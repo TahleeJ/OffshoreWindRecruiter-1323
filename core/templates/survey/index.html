@@ -3,15 +3,13 @@
 {% block title %} Test {% endblock %}
 
 {% block content %}
-  <img src="/static/img/test.png"> 
+    <img src="/static/img/test.png"> 
 
-  {% if question_list %}
     <ul>
     {% for question in question_list %}
-      <li>{{ question.text }}</li>
+        <li>{{ question.text }}</li>
+    {% empty %}
+        <p>No questions are available.</p>
     {% endfor %}
     </ul>
-  {% else %}
-    <p>No questions are available.</p>
-  {% endif %}
 {% endblock %}

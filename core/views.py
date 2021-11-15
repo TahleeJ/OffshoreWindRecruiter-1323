@@ -4,6 +4,7 @@ from core.models import Question
 
 
 def index(request):
+    # Gets all question entries from DB
     question_list = Question.objects.all()
     context = {'question_list': question_list}
     

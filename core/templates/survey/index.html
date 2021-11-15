@@ -1,0 +1,17 @@
+{% extends "base/base.html" %}
+
+{% block title %} Test {% endblock %}
+
+{% block content %}
+  <img src="/static/img/test.png"> 
+
+  {% if question_list %}
+    <ul>
+    {% for question in question_list %}
+      <li>{{ question.text }}</li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>No questions are available.</p>
+  {% endif %}
+{% endblock %}

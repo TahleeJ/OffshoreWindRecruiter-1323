@@ -1,13 +1,10 @@
-$myvar: blue;
-
 html,
 body {
+    padding: 0;
+    margin: 0;
 }
 
-#id {
-    color: $myvar;
-
-    &:hover {
-        color: white;
-    }
+#header {
+    background-color: gray;
+    color: white;
 }

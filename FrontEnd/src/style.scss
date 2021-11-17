@@ -1,4 +1,13 @@
-html, body {
-    
+$myvar: blue;
+
+html,
+body {
 }
 
+#id {
+    color: $myvar;
+
+    &:hover {
+        color: white;
+    }
+}

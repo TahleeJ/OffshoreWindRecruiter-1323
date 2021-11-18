@@ -5,7 +5,15 @@ body {
 }
 
 #header {
-  background-color: gray;
-  color: white;
+  background-color:#F2F2F2;
+  color: #76BEBA;
+  font-size: 30px;
+  text-align: center;
+  font-family: Gill Sans, sans-serif;
+}
+#loginHeader {
+  color:#BE7478;
+  font-size: 20px;
+  text-align: center;
 }
 /*# sourceMappingURL=style.css.map */

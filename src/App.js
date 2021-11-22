@@ -10,16 +10,18 @@ import '@aws-amplify/ui-react/styles.css';
 
 Amplify.configure(awsconfig);
 
-
+//eventually add in  socialProviders={['google']}
 function App() {
+
   return (
-    <Authenticator>
+    <Authenticator variation="modal">
       {({ signOut, user }) => (
         <div className="App">
-            <img src={logo} className="App-logo" alt="logo" />
-            <h1>Hello {user.username}</h1>
+          {console.log(user)}
+          
+          <h1>{user.attributes.email}</h1>
 
-            <button onClick={signOut}>Sign out</button>
+          <button onClick={signOut}>Sign out</button>
         </div>
       )}
     </Authenticator>

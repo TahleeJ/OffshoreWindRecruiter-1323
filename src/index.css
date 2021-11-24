@@ -5,9 +5,27 @@ body {
 }
 
 #header {
-  background-color: gray;
+  background-color: #F2F2F2;
+  color: #76BEBA;
+  height: 40px;
+  text-align: center;
+  font-size: 30px;
+}
+
+#userEmail {
+  font-size: 20px;
+}
+
+#account {
+  color: #BE7478;
+}
+
+#signOut {
+  background-color: #76BEBA;
   color: white;
-  height: 30px;
-  text-align: left;
+  border: none;
+  padding: 15px 32px;
+  font-size: 15px;
+  border-radius: 3px;
 }
 /*# sourceMappingURL=index.css.map */

@@ -4,15 +4,16 @@ import { ModelInit, MutableModel, PersistentModelConstructor } from "@aws-amplif
 
 
 
-type TestMetaData = {
+type TodoMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-export declare class Test {
+export declare class Todo {
   readonly id: string;
-  readonly name?: string;
+  readonly name: string;
+  readonly description?: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
-  constructor(init: ModelInit<Test, TestMetaData>);
-  static copyOf(source: Test, mutator: (draft: MutableModel<Test, TestMetaData>) => MutableModel<Test, TestMetaData> | void): Test;
+  constructor(init: ModelInit<Todo, TodoMetaData>);
+  static copyOf(source: Todo, mutator: (draft: MutableModel<Todo, TodoMetaData>) => MutableModel<Todo, TodoMetaData> | void): Todo;
 }

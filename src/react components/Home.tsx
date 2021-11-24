@@ -12,8 +12,9 @@ const Home: React.FC<props> = ({signOut, user}) => {
     return (
         <>
             <Header />
-            <h1>{user.attributes.email}</h1>
-            <button onClick={signOut}>Sign out</button>
+            <h1 id = "account">Account Management</h1>
+            <p id = "userEmail">{user.attributes.email}</p>
+            <button id = 'signOut' onClick={signOut}>Sign out</button>
         </>
     );
 }

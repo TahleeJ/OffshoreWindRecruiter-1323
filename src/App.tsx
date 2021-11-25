@@ -11,18 +11,17 @@ import Home from './react components/Home'
 
 Amplify.configure(awsconfig);
 
-//eventually add in  socialProviders={['google']}
+//eventually add in socialProviders={['google']}
 function App() {
-
-  return (
-    <Authenticator variation="modal">
-      {({ signOut, user }) => (
-        <div className="App">
-          <Home signOut={signOut} user={user}/>
-        </div>
-      )}
-    </Authenticator>
-  );
+    return (
+        <Authenticator variation="modal" loginMechanisms={['email']}>
+            {({ signOut, user }) => (
+                <div className="App">
+                    <Home signOut={signOut} user={user}/>
+                </div>
+            )}
+        </Authenticator>
+    );
 }
 
 export default App;

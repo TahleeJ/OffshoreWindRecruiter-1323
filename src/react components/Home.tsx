@@ -6,15 +6,16 @@ interface props {
     signOut: (data?: Record<string | number | symbol, any> | undefined) => void;
     user: any;
 }
-
 const Home: React.FC<props> = ({signOut, user}) => {
 
     return (
         <>
             <Header />
-            <h1 id = "account">Account Management</h1>
-            <p id = "userEmail">{user.attributes.email}</p>
-            <button id = 'signOut' onClick={signOut}>Sign out</button>
+            <div id="container">
+                <h1 id = "account">Account Management</h1>
+                <p id = "userEmail">{user.attributes.email}</p>
+                <button id = 'signOut' onClick={signOut}>Sign out</button>
+            </div>
         </>
     );
 }

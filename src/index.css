@@ -4,13 +4,42 @@ body {
   margin: 0;
 }
 
+button {
+  color: white;
+  border: none;
+  padding: 5px 5px;
+  font-size: 15px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+button.gray {
+  background-color: #efefef;
+  color: black;
+}
+
+button.green {
+  background-color: #76beba;
+}
+
+button.red {
+  background-color: #be7478;
+}
+
 #header {
-  background-color: #F2F2F2;
-  color: #76BEBA;
-  height: 40px;
+  background-color: #efefef;
+  color: #76beba;
+  height: 50px;
   text-align: center;
   font-size: 30px;
-  padding: 5px;
+}
+
+#home {
+  height: calc(100% - 50px);
+}
+
+.container {
+  text-align: center;
 }
 
 #userEmail {
@@ -18,25 +47,6 @@ body {
 }
 
 #account {
-  color: #BE7478;
-  padding: 20px 0px 0px 0px;
-}
-
-#signOut {
-  background-color: #76BEBA;
-  color: white;
-  border: none;
-  padding: 15px 32px;
-  font-size: 15px;
-  border-radius: 3px;
-}
-#container {
-  width: 500px;
-  height: 500px;
-  top: 20px;
-  margin: 0 auto;
-  position: relative;
-  box-shadow: 0px 0px 4px 4px rgba(0, 0, 0, 0.20);
-  border-radius: 5px;
+  color: #be7478;
 }
 /*# sourceMappingURL=index.css.map */

@@ -20,21 +20,19 @@ const isLocalhost = Boolean(
       )
   );
   
-  // Assuming you have two redirect URIs, and the first is for localhost and second is for production
-  const [
+// Assuming you have two redirect URIs, and the first is for localhost and second is for production
+const [
     localRedirectSignIn,
     productionRedirectSignIn,
-  ] = awsconfig.oauth.redirectSignIn.split(",");
+] = awsconfig.oauth.redirectSignIn.split(",");
 
-  console.log(`local chosen: ${isLocalhost}\nlocal redirect: ${localRedirectSignIn}\nproduction redirect: ${productionRedirectSignIn}`);
-  
-  const [
+const [
     localRedirectSignOut,
     productionRedirectSignOut,
-  ] = awsconfig.oauth.redirectSignOut.split(",");
+] = awsconfig.oauth.redirectSignOut.split(",");
 
-  awsconfig.oauth.redirectSignIn = isLocalhost ? localRedirectSignIn : productionRedirectSignIn;
-  awsconfig.oauth.redirectSignOut = isLocalhost ? localRedirectSignOut : productionRedirectSignOut;
+awsconfig.oauth.redirectSignIn = isLocalhost ? localRedirectSignIn : productionRedirectSignIn;
+awsconfig.oauth.redirectSignOut = isLocalhost ? localRedirectSignOut : productionRedirectSignOut;
   
 Amplify.configure(awsconfig);
 

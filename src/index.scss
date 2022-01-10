@@ -1,27 +1,60 @@
+$pale-green: #76beba;
+$rose-red: #be7478;
+$gray1: #efefef;
+
+$headerHeight: 50px;
+$contentHeight: calc(100% - 50px);
+
 html,
 body {
     padding: 0;
     margin: 0;
 }
 
+button {
+    color: white;
+    border: none;
+    padding: 5px 5px;
+    font-size: 15px;
+    border-radius: 3px;
+    cursor: pointer;
+
+    &.gray {
+        background-color: $gray1;
+        color: black;
+    }
+
+    &.green {
+        background-color: $pale-green;
+    }
+
+    &.red {
+        background-color: $rose-red;
+    }
+}
+
 #header {
-    background-color:#F2F2F2;
-    color:#76BEBA;
-    height: 40px;
+    background-color: $gray1;
+    color: #76beba;
+    height: $headerHeight;
     text-align: center;
     font-size: 30px;
+
+    // button {
+    //     float: right;
+    // }
+}
+
+#home {
+    height: $contentHeight;
+}
+
+.container {
+    text-align: center;
 }
 #userEmail {
     font-size: 20px;
 }
 #account {
-    color:#BE7478;
-}
-#signOut {
-    background-color :#76BEBA;
-    color:white;
-    border: none;
-    padding: 15px 32px;
-    font-size: 15px;
-    border-radius: 3px;
+    color: $rose-red;
 }

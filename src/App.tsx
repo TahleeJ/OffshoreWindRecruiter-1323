@@ -1,13 +1,14 @@
 import React, { createContext } from 'react';
+import { Provider } from 'react-redux';
 import './App.css';
 
 import Amplify from 'aws-amplify';
 import awsconfig from './aws-exports';
-
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 
 import Home from './react components/Home'
+import { store } from './redux/store';
 
 // Multiple redirect URI handling for OAuth 
 const isLocalhost = Boolean(
@@ -56,9 +57,11 @@ const App: React.FC = () => {
     return (
         <Authenticator variation="modal" loginMechanisms={['email']}>
             {({ signOut, user }) => (
-                <UserContext.Provider value={user}>
-                    <Home signOut={signOut} />
-                </UserContext.Provider>
+                <Provider store={store}>
+                    <UserContext.Provider value={user}>
+                        <Home signOut={signOut} />
+                    </UserContext.Provider>
+                </Provider>
             )}
         </Authenticator>
     );

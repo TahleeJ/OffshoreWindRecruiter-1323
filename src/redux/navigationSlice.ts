@@ -45,16 +45,16 @@ const navigationSlice = createSlice({
     initialState,
     reducers: {
         /** Change the type of the page and optionally specify the operation and the data of the operation. */
-        changePage(state, { payload }: PayloadAction<{ type: PageType, operation?: OperationType, data?: OperationData}>) {
+        changePage(state, { payload }: PayloadAction<{ type: PageType, operation?: OperationType, data?: OperationData }>) {
             state.currentPage = payload.type;
             state.operationType = payload.operation ? payload.operation : OperationType.Idle;
             state.operationData = payload.data ? payload.data : null;
         },
-        changeOperation(state, { payload }: PayloadAction<{ operation: OperationType, data?: OperationData}>) {
+        changeOperation(state, { payload }: PayloadAction<{ operation: OperationType, data?: OperationData }>) {
             state.operationType = payload.operation;
             state.operationData = payload.data ? payload.data : null;
         },
-        changeOperationData(state, {payload}: PayloadAction<OperationData | null>) {
+        changeOperationData(state, { payload }: PayloadAction<OperationData | null>) {
             state.operationData = payload;
         }
     }
@@ -63,5 +63,5 @@ const navigationSlice = createSlice({
 
 
 
-export const { } = navigationSlice.actions
+export const { changePage, changeOperation, changeOperationData } = navigationSlice.actions
 export default navigationSlice.reducer

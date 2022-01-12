@@ -9,7 +9,6 @@ interface props {
 
 const Home: React.FC<props> = (props) => {
     const auth = useContext(AuthContext);
-    const signOut: (data?: Record<string | number | symbol, any> | undefined) => void = auth.signOut;
     const user = auth.user;
 
     console.log(user); //this is to figure out what is all on the user type
@@ -18,7 +17,6 @@ const Home: React.FC<props> = (props) => {
         <div id="home" className='container'>
             <h1 id="account">Account Management</h1>
             <p id="userEmail">{user.attributes.email}</p>
-            <button className='gray' onClick={signOut}>Sign out</button>
         </div>
     );
 }

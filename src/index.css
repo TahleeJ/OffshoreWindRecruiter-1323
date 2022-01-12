@@ -4,28 +4,6 @@ body {
   margin: 0;
 }
 
-button {
-  color: white;
-  border: none;
-  padding: 5px 5px;
-  font-size: 15px;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-button.gray {
-  background-color: #efefef;
-  color: black;
-}
-
-button.green {
-  background-color: #76beba;
-}
-
-button.red {
-  background-color: #be7478;
-}
-
 #header {
   background-color: #efefef;
   color: #76beba;
@@ -48,5 +26,25 @@ button.red {
 
 #account {
   color: #be7478;
+}
+
+.button:hover {
+  color: black;
+}
+
+.button {
+  padding-right: 5px;
+  margin: 10px;
+  color: #76beba;
+  border: none;
+  padding: 5px 5px;
+  font-size: 15px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.headerButton {
+  position: absolute;
+  right: 50px;
 }
 /*# sourceMappingURL=index.css.map */

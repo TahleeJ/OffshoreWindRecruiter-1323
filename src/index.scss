@@ -11,33 +11,34 @@ body {
     margin: 0;
 }
 
-button {
-    color: white;
-    border: none;
-    padding: 5px 5px;
-    font-size: 15px;
-    border-radius: 3px;
-    cursor: pointer;
+// button {
+//     color: white;
+//     border: none;
+//     padding: 5px 5px;
+//     font-size: 15px;
+//     border-radius: 3px;
+//     cursor: pointer;
 
-    &.gray {
-        background-color: $gray1;
-        color: black;
-    }
+//     &.gray {
+//         background-color: $gray1;
+//         color: black;
+//     }
 
-    &.green {
-        background-color: $pale-green;
-    }
+//     &.green {
+//         background-color: $pale-green;
+//     }
 
-    &.red {
-        background-color: $rose-red;
-    }
-}
+//     &.red {
+//         background-color: $rose-red;
+//     }
+// }
 
 #header {
     background-color: $gray1;
     color: #76beba;
     height: $headerHeight;
     text-align: center;
+    //float:right;
     font-size: 30px;
 
     // button {
@@ -57,4 +58,22 @@ button {
 }
 #account {
     color: $rose-red;
+}
+
+.button:hover {
+    color:black;
+}
+.button {
+    padding-right: 5px;
+    margin:10px;
+    color: $pale-green;
+    border: none;
+    padding: 5px 5px;
+    font-size: 15px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.headerButton {
+    position: absolute;;
+    right:50px;
 }

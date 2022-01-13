@@ -1,6 +1,4 @@
-import React, { useContext } from 'react';
-import Amplify from 'aws-amplify';
-import Header from "./Header";
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../App';
 
 interface props {

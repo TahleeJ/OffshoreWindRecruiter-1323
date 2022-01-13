@@ -8,6 +8,9 @@ export const onCreateTodo = /* GraphQL */ `
       id
       name
       description
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -19,6 +22,9 @@ export const onUpdateTodo = /* GraphQL */ `
       id
       name
       description
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -30,6 +36,9 @@ export const onDeleteTodo = /* GraphQL */ `
       id
       name
       description
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }

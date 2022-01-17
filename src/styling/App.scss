@@ -1,3 +1,6 @@
+//CHANGE THIS FILE NOT App.css
+//This is because saving and compiling this file will overwrite App.css
+
 $pale-green: #76beba;
 $rose-red: #be7478;
 $gray1: #efefef;
@@ -44,6 +47,24 @@ body {
     // button {
     //     float: right;
     // }
+
+    .button:hover {
+        color: black;
+    }
+    .button {
+        padding-right: 5px;
+        margin: 10px;
+        color: $pale-green;
+        border: none;
+        padding: 5px 5px;
+        font-size: 15px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    .headerButton {
+        position: absolute;
+        right: 50px;
+    }
 }
 
 #home {
@@ -58,22 +79,4 @@ body {
 }
 #account {
     color: $rose-red;
-}
-
-.button:hover {
-    color:black;
-}
-.button {
-    padding-right: 5px;
-    margin:10px;
-    color: $pale-green;
-    border: none;
-    padding: 5px 5px;
-    font-size: 15px;
-    border-radius: 3px;
-    cursor: pointer;
-}
-.headerButton {
-    position: absolute;;
-    right:50px;
 }

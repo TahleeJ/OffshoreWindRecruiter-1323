@@ -18,10 +18,10 @@ const Header: React.FC<headerProps> = (p: headerProps) => {
         <header id="header" >
             <div style={{display:'inline-block', textAlign:"center"}}>{"Offshore Wind Recruitment".toUpperCase()}</div>
             <div className='headerButton' style={{display:'inline-block'}}>
+                <button className = 'button' onClick={() => {appDispatch(changePage({ type: PageType.AdminHome }))}}>ADMIN</button> 
                 <button className = 'button' onClick={() => {appDispatch(changePage({ type: PageType.Home }))}}>Home</button> 
                 <button className = 'button' onClick={() => {appDispatch(changePage({ type: PageType.Survey}))}}>Survey</button>
                 <button className='button' onClick={signOut}>Sign out</button>
-                
             </div>    
         </header>
     );

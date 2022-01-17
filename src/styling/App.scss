@@ -9,9 +9,17 @@ $headerHeight: 50px;
 $contentHeight: calc(100% - 50px);
 
 html,
-body {
+body,
+#root {
     padding: 0;
     margin: 0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 // button {
@@ -79,4 +87,37 @@ body {
 }
 #account {
     color: $rose-red;
+}
+
+// This element can have pretty much anything else in it
+.listViewer {
+    width: calc(100% - 20px);
+    margin: 10px;
+    background-color: $gray1;
+    border-radius: 3px;
+    // padding: 5px;
+    box-shadow: 0px 0px 3px 2px rgb(221, 221, 221);
+    overflow: hidden;
+
+    .title {
+        font-weight: bold;
+        color: $rose-red;
+        text-align: left;
+        font-size: 18px;
+        padding: 3px 8px;
+    }
+
+    .listElements {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: calc(100% - 25px);
+
+        * {
+            padding: 4px;
+
+            &:nth-child(odd) {
+                background-color: white;
+            }
+        }
+    }
 }

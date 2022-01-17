@@ -1,7 +1,16 @@
 html,
-body {
+body,
+#root {
   padding: 0;
   margin: 0;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+* {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 #header {
@@ -46,5 +55,37 @@ body {
 
 #account {
   color: #be7478;
+}
+
+.listViewer {
+  width: calc(100% - 20px);
+  margin: 10px;
+  background-color: #efefef;
+  border-radius: 3px;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
+  overflow: hidden;
+}
+
+.listViewer .title {
+  font-weight: bold;
+  color: #be7478;
+  text-align: left;
+  font-size: 18px;
+  padding: 3px 8px;
+}
+
+.listViewer .listElements {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100% - 25px);
+}
+
+.listViewer .listElements * {
+  padding: 4px;
+}
+
+.listViewer .listElements *:nth-child(odd) {
+  background-color: white;
 }
 /*# sourceMappingURL=App.css.map */

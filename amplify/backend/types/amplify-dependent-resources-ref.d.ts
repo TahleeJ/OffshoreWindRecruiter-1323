@@ -14,6 +14,7 @@ export type AmplifyDependentResourcesAttributes = {
     },
     "api": {
         "oswjn": {
+            "GraphQLAPIKeyOutput": "string",
             "GraphQLAPIIdOutput": "string",
             "GraphQLAPIEndpointOutput": "string"
         }

@@ -1,6 +1,34 @@
+type Survey @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  description: String!
+  Questions: [Question!] @hasMany(indexName: "bySurvey", fields: ["id"])
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  email: AWSEmail!
+  isAdmin: Boolean!
+}
+
 type Todo @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String!
   description: String
+}
+
+type Question @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  prompt: String!
+  Answers: [Answer!] @hasMany(indexName: "byQuestion", fields: ["id"])
+  surveyID: ID! @index(name: "bySurvey")
+}
+
+type Answer @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  text: String!
+  labels: [String!]
+  questionID: ID! @index(name: "byQuestion")
 }
  

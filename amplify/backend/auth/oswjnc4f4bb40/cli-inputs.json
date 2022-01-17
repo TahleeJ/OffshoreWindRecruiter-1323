@@ -32,7 +32,7 @@
     "sharedId": "c4f4bb40",
     "resourceName": "oswjnc4f4bb40",
     "authSelections": "identityPoolAndUserPool",
-    "useDefault": "defaultSocial",
+    "useDefault": "manual",
     "usernameAttributes": [
       "email"
     ],
@@ -57,13 +57,13 @@
     "userPoolGroups": false,
     "adminQueries": false,
     "hostedUI": true,
-    "hostedUIDomainName": "oswjn2c01ebde-2c01ebde",
+    "authProviders": [],
+    "thirdPartyAuth": false,
+    "hostedUIDomainName": "n7o1nr70yxeh",
     "authProvidersUserPool": [
       "Google"
     ],
     "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
-    "authProviders": [],
-    "hostedUIProviderCreds": "[]",
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\",\"https://jofhswhjesv7-staging.auth.us-east-1.amazoncognito.com/\",\"https://oswjn2c01ebde-2c01ebde-staging.auth.us-east-1.amazoncognito.com/\"],\"LogoutURLs\":[\"http://localhost:3000/\",\"https://jofhswhjesv7-staging.auth.us-east-1.amazoncognito.com/\",\"https://oswjn2c01ebde-2c01ebde-staging.auth.us-east-1.amazoncognito.com/\"]}"
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\",\"https://n7o1nr70yxeh-staging.auth.us-east-1.amazoncognito.com/\",\"https://oswjn2c01ebde-2c01ebde-staging.auth.us-east-1.amazoncognito.com/\"],\"LogoutURLs\":[\"http://localhost:3000/\",\"https://n7o1nr70yxeh-staging.auth.us-east-1.amazoncognito.com/\",\"https://oswjn2c01ebde-2c01ebde-staging.auth.us-east-1.amazoncognito.com/\"]}"
   }
 }

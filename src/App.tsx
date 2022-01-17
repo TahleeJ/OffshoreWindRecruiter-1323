@@ -1,5 +1,5 @@
 import React, { createContext } from 'react';
-import './App.css';
+import './styling/App.css';
 
 import Amplify from 'aws-amplify';
 import awsconfig from './aws-exports';

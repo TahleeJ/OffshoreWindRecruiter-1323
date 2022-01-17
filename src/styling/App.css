@@ -1,0 +1,91 @@
+html,
+body,
+#root {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+* {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+#header {
+  background-color: #efefef;
+  color: #76beba;
+  height: 50px;
+  text-align: center;
+  font-size: 30px;
+}
+
+#header .button:hover {
+  color: black;
+}
+
+#header .button {
+  padding-right: 5px;
+  margin: 10px;
+  color: #76beba;
+  border: none;
+  padding: 5px 5px;
+  font-size: 15px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+#header .headerButton {
+  position: absolute;
+  right: 50px;
+}
+
+#home {
+  height: calc(100% - 50px);
+}
+
+.container {
+  text-align: center;
+}
+
+#userEmail {
+  font-size: 20px;
+}
+
+#account {
+  color: #be7478;
+}
+
+.listViewer {
+  width: calc(100% - 20px);
+  margin: 10px;
+  background-color: #efefef;
+  border-radius: 3px;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
+  overflow: hidden;
+}
+
+.listViewer .title {
+  font-weight: bold;
+  color: #be7478;
+  text-align: left;
+  font-size: 18px;
+  padding: 3px 8px;
+}
+
+.listViewer .listElements {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100% - 25px);
+}
+
+.listViewer .listElements * {
+  padding: 4px;
+}
+
+.listViewer .listElements *:nth-child(odd) {
+  background-color: white;
+}
+/*# sourceMappingURL=App.css.map */

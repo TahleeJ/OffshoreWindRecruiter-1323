@@ -41,6 +41,46 @@ body,
   right: 50px;
 }
 
+#adminHome {
+  height: calc(100% - 50px);
+  background-color: #f4f4f4;
+  font-family: 'Roboto';
+}
+
+#adminHome .userInfo {
+  font-weight: 500;
+  color: #4e4e4e;
+  margin-left: 70px;
+  padding-top: 15px;
+  line-height: 35px;
+}
+
+#adminHome .adminButton {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 618px;
+  height: 85px;
+  border: none;
+  border-radius: 10px;
+  background: white;
+  -webkit-box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.1);
+          box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.1);
+  color: #4e4e4e;
+  font-size: 20px;
+  font-weight: 400;
+  font-family: 'Roboto';
+  text-align: left;
+  margin-bottom: 25px;
+  padding-left: 33px;
+}
+
+#adminPrompt {
+  margin-left: 70px;
+  font-size: 25px;
+  color: #be7478;
+}
+
 #home {
   height: calc(100% - 50px);
 }

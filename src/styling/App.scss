@@ -11,6 +11,10 @@ $dark-gray: #dadada;
 $headerHeight: 50px;
 $contentHeight: calc(100% - 50px);
 
+$normal-font-size: 14px;
+$large-font-size: 18px;
+$largest-font-size: 24px;
+
 html,
 body,
 #root {
@@ -26,7 +30,7 @@ body,
 }
 
 button {
-    //this is the default styling. Override it by adding definition for a specific class in another part of this file
+    //this is the default button styling. Override it by adding definition for a specific class in another part of this file
     color: white;
     border: none;
     padding: 5px 5px;
@@ -55,90 +59,9 @@ button {
     }
 }
 
-#header {
-    background-color: $gray1;
-    color: #76beba;
-    height: $headerHeight;
-    text-align: center;
-    display: flex;
-    position: relative;
-
-    i {
-        //this uses the font-awesome icon library
-        height: 100%;
-        color: $pale-green;
-        border: none;
-        padding: 10px 5px;
-        font-size: 25px;
-        cursor: pointer;
-
-        &:hover {
-            color: black;
-        }
-    }
-    .buttonGroup {
-        height: 100%;
-        // flex: 1;
-        flex-shrink: 2;
-    }
-    .title {
-        display: inline-block;
-        font-size: 25px;
-        padding: 5px;
-        flex: 1;
-    }
-}
-
-#adminHome {
-    height: $contentHeight;
-    background-color: #f4f4f4;
-    font-family: "Roboto";
-    .userInfo {
-        font-weight: 500;
-        color: #4e4e4e;
-        margin-left: 10%;
-        padding-top: 15px;
-        line-height: 35px;
-    }
-    .adminButton {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        width: 75%;
-        height: 85px;
-        border: none;
-        border-radius: 10px;
-        background: white;
-        box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.1);
-        color: #4e4e4e;
-        font-size: 20px;
-        font-weight: 400;
-        font-family: "Roboto";
-        text-align: left;
-        margin-bottom: 25px;
-        padding-left: 33px;
-        padding-right: 33px;
-    }
-}
-#adminPrompt {
-    margin-left: 10%;
-    font-size: 25px;
-    color: $rose-red;
-}
-
-#home {
-    height: $contentHeight;
-
-    #userEmail {
-        font-size: 20px;
-    }
-    #account {
-        color: $rose-red;
-    }
-}
-
 .container {
     text-align: center;
+    max-width: 800px;
 }
 
 // This element can have pretty much anything else in it
@@ -170,6 +93,178 @@ button {
             &:nth-child(odd) {
                 background-color: white;
             }
+        }
+    }
+}
+
+#header {
+    background-color: $gray1;
+    color: #76beba;
+    height: $headerHeight;
+    text-align: center;
+    display: flex;
+    position: relative;
+
+    i {
+        //this uses the font-awesome icon library
+        height: 100%;
+        color: $pale-green;
+        border: none;
+        padding: 10px 10px;
+        font-size: 25px;
+        cursor: pointer;
+
+        &:hover {
+            color: black;
+        }
+    }
+    .buttonGroup {
+        height: 100%;
+        // flex: 1;
+        flex-shrink: 2;
+    }
+    .title {
+        display: inline-block;
+        font-size: 25px;
+        padding: 5px;
+        flex: 1;
+    }
+}
+
+#adminHome {
+    height: $contentHeight;
+    background-color: #f4f4f4;
+    font-family: "Roboto";
+
+    #adminPrompt {
+        margin-left: 10%;
+        font-size: 25px;
+        color: $rose-red;
+    }
+
+    .userInfo {
+        font-weight: 500;
+        color: #4e4e4e;
+        margin-left: 10%;
+        padding-top: 15px;
+        line-height: 35px;
+    }
+    .adminButton {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 75%;
+        height: 85px;
+        border: none;
+        border-radius: 10px;
+        background: white;
+        box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.1);
+        color: #4e4e4e;
+        font-size: 20px;
+        font-weight: 400;
+        font-family: "Roboto";
+        text-align: left;
+        margin-bottom: 25px;
+        padding-left: 33px;
+        padding-right: 33px;
+    }
+}
+
+#home {
+    height: $contentHeight;
+
+    #userEmail {
+        font-size: 20px;
+    }
+    #account {
+        color: $rose-red;
+    }
+}
+
+#surveyHome {
+    .administerSurveyPage {
+        .survey {
+            text-align: center;
+            margin: 0px 25px;
+            font-size: $large-font-size;
+        }
+
+        .surveyTitle {
+            font-weight: bold;
+            color: $rose-red;
+            text-align: left;
+            font-size: 24px;
+            padding: 3px 8px;
+        }
+
+        .title {
+            font-weight: bold;
+            text-align: left;
+            font-size: 18px;
+            margin: 3px;
+        }
+
+        .question {
+            background-color: $gray1;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            padding: 5px;
+
+            textarea {
+                width: calc(100% - 10px);
+                margin: 0px 5px;
+                resize: none;
+                border: none;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+
+            .options {
+                padding: 5px;
+                font-size: $large-font-size;
+            }
+
+            input[type="radio"] {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                width: 30px;
+                height: 30px;
+                border: 2px solid $pale-green;
+                transition: 0.1s all;
+                margin-right: 5px;
+                position: relative;
+                top: 4px;
+                border-radius: 2px;
+                cursor: pointer;
+
+                &:hover {
+                    border: 3px solid $pale-green;
+                    outline: unset !important; /* I added this one for Edge (chromium) support */
+                }
+
+                &:checked {
+                    border: 10px solid $pale-green;
+                    outline: unset !important; /* I added this one for Edge (chromium) support */
+                }
+            }
+
+            &.sq {
+                padding-bottom: 5px;
+
+                input[type="radio"] {
+                    border-radius: 50%;
+                }
+            }
+
+            &.mcq {
+                text-align: left;
+            }
+        }
+
+        button {
+            margin: 5px;
+            font-size: $large-font-size;
         }
     }
 }

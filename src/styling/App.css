@@ -44,100 +44,9 @@ button:hover {
   background-color: #62aaa6;
 }
 
-#header {
-  background-color: #efefef;
-  color: #76beba;
-  height: 50px;
-  text-align: center;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  position: relative;
-}
-
-#header i {
-  height: 100%;
-  color: #76beba;
-  border: none;
-  padding: 10px 5px;
-  font-size: 25px;
-  cursor: pointer;
-}
-
-#header i:hover {
-  color: black;
-}
-
-#header .buttonGroup {
-  height: 100%;
-  -ms-flex-negative: 2;
-      flex-shrink: 2;
-}
-
-#header .title {
-  display: inline-block;
-  font-size: 25px;
-  padding: 5px;
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
-}
-
-#adminHome {
-  height: calc(100% - 50px);
-  background-color: #f4f4f4;
-  font-family: "Roboto";
-}
-
-#adminHome .userInfo {
-  font-weight: 500;
-  color: #4e4e4e;
-  margin-left: 10%;
-  padding-top: 15px;
-  line-height: 35px;
-}
-
-#adminHome .adminButton {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 75%;
-  height: 85px;
-  border: none;
-  border-radius: 10px;
-  background: white;
-  -webkit-box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.1);
-          box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.1);
-  color: #4e4e4e;
-  font-size: 20px;
-  font-weight: 400;
-  font-family: "Roboto";
-  text-align: left;
-  margin-bottom: 25px;
-  padding-left: 33px;
-  padding-right: 33px;
-}
-
-#adminPrompt {
-  margin-left: 10%;
-  font-size: 25px;
-  color: #be7478;
-}
-
-#home {
-  height: calc(100% - 50px);
-}
-
-#home #userEmail {
-  font-size: 20px;
-}
-
-#home #account {
-  color: #be7478;
-}
-
 .container {
   text-align: center;
+  max-width: 800px;
 }
 
 .listViewer {
@@ -170,5 +79,184 @@ button:hover {
 
 .listViewer .listElements *:nth-child(odd) {
   background-color: white;
+}
+
+#header {
+  background-color: #efefef;
+  color: #76beba;
+  height: 50px;
+  text-align: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative;
+}
+
+#header i {
+  height: 100%;
+  color: #76beba;
+  border: none;
+  padding: 10px 10px;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+#header i:hover {
+  color: black;
+}
+
+#header .buttonGroup {
+  height: 100%;
+  -ms-flex-negative: 2;
+      flex-shrink: 2;
+}
+
+#header .title {
+  display: inline-block;
+  font-size: 25px;
+  padding: 5px;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+#adminHome {
+  height: calc(100% - 50px);
+  background-color: #f4f4f4;
+  font-family: "Roboto";
+}
+
+#adminHome #adminPrompt {
+  margin-left: 10%;
+  font-size: 25px;
+  color: #be7478;
+}
+
+#adminHome .userInfo {
+  font-weight: 500;
+  color: #4e4e4e;
+  margin-left: 10%;
+  padding-top: 15px;
+  line-height: 35px;
+}
+
+#adminHome .adminButton {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 75%;
+  height: 85px;
+  border: none;
+  border-radius: 10px;
+  background: white;
+  -webkit-box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.1);
+          box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.1);
+  color: #4e4e4e;
+  font-size: 20px;
+  font-weight: 400;
+  font-family: "Roboto";
+  text-align: left;
+  margin-bottom: 25px;
+  padding-left: 33px;
+  padding-right: 33px;
+}
+
+#home {
+  height: calc(100% - 50px);
+}
+
+#home #userEmail {
+  font-size: 20px;
+}
+
+#home #account {
+  color: #be7478;
+}
+
+#surveyHome .administerSurveyPage .survey {
+  text-align: center;
+  margin: 0px 25px;
+  font-size: 18px;
+}
+
+#surveyHome .administerSurveyPage .surveyTitle {
+  font-weight: bold;
+  color: #be7478;
+  text-align: left;
+  font-size: 24px;
+  padding: 3px 8px;
+}
+
+#surveyHome .administerSurveyPage .title {
+  font-weight: bold;
+  text-align: left;
+  font-size: 18px;
+  margin: 3px;
+}
+
+#surveyHome .administerSurveyPage .question {
+  background-color: #efefef;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  padding: 5px;
+}
+
+#surveyHome .administerSurveyPage .question textarea {
+  width: calc(100% - 10px);
+  margin: 0px 5px;
+  resize: none;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+#surveyHome .administerSurveyPage .question .options {
+  padding: 5px;
+  font-size: 18px;
+}
+
+#surveyHome .administerSurveyPage .question input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 30px;
+  height: 30px;
+  border: 2px solid #76beba;
+  -webkit-transition: 0.1s all;
+  transition: 0.1s all;
+  margin-right: 5px;
+  position: relative;
+  top: 4px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+#surveyHome .administerSurveyPage .question input[type="radio"]:hover {
+  border: 3px solid #76beba;
+  outline: unset !important;
+  /* I added this one for Edge (chromium) support */
+}
+
+#surveyHome .administerSurveyPage .question input[type="radio"]:checked {
+  border: 10px solid #76beba;
+  outline: unset !important;
+  /* I added this one for Edge (chromium) support */
+}
+
+#surveyHome .administerSurveyPage .question.sq {
+  padding-bottom: 5px;
+}
+
+#surveyHome .administerSurveyPage .question.sq input[type="radio"] {
+  border-radius: 50%;
+}
+
+#surveyHome .administerSurveyPage .question.mcq {
+  text-align: left;
+}
+
+#surveyHome .administerSurveyPage button {
+  margin: 5px;
+  font-size: 18px;
 }
 /*# sourceMappingURL=App.css.map */

@@ -64,9 +64,8 @@ const App: React.FC = () => {
             {({ signOut, user }) => (
                 <AuthContext.Provider value={{ user, signOut }}>
                     <Header />
-                    {   //we show the page depending on which PageType is currently in our redux state
-                        getOverallPageFromType(pageType)
-                    }
+                    {//we show the page depending on which PageType is currently in our redux state
+                        getOverallPageFromType(pageType)}
                 </AuthContext.Provider>
             )}
         </Authenticator>

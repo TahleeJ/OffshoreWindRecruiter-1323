@@ -16,12 +16,12 @@ const Header: React.FC<headerProps> = (p: headerProps) => {
 
     return (
         <header id="header" >
-            <div style={{display:'inline-block', textAlign:"center"}}>{"Offshore Wind Recruitment".toUpperCase()}</div>
-            <div className='headerButton' style={{display:'inline-block'}}>
+            <div className = 'buttonContainer'>{"Offshore Wind Recruitment".toUpperCase()}</div>
+            <div className='headerButton'>
+                <button className = 'button' onClick={() => {appDispatch(changePage({ type: PageType.Home }))}}>HOME</button> 
                 <button className = 'button' onClick={() => {appDispatch(changePage({ type: PageType.AdminHome }))}}>ADMIN</button> 
-                <button className = 'button' onClick={() => {appDispatch(changePage({ type: PageType.Home }))}}>Home</button> 
-                <button className = 'button' onClick={() => {appDispatch(changePage({ type: PageType.Survey}))}}>Survey</button>
-                <button className='button' onClick={signOut}>Sign out</button>
+                <button className = 'button' onClick={() => {appDispatch(changePage({ type: PageType.Survey}))}}>SURVEY</button>
+                <button className='button' onClick={signOut}>SIGN OUT</button>
             </div>    
         </header>
     );

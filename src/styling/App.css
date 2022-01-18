@@ -26,8 +26,8 @@ body,
 }
 
 #header .button {
-  padding-right: 5px;
-  margin: 10px;
+  margin-left: 10px;
+  height: 50px;
   color: #76beba;
   border: none;
   padding: 5px 5px;
@@ -39,6 +39,11 @@ body,
 #header .headerButton {
   position: absolute;
   right: 50px;
+  display: inline-block;
+}
+
+#header .buttonContainer {
+  display: inline-block;
 }
 
 #adminHome {

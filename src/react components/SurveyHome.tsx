@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Todo, ListTodosQuery } from '../API';
 import { listTodos } from '../graphql/queries';
 import callGraphQL from '../queries/callGraphQL';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { changeOperation, OperationType } from '../redux/navigationSlice';
 
 /** The props (arguments) to create this element */
 interface props {
@@ -19,33 +21,78 @@ async function sampleQuery(): Promise<Todo[] | null> {
     }
     return null;
 }
-sampleQuery();
 
-/** The header of the application. */
+
+
+/** The Survey Home to select and administer surveys */
 const SurveyHome: React.FC<props> = (props) => {
-    const [sampleTodos, setSampleTodos] = useState<Todo[] | null>(null); //This is the state of this component.
+    const operationType = useAppSelector(s => s.navigation.operationType);
+    const operationData = useAppSelector(s => s.navigation.operationData);
+    const dispatch = useAppDispatch();
 
-    //"useEffect" is called after every render. In this case, we provide the empty array [] so that it's only called after the first render.
-    useEffect(() => {
-        /** This function will call our query and then set the state with the todos (triggering a rerender automatically) */
-        async function wrappedQuery() {
-            const todos = await sampleQuery();
-            setSampleTodos(todos);
+    const getSectionFromOType = (type: OperationType) => {
+        switch (type) {
+            case OperationType.Administering:   //This will be shown when the survey is being administered
+                return (<div className='administerSurveyPage'>
+                    <div className='survey'>
+                        <div className='surveyTitle'>
+                            Survey Title
+                        </div>
+                        <div className='description'>
+                            This is the description of the survey. There probably should be instructions here, and potentially a brief background of why the survey is taken
+                        </div>
+                        <div className='questions'>
+                            {/* The questions will go here. They will be mapped from the current survey */}
+                            <div className='question frq'>
+                                <div className='title'>This is an FRQ! What do you think of it?</div>
+                                <textarea rows={5} placeholder='Answer...' />
+                            </div>
+                            <div className='question sq'>
+                                <div className='title'>This is an Scaled Question! What do you think of it?</div>
+                                <div className='options'>
+                                    Strongly Disagree
+                                    <input type="radio" id="QUESTION_ID_1" name="QUESTIONID" placeholder='N/A' />
+                                    <input type="radio" id="QUESTION_ID_2" name="QUESTIONID" placeholder='N/A' />
+                                    <input type="radio" id="QUESTION_ID_3" name="QUESTIONID" placeholder='N/A' />
+                                    <input type="radio" id="QUESTION_ID_4" name="QUESTIONID" placeholder='N/A' />
+                                    <input type="radio" id="QUESTION_ID_5" name="QUESTIONID" placeholder='N/A' />
+                                    Strongly Agree
+                                </div>
+                            </div>
+                            <div className='question mcq'>
+                                <div className='title'>This is a multiple choice question! What do you think of it?</div>
+                                <div className='options'>
+                                    <input type="radio" id="QUESTION2_ID_1" name="QUESTIONID2" placeholder='N/A' />
+                                    <label htmlFor='QUESTION_ID_1'>Option 1</label>
+                                    <br />
+
+                                    <input type="radio" id="QUESTION2_ID_2" name="QUESTIONID2" placeholder='N/A' />
+                                    <label htmlFor='QUESTION2_ID_2'>Option 2</label>
+                                    <br />
+
+                                    <input type="radio" id="QUESTION2_ID_3" name="QUESTIONID2" placeholder='N/A' />
+                                    <label htmlFor='QUESTION2_ID_3'>Option 3</label>
+                                    <br />
+
+                                    <input type="radio" id="QUESTION2_ID_4" name="QUESTIONID2" placeholder='N/A' />
+                                    <label htmlFor='QUESTION2_ID_4'>Option 4</label>
+                                </div>
+                            </div>
+                            <button onClick={() => alert("This isn't done yet bro")} className='gray'>Cancel Survey</button>
+                            <button onClick={() => alert("This isn't done yet bro")}>Submit</button>
+                        </div>
+                    </div>
+                </div>);
+            default:
+                return (<div>
+                    This will eventually be replaced with a survey list. For now, just click the button
+                    <br />
+                    <button onClick={() => dispatch(changeOperation({ operation: OperationType.Administering }))}>Administer test survey</button>
+                </div>);
         }
-        wrappedQuery();
-    }, []);
+    }
 
-    return (
-        <>
-            <div>THIS ELEMENT NEEDS TO BE DEVELOPED</div>
-            <br />
-            {   //SAMPLE: 
-                sampleTodos?.map(todo => {
-                    return <div key={todo.id}>TODO: {todo.description}</div>
-                }) || null
-            }
-        </>
-    );
+    return <div id="surveyHome">{getSectionFromOType(operationType)}</div>
 }
 
 export default SurveyHome;

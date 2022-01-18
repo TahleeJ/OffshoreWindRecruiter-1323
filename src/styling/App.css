@@ -13,6 +13,37 @@ body,
           box-sizing: border-box;
 }
 
+button {
+  color: white;
+  border: none;
+  padding: 5px 5px;
+  font-size: 15px;
+  border-radius: 3px;
+  background-color: #76beba;
+  cursor: pointer;
+}
+
+button.gray {
+  background-color: #efefef;
+  color: black;
+}
+
+button.gray:hover {
+  background-color: #dadada;
+}
+
+button.red {
+  background-color: #be7478;
+}
+
+button.red:hover {
+  background-color: #a76568;
+}
+
+button:hover {
+  background-color: #62aaa6;
+}
+
 #header {
   background-color: #efefef;
   color: #76beba;
@@ -97,16 +128,16 @@ body,
   height: calc(100% - 50px);
 }
 
-.container {
-  text-align: center;
-}
-
-#userEmail {
+#home #userEmail {
   font-size: 20px;
 }
 
-#account {
+#home #account {
   color: #be7478;
+}
+
+.container {
+  text-align: center;
 }
 
 .listViewer {

@@ -2,8 +2,11 @@
 //This is because saving and compiling this file will overwrite App.css
 
 $pale-green: #76beba;
+$dark-pale-green: #62aaa6;
 $rose-red: #be7478;
+$dark-rose-red: #a76568;
 $gray1: #efefef;
+$dark-gray: #dadada;
 
 $headerHeight: 50px;
 $contentHeight: calc(100% - 50px);
@@ -22,27 +25,35 @@ body,
     box-sizing: border-box;
 }
 
-// button {
-//     color: white;
-//     border: none;
-//     padding: 5px 5px;
-//     font-size: 15px;
-//     border-radius: 3px;
-//     cursor: pointer;
+button {
+    //this is the default styling. Override it by adding definition for a specific class in another part of this file
+    color: white;
+    border: none;
+    padding: 5px 5px;
+    font-size: 15px;
+    border-radius: 3px;
+    background-color: $pale-green;
+    cursor: pointer;
 
-//     &.gray {
-//         background-color: $gray1;
-//         color: black;
-//     }
+    &.gray {
+        background-color: $gray1;
+        color: black;
+        &:hover {
+            background-color: $dark-gray;
+        }
+    }
 
-//     &.green {
-//         background-color: $pale-green;
-//     }
+    &.red {
+        background-color: $rose-red;
+        &:hover {
+            background-color: $dark-rose-red;
+        }
+    }
 
-//     &.red {
-//         background-color: $rose-red;
-//     }
-// }
+    &:hover {
+        background-color: $dark-pale-green;
+    }
+}
 
 #header {
     background-color: $gray1;
@@ -117,16 +128,17 @@ body,
 
 #home {
     height: $contentHeight;
+
+    #userEmail {
+        font-size: 20px;
+    }
+    #account {
+        color: $rose-red;
+    }
 }
 
 .container {
     text-align: center;
-}
-#userEmail {
-    font-size: 20px;
-}
-#account {
-    color: $rose-red;
 }
 
 // This element can have pretty much anything else in it

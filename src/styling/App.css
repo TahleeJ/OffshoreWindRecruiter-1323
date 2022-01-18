@@ -18,38 +18,44 @@ body,
   color: #76beba;
   height: 50px;
   text-align: center;
-  font-size: 30px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative;
 }
 
-#header .button:hover {
-  color: black;
-}
-
-#header .button {
-  margin-left: 10px;
-  height: 50px;
+#header i {
+  height: 100%;
   color: #76beba;
   border: none;
-  padding: 5px 5px;
-  font-size: 15px;
-  border-radius: 3px;
+  padding: 10px 5px;
+  font-size: 25px;
   cursor: pointer;
 }
 
-#header .headerButton {
-  position: absolute;
-  right: 50px;
-  display: inline-block;
+#header i:hover {
+  color: black;
 }
 
-#header .buttonContainer {
+#header .buttonGroup {
+  height: 100%;
+  -ms-flex-negative: 2;
+      flex-shrink: 2;
+}
+
+#header .title {
   display: inline-block;
+  font-size: 25px;
+  padding: 5px;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
 }
 
 #adminHome {
   height: calc(100% - 50px);
   background-color: #f4f4f4;
-  font-family: 'Roboto';
+  font-family: "Roboto";
 }
 
 #adminHome .userInfo {
@@ -74,7 +80,7 @@ body,
   color: #4e4e4e;
   font-size: 20px;
   font-weight: 400;
-  font-family: 'Roboto';
+  font-family: "Roboto";
   text-align: left;
   margin-bottom: 25px;
   padding-left: 33px;

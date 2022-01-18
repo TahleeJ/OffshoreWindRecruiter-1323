@@ -49,40 +49,39 @@ body,
     color: #76beba;
     height: $headerHeight;
     text-align: center;
-    //float:right;
-    font-size: 30px;
+    display: flex;
+    position: relative;
 
-    // button {
-    //     float: right;
-    // }
-
-    .button:hover {
-        color: black;
-    }
-    .button {
-        margin-left: 10px;
-        height: $headerHeight;
+    i {
+        //this uses the font-awesome icon library
+        height: 100%;
         color: $pale-green;
         border: none;
-        padding: 5px 5px;
-        font-size: 15px;
-        border-radius: 3px;
+        padding: 10px 5px;
+        font-size: 25px;
         cursor: pointer;
+
+        &:hover {
+            color: black;
+        }
     }
-    .headerButton {
-        position: absolute;
-        right: 50px;
-        display: inline-block;
+    .buttonGroup {
+        height: 100%;
+        // flex: 1;
+        flex-shrink: 2;
     }
-    .buttonContainer {
+    .title {
         display: inline-block;
+        font-size: 25px;
+        padding: 5px;
+        flex: 1;
     }
 }
 
 #adminHome {
     height: $contentHeight;
     background-color: #f4f4f4;
-    font-family: 'Roboto';
+    font-family: "Roboto";
     .userInfo {
         font-weight: 500;
         color: #4e4e4e;
@@ -103,7 +102,7 @@ body,
         color: #4e4e4e;
         font-size: 20px;
         font-weight: 400;
-        font-family: 'Roboto';
+        font-family: "Roboto";
         text-align: left;
         margin-bottom: 25px;
         padding-left: 33px;

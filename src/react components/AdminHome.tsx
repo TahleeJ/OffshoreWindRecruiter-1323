@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AuthContext } from '../App';
 
 /** The props (arguments) to create this element */
 interface props {
@@ -7,12 +8,14 @@ interface props {
 
 /** The header of the application. */
 const AdminHome: React.FC<props> = (props) => {
+    const auth = useContext(AuthContext);
+    const user = auth.user;
 
     return (
         <div id="adminHome" className='adminContainer'>
             <div className="userInfo">
                 <p>[First Name] [Last Name] <br/>
-                Email <br/>
+                {user.attributes.email} <br/>
                 Administrator
                 </p>
             </div>

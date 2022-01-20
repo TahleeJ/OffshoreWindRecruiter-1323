@@ -259,4 +259,42 @@ button:hover {
   margin: 5px;
   font-size: 18px;
 }
+
+#jobManager {
+  margin: 0px 25px;
+}
+
+#jobManager .jobTitle {
+  font-weight: bold;
+  color: #be7478;
+  text-align: left;
+  font-size: 24px;
+  padding: 3px 8px;
+  display: inline-block;
+}
+
+#jobManager .jobButton {
+  margin-top: 8px;
+  -ms-flex-negative: 2;
+      flex-shrink: 2;
+  position: relative;
+  left: 70%;
+  display: inline;
+}
+
+#jobManager .searchBox .searchText {
+  display: inline-block;
+  position: relative;
+  left: 39%;
+}
+
+#jobManager .searchBox .searchBar {
+  display: inline;
+  position: relative;
+  left: 40%;
+}
+
+#jobManager .searchBox .searchBar input {
+  width: 300px;
+}
 /*# sourceMappingURL=App.css.map */

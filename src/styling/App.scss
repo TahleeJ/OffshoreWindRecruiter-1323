@@ -268,3 +268,37 @@ button {
         }
     }
 }
+#jobManager {
+    margin: 0px 25px;
+    .jobTitle {
+        font-weight: bold;
+        color: $rose-red;
+        text-align: left;
+        font-size: 24px;
+        padding: 3px 8px;
+        display: inline-block;
+    }
+    .jobButton {
+        margin-top: 8px;
+        flex-shrink: 2;
+        position: relative;
+        left:70%;
+        display:inline;
+    }
+    .searchBox {
+        .searchText {
+            display: inline-block;
+            position: relative;
+            left:39%;
+        }
+        .searchBar {
+            display: inline;
+            position: relative;
+            left:40%;
+            input {
+                width:300px;
+            }
+        }
+    }
+
+}

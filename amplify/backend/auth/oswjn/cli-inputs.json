@@ -1,10 +1,10 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "oswjnc4f4bb40_identitypool_c4f4bb40",
+    "identityPoolName": "oswjn_identitypool_cb95fd40",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "oswjnc4f4bb40",
-    "userPoolName": "oswjnc4f4bb40_userpool_c4f4bb40",
+    "resourceNameTruncated": "oswjn",
+    "userPoolName": "oswjn_userpool_cb95fd40",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -27,15 +27,22 @@
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [],
     "userpoolClientReadAttributes": [],
-    "userpoolClientLambdaRole": "oswjncc4f4bb40_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "oswjn_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "c4f4bb40",
-    "resourceName": "oswjnc4f4bb40",
+    "sharedId": "cb95fd40",
+    "resourceName": "oswjn",
     "authSelections": "identityPoolAndUserPool",
-    "useDefault": "manual",
+    "useDefault": "defaultSocial",
+    "hostedUI": true,
     "usernameAttributes": [
       "email"
     ],
+    "triggers": {},
+    "hostedUIDomainName": "oswjn",
+    "authProvidersUserPool": [
+      "Google"
+    ],
+    "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
@@ -56,14 +63,11 @@
     "dependsOn": [],
     "userPoolGroups": false,
     "adminQueries": false,
-    "hostedUI": true,
-    "authProviders": [],
-    "thirdPartyAuth": false,
-    "hostedUIDomainName": "n7o1nr70yxeh",
-    "authProvidersUserPool": [
-      "Google"
-    ],
-    "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\",\"https://n7o1nr70yxeh-staging.auth.us-east-1.amazoncognito.com/\",\"https://oswjn2c01ebde-2c01ebde-staging.auth.us-east-1.amazoncognito.com/\"],\"LogoutURLs\":[\"http://localhost:3000/\",\"https://n7o1nr70yxeh-staging.auth.us-east-1.amazoncognito.com/\",\"https://oswjn2c01ebde-2c01ebde-staging.auth.us-east-1.amazoncognito.com/\"]}"
+    "parentStack": {
+      "Ref": "AWS::StackId"
+    },
+    "permissions": [],
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\",\"https://oswjn-staging.auth.us-east-1.amazoncognito.com/oauth2/idpresponse\"],\"LogoutURLs\":[\"http://localhost:3000/\",\"https://oswjn-staging.auth.us-east-1.amazoncognito.com/oauth2/idpresponse\"]}",
+    "authProviders": []
   }
 }

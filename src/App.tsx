@@ -54,7 +54,6 @@ const getOverallPageFromType = (type: PageType) => {
         case PageType.AdminManage: return <AdminManager />
         case PageType.LabelManage: return <LabelManager />
         case PageType.JobManage: return <JobManager />
-        case PageType.PromoteUser: return <PromoteUser />
     }
 }
 

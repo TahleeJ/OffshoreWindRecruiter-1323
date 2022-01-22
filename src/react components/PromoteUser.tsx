@@ -13,26 +13,21 @@ const PromoteUser: React.FC<props> = (props) => {
     const resetInput = () => {
         setInputValue("");
     }
+    
     return (
-        <div id = "promoteUser" className = "promoteUser">
-            <div className = "promoteHeader">
-                Authorize User as Administrator
-            </div>
+        <div id="promoteUser">
+            <div className="header">Administrator Authorization</div>
+            <div className='textBlock'>Type the email address of the user that you would like to promote/demote to Administrator. 
+            <br/><br/>
+            Administrators have full access to the application; They are able to create new surveys, labels, jobs, and administer surveys.</div>
             <div className="inputContainer">
-                <div className="userEmail">
-                    User Email:  
-                </div>
-                <div className = "emailInput">
-                    <input type="text" value={InputValue} onChange={(e) => setInputValue(e.target.value)} placeholder='Email1, Email2...'></input>
-                </div>   
+                <div className="userEmail">User Email:</div>
+                <input type="text" value={InputValue} onChange={(e) => setInputValue(e.target.value)} placeholder='example@gmail.com'></input>
             </div>
             <div className="buttonContainer">
-                <div className="Cancel">
-                    <button onClick={resetInput}>Cancel</button>
-                </div>
-                <div className="Promote">
-                    <button>Promote</button>
-                </div>
+                <button className="gray" onClick={resetInput}>Clear Input</button>
+                <button>Promote</button>
+                <button className='red'>Demote</button>
             </div>
         </div>
     );

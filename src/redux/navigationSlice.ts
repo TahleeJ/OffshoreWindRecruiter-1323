@@ -9,7 +9,6 @@ export enum PageType {
     LabelManage,
     JobManage,
     AdminManage,
-    PromoteUser
 }
 
 export enum OperationType {

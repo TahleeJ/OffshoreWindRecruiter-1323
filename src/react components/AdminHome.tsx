@@ -26,7 +26,7 @@ const AdminHome: React.FC<props> = (props) => {
                 <button className='adminButton' onClick={() => {appDispatch(changePage({ type: PageType.JobManage })) }}>Manage Job Opportunities</button>
                 <button className='adminButton'>Manage Surveys</button>
                 <button className='adminButton'>Manage Labels</button>
-                <button className='adminButton' onClick={() => {appDispatch(changePage({ type: PageType.PromoteUser })) }}>Promote User</button>
+                <button className='adminButton' onClick={() => {appDispatch(changePage({ type: PageType.AdminManage })) }}>Promote User</button>
             </div>
         </div>
     );

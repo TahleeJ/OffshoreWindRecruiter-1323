@@ -20,7 +20,7 @@ body,
 #root {
     padding: 0;
     margin: 0;
-    overflow: hidden;
+    overflow: scroll;
     height: 100vh;
     width: 100vw;
 }
@@ -134,44 +134,127 @@ textarea {
         padding: 5px;
         flex: 1;
     }
+    @media screen and (max-width: 500px) {
+        .title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-block: auto;
+        }
+    }
 }
 
 #adminHome {
     height: $contentHeight;
     background-color: #f4f4f4;
     font-family: "Roboto";
-
-    #adminPrompt {
-        margin-left: 10%;
-        font-size: 25px;
-        color: $rose-red;
+    color: #4e4e4e;
+    padding-inline: 15px;
+    .topGrid {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 870px;
+        margin: auto;
+    }
+    .jobAndSurveyColumn {
+        flex: 1 1 65%;
+        margin-left: 7.5px;
+        .jobContainer {
+            height: 340px;
+            background: #FFFFFF;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .surveyContainer {
+            height: 340px;
+            background: #FFFFFF;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+    }
+    #jobName, #surveyName, #newResponsePrompt {
+        font-size: 15px;
+        line-height:10px;
+    }
+    .notifGrid {
+        vertical-align: top;
+        flex: 1 1 30%;
+        margin-right: 7.5px;
+        .notifContainer {
+            height: 721px;
+            background: #FFFFFF;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .notifHeading {
+            display: flex;
+            .notifNumCircle {
+                margin-block:auto;
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                background-color: #be7478;
+                margin-right: 5px;
+            }
+            #notifNum {
+                font-size: 15px;
+                color: #FFFFFF;
+                text-align: center;
+                margin: auto;
+            }
+        }
     }
 
-    .userInfo {
-        font-weight: 500;
-        color: #4e4e4e;
-        margin-left: 10%;
-        padding-top: 15px;
-        line-height: 35px;
+    .bottomGrid {
+        display: flex;
+        flex-wrap: wrap;
+        margin-block: 20px;
+        margin-inline: auto;
+        max-width: 870px;
+        .adminButtons {
+            flex: 1 1 55%;
+            margin-right: 7.5px;
+        }
+        .adminButtons > * {
+            display: block;
+            height: 70px;
+            width: 100%;
+            border-radius: 10px;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 17px;
+            padding-left: 20px;
+        }
+        .userPromo {
+            background-color: #EA8E93;
+        }
+        .userInfo {
+            flex: 1 1 40%;
+            margin-left: 7.5px;
+            height: 155px;
+            width: 100%;
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            line-height: 30px;
+            font-weight: 500;
+            padding:15px;
+            margin-bottom: 20px;
+        }
     }
-    .adminButton {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        width: 75%;
-        height: 85px;
-        border: none;
-        border-radius: 10px;
-        background: white;
-        box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.1);
-        color: #4e4e4e;
-        font-size: 20px;
-        font-weight: 400;
-        font-family: "Roboto";
-        text-align: left;
-        margin-bottom: 25px;
-        padding-left: 33px;
-        padding-right: 33px;
+    @media screen and (max-width: 600px) {
+        .topGrid {
+            display: block;
+        }
+        .notifGrid {
+            margin: 0;
+            .notifContainer {
+                height: 350px;
+            }
+        }
+        .jobAndSurveyColumn {
+            margin: 0;
+        }
     }
 }
 

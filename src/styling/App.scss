@@ -385,3 +385,42 @@ button {
     }
 
 }
+#promoteUser {
+    .promoteHeader {
+        font-weight: bold;
+        color: $rose-red;
+        font-size: 24px;
+        position:relative;
+        left: 35%;
+        padding-top: 80px;
+    }
+    .inputContainer {
+        padding-top: 50px;
+        position: relative;
+        left: 35%;
+        .userEmail {
+            padding-bottom: 5px;
+        }
+        .emailInput {
+            input {
+                width:350px;
+                height: 30px;
+                background-color:$gray1;
+                border:none;
+            }
+        }
+    }
+    .buttonContainer {
+        margin-top: 40px;
+        position: relative;
+        left:40%;
+        .Cancel {
+            display:inline;
+        }
+        .Promote {
+            display:inline;
+            margin-left: 50px;
+        }
+    }
+    
+}

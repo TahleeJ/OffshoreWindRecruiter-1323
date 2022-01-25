@@ -13,7 +13,7 @@ const Home: React.FC<props> = (props) => {
     console.log(user); //this is to figure out what is all on the user type
 
     return (
-        <div id="home" className='container'>
+        <div id="home">
             <h1 id="account">Account Management</h1>
             <p id="userEmail">{user.attributes.email}</p>
             <ListViewer height="calc(100% - 500px)" title='Recent Surveys'>

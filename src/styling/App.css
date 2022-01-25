@@ -3,7 +3,7 @@ body,
 #root {
   padding: 0;
   margin: 0;
-  overflow: hidden;
+  overflow: scroll;
   height: 100vh;
   width: 100vw;
 }
@@ -120,45 +120,162 @@ button:hover {
           flex: 1;
 }
 
+@media screen and (max-width: 500px) {
+  #header .title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-block: auto;
+  }
+}
+
 #adminHome {
   height: calc(100% - 50px);
   background-color: #f4f4f4;
   font-family: "Roboto";
-}
-
-#adminHome #adminPrompt {
-  margin-left: 10%;
-  font-size: 25px;
-  color: #be7478;
-}
-
-#adminHome .userInfo {
-  font-weight: 500;
   color: #4e4e4e;
-  margin-left: 10%;
-  padding-top: 15px;
-  line-height: 35px;
+  padding-inline: 15px;
 }
 
-#adminHome .adminButton {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 75%;
-  height: 85px;
-  border: none;
+#adminHome .topGrid {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  max-width: 870px;
+  margin: auto;
+}
+
+#adminHome .jobAndSurveyColumn {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 65%;
+          flex: 1 1 65%;
+  margin-left: 7.5px;
+}
+
+#adminHome .jobAndSurveyColumn .jobContainer {
+  height: 340px;
+  background: #FFFFFF;
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  background: white;
-  -webkit-box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.1);
-          box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.1);
-  color: #4e4e4e;
-  font-size: 20px;
-  font-weight: 400;
-  font-family: "Roboto";
+}
+
+#adminHome .jobAndSurveyColumn .surveyContainer {
+  height: 340px;
+  background: #FFFFFF;
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+#adminHome #jobName, #adminHome #surveyName, #adminHome #newResponsePrompt {
+  font-size: 15px;
+  line-height: 10px;
+}
+
+#adminHome .notifGrid {
+  vertical-align: top;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 30%;
+          flex: 1 1 30%;
+  margin-right: 7.5px;
+}
+
+#adminHome .notifGrid .notifContainer {
+  height: 721px;
+  background: #FFFFFF;
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+#adminHome .notifGrid .notifHeading {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+#adminHome .notifGrid .notifHeading .notifNumCircle {
+  margin-block: auto;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: #be7478;
+  margin-right: 5px;
+}
+
+#adminHome .notifGrid .notifHeading #notifNum {
+  font-size: 15px;
+  color: #FFFFFF;
+  text-align: center;
+  margin: auto;
+}
+
+#adminHome .bottomGrid {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  margin-block: 20px;
+  margin-inline: auto;
+  max-width: 870px;
+}
+
+#adminHome .bottomGrid .adminButtons {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 55%;
+          flex: 1 1 55%;
+  margin-right: 7.5px;
+}
+
+#adminHome .bottomGrid .adminButtons > * {
+  display: block;
+  height: 70px;
+  width: 100%;
+  border-radius: 10px;
   text-align: left;
-  margin-bottom: 25px;
-  padding-left: 33px;
-  padding-right: 33px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 17px;
+  padding-left: 20px;
+}
+
+#adminHome .bottomGrid .userPromo {
+  background-color: #EA8E93;
+}
+
+#adminHome .bottomGrid .userInfo {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 40%;
+          flex: 1 1 40%;
+  margin-left: 7.5px;
+  height: 155px;
+  width: 100%;
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  line-height: 30px;
+  font-weight: 500;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+@media screen and (max-width: 600px) {
+  #adminHome .topGrid {
+    display: block;
+  }
+  #adminHome .notifGrid {
+    margin: 0;
+  }
+  #adminHome .notifGrid .notifContainer {
+    height: 350px;
+  }
+  #adminHome .jobAndSurveyColumn {
+    margin: 0;
+  }
 }
 
 #home {

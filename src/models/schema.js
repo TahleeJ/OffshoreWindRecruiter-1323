@@ -228,6 +228,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "surveyQuestionsId": {
+                    "name": "surveyQuestionsId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -313,6 +320,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "questionAnswersId": {
+                    "name": "questionAnswersId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -348,5 +362,5 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "version": "857cbec6c683d13a6d295d3ae998657a"
+    "version": "85d675ddf3fc9313a7ac4df81540b6be"
 };

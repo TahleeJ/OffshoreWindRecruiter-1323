@@ -1,30 +1,35 @@
-type User @model(subscriptions: null) @auth(rules: [{ allow: owner }]) {
+type User @model(subscriptions: null) @auth(rules: [{ allow: public }]) {
   id: ID!
   name: String!
-  email: AWSEmail!
+  email: AWSEmail!  
   isAdmin: Boolean!
 }
 
-type Survey @model(subscriptions: null) @auth(rules: [
-  { allow: public, operations: [read]}
-  { allow: owner }
-]) {
+type Survey @model(subscriptions: null) @auth(rules: [{ allow: public }]) {
   id: ID!
   name: String!
   description: String!
   Questions: [Question!] @hasMany
 }
 
-type Question @model(subscriptions: null) @auth(rules: [{ allow: owner }]) {
+enum QuestionType {
+  Scale,
+  MultipleChoice,
+  FreeResponse
+}
+
+type Question @model(subscriptions: null) @auth(rules: [{ allow: public }]) {
   id: ID!
   prompt: String!
-  Answers: [Answer!] @hasMany
+  answers: [Answer!] @hasMany
+  questionType: QuestionType!
   survey: Survey @belongsTo
 }
 
-type Answer @model(subscriptions: null) @auth(rules: [{ allow: owner }]) {
+type Answer @model(subscriptions: null) @auth(rules: [{ allow: public }]) {
   id: ID!
   text: String!
   labels: [String!]
   question: Question @belongsTo
 }
+ 

@@ -1,6 +1,10 @@
 import { ModelInit, MutableModel, PersistentModelConstructor } from "@aws-amplify/datastore";
 
-
+export enum QuestionType {
+  SCALE = "Scale",
+  MULTIPLE_CHOICE = "MultipleChoice",
+  FREE_RESPONSE = "FreeResponse"
+}
 
 
 
@@ -45,7 +49,8 @@ export declare class Survey {
 export declare class Question {
   readonly id: string;
   readonly prompt: string;
-  readonly Answers?: Answer[];
+  readonly answers?: Answer[];
+  readonly questionType: QuestionType | keyof typeof QuestionType;
   readonly survey?: Survey;
   readonly createdAt?: string;
   readonly updatedAt?: string;

@@ -3,12 +3,11 @@
   "serviceConfiguration": {
     "apiName": "oswjn",
     "serviceName": "AppSync",
-    "gqlSchemaPath": "./amplify/backend/api/oswjn/schema.graphql",
+    "gqlSchemaPath": "/tmp/amplify-e2a20357-5eee-4753-aacf-21e1f27f4547/amplify/backend/api/oswjn/schema.graphql",
     "defaultAuthType": {
       "mode": "API_KEY",
-      "expirationTime": 180,
-      "apiKeyExpirationDate": "2022-07-18T03:46:13.503Z",
-      "keyDescription": ""
+      "keyDescription": "api key description",
+      "expirationTime": 30
     },
     "conflictResolution": {
       "defaultResolutionStrategy": {
@@ -17,8 +16,7 @@
     },
     "additionalAuthTypes": [
       {
-        "mode": "AMAZON_COGNITO_USER_POOLS",
-        "cognitoUserPoolId": "authoswjn"
+        "mode": "AWS_IAM"
       }
     ]
   }

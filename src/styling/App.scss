@@ -59,6 +59,11 @@ button {
     }
 }
 
+input,
+textarea {
+    outline: 0px;
+}
+
 .container {
     text-align: center;
     max-width: 800px;
@@ -88,7 +93,7 @@ button {
         height: calc(100% - 25px);
 
         * {
-            padding: 4px;
+            padding: 5px;
 
             &:nth-child(odd) {
                 background-color: white;
@@ -172,6 +177,7 @@ button {
 
 #home {
     height: $contentHeight;
+    text-align: center;
 
     #userEmail {
         font-size: 20px;
@@ -182,6 +188,111 @@ button {
 }
 
 #surveyHome {
+    text-align: center;
+    height: $contentHeight;
+    overflow-y: auto;
+
+    button {
+        margin: 5px;
+        font-size: $large-font-size;
+    }
+
+    .optionPage {
+        padding: 10%;
+    }
+
+    .surveyCreator {
+        background-color: $dark-gray;
+        max-width: 800px;
+        margin: auto; //used for centering div
+        padding: 10px;
+
+        input[type="text"] {
+            font-size: $large-font-size;
+            border-radius: 3px;
+            border: 2px solid $gray1;
+
+            &:focus {
+                border-bottom: 2px solid $pale-green;
+            }
+        }
+
+        .surveyHeader {
+            border-radius: 5px;
+            width: 100%;
+            background-color: white;
+            // border: 2px solid $pale-green;
+
+            .surveyTitle {
+                font-size: $largest-font-size;
+                width: 100%;
+                padding: 5px;
+                border: none;
+                background-color: transparent;
+            }
+
+            .surveyDescription {
+                font-size: $large-font-size;
+                width: 100%;
+                padding: 5px;
+                border: none;
+                resize: none;
+            }
+        }
+
+        .createdQuestion {
+            background-color: white;
+            margin-top: 15px;
+            border-radius: 5px;
+            padding: 5px;
+            position: relative;
+            text-align: left;
+
+            .header {
+                display: flex;
+                .prompt {
+                    width: calc(100% - 140px);
+                }
+
+                .questionType {
+                    width: 130px;
+                    height: 40px;
+                    margin-left: 5px;
+                    font-size: $large-font-size;
+                }
+            }
+
+            .delete {
+                width: 30px;
+            }
+
+            .s-options {
+                text-align: center;
+                padding-bottom: 10px;
+            }
+
+            .options {
+                width: 100%;
+                padding: 3px;
+
+                input[type="text"] {
+                    flex: 1;
+                    margin-top: 5px;
+                }
+
+                .answer {
+                    // position: relative;
+                    display: flex;
+                    width: 100%;
+                }
+            }
+        }
+
+        input[type="radio"] {
+            pointer-events: none;
+        }
+    }
+
     .administerSurveyPage {
         .survey {
             text-align: center;
@@ -224,47 +335,39 @@ button {
                 font-size: $large-font-size;
             }
 
-            input[type="radio"] {
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-                width: 30px;
-                height: 30px;
-                border: 2px solid $pale-green;
-                transition: 0.1s all;
-                margin-right: 5px;
-                position: relative;
-                top: 4px;
-                border-radius: 2px;
-                cursor: pointer;
-
-                &:hover {
-                    border: 3px solid $pale-green;
-                    outline: unset !important; /* I added this one for Edge (chromium) support */
-                }
-
-                &:checked {
-                    border: 10px solid $pale-green;
-                    outline: unset !important; /* I added this one for Edge (chromium) support */
-                }
-            }
-
             &.sq {
                 padding-bottom: 5px;
-
-                input[type="radio"] {
-                    border-radius: 50%;
-                }
             }
 
             &.mcq {
                 text-align: left;
             }
         }
+    }
 
-        button {
-            margin: 5px;
-            font-size: $large-font-size;
+    input[type="radio"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        width: 30px;
+        height: 30px;
+        border: 2px solid $pale-green;
+        transition: 0.1s all;
+        margin-right: 5px;
+        position: relative;
+        top: 4px;
+        border-radius: 2px;
+        border-radius: 50%;
+        cursor: pointer;
+
+        &:hover {
+            border: 3px solid $pale-green;
+            outline: unset !important; /* I added this one for Edge (chromium) support */
+        }
+
+        &:checked {
+            border: 10px solid $pale-green;
+            outline: unset !important; /* I added this one for Edge (chromium) support */
         }
     }
 }
@@ -282,62 +385,64 @@ button {
         margin-top: 8px;
         flex-shrink: 2;
         position: relative;
-        left:70%;
-        display:inline;
+        left: 70%;
+        display: inline;
     }
     .searchBox {
         .searchText {
             display: inline-block;
             position: relative;
-            left:39%;
+            left: 39%;
         }
         .searchBar {
             display: inline;
             position: relative;
-            left:40%;
+            left: 40%;
             input {
-                width:300px;
+                width: 300px;
             }
         }
     }
-
 }
 #promoteUser {
-    .promoteHeader {
+    text-align: center;
+    padding: 10px;
+
+    .header {
         font-weight: bold;
         color: $rose-red;
-        font-size: 24px;
-        position:relative;
-        left: 35%;
+        font-size: $largest-font-size;
+        position: relative;
         padding-top: 80px;
     }
+
+    .textBlock {
+        max-width: 500px;
+        display: inline-block;
+    }
+
     .inputContainer {
         padding-top: 50px;
-        position: relative;
-        left: 35%;
         .userEmail {
             padding-bottom: 5px;
         }
-        .emailInput {
-            input {
-                width:350px;
-                height: 30px;
-                background-color:$gray1;
-                border:none;
-            }
+        input {
+            width: 350px;
+            height: 30px;
+            background-color: $gray1;
+            border: none;
         }
     }
     .buttonContainer {
         margin-top: 40px;
-        position: relative;
-        left:40%;
-        .Cancel {
-            display:inline;
-        }
-        .Promote {
-            display:inline;
-            margin-left: 50px;
+
+        button {
+            display: inline;
+            margin-right: 10px;
+
+            &.gray {
+                margin-right: 50px;
+            }
         }
     }
-    
 }

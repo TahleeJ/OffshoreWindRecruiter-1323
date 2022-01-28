@@ -62,10 +62,7 @@ export const schema = {
                     "properties": {
                         "rules": [
                             {
-                                "provider": "userPools",
-                                "ownerField": "owner",
-                                "allow": "owner",
-                                "identityClaim": "cognito:username",
+                                "allow": "public",
                                 "operations": [
                                     "create",
                                     "update",
@@ -149,15 +146,6 @@ export const schema = {
                             {
                                 "allow": "public",
                                 "operations": [
-                                    "read"
-                                ]
-                            },
-                            {
-                                "provider": "userPools",
-                                "ownerField": "owner",
-                                "allow": "owner",
-                                "identityClaim": "cognito:username",
-                                "operations": [
                                     "create",
                                     "update",
                                     "delete",
@@ -186,8 +174,8 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "Answers": {
-                    "name": "Answers",
+                "answers": {
+                    "name": "answers",
                     "isArray": true,
                     "type": {
                         "model": "Answer"
@@ -199,6 +187,15 @@ export const schema = {
                         "connectionType": "HAS_MANY",
                         "associatedWith": "questionAnswersId"
                     }
+                },
+                "questionType": {
+                    "name": "questionType",
+                    "isArray": false,
+                    "type": {
+                        "enum": "QuestionType"
+                    },
+                    "isRequired": true,
+                    "attributes": []
                 },
                 "survey": {
                     "name": "survey",
@@ -244,10 +241,7 @@ export const schema = {
                     "properties": {
                         "rules": [
                             {
-                                "provider": "userPools",
-                                "ownerField": "owner",
-                                "allow": "owner",
-                                "identityClaim": "cognito:username",
+                                "allow": "public",
                                 "operations": [
                                     "create",
                                     "update",
@@ -329,10 +323,7 @@ export const schema = {
                     "properties": {
                         "rules": [
                             {
-                                "provider": "userPools",
-                                "ownerField": "owner",
-                                "allow": "owner",
-                                "identityClaim": "cognito:username",
+                                "allow": "public",
                                 "operations": [
                                     "create",
                                     "update",
@@ -346,7 +337,16 @@ export const schema = {
             ]
         }
     },
-    "enums": {},
+    "enums": {
+        "QuestionType": {
+            "name": "QuestionType",
+            "values": [
+                "Scale",
+                "MultipleChoice",
+                "FreeResponse"
+            ]
+        }
+    },
     "nonModels": {},
-    "version": "857cbec6c683d13a6d295d3ae998657a"
+    "version": "8a86c6fae4efbbf19ec10fb838f47471"
 };

@@ -50,7 +50,7 @@ const AdminHome: React.FC<props> = (props) => {
             <div className='bottomGrid'>
                 <div className='adminButtons'>
                     <button className='manageLabel'>Manage Labels</button>
-                    <button className='userPromo' onClick={() => {appDispatch(changePage({ type: PageType.PromoteUser })) }}>User Promotion</button>
+                    <button className='userPromo' onClick={() => {appDispatch(changePage({ type: PageType.AdminManage })) }}>User Promotion</button>
                 </div>
                 <div className="userInfo">
                     <p>[First Name] [Last Name] <br/>

@@ -348,9 +348,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-<<<<<<< Updated upstream
-    "version": "857cbec6c683d13a6d295d3ae998657a"
-=======
     "version": "8a86c6fae4efbbf19ec10fb838f47471"
->>>>>>> Stashed changes
 };

@@ -11,11 +11,11 @@ import { useAppSelector } from './redux/hooks';
 import { PageType } from './redux/navigationSlice';
 import AdminHome from './react components/AdminHome';
 import Header from './react components/Header';
-import SurveyHome from './react components/SurveyHome';
+import SurveyHome from './react components/survey/SurveyHome';
 import AdminManager from './react components/AdminManager';
 import LabelManager from './react components/LabelManager';
 import JobManager from './react components/JobManager';
-import PromoteUser from './react components/PromoteUser';
+
 
 // Multiple redirect URI handling for OAuth 
 const isLocalhost = Boolean(
@@ -54,7 +54,6 @@ const getOverallPageFromType = (type: PageType) => {
         case PageType.AdminManage: return <AdminManager />
         case PageType.LabelManage: return <LabelManager />
         case PageType.JobManage: return <JobManager />
-        case PageType.PromoteUser: return <PromoteUser />
     }
 }
 

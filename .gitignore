@@ -204,6 +204,7 @@ amplify/.config/local-*
 amplify/logs
 amplify/mock-data
 amplify/backend/amplify-meta.json
+amplify/backend/amplify-meta 2.json
 amplify/backend/.temp
 build/
 dist/

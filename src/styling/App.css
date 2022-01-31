@@ -453,4 +453,80 @@ textarea {
 #promoteUser .buttonContainer button.gray {
   margin-right: 50px;
 }
+
+#jobList .jobName {
+  display: inline;
+}
+
+#jobList .buttons {
+  display: inline;
+  position: relative;
+  left: 80%;
+}
+
+#jobList .buttons button {
+  margin-right: 10px;
+}
+
+#jobList .buttons .red {
+  background-color: #be7478;
+}
+
+#jobList .buttons .red:hover {
+  background-color: #a76568;
+}
+
+#jobCreator {
+  position: relative;
+  left: 5%;
+}
+
+#jobCreator .jobHeader {
+  font-weight: bold;
+  color: #be7478;
+  font-size: 24px;
+  position: relative;
+  left: 35%;
+  padding-top: 20px;
+}
+
+#jobCreator .title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+#jobCreator .jobInputContainer {
+  position: relative;
+  margin-top: 40px;
+  background-color: #dadada;
+  width: calc(100% - 140px);
+}
+
+#jobCreator .jobInputContainer input[type="text"] {
+  font-size: 18px;
+  border-radius: 3px;
+  border: 2px solid #efefef;
+  width: calc(100%);
+}
+
+#jobCreator .jobInputContainer input[type="text"]:focus {
+  border-bottom: 2px solid #76beba;
+}
+
+#jobCreator .jobInputContainer textarea {
+  width: calc(100%);
+  border: 2px solid #efefef;
+  resize: none;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+#jobCreator .buttons {
+  margin-top: 40px;
+  margin-left: 40%;
+}
+
+#jobCreator .buttons .gray {
+  margin-right: 100px;
+}
 /*# sourceMappingURL=App.css.map */

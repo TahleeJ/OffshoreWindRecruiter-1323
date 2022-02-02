@@ -3,7 +3,7 @@ body,
 #root {
   padding: 0;
   margin: 0;
-  overflow: scroll;
+  overflow: hidden;
   height: 100vh;
   width: 100vw;
 }
@@ -215,7 +215,6 @@ textarea {
   color: #FFFFFF;
   text-align: center;
   margin: auto;
-
 }
 
 #adminHome .bottomGrid {
@@ -228,7 +227,6 @@ textarea {
   margin-inline: auto;
   max-width: 870px;
 }
-
 
 #adminHome .bottomGrid .adminButtons {
   -webkit-box-flex: 1;
@@ -288,6 +286,11 @@ textarea {
 #home {
   height: calc(100% - 50px);
   text-align: center;
+}
+
+#home h1 {
+  margin: 0;
+  padding: 20px;
 }
 
 #home #userEmail {
@@ -571,7 +574,6 @@ textarea {
 
 #promoteUser .buttonContainer button.gray {
   margin-right: 50px;
-
 }
 
 #jobList .jobName {
@@ -648,6 +650,5 @@ textarea {
 
 #jobCreator .buttons .gray {
   margin-right: 100px;
-
 }
 /*# sourceMappingURL=App.css.map */

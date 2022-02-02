@@ -20,9 +20,6 @@ import JobCreator from './react components/Job/JobCreator';
 import JobEditor from './react components/Job/JobEditor';
 import DeletePopup from './react components/Job/DeletePopup';
 
-import JobManager from './react components/JobManager';
-
-
 
 // Multiple redirect URI handling for OAuth 
 const isLocalhost = Boolean(
@@ -60,11 +57,10 @@ const getOverallPageFromType = (type: PageType) => {
         case PageType.Survey: return <SurveyHome />
         case PageType.AdminManage: return <AdminManager />
         case PageType.LabelManage: return <LabelManager />
-        case PageType.JobManage: return <JobManager />
 
+        case PageType.JobManage: return <JobManager />
         case PageType.JobCreator: return <JobCreator />
         case PageType.JobEditor: return <JobEditor />
-=
     }
 }
 

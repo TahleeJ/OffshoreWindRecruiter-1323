@@ -428,6 +428,7 @@ textarea {
         }
     }
 
+
     input[type="radio"] {
         -webkit-appearance: none;
         -moz-appearance: none;
@@ -447,6 +448,7 @@ textarea {
             border: 3px solid $pale-green;
             outline: unset !important; /* I added this one for Edge (chromium) support */
         }
+
 
         &:checked {
             border: 10px solid $pale-green;
@@ -526,6 +528,7 @@ textarea {
             &.gray {
                 margin-right: 50px;
             }
+
         }
     }
 }
@@ -592,4 +595,5 @@ textarea {
             margin-right: 100px;
         }
     }
+
 }

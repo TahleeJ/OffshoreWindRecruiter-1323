@@ -14,10 +14,14 @@ import Header from './react components/Header';
 import SurveyHome from './react components/survey/SurveyHome';
 import AdminManager from './react components/AdminManager';
 import LabelManager from './react components/LabelManager';
+
 import JobManager from './react components/Job/JobManager';
 import JobCreator from './react components/Job/JobCreator';
 import JobEditor from './react components/Job/JobEditor';
 import DeletePopup from './react components/Job/DeletePopup';
+
+import JobManager from './react components/JobManager';
+
 
 
 // Multiple redirect URI handling for OAuth 
@@ -57,8 +61,10 @@ const getOverallPageFromType = (type: PageType) => {
         case PageType.AdminManage: return <AdminManager />
         case PageType.LabelManage: return <LabelManager />
         case PageType.JobManage: return <JobManager />
+
         case PageType.JobCreator: return <JobCreator />
         case PageType.JobEditor: return <JobEditor />
+=
     }
 }
 

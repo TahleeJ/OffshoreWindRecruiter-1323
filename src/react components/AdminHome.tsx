@@ -46,6 +46,7 @@ const AdminHome: React.FC<props> = (props) => {
                     </div>
                 </div>
             </div>
+
             <div className='bottomGrid'>
                 <div className='adminButtons'>
                     <button className='manageLabel'>Manage Labels</button>
@@ -57,6 +58,7 @@ const AdminHome: React.FC<props> = (props) => {
                     Administrator
                     </p>
                 </div>
+
             </div>
         </div>
     );

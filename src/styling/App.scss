@@ -428,6 +428,7 @@ textarea {
         }
     }
 
+
     input[type="radio"] {
         -webkit-appearance: none;
         -moz-appearance: none;
@@ -447,6 +448,7 @@ textarea {
             border: 3px solid $pale-green;
             outline: unset !important; /* I added this one for Edge (chromium) support */
         }
+
 
         &:checked {
             border: 10px solid $pale-green;
@@ -526,6 +528,72 @@ textarea {
             &.gray {
                 margin-right: 50px;
             }
+
         }
     }
+}
+#jobList {
+    .jobName {
+        display: inline;
+    }
+    .buttons {
+        display: inline;
+        position: relative;
+        left: 80%;
+        button {
+            margin-right: 10px;
+        }
+        .red {
+            background-color: $rose-red;
+        }
+        .red:hover {
+            background-color: $dark-rose-red;
+        }
+    }
+}
+#jobCreator {
+    position: relative;
+    left: 5%;
+    .jobHeader {
+        font-weight: bold;
+        color: $rose-red;
+        font-size: $largest-font-size;
+        position: relative;
+        left: 35%;
+        padding-top: 20px;
+    }
+    .title {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .jobInputContainer {
+        position: relative;
+        margin-top: 40px;
+        background-color: $dark-gray;
+        width: calc(100% - 140px);
+        input[type="text"] {
+            font-size: $large-font-size;
+            border-radius: 3px;
+            border: 2px solid $gray1;
+            width: calc(100%);
+            &:focus {
+                border-bottom: 2px solid $pale-green;
+            }
+        }
+        textarea {
+            width: calc(100%);
+            border: 2px solid $gray1;
+            resize: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    }
+    .buttons {
+        margin-top: 40px;
+        margin-left: 40%;
+        .gray {
+            margin-right: 100px;
+        }
+    }
+
 }

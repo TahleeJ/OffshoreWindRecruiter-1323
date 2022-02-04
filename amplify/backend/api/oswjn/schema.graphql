@@ -33,3 +33,4 @@ type Answer @model(subscriptions: null) @auth(rules: [{ allow: public }]) {
   question: Question @belongsTo
 }
  
+ 

@@ -1,11 +1,13 @@
 import React from 'react';
+import { useAppDispatch } from '../../redux/hooks';
+import { changePage, PageType } from '../../redux/navigationSlice';
 
 interface props {
 
 }
 
 const SurveyAmdminister: React.FC = (p: props) => {
-
+    const dispatch = useAppDispatch();
 
     return (
         <div className='administerSurveyPage'>
@@ -53,8 +55,8 @@ const SurveyAmdminister: React.FC = (p: props) => {
                             <label htmlFor='QUESTION2_ID_4'>Option 4</label>
                         </div>
                     </div>
-                    <button onClick={() => alert("This isn't done yet bro")} className='gray'>Cancel Survey</button>
-                    <button onClick={() => alert("This isn't done yet bro")}>Submit</button>
+                    <button onClick={() => { alert("Feature yet to submit to database"); dispatch(changePage({ type: PageType.Home })); }} className='gray'>Cancel Survey</button>
+                    <button onClick={() => { alert("Feature yet to submit to database"); dispatch(changePage({ type: PageType.Home })); }}>Submit</button>
                 </div>
             </div>
         </div>

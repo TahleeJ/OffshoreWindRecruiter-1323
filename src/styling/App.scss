@@ -71,8 +71,7 @@ textarea {
 
 // This element can have pretty much anything else in it
 .listViewer {
-    width: calc(100% - 20px);
-    margin: 10px;
+    width: calc(100%);
     background-color: $gray1;
     border-radius: 3px;
     // padding: 5px;
@@ -116,11 +115,12 @@ textarea {
         color: $pale-green;
         border: none;
         padding: 10px 10px;
-        font-size: 25px;
+        font-size: 30px;
         cursor: pointer;
 
         &:hover {
-            color: black;
+            background-color: $pale-green;
+            color: white;
         }
     }
     .buttonGroup {

@@ -55,8 +55,7 @@ textarea {
 }
 
 .listViewer {
-  width: calc(100% - 20px);
-  margin: 10px;
+  width: calc(100%);
   background-color: #efefef;
   border-radius: 3px;
   -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
@@ -102,12 +101,13 @@ textarea {
   color: #76beba;
   border: none;
   padding: 10px 10px;
-  font-size: 25px;
+  font-size: 30px;
   cursor: pointer;
 }
 
 #header i:hover {
-  color: black;
+  background-color: #76beba;
+  color: white;
 }
 
 #header .buttonGroup {

@@ -1,7 +1,4 @@
 import React from 'react';
-import { Todo, ListTodosQuery } from '../../API';
-import { listTodos } from '../../graphql/queries';
-import callGraphQL from '../../queries/callGraphQL';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changeOperation, OperationType } from '../../redux/navigationSlice';
 import ListViewer from '../ListViewer';
@@ -12,19 +9,6 @@ import SurverCreator from './SurveyCreator';
 interface props {
 
 }
-
-/** We can create this functions and put them all in a folder such as ./queries They can then be used to interact with the database */
-// async function sampleQuery(): Promise<Todo[] | null> {
-//     try {
-//         const sampleData = await callGraphQL<ListTodosQuery>(listTodos)
-//         console.log("Got data", sampleData);
-//         return sampleData.data?.listTodos?.items as Todo[] || null;
-//     } catch (error: any) {
-//         console.warn(error);
-//     }
-//     return null;
-// }
-
 
 
 /** The Survey Home to select and administer surveys */
@@ -52,7 +36,6 @@ const SurveyHome: React.FC<props> = (props) => {
                             <div onClick={() => dispatch(changeOperation({ operation: OperationType.Administering }))}>test survey</div>
                             <div onClick={() => dispatch(changeOperation({ operation: OperationType.Administering }))}>test survey</div>
                         </ListViewer>
-                        <button onClick={() => dispatch(changeOperation({ operation: OperationType.Creating }))}>TO BE MOVED TO ADMIN DASHBOARD</button>
                     </div>
                 );
         }

@@ -21,7 +21,7 @@ const Header: React.FC<headerProps> = (p: headerProps) => {
             <div className='buttonGroup'>
                 <i className='fas fa-home' onClick={() => { appDispatch(changePage({ type: PageType.Home })) }} data-tip="Home"></i>
                 <i className='fas fa-tools' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })) }} data-tip="Administrative"></i>
-                <i className="fas fa-poll-h" onClick={() => { appDispatch(changePage({ type: PageType.Survey })) }} data-tip="Give Survey"></i>
+                {/* <i className="fas fa-poll-h" onClick={() => { appDispatch(changePage({ type: PageType.Survey })) }} data-tip="Give Survey"></i> */}
                 <i className="fas fa-sign-out-alt" onClick={signOut} data-tip="Sign Out"></i>
             </div>
             <ReactTooltip/>

@@ -9,11 +9,8 @@ export enum PageType {
     LabelManage,
     JobManage,
     AdminManage,
-
-    JobCreator,
-    JobEditor,
+    
     DeletePopup
-
 }
 
 export enum OperationType {

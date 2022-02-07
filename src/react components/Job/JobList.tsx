@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppDispatch } from '../../redux/hooks';
-import { changePage, PageType } from '../../redux/navigationSlice';
+import { changeOperation, changePage, OperationType, PageType } from '../../redux/navigationSlice';
 
 /** The props (arguments) to create this element */
 interface props {
@@ -19,7 +19,7 @@ const JobList: React.FC<props> = (props) => {
                 <button className = 'red'>
                     Delete
                 </button>
-                <button className='green' onClick={() => {appDispatch(changePage({ type: PageType.JobEditor })) }}>
+                <button className='green' onClick={() => {appDispatch(changeOperation({ operation: OperationType.Editing })) }}>
                     Edit
                 </button>
             </div>

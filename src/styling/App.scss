@@ -15,12 +15,14 @@ $normal-font-size: 14px;
 $large-font-size: 18px;
 $largest-font-size: 24px;
 
+$subtle-shadow: 0px 0px 3px 2px rgb(221, 221, 221);
+
 html,
 body,
 #root {
     padding: 0;
     margin: 0;
-    overflow: scroll;
+    overflow: hidden;
     height: 100vh;
     width: 100vw;
 }
@@ -71,13 +73,12 @@ textarea {
 
 // This element can have pretty much anything else in it
 .listViewer {
-    width: calc(100% - 20px);
-    margin: 10px;
+    width: calc(100%);
     background-color: $gray1;
     border-radius: 3px;
     // padding: 5px;
-    box-shadow: 0px 0px 3px 2px rgb(221, 221, 221);
     overflow: hidden;
+    box-shadow: $subtle-shadow;
 
     .title {
         font-weight: bold;
@@ -92,11 +93,25 @@ textarea {
         overflow-x: hidden;
         height: calc(100% - 25px);
 
-        * {
-            padding: 5px;
+        & > * {
+            padding: 7px 5px;
 
             &:nth-child(odd) {
                 background-color: white;
+            }
+        }
+
+        .listElement {
+            display: flex;
+
+            .name {
+                text-align: left;
+                flex: 1;
+                padding: 4px;
+            }
+
+            button {
+                margin-right: 5px;
             }
         }
     }
@@ -116,11 +131,12 @@ textarea {
         color: $pale-green;
         border: none;
         padding: 10px 10px;
-        font-size: 25px;
+        font-size: 30px;
         cursor: pointer;
 
         &:hover {
-            color: black;
+            background-color: $pale-green;
+            color: white;
         }
     }
     .buttonGroup {
@@ -145,108 +161,93 @@ textarea {
 
 #adminHome {
     height: $contentHeight;
-    background-color: #f4f4f4;
+    // background-color: ;
     font-family: "Roboto";
-    color: #4e4e4e;
-    padding-inline: 15px;
+    // color: #4e4e4e;
+    padding: 10px;
+    overflow-y: auto;
+
     .topGrid {
         display: flex;
         flex-wrap: wrap;
-        max-width: 870px;
-        margin: auto;
     }
-    .jobAndSurveyColumn {
-        flex: 1 1 65%;
-        margin-left: 7.5px;
-        .jobContainer {
-            height: 340px;
-            background: #FFFFFF;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-        .surveyContainer {
-            height: 340px;
-            background: #FFFFFF;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-    }
-    #jobName, #surveyName, #newResponsePrompt {
-        font-size: 15px;
-        line-height:10px;
-    }
-    .notifGrid {
+    .leftColumn {
         vertical-align: top;
-        flex: 1 1 30%;
-        margin-right: 7.5px;
+        flex: 1 1 25%;
+        padding: 7px;
+
         .notifContainer {
-            height: 721px;
-            background: #FFFFFF;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            height: 100%;
+            // box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
         }
         .notifHeading {
             display: flex;
+
             .notifNumCircle {
-                margin-block:auto;
-                height: 20px;
-                width: 20px;
+                margin: 8px;
+                height: 25px;
+                width: 25px;
                 border-radius: 50%;
                 background-color: #be7478;
                 margin-right: 5px;
+                padding: 4px;
             }
             #notifNum {
                 font-size: 15px;
-                color: #FFFFFF;
+                color: #ffffff;
                 text-align: center;
                 margin: auto;
             }
         }
     }
+    .middleColumn {
+        flex: 1 1 50%;
 
-    .bottomGrid {
+        .jobContainer,
+        .surveyContainer {
+            border-radius: 10px;
+            padding: 7px;
+        }
+    }
+
+    .rightColumn {
+        flex: 1 1 25%;
         display: flex;
+        flex-direction: column;
         flex-wrap: wrap;
-        margin-block: 20px;
-        margin-inline: auto;
-        max-width: 870px;
+
         .adminButtons {
-            flex: 1 1 55%;
-            margin-right: 7.5px;
+            flex: 1;
+            margin: 7px;
+
+            button {
+                display: block;
+                height: 50px;
+                width: 100%;
+                border-radius: 5px;
+                margin-bottom: 10px;
+                font-size: $largest-font-size;
+                text-align: center;
+            }
         }
-        .adminButtons > * {
-            display: block;
-            height: 70px;
-            width: 100%;
-            border-radius: 10px;
-            text-align: left;
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 17px;
-            padding-left: 20px;
-        }
-        .userPromo {
-            background-color: #EA8E93;
-        }
+
         .userInfo {
-            flex: 1 1 40%;
-            margin-left: 7.5px;
-            height: 155px;
-            width: 100%;
-            background-color: #FFFFFF;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            line-height: 30px;
-            font-weight: 500;
-            padding:15px;
-            margin-bottom: 20px;
+            background-color: $gray1;
+            font-size: $large-font-size;
+            flex: 1;
+            border-radius: 3px;
+            line-height: 20px;
+            padding: 10px;
+            margin: 7px;
+            box-shadow: $subtle-shadow;
         }
     }
     @media screen and (max-width: 600px) {
         .topGrid {
             display: block;
         }
-        .notifGrid {
+        .leftColumn {
             margin: 0;
             .notifContainer {
                 height: 350px;
@@ -261,6 +262,11 @@ textarea {
 #home {
     height: $contentHeight;
     text-align: center;
+
+    h1 {
+        margin: 0;
+        padding: 20px;
+    }
 
     #userEmail {
         font-size: 20px;
@@ -428,7 +434,6 @@ textarea {
         }
     }
 
-
     input[type="radio"] {
         -webkit-appearance: none;
         -moz-appearance: none;
@@ -448,7 +453,6 @@ textarea {
             border: 3px solid $pale-green;
             outline: unset !important; /* I added this one for Edge (chromium) support */
         }
-
 
         &:checked {
             border: 10px solid $pale-green;
@@ -528,7 +532,6 @@ textarea {
             &.gray {
                 margin-right: 50px;
             }
-
         }
     }
 }
@@ -595,5 +598,4 @@ textarea {
             margin-right: 100px;
         }
     }
-
 }

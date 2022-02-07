@@ -85,13 +85,13 @@ textarea {
   background-color: white;
 }
 
-.listViewer .listElements .surveyListElement {
+.listViewer .listElements .listElement {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
 
-.listViewer .listElements .surveyListElement .name {
+.listViewer .listElements .listElement .name {
   text-align: left;
   -webkit-box-flex: 1;
       -ms-flex: 1;
@@ -99,7 +99,7 @@ textarea {
   padding: 4px;
 }
 
-.listViewer .listElements .surveyListElement button {
+.listViewer .listElements .listElement button {
   margin-right: 5px;
 }
 

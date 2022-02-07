@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../App';
 import { useAppDispatch } from '../redux/hooks';
-import { changePage, PageType } from '../redux/navigationSlice';
+import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import ListViewer from './ListViewer';
-import SurveyListElement from './survey/SurveyListElement';
+import ListElement from './survey/ListElement';
 
 /** The props (arguments) to create this element */
 interface props {
@@ -44,17 +44,17 @@ const AdminHome: React.FC<props> = (props) => {
                     {/* <h3 id='jobName'>Job Opportunities</h3> */}
                     <div className='jobContainer'>
                         <ListViewer height="350px" title='Job Opportunities'>
-                            <div>owo</div>
-                            <div>owo</div>
-                            <div>owo</div>
+                            <ListElement name="Test job opp" handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")} />
+                            <ListElement name="Test job opp" handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")} />
+                            <ListElement name="Test job opp" handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")} />
                         </ListViewer>
                     </div>
                     {/* <h3 id='surveyName'>Surveys</h3> */}
                     <div className='surveyContainer'>
                         <ListViewer height="350px" title='Survey Templates'>
-                            <SurveyListElement />
-                            <SurveyListElement />
-                            <SurveyListElement />
+                            <ListElement name="Test Survey Template" handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")}/>
+                            <ListElement name="Test Survey Template" handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")}/>
+                            <ListElement name="Test Survey Template" handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")}/>
                         </ListViewer>
                     </div>
                 </div>

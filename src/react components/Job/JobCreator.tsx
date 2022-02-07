@@ -10,15 +10,13 @@ interface props {
 /** The header of the application. */
 const JobCreator: React.FC<props> = (props) => {
     const [InputValue, setInputValue] = useState("");
-    const resetInput = () => {
-        setInputValue("");
-    }
     const appDispatch = useAppDispatch();
+    
     return (
         <div id='jobCreator' className='jobCreator'>
             <div className='jobHeader'>
                 <div className='jobTitle'>
-                    Create New Opportunity
+                    Job Opportunity
                 </div>
             </div>
             <div className="jobInputContainer">
@@ -38,7 +36,7 @@ const JobCreator: React.FC<props> = (props) => {
                 <textarea rows={5} placeholder='Desctiption...' />
             </div>
             <div className="buttons">
-                <button className='gray' onClick={() => {appDispatch(changePage({ type: PageType.JobManage })) }}>Cancel</button>
+                <button className='gray' onClick={() => {appDispatch(changePage({ type: PageType.AdminHome })) }}>Cancel</button>
                 <button className="green">Create</button>
             </div>
         </div>

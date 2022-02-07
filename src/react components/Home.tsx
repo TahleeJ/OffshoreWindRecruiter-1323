@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../App';
 import { useAppDispatch } from '../redux/hooks';
-import { changeOperation, changePage, OperationType, PageType } from '../redux/navigationSlice';
+import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import ListViewer from './ListViewer';
 
 interface props {
@@ -30,7 +30,6 @@ const Home: React.FC<props> = (props) => {
                 <div onClick={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Administering }))}>TEST ITEM (this will be a survey template eventually)</div>
                 <div onClick={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Administering }))}>TEST ITEM (this will be a survey template eventually)</div>
             </ListViewer>
-            <button onClick={() => appDispatch(changeOperation({ operation: OperationType.Creating }))}>TO BE MOVED TO ADMIN DASHBOARD</button>
         </div>
     );
 }

@@ -58,9 +58,9 @@ textarea {
   width: calc(100%);
   background-color: #efefef;
   border-radius: 3px;
+  overflow: hidden;
   -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
           box-shadow: 0px 0px 3px 2px #dddddd;
-  overflow: hidden;
 }
 
 .listViewer .title {
@@ -77,12 +77,30 @@ textarea {
   height: calc(100% - 25px);
 }
 
-.listViewer .listElements * {
-  padding: 5px;
+.listViewer .listElements > * {
+  padding: 7px 5px;
 }
 
-.listViewer .listElements *:nth-child(odd) {
+.listViewer .listElements > *:nth-child(odd) {
   background-color: white;
+}
+
+.listViewer .listElements .surveyListElement {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.listViewer .listElements .surveyListElement .name {
+  text-align: left;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  padding: 4px;
+}
+
+.listViewer .listElements .surveyListElement button {
+  margin-right: 5px;
 }
 
 #header {
@@ -135,10 +153,9 @@ textarea {
 
 #adminHome {
   height: calc(100% - 50px);
-  background-color: #f4f4f4;
   font-family: "Roboto";
-  color: #4e4e4e;
-  padding-inline: 15px;
+  padding: 10px;
+  overflow-y: auto;
 }
 
 #adminHome .topGrid {
@@ -147,135 +164,110 @@ textarea {
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  max-width: 870px;
-  margin: auto;
 }
 
-#adminHome .jobAndSurveyColumn {
-  -webkit-box-flex: 1;
-      -ms-flex: 1 1 65%;
-          flex: 1 1 65%;
-  margin-left: 7.5px;
-}
-
-#adminHome .jobAndSurveyColumn .jobContainer {
-  height: 340px;
-  background: #FFFFFF;
-  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-}
-
-#adminHome .jobAndSurveyColumn .surveyContainer {
-  height: 340px;
-  background: #FFFFFF;
-  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-}
-
-#adminHome #jobName, #adminHome #surveyName, #adminHome #newResponsePrompt {
-  font-size: 15px;
-  line-height: 10px;
-}
-
-#adminHome .notifGrid {
+#adminHome .leftColumn {
   vertical-align: top;
   -webkit-box-flex: 1;
-      -ms-flex: 1 1 30%;
-          flex: 1 1 30%;
-  margin-right: 7.5px;
+      -ms-flex: 1 1 25%;
+          flex: 1 1 25%;
+  padding: 7px;
 }
 
-#adminHome .notifGrid .notifContainer {
-  height: 721px;
-  background: #FFFFFF;
-  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+#adminHome .leftColumn .notifContainer {
+  height: 100%;
   border-radius: 10px;
 }
 
-#adminHome .notifGrid .notifHeading {
+#adminHome .leftColumn .notifHeading {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
 
-#adminHome .notifGrid .notifHeading .notifNumCircle {
-  margin-block: auto;
-  height: 20px;
-  width: 20px;
+#adminHome .leftColumn .notifHeading .notifNumCircle {
+  margin: 8px;
+  height: 25px;
+  width: 25px;
   border-radius: 50%;
   background-color: #be7478;
   margin-right: 5px;
+  padding: 4px;
 }
 
-#adminHome .notifGrid .notifHeading #notifNum {
+#adminHome .leftColumn .notifHeading #notifNum {
   font-size: 15px;
-  color: #FFFFFF;
+  color: #ffffff;
   text-align: center;
   margin: auto;
 }
 
-#adminHome .bottomGrid {
+#adminHome .middleColumn {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 50%;
+          flex: 1 1 50%;
+}
+
+#adminHome .middleColumn .jobContainer,
+#adminHome .middleColumn .surveyContainer {
+  border-radius: 10px;
+  padding: 7px;
+}
+
+#adminHome .rightColumn {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 25%;
+          flex: 1 1 25%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  margin-block: 20px;
-  margin-inline: auto;
-  max-width: 870px;
 }
 
-#adminHome .bottomGrid .adminButtons {
+#adminHome .rightColumn .adminButtons {
   -webkit-box-flex: 1;
-      -ms-flex: 1 1 55%;
-          flex: 1 1 55%;
-  margin-right: 7.5px;
+      -ms-flex: 1;
+          flex: 1;
+  margin: 7px;
 }
 
-#adminHome .bottomGrid .adminButtons > * {
+#adminHome .rightColumn .adminButtons button {
   display: block;
-  height: 70px;
+  height: 50px;
   width: 100%;
-  border-radius: 10px;
-  text-align: left;
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 17px;
-  padding-left: 20px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-size: 24px;
+  text-align: center;
 }
 
-#adminHome .bottomGrid .userPromo {
-  background-color: #EA8E93;
-}
-
-#adminHome .bottomGrid .userInfo {
+#adminHome .rightColumn .userInfo {
+  background-color: #efefef;
+  font-size: 18px;
   -webkit-box-flex: 1;
-      -ms-flex: 1 1 40%;
-          flex: 1 1 40%;
-  margin-left: 7.5px;
-  height: 155px;
-  width: 100%;
-  background-color: #FFFFFF;
-  border-radius: 10px;
-  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  line-height: 30px;
-  font-weight: 500;
-  padding: 15px;
-  margin-bottom: 20px;
+      -ms-flex: 1;
+          flex: 1;
+  border-radius: 3px;
+  line-height: 20px;
+  padding: 10px;
+  margin: 7px;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
 }
 
 @media screen and (max-width: 600px) {
   #adminHome .topGrid {
     display: block;
   }
-  #adminHome .notifGrid {
+  #adminHome .leftColumn {
     margin: 0;
   }
-  #adminHome .notifGrid .notifContainer {
+  #adminHome .leftColumn .notifContainer {
     height: 350px;
   }
   #adminHome .jobAndSurveyColumn {

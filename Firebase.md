@@ -7,7 +7,7 @@ Development with Firebase for this repository will require this Firebase project
 ## Node Modules
 `npm install --save firebase`  
 `npm install --save firebaseui`  
-`npm i firebase @9.6.6`  
+`npm i firebase@9.6.6`  
 `npm install dotenv`  
 
 # App API Uage

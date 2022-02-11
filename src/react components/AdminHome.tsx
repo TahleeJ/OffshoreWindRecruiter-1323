@@ -43,7 +43,7 @@ const AdminHome: React.FC<props> = (props) => {
                 <div className='middleColumn'>
                     {/* <h3 id='jobName'>Job Opportunities</h3> */}
                     <div className='jobContainer'>
-                        <ListViewer height="350px" title='Job Opportunities'>
+                        <ListViewer height="350px" title='Job Opportunities' handleNew={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Creating }))} >
                             <ListElement name="Test job opp" handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")} />
                             <ListElement name="Test job opp" handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")} />
                             <ListElement name="Test job opp" handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")} />
@@ -51,7 +51,7 @@ const AdminHome: React.FC<props> = (props) => {
                     </div>
                     {/* <h3 id='surveyName'>Surveys</h3> */}
                     <div className='surveyContainer'>
-                        <ListViewer height="350px" title='Survey Templates'>
+                        <ListViewer height="350px" title='Survey Templates' handleNew={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Creating }))}>
                             <ListElement name="Test Survey Template" handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")}/>
                             <ListElement name="Test Survey Template" handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")}/>
                             <ListElement name="Test Survey Template" handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")}/>

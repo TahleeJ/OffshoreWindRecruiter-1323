@@ -20,12 +20,12 @@ import JobManager from './react components/Job/JobManager';
 require('dotenv').config();
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID
+    apiKey: process.env.REACT_APP_FIREBASE_KEY,
+    authDomain: process.env.REACT_APP_FIREBASE_DOMAIN,
+    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_FIREBASE_SENDER_ID,
+    appId: process.env.REACT_APP_FIREBASE_APP_ID
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
@@ -56,21 +56,21 @@ const App: React.FC = () => {
         if (user) {
             alert("Good auth state");
             firestore.setDoc(
-                firestore.doc(firestoreInstance, "User", `${user.uid}`), 
+                firestore.doc(firestoreInstance, "User", `${user.uid}`),
                 {
-                    email : user.email, 
-                    isAdmin: true, 
+                    email: user.email,
+                    isAdmin: true,
                     dummyData: "dummmmmy"
                 }
             );
 
-            await checkAdmin({})
-                .then((result) => {
-                    const usableData: Object = result.data as Object;
-                    const dataMap = new Map(Object.entries(usableData));
-                    console.log(dataMap.get("isAdmin"));
-                    console.log(dataMap.get("text"));
-                })
+            const result = await checkAdmin({})
+            const usableData: Object = result.data as Object;
+            console.log(usableData);
+            const dataMap = new Map(Object.entries(usableData));
+            // console.log(dataMap.get("isAdmin"));
+            // console.log(dataMap.get("text"));
+            console.log(dataMap);
         } else {
             alert("Bad auth state");
         }
@@ -78,7 +78,7 @@ const App: React.FC = () => {
 
     console.log("firebase");
     const pageType = useAppSelector(s => s.navigation.currentPage);
-    
+
     ui.start('#firebaseui-auth-container', {
         signInOptions: [
             {
@@ -93,14 +93,14 @@ const App: React.FC = () => {
                     prompt: 'select_account'
                 }
             }
-        ], 
+        ],
     });
 
     firebaseAuth.setPersistence(authInstance, firebaseAuth.browserLocalPersistence);
 
     // getOverallPageFromType(pageType);
 
-    return(
+    return (
         <><Header /><div id="firebaseui-auth-container">
 
         </div></>

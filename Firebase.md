@@ -11,7 +11,9 @@ Development with Firebase for this repository will require this Firebase project
 `npm install dotenv`  
 
 # App API Uage
-1. Every source file referencing any Firebase must include the following import before any other Firebase reference:   
+1. API reference found here: https://firebase.google.com/docs/reference/js  
+
+2. Every source file referencing any Firebase must include the following import before any other Firebase reference:   
 `import { firebaseApp } from '../App';`  
   
     **`firebaseApp` is included inside of the root directory, so change `'../App'` to match this location where applicable*

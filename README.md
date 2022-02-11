@@ -17,22 +17,22 @@ To edit the frontend:
 
 ## v0.2
 ### Features
-Removed redundant extra header button
+- Removed redundant extra header button
 ### Bug Fixes
-Page overscroll issue
+- Page overscroll issue
 ### Known Issues
 
 
 
 ## v0.1
 ### Features
-User signup page (with email verification)
-User login page
-Oauth with Google
-Template navigator dashboard
-Template admin dashboard
+- User signup page (with email verification)
+- User login page
+- Oauth with Google
+- Template navigator dashboard
+- Template admin dashboard
 ### Bug Fixes
-N/A
+- N/A
 ### Known Issues
-Admin dashboard has 3 extra scrollbars
-Survey list does not pull from database
+- Admin dashboard has 3 extra scrollbars
+- Survey list does not pull from database

@@ -1,7 +1,8 @@
-import React, { createContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import './styling/App.css';
-import { initializeApp } from "firebase/app";
-import * as firebaseui from 'firebaseui';
+
+import { FirebaseError, initializeApp } from "firebase/app";
+// import * as firebaseui from 'firebaseui';
 import * as firebaseAuth from "@firebase/auth";
 import * as firestore from "@firebase/firestore";
 import * as functions from "@firebase/functions";
@@ -15,6 +16,7 @@ import SurveyHome from './react components/survey/SurveyHome';
 import AdminManager from './react components/AdminManager';
 import LabelManager from './react components/LabelManager';
 import JobManager from './react components/Job/JobManager';
+import AuthPage from './react components/AuthPage';
 
 // Your web app's Firebase configuration
 require('dotenv').config();
@@ -28,8 +30,8 @@ const firebaseConfig = {
     appId: process.env.REACT_APP_FIREBASE_APP_ID
 };
 
+/** Every source file referencing any Firebase must include this before any other Firebase reference */
 export const firebaseApp = initializeApp(firebaseConfig);
-export const AuthContext = createContext({} as any);
 
 const getOverallPageFromType = (type: PageType) => {
     switch (type) {
@@ -48,13 +50,19 @@ const functionsInstance = functions.getFunctions(firebaseApp);
 
 const checkAdmin = functions.httpsCallable(functionsInstance, 'checkAdmin');
 
-// Initialize the FirebaseUI Widget using Firebase.
-var ui = new firebaseui.auth.AuthUI(authInstance);
-
 const App: React.FC = () => {
-    authInstance.onAuthStateChanged(async (user) => {
-        if (user) {
-            alert("Good auth state");
+    const [isLoggedIn, setLoggedIn] = useState(false);
+
+    useEffect(() => {
+        authInstance.onAuthStateChanged(async (user) => {
+            if (!user) {
+                setLoggedIn(false);
+                return;
+            }
+
+            setLoggedIn(true);
+
+            //submit the user to the object store
             firestore.setDoc(
                 firestore.doc(firestoreInstance, "User", `${user.uid}`),
                 {
@@ -64,46 +72,31 @@ const App: React.FC = () => {
                 }
             );
 
-            const result = await checkAdmin({})
-            const usableData: Object = result.data as Object;
-            console.log(usableData);
-            const dataMap = new Map(Object.entries(usableData));
+            // const result = await checkAdmin({})
+            // const usableData: Object = result.data as Object;
+            // console.log(usableData);
+            // const dataMap = new Map(Object.entries(usableData));
+
             // console.log(dataMap.get("isAdmin"));
             // console.log(dataMap.get("text"));
-            console.log(dataMap);
-        } else {
-            alert("Bad auth state");
-        }
-    });
+            // console.log(dataMap);
+        });
+    }, [])
 
-    console.log("firebase");
     const pageType = useAppSelector(s => s.navigation.currentPage);
-
-    ui.start('#firebaseui-auth-container', {
-        signInOptions: [
-            {
-                provider: firebaseAuth.EmailAuthProvider.PROVIDER_ID,
-                requireDisplayName: false
-            },
-            {
-                provider: firebaseAuth.GoogleAuthProvider.PROVIDER_ID,
-                customParameters: {
-                    // Forces account selection even when one account
-                    // is available.
-                    prompt: 'select_account'
-                }
-            }
-        ],
-    });
 
     firebaseAuth.setPersistence(authInstance, firebaseAuth.browserLocalPersistence);
 
-    // getOverallPageFromType(pageType);
-
     return (
-        <><Header /><div id="firebaseui-auth-container">
-
-        </div></>
+        <>
+            {isLoggedIn ?
+                <>
+                    <Header />
+                    {getOverallPageFromType(pageType)}
+                </>
+                : <AuthPage />
+            }
+        </>
     );
 }
 

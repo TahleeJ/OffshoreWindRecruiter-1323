@@ -1,5 +1,4 @@
-import React, { useContext } from 'react';
-import { AuthContext } from '../App';
+import React from 'react';
 import { useAppDispatch } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import ListViewer from './ListViewer';

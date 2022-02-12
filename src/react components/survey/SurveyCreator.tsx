@@ -107,7 +107,6 @@ const SurverCreator: React.FC = (props: props) => {
     const deleteAnswer = (qIndex: number, aIndex: number) => {
         let cpyQuestions: any[] = [];
         questions.forEach((q, qi) => {
-            const answers = []
             if (qi === qIndex) {
                 let cpyQ = Object.assign(q);
                 const cpyAnswers: Answer[] = [];

@@ -103,6 +103,45 @@ textarea {
   margin-right: 5px;
 }
 
+#authPage {
+  text-align: center;
+  font-size: 24px;
+}
+
+#authPage .title {
+  color: #be7478;
+  font-weight: bold;
+  padding-top: 10px;
+}
+
+#authPage .error {
+  margin: 5px;
+  padding: 3px;
+  background: #be7478;
+  color: white;
+  border-radius: 3px;
+}
+
+#authPage input[type='text'] {
+  padding: 5px;
+  font-size: 18px;
+}
+
+#authPage .content {
+  max-width: 500px;
+  height: 500px;
+  margin: auto;
+  margin-top: calc(50% - 100px);
+  background-color: #efefef;
+  border-radius: 5px;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
+}
+
+#authPage button {
+  margin-right: 5px;
+}
+
 #header {
   background-color: #efefef;
   color: #76beba;

@@ -32,17 +32,17 @@ const AuthPage = () => {
     }
 
     return (
-        <div>
-            SIGN IN or CREATE ACCOUNT
-            <br />
-            <span>Oh no! {error}</span>
-            <br />
-            <button onClick={googleSignIn}>Google</button>
-            <br />
-            <input placeholder='Email'/><br />
-            <input placeholder='Password' /><br />
-            <button onClick={createAccount}>CREATE</button>
-            <button onClick={signIn}>SIGN IN</button>
+        <div id='authPage'>
+            {error ? <div className='error'>{error}</div> : null}
+            <div className='content'>
+                <div className='title'>Sign-In/Create Account</div>
+                <button onClick={googleSignIn}>Google</button>
+                <br />
+                <input type="text" id="email" placeholder='Email' /><br />
+                <input type="text" id="password" placeholder='Password' /><br />
+                <button onClick={createAccount}>Create Account</button>
+                <button onClick={signIn}>Sign-In</button>
+            </div>
         </div>
     )
 }

@@ -117,6 +117,44 @@ textarea {
     }
 }
 
+#authPage {
+    text-align: center;
+    font-size: $largest-font-size;
+
+    .title {
+        color: $rose-red;
+        font-weight: bold;
+        padding-top: 10px;
+    }
+
+    .error {
+        margin: 5px;
+        padding: 3px;
+        background: $rose-red;
+        color: white;
+        border-radius: 3px;
+    }
+
+    input[type='text'] {
+        padding: 5px;
+        font-size: $large-font-size;
+    }
+
+    .content {
+        max-width: 500px;
+        height: 500px;
+        margin: auto;
+        margin-top: calc(50% - 100px);
+        background-color: $gray1;
+        border-radius: 5px;
+        box-shadow: $subtle-shadow;
+    }
+
+    button {
+        margin-right: 5px;
+    }
+}
+
 #header {
     background-color: $gray1;
     color: #76beba;

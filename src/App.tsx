@@ -62,15 +62,19 @@ const App: React.FC = () => {
 
             setLoggedIn(true);
 
-            //submit the user to the object store
-            firestore.setDoc(
-                firestore.doc(firestoreInstance, "User", `${user.uid}`),
-                {
-                    email: user.email,
-                    isAdmin: true,
-                    dummyData: "dummmmmy"
-                }
-            );
+            // Add new user to Firestore if not already present in database
+            var userDoc = await firestore.getDoc(firestore.doc(firestoreInstance, "User", `${user.uid}`));
+
+            if (!userDoc.exists()) {
+                firestore.setDoc(
+                    firestore.doc(firestoreInstance, "User", `${user.uid}`),
+                    {
+                        email: user.email,
+                        isAdmin: true,
+                        owner: false
+                    }
+                );
+            }         
 
             // const result = await checkAdmin({})
             // const usableData: Object = result.data as Object;

@@ -106,6 +106,10 @@ textarea {
 #authPage {
   text-align: center;
   font-size: 24px;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
 }
 
 #authPage .title {
@@ -123,23 +127,33 @@ textarea {
 }
 
 #authPage input[type='text'] {
-  padding: 5px;
+  padding: 7px;
   font-size: 18px;
+  border: none;
+  border-bottom: 1px solid black;
+  background-color: transparent;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
 #authPage .content {
+  position: relative;
   max-width: 500px;
   height: 500px;
   margin: auto;
-  margin-top: calc(50% - 100px);
+  top: calc(50% - 250px);
   background-color: #efefef;
   border-radius: 5px;
   -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
           box-shadow: 0px 0px 3px 2px #dddddd;
+  padding: 20px;
 }
 
 #authPage button {
-  margin-right: 5px;
+  margin-bottom: 20px;
+  padding: 7px;
+  width: 100%;
+  font-size: 18px;
 }
 
 #header {

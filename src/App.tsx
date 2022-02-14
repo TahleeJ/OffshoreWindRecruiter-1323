@@ -4,7 +4,6 @@ import './styling/App.css';
 import * as firebaseAuth from "@firebase/auth";
 import * as firestore from "@firebase/firestore";
 import * as functions from "@firebase/functions";
-import { HttpsError } from 'firebase-functions/v2/https';
 
 import Home from './react components/Home'
 import { useAppSelector } from './redux/hooks';

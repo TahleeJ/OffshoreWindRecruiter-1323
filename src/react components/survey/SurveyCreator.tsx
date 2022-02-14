@@ -4,6 +4,8 @@ import * as firestore from "@firebase/firestore";
 
 import { Answer, QuestionType, Survey, SurveyQuestion } from "../../firebase/Types";
 import db from "../../firebase/Firestore";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
 
 interface props {
 
@@ -21,8 +23,10 @@ const SurverCreator: React.FC = (props: props) => {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
     const [questions, setQuestions] = useState<SurveyQuestion[]>(devQuestions);
+    const operationType = useAppSelector(s => s.navigation.operationType);
+    const dispatch = useAppDispatch();
 
-    const saveSurvey = () => {
+    const saveSurvey = async () => {
         let survey: Survey = {
             title: title,
             description: desc,
@@ -31,12 +35,14 @@ const SurverCreator: React.FC = (props: props) => {
 
 
         const surveyDoc = firestore.doc(db.Surveys, title);  // Refrence to a specific survey at 'survey/{title}'
-        firestore.setDoc(surveyDoc, survey);
+        await firestore.setDoc(surveyDoc, survey);
 
         // Gets survey
-        firestore.getDoc(surveyDoc).then(d => {
+        await firestore.getDoc(surveyDoc).then(d => {
             console.log(d.data()?.questions)
         })
+
+        dispatch(changePage({type: PageType.AdminHome}));
     }
 
     const addNewQuestion = () => {
@@ -205,6 +211,11 @@ const SurverCreator: React.FC = (props: props) => {
                 })
             }
             <button onClick={addNewQuestion}>New Question</button>
+            {
+                operationType == OperationType.Creating ?
+                    <button onClick={saveSurvey}>Save Survey</button>
+                    : null
+            }
         </div>
     )
 }

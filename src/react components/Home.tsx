@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { AuthContext, authInstance } from "../firebase/Firebase";
 import { useAppDispatch } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import ListViewer from './ListViewer';
-import { firebaseApp } from "../App";
-import * as firebaseAuth from "@firebase/auth";
 
 interface props {
 
@@ -14,7 +13,6 @@ interface props {
 const Home: React.FC<props> = (props) => {
     const appDispatch = useAppDispatch();
     // const auth = useContext(AuthContext);
-    const authInstance = firebaseAuth.getAuth(firebaseApp);
     const user = authInstance.currentUser;
     // console.log(user); //this is to figure out what is all on the user type
     

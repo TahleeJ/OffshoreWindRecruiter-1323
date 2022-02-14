@@ -42,6 +42,7 @@ API reference found here: https://firebase.google.com/docs/reference/js
 4. To call a function and parse its results, do the following:
     1. `const result = await <function reference name>({[function request parameters]})`
     2. `const usableData: Object = result.data as Object;`
+    3. `const dataMap = new Map(Object.entries(usableData));`
 
 
 

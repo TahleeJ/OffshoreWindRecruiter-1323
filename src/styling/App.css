@@ -67,8 +67,19 @@ textarea {
   font-weight: bold;
   color: #be7478;
   text-align: left;
-  font-size: 18px;
+  font-size: 20px;
   padding: 3px 8px;
+  display: inline;
+  height: 20px;
+}
+
+.listViewer .button {
+  display: inline;
+}
+
+.listViewer .button .green {
+  margin-left: 66%;
+  font-size: 10px;
 }
 
 .listViewer .listElements {

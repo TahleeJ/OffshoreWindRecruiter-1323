@@ -6,6 +6,7 @@ import { FirebaseError, initializeApp } from "firebase/app";
 import * as firebaseAuth from "@firebase/auth";
 import * as firestore from "@firebase/firestore";
 import * as functions from "@firebase/functions";
+import { FunctionsError } from "@firebase/functions";
 
 import Home from './react components/Home'
 import { useAppSelector } from './redux/hooks';
@@ -49,6 +50,7 @@ const firestoreInstance = firestore.getFirestore(firebaseApp);
 const functionsInstance = functions.getFunctions(firebaseApp);
 
 const checkAdmin = functions.httpsCallable(functionsInstance, 'checkAdmin');
+const updateAdmin = functions.httpsCallable(functionsInstance, 'updateAdmin');
 
 const App: React.FC = () => {
     const [isLoggedIn, setLoggedIn] = useState(false);
@@ -62,24 +64,35 @@ const App: React.FC = () => {
 
             setLoggedIn(true);
 
-            //submit the user to the object store
             firestore.setDoc(
                 firestore.doc(firestoreInstance, "User", `${user.uid}`),
                 {
                     email: user.email,
-                    isAdmin: true,
+                    isAdmin: false,
                     dummyData: "dummmmmy"
                 }
             );
 
-            // const result = await checkAdmin({})
-            // const usableData: Object = result.data as Object;
-            // console.log(usableData);
-            // const dataMap = new Map(Object.entries(usableData));
+            try {
+                await updateAdmin({userEmail: "seankaat@gmail.com", promote: true});
+            } catch (error) {
+                const {code, details} = JSON.parse(JSON.stringify(error));
 
-            // console.log(dataMap.get("isAdmin"));
-            // console.log(dataMap.get("text"));
-            // console.log(dataMap);
+                switch (code) {
+                    case "functions/failed-precondition":
+                        console.log("The selected user is not a member of this application.");
+                        break;
+                    case "functions/invalid-argument":
+                        console.log("You must choose whether to promote or demote the selected user using true/false.");
+                        break;
+                    case "functions/permission-denied":
+                        console.log("You do not have the privileges necessary to make this call.");
+                        break;
+                    default:
+                        console.log("Update success!");
+                        break;
+                }
+            }
         });
     }, [])
 

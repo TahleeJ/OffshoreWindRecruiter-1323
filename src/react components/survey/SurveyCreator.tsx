@@ -33,6 +33,7 @@ const SurverCreator: React.FC = (props: props) => {
             questions: questions
         }
 
+        console.log(survey);
 
         const surveyDoc = firestore.doc(db.Surveys, title);  // Refrence to a specific survey at 'survey/{title}'
         await firestore.setDoc(surveyDoc, survey);
@@ -42,7 +43,7 @@ const SurverCreator: React.FC = (props: props) => {
             console.log(d.data()?.questions)
         })
 
-        dispatch(changePage({type: PageType.AdminHome}));
+        dispatch(changePage({ type: PageType.AdminHome }));
     }
 
     const addNewQuestion = () => {
@@ -148,6 +149,7 @@ const SurverCreator: React.FC = (props: props) => {
 
     return (
         <div className="surveyCreator">
+            <button className="red" onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
             <div className="surveyHeader">
                 <input type='text' className="surveyTitle" placeholder="Survey Title..." value={title} onChange={(e) => setTitle(e.target.value)} />
                 <textarea className="surveyDescription" placeholder="Survey Description..." value={desc} onChange={(e) => setDesc(e.target.value)} />
@@ -161,9 +163,9 @@ const SurverCreator: React.FC = (props: props) => {
                                     <input type='text' className="prompt" value={q.prompt} placeholder="Question Prompt..." onChange={(e) => changeQuestionPrompt(qIndex, e.target.value)} />
                                     <div className="questionType">
                                         <select name="questionType" title="Question Type" onChange={(e) => changeQuestionType(qIndex, e.target.value)}>
-                                            <option value="MULTIPLE_CHOICE">Multiple Choice</option>
-                                            <option value="SCALE">Scale</option>
-                                            <option value="FREE_RESPONSE">Free Response</option>
+                                            <option value="MultipleChoice">Multiple Choice</option>
+                                            <option value="Scale">Scale</option>
+                                            <option value="FreeResponse">Free Response</option>
                                         </select>
                                     </div>
                                     <button className="delete red" onClick={() => deleteQuestion(qIndex)}>-</button>

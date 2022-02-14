@@ -1,16 +1,23 @@
-const functions = require("firebase-functions");
 const admin = require('firebase-admin');
-const { request } = require("http");
+const functions = require('firebase-functions');
 admin.initializeApp();
 
 const firestore = admin.firestore();
 const auth = admin.auth();
+
+const permissionLevels = {
+    None: 0,
+    Admin: 1,
+    Owner: 2
+};
+
 
 /**
  * Checks whether the signed in user has administrator priviliges
  * 
  * @param request Parameters sent through function call (unused in this function)
  * @param context Function caller user's authentication information
+ * @return whether the signed in user has at least administrator permissions
  */
 exports.checkAdmin = functions.https.onCall(async (request, context) => {
     const uid = context.auth.uid;
@@ -19,7 +26,7 @@ exports.checkAdmin = functions.https.onCall(async (request, context) => {
         const data = snapshot.data();
 
         return { 
-            isAdmin: data.isAdmin
+            isAdmin: data.permissionLevel != permissionLevels.None
         };
     });
 });
@@ -31,7 +38,7 @@ exports.checkAdmin = functions.https.onCall(async (request, context) => {
  * @param request Parameters sent through function call:
  *  {
  *      userEmail: <string>,
- *      promote: <boolean>
+ *      newPermissionLevel: <integer>
  *  }
  * 
  * @param context Function caller user's authentication information
@@ -42,10 +49,10 @@ exports.updateAdmin = functions.https.onCall(async (request, context) => {
     const isAdmin = await firestore.collection("User").doc(uid).get().then(snapshot => {
         const data = snapshot.data();
 
-        return data.isAdmin;
+        return data.permissionLevel;
     });
 
-    if (!isAdmin) {
+    if (isAdmin != permissionLevels.Owner) {
         throw new functions.https.HttpsError("permission-denied", "You do not have the privileges necessary to make this call.");
     }
 
@@ -59,11 +66,11 @@ exports.updateAdmin = functions.https.onCall(async (request, context) => {
 
     const userDoc = firestore.collection("User").doc(userRecord.uid);
 
-    if (request.promote != true && request.promote != false) {
-        throw new functions.https.HttpsError("invalid-argument", "You must choose whether to promote or demote the selected user using true/false.");
+    if (request.newPermissionLevel == undefined || request.newPermissionLevel == null) {
+        throw new functions.https.HttpsError("invalid-argument", "You must choose a user to change permission for and whether to promote or demote them using an integer value 0-2.");
     }
 
-    userDoc.update({isAdmin: request.promote});
+    await userDoc.update({permissionLevel: request.newPermissionLevel});
 
     return;
 });

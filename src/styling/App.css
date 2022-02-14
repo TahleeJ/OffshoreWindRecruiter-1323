@@ -126,7 +126,8 @@ textarea {
   border-radius: 3px;
 }
 
-#authPage input[type='text'] {
+#authPage input[type="text"],
+#authPage input[type="password"] {
   padding: 7px;
   font-size: 18px;
   border: none;
@@ -154,6 +155,10 @@ textarea {
   padding: 7px;
   width: 100%;
   font-size: 18px;
+}
+
+#authPage img {
+  width: 30px;
 }
 
 #header {

@@ -5,39 +5,36 @@
 Development with Firebase for this repository will require this Firebase project's configuration keys for app initialization. These keys are hidden inside of the provided `.env` file to be stored in the root directory.
 
 ## Node Modules
+`npm install firebase`
+`npm install -g firebase-tools`
 `npm install --save firebase`  
-`npm install --save firebaseui`  
 `npm i firebase@9.6.6`  
 `npm install dotenv`  
 
 # App API Uage
-1. API reference found here: https://firebase.google.com/docs/reference/js  
+API reference found here: https://firebase.google.com/docs/reference/js  
 
-2. Every source file referencing any Firebase must include the following import before any other Firebase reference:   
-`import { firebaseApp } from '../App';`  
-  
-    **`firebaseApp` is included inside of the root directory, so change `'../App'` to match this location where applicable*
-
+    ** All firebase references live in the `src/firebase` directory. When using any of these references, please make sure to update the import path accordingly *
 ## Authentication
 1. Include the following to reference the Firebase authentication library:  
 `import * as firebaseAuth from '@firebase/auth';`
 
 2. Include the following to reference this project's Firebase authentication instance:  
-`const authInstance = firebaseAuth.getAuth(firebaseApp);`
+`import { authInstance } from './firebase/Firebase';`
 
 ## Firestore
 1. Include the following to reference the Firestore library:  
 `import * as firestore from '@firebase/firestore';`
 
 2. Include the following to reference this project's Firestore instance:  
-`const firestoreInstance = firestore.getFirestore(firebaseApp);`
+`import { db } from './firebase/Firebase';`
 
 ## Functions
 1. Include the following to reference the Firebase functions library:  
 `import * as functions from '@firebase/functions';`
 
 2. Include the following to reference this project's Firebase functions instance:  
-`const functionsInstance = functions.getFunctions(firebaseApp);`
+`import { functionsInstance } from './firebase/Firebase';`
 
 3. To reference a function created and deployed from `functions/index.js`, include the following:  
 `const <function reference name> = functions.HttpsCallable(functionsInstance, <name of function in index.js>);`

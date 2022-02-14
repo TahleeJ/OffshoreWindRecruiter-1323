@@ -1,16 +1,18 @@
 import React, { useState } from "react";
-import { QuestionType } from "../../models";
-import { Answer, Question } from "../../models";
+
+import * as firestore from "@firebase/firestore";
+
+import { Answer, QuestionType, Survey, SurveyQuestion } from "../../firebase/Types";
+import db from "../../firebase/Firestore";
 
 interface props {
 
 }
 
-const devQuestions = [
+const devQuestions: SurveyQuestion[] = [
     {
-        id: "",
         prompt: "",
-        questionType: QuestionType.MULTIPLE_CHOICE,
+        questionType: QuestionType.MultipleChoice,
         answers: [],
     }
 ]
@@ -18,17 +20,34 @@ const devQuestions = [
 const SurverCreator: React.FC = (props: props) => {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
-    const [questions, setQuestions] = useState<Question[]>(devQuestions);
+    const [questions, setQuestions] = useState<SurveyQuestion[]>(devQuestions);
+
+    const saveSurvey = () => {
+        let survey: Survey = {
+            title: title,
+            description: desc,
+            questions: questions
+        }
+
+
+        const surveyDoc = firestore.doc(db.Surveys, title);  // Refrence to a specific survey at 'survey/{title}'
+        firestore.setDoc(surveyDoc, survey);
+
+        // Gets survey
+        firestore.getDoc(surveyDoc).then(d => {
+            console.log(d.data()?.questions)
+        })
+    }
 
     const addNewQuestion = () => {
-        setQuestions(s => [...s, { id: "", prompt: "", Answers: [], questionType: QuestionType.MULTIPLE_CHOICE }])
+        setQuestions(s => [...s, { prompt: "", answers: [], questionType: QuestionType.MultipleChoice }])
     }
     const addNewAnswer = (qIndex: number) => {
         let cpyQuestions: any[] = [];
         questions.forEach((q, i) => {
             let value = q;
             if (i === qIndex) {
-                const newAnswer = { id: '', text: '' };
+                const newAnswer: Answer = { text: '', labels: [] };
                 const answers = q.answers ? [...q.answers, newAnswer] : [newAnswer];
                 value = {
                     ...q,
@@ -144,7 +163,7 @@ const SurverCreator: React.FC = (props: props) => {
                                     <button className="delete red" onClick={() => deleteQuestion(qIndex)}>-</button>
                                 </div>
                                 {
-                                    q.questionType === QuestionType.MULTIPLE_CHOICE ?
+                                    q.questionType === QuestionType.MultipleChoice ?
                                         <div className='options'>
                                             {
                                                 q.answers?.map((answer, aIndex) => {
@@ -160,7 +179,7 @@ const SurverCreator: React.FC = (props: props) => {
                                         : null
                                 }
                                 {
-                                    q.questionType === QuestionType.SCALE ?
+                                    q.questionType === QuestionType.Scale ?
                                         <div className='s-options'>
                                             Strongly Disagree
                                             <input type="radio" placeholder='N/A' />
@@ -173,7 +192,7 @@ const SurverCreator: React.FC = (props: props) => {
                                         : null
                                 }
                                 {
-                                    q.questionType === QuestionType.FREE_RESPONSE ?
+                                    q.questionType === QuestionType.FreeResponse ?
                                         <div>
                                             During survey administering, the user will be presented with a text input field
                                         </div>

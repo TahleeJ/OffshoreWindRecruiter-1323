@@ -78,6 +78,7 @@ const App: React.FC = () => {
                 );
             }         
 
+            // Sample promote/demote admin usage
             try {
                 await updateAdmin({userEmail: "seankaat@gmail.com", promote: true});
             } catch (error) {

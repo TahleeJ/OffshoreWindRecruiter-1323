@@ -66,4 +66,4 @@ exports.updateAdmin = functions.https.onCall(async (request, context) => {
     userDoc.update({isAdmin: request.promote});
 
     return;
-})
+});

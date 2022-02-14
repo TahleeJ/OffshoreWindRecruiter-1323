@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 
-import * as firestore from "@firebase/firestore";
-
 import { Answer, QuestionType, Survey, SurveyQuestion } from "../../firebase/Types";
-import db from "../../firebase/Firestore";
+
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
+import { createSurvey } from "../../firebase/SurveyQueries";
 
 interface props {
 
@@ -32,16 +31,7 @@ const SurverCreator: React.FC = (props: props) => {
             description: desc,
             questions: questions
         }
-
-        console.log(survey);
-
-        const surveyDoc = firestore.doc(db.Surveys, title);  // Refrence to a specific survey at 'survey/{title}'
-        await firestore.setDoc(surveyDoc, survey);
-
-        // Gets survey
-        await firestore.getDoc(surveyDoc).then(d => {
-            console.log(d.data()?.questions)
-        })
+        await createSurvey(survey);
 
         dispatch(changePage({ type: PageType.AdminHome }));
     }

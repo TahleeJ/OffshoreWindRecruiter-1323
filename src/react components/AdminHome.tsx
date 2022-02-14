@@ -1,5 +1,6 @@
 import React from 'react';
-import { useAppDispatch } from '../redux/hooks';
+import { authInstance } from '../firebase/Firebase';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import ListViewer from './ListViewer';
 import ListElement from './survey/ListElement';
@@ -9,10 +10,10 @@ interface props {
 
 }
 
-/** The header of the application. */
 const AdminHome: React.FC<props> = (props) => {
-    // const [unresolvedResponses, setUnResponses] = useState(0);
+    const surveys = useAppSelector(s => s.data.surveys);
     const appDispatch = useAppDispatch();
+    const user = authInstance.currentUser;
 
     return (
         <div id="adminHome" className='adminContainer'> {/*Contains the whole page*/}
@@ -49,16 +50,23 @@ const AdminHome: React.FC<props> = (props) => {
                     {/* <h3 id='surveyName'>Surveys</h3> */}
                     <div className='surveyContainer'>
                         <ListViewer height="350px" title='Survey Templates' handleNew={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Creating }))}>
-                            <ListElement name="Test Survey Template" handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")}/>
-                            <ListElement name="Test Survey Template" handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")}/>
-                            <ListElement name="Test Survey Template" handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")}/>
+                            {
+                                surveys.map((survey, ind) => {
+                                    return <ListElement
+                                        key={ind}
+                                        name={survey.title}
+                                        handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing, data: survey }))}
+                                        handleDelete={() => alert("This function has not been completed yet.")}
+                                    />
+                                })
+                            }
                         </ListViewer>
                     </div>
                 </div>
                 <div className='rightColumn'>
                     <div className="userInfo">
                         <p>[First Name] [Last Name] <br />
-                            {/* {user.attributes.email} */}
+                            {user?.email}
                             <br />
                             Administrator
                         </p>

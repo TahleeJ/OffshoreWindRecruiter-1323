@@ -6,7 +6,7 @@ import * as firestore from "@firebase/firestore";
 import * as functions from "@firebase/functions";
 
 import Home from './react components/Home'
-import { useAppSelector } from './redux/hooks';
+import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { PageType } from './redux/navigationSlice';
 import AdminHome from './react components/AdminHome';
 import Header from './react components/Header';
@@ -16,12 +16,14 @@ import LabelManager from './react components/LabelManager';
 import JobManager from './react components/Job/JobManager';
 import AuthPage from './react components/AuthPage';
 
-import { functionsInstance, authInstance } from './firebase/Firebase';
+import { functionsInstance, authInstance, firestoreInstance } from './firebase/Firebase';
 import db from './firebase/Firestore';
 import { PermissionLevel, QuestionType, Survey } from './firebase/Types';
+import { getSurveys } from './firebase/SurveyQueries';
+import { updateSurveyList } from './redux/dataSlice.ts';
 
 const getOverallPageFromType = (type: PageType) => {
-    switch (type) { 
+    switch (type) {
         case PageType.Home: return <Home />
         case PageType.AdminHome: return <AdminHome />
         case PageType.Survey: return <SurveyHome />
@@ -33,29 +35,34 @@ const getOverallPageFromType = (type: PageType) => {
 
 const App: React.FC = () => {
     const [isLoggedIn, setLoggedIn] = useState(false);
+    const dispatch = useAppDispatch();
+
+    async function setSurveyState() {
+        const surveys = await getSurveys(firestoreInstance);
+        dispatch(updateSurveyList(surveys));
+    }
 
     useEffect(() => {
+        setSurveyState()
+
         authInstance.onAuthStateChanged(async (user) => {
             if (!user) {
                 setLoggedIn(false);
                 return;
             }
-            
+
             setLoggedIn(true);
 
             // Add new user to Firestore if not already present in database
             var userDoc = await firestore.getDoc(firestore.doc(db.Users, user.uid));
-            // Get email from user:    userDoc.data()?.email
 
             if (!userDoc.exists()) {
                 firestore.setDoc(
-                    firestore.doc(db.Users, user.uid),
-                    {
-                        email: user.email,
-                        permissionLevel: PermissionLevel.Admin,
-                    }
-                );
-            }         
+                    firestore.doc(db.Users, user.uid), {
+                    email: user.email,
+                    permissionLevel: PermissionLevel.Admin,
+                });
+            }
 
             /*
             // Sample promote/demote admin usage            

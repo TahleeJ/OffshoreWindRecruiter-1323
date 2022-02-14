@@ -31,6 +31,10 @@ body,
     box-sizing: border-box;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 button {
     //this is the default button styling. Override it by adding definition for a specific class in another part of this file
     color: white;

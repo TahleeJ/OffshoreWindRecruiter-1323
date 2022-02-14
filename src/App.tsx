@@ -20,7 +20,6 @@ import { functionsInstance, authInstance } from './firebase/Firebase';
 import db from './firebase/Firestore';
 import { PermissionLevel, QuestionType, Survey } from './firebase/Types';
 
-
 const getOverallPageFromType = (type: PageType) => {
     switch (type) { 
         case PageType.Home: return <Home />
@@ -31,8 +30,6 @@ const getOverallPageFromType = (type: PageType) => {
         case PageType.JobManage: return <JobManager />
     }
 }
-
-const checkAdmin = functions.httpsCallable(functionsInstance, 'checkAdmin');
 
 const App: React.FC = () => {
     const [isLoggedIn, setLoggedIn] = useState(false);
@@ -58,7 +55,42 @@ const App: React.FC = () => {
                         permissionLevel: PermissionLevel.Admin,
                     }
                 );
+            }         
+
+            /*
+            // Sample promote/demote admin usage            
+            const updateAdmin = functions.httpsCallable(functionsInstance, 'updateAdmin');
+
+            try {
+                await updateAdmin({userEmail: <insert email here>, newPermissionLevel: PermissionLevel.Owner});
+
+                console.log("Update success!");
+            } catch (error) {
+                const {code, details} = JSON.parse(JSON.stringify(error));
+
+                switch (code) {
+                    case "functions/failed-precondition":
+                        console.log("The selected user is not a member of this application.");
+                        break;
+                    case "functions/invalid-argument":
+                        console.log("You must choose a user to change permission for and whether to promote or demote them using an integer value 0-2.");
+                        break;
+                    case "functions/permission-denied":
+                        console.log("You do not have the privileges necessary to make this call.");
+                        break;
+                }
             }
+            */
+
+            /*
+            // Sample checkAdmin usage
+            const checkAdmin = functions.httpsCallable(functionsInstance, 'checkAdmin');
+
+            var result = await checkAdmin({});
+            const usableData: Object = result.data as Object;
+            const dataMap = new Map(Object.entries(usableData));
+            console.log(dataMap.get("isAdmin"));
+            */
         });
     }, [])
 

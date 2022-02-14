@@ -4,6 +4,7 @@ import React from 'react';
 interface props {
     height: string;
     title?: string;
+    handleNew?: () => void;
 }
 
 /** The header of the application. */
@@ -15,9 +16,13 @@ const ListViewer: React.FC<props> = (props) => {
                 <div className='title'>{props.title}</div>
                 : null
             }
+            <div className='button'>
+                <button className='green' onClick={props.handleNew} hidden={!props.handleNew}>Add New</button>
+            </div>
             <div className='listElements'>
                 {props.children}
             </div>
+            
         </div>
     );
 }

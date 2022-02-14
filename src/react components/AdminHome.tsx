@@ -1,5 +1,4 @@
-import React, { useContext, useState } from 'react';
-import { AuthContext } from '../App';
+import React from 'react';
 import { useAppDispatch } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import ListViewer from './ListViewer';
@@ -12,9 +11,7 @@ interface props {
 
 /** The header of the application. */
 const AdminHome: React.FC<props> = (props) => {
-    const [unresolvedResponses, setUnResponses] = useState(0);
-    const auth = useContext(AuthContext);
-    const user = auth.user;
+    // const [unresolvedResponses, setUnResponses] = useState(0);
     const appDispatch = useAppDispatch();
 
     return (
@@ -61,7 +58,8 @@ const AdminHome: React.FC<props> = (props) => {
                 <div className='rightColumn'>
                     <div className="userInfo">
                         <p>[First Name] [Last Name] <br />
-                            {user.attributes.email} <br />
+                            {/* {user.attributes.email} */}
+                            <br />
                             Administrator
                         </p>
                     </div>

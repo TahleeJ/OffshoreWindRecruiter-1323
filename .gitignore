@@ -1,23 +1,15 @@
-# Created by https://www.toptal.com/developers/gitignore/api/amplify,macos,node,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=amplify,macos,node,visualstudiocode
 
-### Amplify ###
-# AWS Amplify
-amplify/\#current-cloud-backend
-amplify/.config/local-*
-amplify/mock-data
-amplify/backend/amplify-meta.json
-amplify/backend/awscloudformation
-amplify/team-provider-info.json
-build/
-dist/
-node_modules/
-aws-exports.js
-awsconfiguration.json
-amplifyconfiguration.json
-amplify-build-config.json
-amplify-gradle-config.json
-amplifyxc.config
+# Created by https://www.toptal.com/developers/gitignore/api/firebase,macos,node,visualstudiocode
+# Edit at https://www.toptal.com/developers/gitignore?templates=firebase,macos,node,visualstudiocode
+
+### Firebase ###
+.idea
+**/node_modules/*
+**/.firebaserc
+
+### Firebase Patch ###
+.runtimeconfig.json
+.firebase/
 
 ### macOS ###
 # General
@@ -90,6 +82,7 @@ bower_components
 build/Release
 
 # Dependency directories
+node_modules/
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
@@ -103,6 +96,9 @@ web_modules/
 
 # Optional eslint cache
 .eslintcache
+
+# Optional stylelint cache
+.stylelintcache
 
 # Microbundle cache
 .rpt2_cache/
@@ -119,10 +115,12 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
+# dotenv environment variable files
 .env
-.env.test
-.env.production
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -144,6 +142,12 @@ dist
 
 # vuepress build output
 .vuepress/dist
+
+# vuepress v2.x temp and cache directory
+.temp
+
+# Docusaurus cache and generated files
+.docusaurus
 
 # Serverless directories
 .serverless/
@@ -172,7 +176,6 @@ dist
 .webpack/
 
 # Optional stylelint cache
-.stylelintcache
 
 # SvelteKit build / generate output
 .svelte-kit
@@ -183,10 +186,13 @@ dist
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-*.code-workspace
+!.vscode/*.code-snippets
 
 # Local History for Visual Studio Code
 .history/
+
+# Built Visual Studio Code Extensions
+*.vsix
 
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
@@ -194,28 +200,10 @@ dist
 .ionide
 
 # Support for Project snippet scope
-!.vscode/*.code-snippets
+
+# End of https://www.toptal.com/developers/gitignore/api/firebase,macos,node,visualstudiocode
+
 
 # End of https://www.toptal.com/developers/gitignore/api/amplify,macos,node,visualstudiocode
 
-#amplify-do-not-edit-begin
-amplify/\#current-cloud-backend
-amplify/.config/local-*
-amplify/logs
-amplify/mock-data
-amplify/backend/amplify-meta.json
-"amplify/backend/amplify-meta 2.json"
-amplify/backend/.temp
-build/
-dist/
-node_modules/
-aws-exports.js
-awsconfiguration.json
-amplifyconfiguration.json
-amplifyconfiguration.dart
-amplify-build-config.json
-amplify-gradle-config.json
-amplifytools.xcconfig
-.secret-*
-**.sample
-#amplify-do-not-edit-end
+# End of https://www.toptal.com/developers/gitignore/api/firebase,macos,node,visualstudiocode

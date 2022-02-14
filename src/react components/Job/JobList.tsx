@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppDispatch } from '../../redux/hooks';
-import { changeOperation, changePage, OperationType, PageType } from '../../redux/navigationSlice';
+import { changeOperation, OperationType } from '../../redux/navigationSlice';
 
 /** The props (arguments) to create this element */
 interface props {

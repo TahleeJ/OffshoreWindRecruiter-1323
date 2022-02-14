@@ -1,10 +1,9 @@
-import React, { createContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import './styling/App.css';
 
-import Amplify from 'aws-amplify';
-import awsconfig from './aws-exports';
-import { Authenticator } from '@aws-amplify/ui-react';
-import '@aws-amplify/ui-react/styles.css';
+import * as firebaseAuth from "@firebase/auth";
+import * as firestore from "@firebase/firestore";
+import * as functions from "@firebase/functions";
 
 import Home from './react components/Home'
 import { useAppSelector } from './redux/hooks';
@@ -14,64 +13,69 @@ import Header from './react components/Header';
 import SurveyHome from './react components/survey/SurveyHome';
 import AdminManager from './react components/AdminManager';
 import LabelManager from './react components/LabelManager';
-
 import JobManager from './react components/Job/JobManager';
+import AuthPage from './react components/AuthPage';
 
+import { functionsInstance, authInstance } from './firebase/Firebase';
+import db from './firebase/Firestore';
+import { PermissionLevel, QuestionType, Survey } from './firebase/Types';
 
-// Multiple redirect URI handling for OAuth 
-const isLocalhost = Boolean(
-    window.location.hostname === "localhost" ||
-    // [::1] is the IPv6 localhost address.
-    window.location.hostname === "[::1]" ||
-    // 127.0.0.1/8 is considered localhost for IPv4.
-    window.location.hostname.match(
-        /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
-    )
-);
-
-// Assuming you have two redirect URIs, and the first is for localhost and second is for production
-const [
-    localRedirectSignIn,
-    productionRedirectSignIn,
-] = awsconfig.oauth.redirectSignIn.split(",");
-
-const [
-    localRedirectSignOut,
-    productionRedirectSignOut,
-] = awsconfig.oauth.redirectSignOut.split(",");
-
-awsconfig.oauth.redirectSignIn = isLocalhost ? localRedirectSignIn : productionRedirectSignIn;
-awsconfig.oauth.redirectSignOut = isLocalhost ? localRedirectSignOut : productionRedirectSignOut;
-
-Amplify.configure(awsconfig);
-
-export const AuthContext = createContext({} as any);
 
 const getOverallPageFromType = (type: PageType) => {
-    switch (type) {
+    switch (type) { 
         case PageType.Home: return <Home />
         case PageType.AdminHome: return <AdminHome />
         case PageType.Survey: return <SurveyHome />
         case PageType.AdminManage: return <AdminManager />
         case PageType.LabelManage: return <LabelManager />
-
         case PageType.JobManage: return <JobManager />
     }
 }
 
+const checkAdmin = functions.httpsCallable(functionsInstance, 'checkAdmin');
+
 const App: React.FC = () => {
+    const [isLoggedIn, setLoggedIn] = useState(false);
+
+    useEffect(() => {
+        authInstance.onAuthStateChanged(async (user) => {
+            if (!user) {
+                setLoggedIn(false);
+                return;
+            }
+            
+            setLoggedIn(true);
+
+            // Add new user to Firestore if not already present in database
+            var userDoc = await firestore.getDoc(firestore.doc(db.Users, user.uid));
+            // Get email from user:    userDoc.data()?.email
+
+            if (!userDoc.exists()) {
+                firestore.setDoc(
+                    firestore.doc(db.Users, user.uid),
+                    {
+                        email: user.email,
+                        permissionLevel: PermissionLevel.Admin,
+                    }
+                );
+            }
+        });
+    }, [])
+
     const pageType = useAppSelector(s => s.navigation.currentPage);
 
+    firebaseAuth.setPersistence(authInstance, firebaseAuth.browserLocalPersistence);
+
     return (
-        <Authenticator socialProviders={['google']} variation="modal" loginMechanisms={['email']}>
-            {({ signOut, user }) => (
-                <AuthContext.Provider value={{ user, signOut }}>
+        <>
+            {isLoggedIn ?
+                <>
                     <Header />
-                    {//we show the page depending on which PageType is currently in our redux state
-                        getOverallPageFromType(pageType)}
-                </AuthContext.Provider>
-            )}
-        </Authenticator>
+                    {getOverallPageFromType(pageType)}
+                </>
+                : <AuthPage />
+            }
+        </>
     );
 }
 

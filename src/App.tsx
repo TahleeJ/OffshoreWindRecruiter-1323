@@ -64,14 +64,19 @@ const App: React.FC = () => {
 
             setLoggedIn(true);
 
-            firestore.setDoc(
-                firestore.doc(firestoreInstance, "User", `${user.uid}`),
-                {
-                    email: user.email,
-                    isAdmin: false,
-                    dummyData: "dummmmmy"
-                }
-            );
+            // Add new user to Firestore if not already present in database
+            var userDoc = await firestore.getDoc(firestore.doc(firestoreInstance, "User", `${user.uid}`));
+
+            if (!userDoc.exists()) {
+                firestore.setDoc(
+                    firestore.doc(firestoreInstance, "User", `${user.uid}`),
+                    {
+                        email: user.email,
+                        isAdmin: true,
+                        owner: false
+                    }
+                );
+            }         
 
             try {
                 await updateAdmin({userEmail: "seankaat@gmail.com", promote: true});

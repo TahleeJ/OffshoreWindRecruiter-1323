@@ -36,11 +36,12 @@ const AuthPage = () => {
             {error ? <div className='error'>{error}</div> : null}
             <div className='content'>
                 <div className='title'>Sign-In/Create Account</div>
-                <button onClick={googleSignIn}>Google</button>
-                <br />
                 <input type="text" id="email" placeholder='Email' /><br />
                 <input type="text" id="password" placeholder='Password' /><br />
+                <button onClick={googleSignIn}>Use Google</button>
+                <br />
                 <button onClick={createAccount}>Create Account</button>
+                <br/>
                 <button onClick={signIn}>Sign-In</button>
             </div>
         </div>

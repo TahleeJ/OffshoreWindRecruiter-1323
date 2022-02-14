@@ -120,6 +120,10 @@ textarea {
 #authPage {
     text-align: center;
     font-size: $largest-font-size;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
 
     .title {
         color: $rose-red;
@@ -136,22 +140,32 @@ textarea {
     }
 
     input[type='text'] {
-        padding: 5px;
+        padding: 7px;
         font-size: $large-font-size;
+        border: none;
+        border-bottom: 1px solid black;
+        background-color: transparent;
+        width: 100%;
+        margin-bottom: 10px;
     }
 
     .content {
+        position: relative;
         max-width: 500px;
         height: 500px;
         margin: auto;
-        margin-top: calc(50% - 100px);
+        top: calc(50% - 250px);
         background-color: $gray1;
         border-radius: 5px;
         box-shadow: $subtle-shadow;
+        padding: 20px;
     }
 
     button {
-        margin-right: 5px;
+        margin-bottom: 20px;
+        padding: 7px;
+        width: 100%;
+        font-size: $large-font-size;
     }
 }
 

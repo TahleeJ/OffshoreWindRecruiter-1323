@@ -139,7 +139,8 @@ textarea {
         border-radius: 3px;
     }
 
-    input[type='text'] {
+    input[type="text"],
+    input[type="password"] {
         padding: 7px;
         font-size: $large-font-size;
         border: none;
@@ -166,6 +167,9 @@ textarea {
         padding: 7px;
         width: 100%;
         font-size: $large-font-size;
+    }
+    img {
+        width: 30px;
     }
 }
 

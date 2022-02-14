@@ -20,7 +20,7 @@ export async function getSurvey(title: string) {
     return (response.data() as Survey);
 }
 
-export async function createSurvey(survey: Survey) {
+export async function saveSurveyToFirebase(survey: Survey) {
     const surveyDoc = firestore.doc(db.Surveys, survey.title);  // Refrence to a specific survey at 'survey/{title}'
     await firestore.setDoc(surveyDoc, survey);
 }

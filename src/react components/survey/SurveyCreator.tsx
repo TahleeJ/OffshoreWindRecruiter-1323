@@ -4,7 +4,8 @@ import { Answer, QuestionType, Survey, SurveyQuestion } from "../../firebase/Typ
 
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
-import { createSurvey } from "../../firebase/SurveyQueries";
+import { saveSurveyToFirebase } from "../../firebase/SurveyQueries";
+import { useEffect } from "react";
 
 interface props {
 
@@ -23,6 +24,7 @@ const SurverCreator: React.FC = (props: props) => {
     const [desc, setDesc] = useState("");
     const [questions, setQuestions] = useState<SurveyQuestion[]>(devQuestions);
     const operationType = useAppSelector(s => s.navigation.operationType);
+    const reduxSurveyData = useAppSelector(s => s.navigation.operationData as Survey);
     const dispatch = useAppDispatch();
 
     const saveSurvey = async () => {
@@ -31,7 +33,7 @@ const SurverCreator: React.FC = (props: props) => {
             description: desc,
             questions: questions
         }
-        await createSurvey(survey);
+        await saveSurveyToFirebase(survey);
 
         dispatch(changePage({ type: PageType.AdminHome }));
     }
@@ -137,6 +139,14 @@ const SurverCreator: React.FC = (props: props) => {
         setQuestions(cpyQuestions);
     }
 
+    useEffect(() => {
+        if (operationType == OperationType.Editing) {
+            setDesc(reduxSurveyData.title)
+            setTitle(reduxSurveyData.title);
+            setQuestions(reduxSurveyData.questions);
+        }
+    }, []);
+
     return (
         <div className="surveyCreator">
             <button className="red" onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
@@ -153,9 +163,9 @@ const SurverCreator: React.FC = (props: props) => {
                                     <input type='text' className="prompt" value={q.prompt} placeholder="Question Prompt..." onChange={(e) => changeQuestionPrompt(qIndex, e.target.value)} />
                                     <div className="questionType">
                                         <select name="questionType" title="Question Type" onChange={(e) => changeQuestionType(qIndex, e.target.value)}>
-                                            <option value="MultipleChoice">Multiple Choice</option>
-                                            <option value="Scale">Scale</option>
-                                            <option value="FreeResponse">Free Response</option>
+                                            <option value="MultipleChoice" selected={q.questionType === QuestionType.MultipleChoice}>Multiple Choice</option>
+                                            <option value="Scale" selected={q.questionType === QuestionType.Scale}>Scale</option>
+                                            <option value="FreeResponse" selected={q.questionType === QuestionType.FreeResponse}>Free Response</option>
                                         </select>
                                     </div>
                                     <button className="delete red" onClick={() => deleteQuestion(qIndex)}>-</button>
@@ -203,11 +213,7 @@ const SurverCreator: React.FC = (props: props) => {
                 })
             }
             <button onClick={addNewQuestion}>New Question</button>
-            {
-                operationType == OperationType.Creating ?
-                    <button onClick={saveSurvey}>Save Survey</button>
-                    : null
-            }
+            <button onClick={saveSurvey}>{operationType == OperationType.Creating ? "Save Survey as New" : "Save Edits"}</button>
         </div>
     )
 }

@@ -4,8 +4,10 @@ import { Answer, QuestionType, Survey, SurveyQuestion } from "../../firebase/Typ
 
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
-import { saveSurveyToFirebase } from "../../firebase/SurveyQueries";
+import { editSurvey, getSurveys, newSurvey } from "../../firebase/SurveyQueries";
 import { useEffect } from "react";
+import { updateSurveyList } from "../../redux/dataSlice.ts";
+import { firestoreInstance } from "../../firebase/Firebase";
 
 interface props {
 
@@ -23,7 +25,9 @@ const SurverCreator: React.FC = (props: props) => {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
     const [questions, setQuestions] = useState<SurveyQuestion[]>(devQuestions);
-    const operationType = useAppSelector(s => s.navigation.operationType);
+    /** This is the current operation that is being done with surveys...usually creating/editing */
+    const currentOperation = useAppSelector(s => s.navigation.operationType);
+    /** This contains the old survey data. */
     const reduxSurveyData = useAppSelector(s => s.navigation.operationData as Survey);
     const dispatch = useAppDispatch();
 
@@ -33,9 +37,13 @@ const SurverCreator: React.FC = (props: props) => {
             description: desc,
             questions: questions
         }
-        await saveSurveyToFirebase(survey);
+        if (currentOperation === OperationType.Creating)
+            await newSurvey(survey);
+        else
+            await editSurvey(reduxSurveyData.title, survey);
 
         dispatch(changePage({ type: PageType.AdminHome }));
+        dispatch(updateSurveyList(await getSurveys(firestoreInstance)));
     }
 
     const addNewQuestion = () => {
@@ -140,12 +148,13 @@ const SurverCreator: React.FC = (props: props) => {
     }
 
     useEffect(() => {
-        if (operationType == OperationType.Editing) {
+        //copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
+        if (currentOperation === OperationType.Editing) {
             setDesc(reduxSurveyData.title)
             setTitle(reduxSurveyData.title);
             setQuestions(reduxSurveyData.questions);
         }
-    }, []);
+    }, [reduxSurveyData, currentOperation]);
 
     return (
         <div className="surveyCreator">
@@ -213,7 +222,7 @@ const SurverCreator: React.FC = (props: props) => {
                 })
             }
             <button onClick={addNewQuestion}>New Question</button>
-            <button onClick={saveSurvey}>{operationType == OperationType.Creating ? "Save Survey as New" : "Save Edits"}</button>
+            <button onClick={saveSurvey}>{currentOperation === OperationType.Creating ? "Save Survey as New" : "Save Edits"}</button>
         </div>
     )
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { authInstance } from '../firebase/Firebase';
+import { deleteSurvey } from '../firebase/SurveyQueries';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import ListViewer from './ListViewer';
@@ -56,7 +57,7 @@ const AdminHome: React.FC<props> = (props) => {
                                         key={ind}
                                         name={survey.title}
                                         handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing, data: survey }))}
-                                        handleDelete={() => alert("This function has not been completed yet.")}
+                                        handleDelete={() => deleteSurvey(survey.title)}
                                     />
                                 })
                             }
@@ -65,7 +66,7 @@ const AdminHome: React.FC<props> = (props) => {
                 </div>
                 <div className='rightColumn'>
                     <div className="userInfo">
-                        <p>[First Name] [Last Name] <br />
+                        <p>
                             {user?.email}
                             <br />
                             Administrator

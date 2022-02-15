@@ -3,7 +3,9 @@ import './styling/App.css';
 
 import * as firebaseAuth from "@firebase/auth";
 import * as firestore from "@firebase/firestore";
-import * as functions from "@firebase/functions";
+import { functionsInstance, authInstance, firestoreInstance } from './firebase/Firebase';
+import db from './firebase/Firestore';
+import { PermissionLevel, QuestionType, Survey } from './firebase/Types';
 
 import Home from './react components/Home'
 import { useAppDispatch, useAppSelector } from './redux/hooks';
@@ -16,9 +18,6 @@ import LabelManager from './react components/LabelManager';
 import JobManager from './react components/Job/JobManager';
 import AuthPage from './react components/AuthPage';
 
-import { functionsInstance, authInstance, firestoreInstance } from './firebase/Firebase';
-import db from './firebase/Firestore';
-import { PermissionLevel, QuestionType, Survey } from './firebase/Types';
 import { getSurveys } from './firebase/SurveyQueries';
 import { updateSurveyList } from './redux/dataSlice.ts';
 
@@ -87,16 +86,6 @@ const App: React.FC = () => {
                         break;
                 }
             }
-            */
-
-            /*
-            // Sample checkAdmin usage
-            const checkAdmin = functions.httpsCallable(functionsInstance, 'checkAdmin');
-
-            var result = await checkAdmin({});
-            const usableData: Object = result.data as Object;
-            const dataMap = new Map(Object.entries(usableData));
-            console.log(dataMap.get("isAdmin"));
             */
         });
     }, [])

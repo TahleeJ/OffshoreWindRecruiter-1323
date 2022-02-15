@@ -20,7 +20,14 @@ export async function getSurvey(title: string) {
     return (response.data() as Survey);
 }
 
-export async function saveSurveyToFirebase(survey: Survey) {
-    const surveyDoc = firestore.doc(db.Surveys, survey.title);  // Refrence to a specific survey at 'survey/{title}'
-    await firestore.setDoc(surveyDoc, survey);
+export async function newSurvey(survey: Survey) {
+    await firestore.setDoc(firestore.doc(db.Surveys, survey.title), survey);
+}
+
+export async function editSurvey(oldTitle: string, survey: Survey) {
+    await firestore.updateDoc(firestore.doc(db.Surveys, oldTitle), survey);
+}
+
+export async function deleteSurvey(surveyTitle: string) {
+    await firestore.deleteDoc(firestore.doc(db.Surveys, surveyTitle));
 }

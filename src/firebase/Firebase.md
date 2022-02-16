@@ -37,7 +37,7 @@ API reference found here: https://firebase.google.com/docs/reference/js
 `import { functionsInstance } from './firebase/Firebase';`
 
 3. To reference a function created and deployed from `functions/index.js`, include the following:  
-`const <function reference name> = functions.HttpsCallable(functionsInstance, <name of function in index.js>);`
+`import { <function name from Firebase.ts> } from './firebase/Firebase';`
 
 4. To call a function and parse its results, do the following:
     1. `const result = await <function reference name>({[function request parameters]})`

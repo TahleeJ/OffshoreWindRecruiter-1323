@@ -19,6 +19,7 @@ import AuthPage from './react components/AuthPage';
 import { functionsInstance, authInstance } from './firebase/Firebase';
 import db from './firebase/Firestore';
 import { PermissionLevel, QuestionType, Survey } from './firebase/Types';
+import { checkAdmin, updateAdmin } from './firebase/Firebase';
 
 const getOverallPageFromType = (type: PageType) => {
     switch (type) { 
@@ -58,8 +59,7 @@ const App: React.FC = () => {
             }         
 
             /*
-            // Sample promote/demote admin usage            
-            const updateAdmin = functions.httpsCallable(functionsInstance, 'updateAdmin');
+            // Sample promote/demote admin usage                       
 
             try {
                 await updateAdmin({userEmail: "tyler.cosentino1@gmail.com", newPermissionLevel: PermissionLevel.Owner});
@@ -84,8 +84,7 @@ const App: React.FC = () => {
 
             /*
             // Sample checkAdmin usage
-            const checkAdmin = functions.httpsCallable(functionsInstance, 'checkAdmin');
-
+            
             var result = await checkAdmin({});
             const usableData: Object = result.data as Object;
             const dataMap = new Map(Object.entries(usableData));

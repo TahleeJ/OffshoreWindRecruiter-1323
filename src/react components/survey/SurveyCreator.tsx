@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import * as firestore from "@firebase/firestore";
 
-import { Answer, QuestionType, Survey, SurveyQuestion } from "../../firebase/Types";
+import { Answer, QuestionType, Survey, SurveyQuestion, SurveyResponse } from "../../firebase/Types";
 import db from "../../firebase/Firestore";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
@@ -30,7 +30,8 @@ const SurverCreator: React.FC = (props: props) => {
         let survey: Survey = {
             title: title,
             description: desc,
-            questions: questions
+            questions: questions,
+            answers: null
         }
 
 

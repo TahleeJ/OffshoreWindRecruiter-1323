@@ -62,7 +62,7 @@ const App: React.FC = () => {
             // Sample promote/demote admin usage                       
 
             try {
-                await updateAdmin({userEmail: "tyler.cosentino1@gmail.com", newPermissionLevel: PermissionLevel.Owner});
+                await updateAdmin({userEmail: <insert email here>, newPermissionLevel: PermissionLevel.Owner});
 
                 console.log("Update success!");
             } catch (error) {

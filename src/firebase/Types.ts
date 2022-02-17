@@ -24,19 +24,24 @@ export enum QuestionType {
 
 export interface Answer {
     text: string
-    labels: string[]
+    labels: Label[]
 }
 
 export interface Job {
     jobName: string
     companyName: string
-    labels: string[]
+    labels: Label[]
     jobDescription: string
 }
 
 export interface RecommendedJobs {
     taker: SurveyTaker
     jobs: Job[] | null
+}
+
+export interface Label {
+    name: string
+    jobs: Job[]
 }
 
 export interface User {

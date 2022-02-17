@@ -6,7 +6,7 @@ interface props {
 
 }
 
-const SurveyAmdminister: React.FC = (p: props) => {
+const SurveyAdminister: React.FC = (p: props) => {
     const dispatch = useAppDispatch();
 
     return (
@@ -63,4 +63,4 @@ const SurveyAmdminister: React.FC = (p: props) => {
     )
 }
 
-export default SurveyAmdminister;
+export default SurveyAdminister;

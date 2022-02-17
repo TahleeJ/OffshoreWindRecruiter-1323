@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 
-import { Answer, QuestionType, Survey, SurveyQuestion } from "../../firebase/Types";
+import * as firestore from "@firebase/firestore";
+
+import { Answer, QuestionType, Survey, SurveyQuestion, SurveyResponse } from "../../firebase/Types";
+import db from "../../firebase/Firestore";
 
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
@@ -17,7 +20,7 @@ const devQuestions: SurveyQuestion[] = [
     {
         prompt: "",
         questionType: QuestionType.MultipleChoice,
-        answers: [],
+        options: [],
     }
 ]
 
@@ -35,7 +38,7 @@ const SurverCreator: React.FC = (props: props) => {
         let survey: Survey = {
             title: title,
             description: desc,
-            questions: questions
+            questions: questions,
         }
         if (currentOperation === OperationType.Creating)
             await newSurvey(survey);
@@ -47,7 +50,7 @@ const SurverCreator: React.FC = (props: props) => {
     }
 
     const addNewQuestion = () => {
-        setQuestions(s => [...s, { prompt: "", answers: [], questionType: QuestionType.MultipleChoice }])
+        setQuestions(s => [...s, { prompt: "", options: [], questionType: QuestionType.MultipleChoice }])
     }
     const addNewAnswer = (qIndex: number) => {
         let cpyQuestions: any[] = [];
@@ -55,10 +58,10 @@ const SurverCreator: React.FC = (props: props) => {
             let value = q;
             if (i === qIndex) {
                 const newAnswer: Answer = { text: '', labels: [] };
-                const answers = q.answers ? [...q.answers, newAnswer] : [newAnswer];
+                const answers = q.options ? [...q.options, newAnswer] : [newAnswer];
                 value = {
                     ...q,
-                    answers: answers
+                    options: answers
                 };
             }
             cpyQuestions.push(value);
@@ -98,8 +101,8 @@ const SurverCreator: React.FC = (props: props) => {
         questions.forEach((q, qI) => {
             let changedQ = q;
             if (qI === qIndex) { //this is the question that needs to be modified
-                const answers: Answer[] = [];
-                (q.answers as Answer[]).forEach((a, aI) => {
+                const options: Answer[] = [];
+                (q.options as Answer[]).forEach((a, aI) => {
                     let changedA = a;
                     if (aI === aIndex) { //this is the answer that needs to be modified
                         changedA = {
@@ -107,18 +110,18 @@ const SurverCreator: React.FC = (props: props) => {
                             text: newText
                         }
                     }
-                    answers.push(changedA);
+                    options.push(changedA);
                 });
                 changedQ = {
                     ...q,
-                    answers: answers
+                    options: options
                 };
             }
             cpyQuestions.push(changedQ);
         });
         setQuestions(cpyQuestions);
         // questions.forEach(q => {
-        //     q.Answers?.forEach(a => {
+        //     q.options?.forEach(a => {
         //         console.log(a.text)
         //     });
         // });
@@ -135,12 +138,12 @@ const SurverCreator: React.FC = (props: props) => {
         questions.forEach((q, qi) => {
             if (qi === qIndex) {
                 let cpyQ = Object.assign(q);
-                const cpyAnswers: Answer[] = [];
-                q.answers?.forEach((a, ai) => {
+                const cpyOptions: Answer[] = [];
+                q.options?.forEach((a, ai) => {
                     if (ai !== aIndex)
-                        cpyAnswers.push(a)
+                        cpyOptions.push(a)
                 })
-                cpyQ.answers = cpyAnswers;
+                cpyQ.options = cpyOptions;
                 cpyQuestions.push(cpyQ);
             } else cpyQuestions.push(q);
         });
@@ -183,10 +186,10 @@ const SurverCreator: React.FC = (props: props) => {
                                     q.questionType === QuestionType.MultipleChoice ?
                                         <div className='options'>
                                             {
-                                                q.answers?.map((answer, aIndex) => {
+                                                q.options?.map((option, aIndex) => {
                                                     return <div key={"answer" + aIndex} className="answer" >
                                                         <input type="radio" placeholder='N/A' />
-                                                        <input type="text" placeholder="Answer..." onChange={(e) => changeAnswerText(qIndex, aIndex, e.target.value)} value={answer.text} />
+                                                        <input type="text" placeholder="Answer..." onChange={(e) => changeAnswerText(qIndex, aIndex, e.target.value)} value={option.text} />
                                                         <button className="red delete" onClick={() => deleteAnswer(qIndex, aIndex)}>-</button>
                                                     </div >
                                                 })

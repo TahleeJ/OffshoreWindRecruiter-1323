@@ -1,8 +1,14 @@
-import React, { useContext } from 'react';
-import { AuthContext, authInstance } from "../firebase/Firebase";
-import { useAppDispatch } from '../redux/hooks';
+import React from 'react';
+import { authInstance } from "../firebase/Firebase";
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import ListViewer from './ListViewer';
+
+// import * as firestore from "@firebase/firestore";
+// import { useEffect } from 'react';
+// import { Survey } from '../firebase/Types';
+// import { getSurveys } from '../firebase/SurveyQueries';
+// import { useState } from 'react';
 
 interface props {
 
@@ -11,27 +17,31 @@ interface props {
 // var firebase = require('firebase');
 
 const Home: React.FC<props> = (props) => {
+    const surveys = useAppSelector(s => s.data.surveys);
     const appDispatch = useAppDispatch();
-    // const auth = useContext(AuthContext);
     const user = authInstance.currentUser;
-    // console.log(user); //this is to figure out what is all on the user type
-    
 
     return (
         <div id="home">
-            <h1 id="account">Account Management</h1>
-            {/* <p id="userEmail">{user.attributes.email}</p> */}
+            <h1 id="account">Administer Survey:</h1>
             <p id="userEmail">{user?.email}</p>
             <ListViewer height="calc(100% - 300px)" title='Survey Templates'>
-                <div onClick={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Administering }))}>TEST ITEM (this will be a survey template eventually)</div>
-                <div onClick={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Administering }))}>TEST ITEM (this will be a survey template eventually)</div>
-                <div onClick={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Administering }))}>TEST ITEM (this will be a survey template eventually)</div>
-                <div onClick={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Administering }))}>TEST ITEM (this will be a survey template eventually)</div>
-                <div onClick={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Administering }))}>TEST ITEM (this will be a survey template eventually)</div>
-                <div onClick={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Administering }))}>TEST ITEM (this will be a survey template eventually)</div>
-                <div onClick={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Administering }))}>TEST ITEM (this will be a survey template eventually)</div>
-                <div onClick={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Administering }))}>TEST ITEM (this will be a survey template eventually)</div>
-                <div onClick={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Administering }))}>TEST ITEM (this will be a survey template eventually)</div>
+                {
+                    surveys.map((survey, ind) => {
+                        return <div
+                            key={ind}
+                            className="pointer"
+                            onClick={() => {
+                                appDispatch(changePage({
+                                    type: PageType.Survey,
+                                    operation: OperationType.Administering,
+                                    data: survey
+                                }))
+                            }}>
+                            {survey.title}
+                        </div>
+                    })
+                }
             </ListViewer>
         </div>
     );

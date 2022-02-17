@@ -21,6 +21,7 @@ import AuthPage from './react components/AuthPage';
 import { getSurveys } from './firebase/SurveyQueries';
 import { updateSurveyList } from './redux/dataSlice.ts';
 
+
 const getOverallPageFromType = (type: PageType) => {
     switch (type) {
         case PageType.Home: return <Home />
@@ -64,8 +65,7 @@ const App: React.FC = () => {
             }
 
             /*
-            // Sample promote/demote admin usage            
-            const updateAdmin = functions.httpsCallable(functionsInstance, 'updateAdmin');
+            // Sample promote/demote admin usage                       
 
             try {
                 await updateAdmin({userEmail: <insert email here>, newPermissionLevel: PermissionLevel.Owner});

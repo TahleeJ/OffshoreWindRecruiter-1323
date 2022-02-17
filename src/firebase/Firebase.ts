@@ -7,7 +7,7 @@ import * as functions from "@firebase/functions";
 
 require('dotenv').config();
 
-export const firebaseConfig = {
+const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_KEY,
     authDomain: process.env.REACT_APP_FIREBASE_DOMAIN,
     projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
@@ -22,3 +22,7 @@ export const AuthContext = createContext({} as any);
 export const authInstance = firebaseAuth.getAuth(firebaseApp);
 export const firestoreInstance = firestore.getFirestore(firebaseApp);
 export const functionsInstance = functions.getFunctions(firebaseApp);
+
+export const updateAdmin = functions.httpsCallable(functionsInstance, 'updateAdmin');
+export const checkAdmin = functions.httpsCallable(functionsInstance, 'checkAdmin');
+

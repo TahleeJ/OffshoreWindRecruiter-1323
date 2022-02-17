@@ -2,18 +2,17 @@ export interface Survey {
     title: string
     description: string
     questions: SurveyQuestion[]
-    answers: SurveyResponse[] | null
 }
 
 export interface SurveyQuestion {
     prompt: string
-    answers: Answer[]
+    options: Answer[]
     questionType: QuestionType
 }
 
 export interface SurveyResponse {
-    question: SurveyQuestion[]
-    answer: Answer[]
+    questions: SurveyQuestion[]
+    answers: Answer[]
     taker: SurveyTaker
 }
 
@@ -46,9 +45,9 @@ export interface User {
 }
 
 export interface SurveyTaker {
-    email: string
     name: string
-    birthdate: string
+    email: string
+    phone: string
 }
 
 export enum PermissionLevel {

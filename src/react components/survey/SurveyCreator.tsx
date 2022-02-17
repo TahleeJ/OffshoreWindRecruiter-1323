@@ -42,8 +42,6 @@ const SurverCreator: React.FC = (props: props) => {
         else
             await editSurvey(reduxSurveyData.id, survey);
 
-        console.log(reduxSurveyData)
-
         dispatch(changePage({ type: PageType.AdminHome }));
         dispatch(updateSurveyList(await getSurveys(firestoreInstance)));
     }

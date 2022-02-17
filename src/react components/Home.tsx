@@ -27,20 +27,22 @@ const Home: React.FC<props> = (props) => {
             <p id="userEmail">{user?.email}</p>
             <ListViewer height="calc(100% - 300px)" title='Survey Templates'>
                 {
-                    surveys.map((survey, ind) => {
-                        return <div
-                            key={ind}
-                            className="pointer"
-                            onClick={() => {
-                                appDispatch(changePage({
-                                    type: PageType.Survey,
-                                    operation: OperationType.Administering,
-                                    data: survey
-                                }))
-                            }}>
-                            {survey.title}
-                        </div>
-                    })
+                    surveys.length > 0 ?
+                        surveys.map((survey, ind) => {
+                            return <div
+                                key={ind}
+                                className="pointer"
+                                onClick={() => {
+                                    appDispatch(changePage({
+                                        type: PageType.Survey,
+                                        operation: OperationType.Administering,
+                                        data: survey
+                                    }))
+                                }}>
+                                {survey.title}
+                            </div>
+                        })
+                        : <div>There are no survey templates at the moment</div>
                 }
             </ListViewer>
         </div>

@@ -3,7 +3,7 @@ import { Survey } from '../firebase/Types';
 
 
 interface dataState {
-    surveys: Survey[];
+    surveys: (Survey & { id: string })[];
     surveyResponses: any[];
     jobOpps: any[];
     labels: any[];
@@ -23,7 +23,7 @@ const dataSlice = createSlice({
     name: 'data',
     initialState,
     reducers: {
-        setSurveys(state, { payload }: PayloadAction<Survey[]>) {
+        setSurveys(state, { payload }: PayloadAction<(Survey & { id: string })[]>) {
             state.surveys = payload;
         },
         //add other methods here for when we know the types of labels, jobOpps, etc

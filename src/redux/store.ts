@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 //we can add all of our frontend state "slices" as imports here:
 import example from './sampleSlice';
 import navigation from './navigationSlice';
+import data from './dataSlice.ts';
 
 
 export const store = configureStore({
@@ -9,8 +10,10 @@ export const store = configureStore({
     reducer: {
         /** DO NOT USE...this is just an example if you wish to create another one */
         example,
-        /** The slice of the state that deals with navigating to parts of the application*/
+        /** The slice of the state that deals with navigating to parts of the application */
         navigation,
+        /** The slice of the state that deals with cloud data, such as the list of surveys */
+        data,
     }
 })
 

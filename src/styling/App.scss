@@ -31,6 +31,10 @@ body,
     box-sizing: border-box;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 button {
     //this is the default button styling. Override it by adding definition for a specific class in another part of this file
     color: white;
@@ -79,22 +83,19 @@ textarea {
     // padding: 5px;
     overflow: hidden;
     box-shadow: $subtle-shadow;
+    position: relative;
 
     .title {
         font-weight: bold;
         color: $rose-red;
         text-align: left;
-        font-size: 20px;
+        font-size: $largest-font-size;
         padding: 3px 8px;
-        display: inline;
-        height: 20px;
     }
-    .button {
-        display:inline;
-        .green {
-            margin-left: 66%;
-            font-size: 10px;
-        }
+    .addNew {
+        position: absolute;
+        right: 3px;
+        top: 3px;
     }
     .listElements {
         overflow-y: auto;

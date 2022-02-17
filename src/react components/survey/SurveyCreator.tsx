@@ -28,7 +28,7 @@ const SurverCreator: React.FC = (props: props) => {
     /** This is the current operation that is being done with surveys...usually creating/editing */
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     /** This contains the old survey data. */
-    const reduxSurveyData = useAppSelector(s => s.navigation.operationData as Survey);
+    const reduxSurveyData = useAppSelector(s => s.navigation.operationData as Survey & { id: string });
     const dispatch = useAppDispatch();
 
     const saveSurvey = async () => {
@@ -40,7 +40,9 @@ const SurverCreator: React.FC = (props: props) => {
         if (currentOperation === OperationType.Creating)
             await newSurvey(survey);
         else
-            await editSurvey(reduxSurveyData.title, survey);
+            await editSurvey(reduxSurveyData.id, survey);
+
+        console.log(reduxSurveyData)
 
         dispatch(changePage({ type: PageType.AdminHome }));
         dispatch(updateSurveyList(await getSurveys(firestoreInstance)));
@@ -150,7 +152,7 @@ const SurverCreator: React.FC = (props: props) => {
     useEffect(() => {
         //copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
         if (currentOperation === OperationType.Editing) {
-            setDesc(reduxSurveyData.title)
+            setDesc(reduxSurveyData.description)
             setTitle(reduxSurveyData.title);
             setQuestions(reduxSurveyData.questions);
         }

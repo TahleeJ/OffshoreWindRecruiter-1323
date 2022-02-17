@@ -9,25 +9,25 @@ export async function getSurveys(firestoreInstance: firestore.Firestore) {
         )
     )
 
-    const surveys: Survey[] = [];
-    response.forEach(d => surveys.push(d.data() as Survey))
+    const surveys: (Survey & { id: string })[] = [];
+    response.forEach(d => surveys.push({ ...d.data(), id: d.id } as any))
     return surveys;
 }
 
 export async function getSurvey(title: string) {
     const surveyDoc = firestore.doc(db.Surveys, title);  // Refrence to a specific survey at 'survey/{title}'
     const response = await firestore.getDoc(surveyDoc);
-    return (response.data() as Survey);
+    return ({ ...response.data(), id: response.id } as Survey);
 }
 
 export async function newSurvey(survey: Survey) {
-    await firestore.setDoc(firestore.doc(db.Surveys, survey.title), survey);
+    await firestore.addDoc(db.Surveys, survey);
 }
 
-export async function editSurvey(oldTitle: string, survey: Survey) {
-    await firestore.updateDoc(firestore.doc(db.Surveys, oldTitle), survey);
+export async function editSurvey(id: string, survey: Survey) {
+    await firestore.updateDoc(firestore.doc(db.Surveys, id), survey);
 }
 
-export async function deleteSurvey(surveyTitle: string) {
-    await firestore.deleteDoc(firestore.doc(db.Surveys, surveyTitle));
+export async function deleteSurvey(id: string) {
+    await firestore.deleteDoc(firestore.doc(db.Surveys, id));
 }

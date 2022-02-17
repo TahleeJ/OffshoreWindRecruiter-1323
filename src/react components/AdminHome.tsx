@@ -1,6 +1,7 @@
 import React from 'react';
-import { authInstance } from '../firebase/Firebase';
-import { deleteSurvey } from '../firebase/SurveyQueries';
+import { authInstance, firestoreInstance } from '../firebase/Firebase';
+import { deleteSurvey, getSurveys } from '../firebase/SurveyQueries';
+import { updateSurveyList } from '../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import ListViewer from './ListViewer';
@@ -51,15 +52,16 @@ const AdminHome: React.FC<props> = (props) => {
                     {/* <h3 id='surveyName'>Surveys</h3> */}
                     <div className='surveyContainer'>
                         <ListViewer height="350px" title='Survey Templates' handleNew={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Creating }))}>
-                            {
+                            {surveys.length > 0 ?
                                 surveys.map((survey, ind) => {
                                     return <ListElement
                                         key={ind}
                                         name={survey.title}
                                         handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing, data: survey }))}
-                                        handleDelete={() => deleteSurvey(survey.title)}
+                                        handleDelete={async () => { await deleteSurvey(survey.id); appDispatch(updateSurveyList(await getSurveys(firestoreInstance)))}}
                                     />
                                 })
+                                : <div>Click the "New" button to create a new survey template</div>
                             }
                         </ListViewer>
                     </div>

@@ -72,7 +72,7 @@ textarea {
   font-weight: bold;
   color: #be7478;
   text-align: left;
-  font-size: 24px;
+  font-size: 28px;
   padding: 3px 8px;
 }
 
@@ -116,7 +116,7 @@ textarea {
 
 #authPage {
   text-align: center;
-  font-size: 24px;
+  font-size: 28px;
   height: 100%;
   width: 100%;
   top: 0;
@@ -140,7 +140,7 @@ textarea {
 #authPage input[type="text"],
 #authPage input[type="password"] {
   padding: 7px;
-  font-size: 18px;
+  font-size: 16px;
   border: none;
   border-bottom: 1px solid black;
   background-color: transparent;
@@ -165,7 +165,7 @@ textarea {
   margin-bottom: 20px;
   padding: 7px;
   width: 100%;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 #authPage img {
@@ -210,13 +210,13 @@ textarea {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
+  margin: auto;
+  font-weight: 600;
 }
 
 @media screen and (max-width: 500px) {
   #header .title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-block: auto;
+    font-size: 20px;
   }
 }
 
@@ -224,6 +224,7 @@ textarea {
   height: calc(100% - 50px);
   font-family: "Roboto";
   padding: 10px;
+  font-size: 20px;
   overflow-y: auto;
 }
 
@@ -307,17 +308,14 @@ textarea {
 
 #adminHome .rightColumn .adminButtons button {
   display: block;
-  height: 50px;
   width: 100%;
   border-radius: 5px;
   margin-bottom: 10px;
-  font-size: 24px;
   text-align: center;
 }
 
 #adminHome .rightColumn .userInfo {
   background-color: #efefef;
-  font-size: 18px;
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -352,6 +350,7 @@ textarea {
 #home h1 {
   margin: 0;
   padding: 20px;
+  font-size: 28px;
 }
 
 #home #userEmail {
@@ -370,7 +369,7 @@ textarea {
 
 #surveyHome button {
   margin: 5px;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 #surveyHome .optionPage {
@@ -385,7 +384,7 @@ textarea {
 }
 
 #surveyHome .surveyCreator input[type="text"] {
-  font-size: 18px;
+  font-size: 16px;
   border-radius: 3px;
   border: 2px solid #efefef;
 }
@@ -401,7 +400,7 @@ textarea {
 }
 
 #surveyHome .surveyCreator .surveyHeader .surveyTitle {
-  font-size: 24px;
+  font-size: 28px;
   width: 100%;
   padding: 5px;
   border: none;
@@ -409,7 +408,7 @@ textarea {
 }
 
 #surveyHome .surveyCreator .surveyHeader .surveyDescription {
-  font-size: 18px;
+  font-size: 16px;
   width: 100%;
   padding: 5px;
   border: none;
@@ -439,7 +438,7 @@ textarea {
   width: 130px;
   height: 40px;
   margin-left: 5px;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 #surveyHome .surveyCreator .createdQuestion .delete {
@@ -477,7 +476,7 @@ textarea {
 #surveyHome .administerSurveyPage .survey {
   text-align: center;
   margin: 0px 25px;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 #surveyHome .administerSurveyPage .surveyTitle {
@@ -513,7 +512,7 @@ textarea {
 
 #surveyHome .administerSurveyPage .question .options {
   padding: 5px;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 #surveyHome .administerSurveyPage .question.sq {
@@ -594,14 +593,15 @@ textarea {
 #promoteUser {
   text-align: center;
   padding: 10px;
+  font-size: 20px;
 }
 
-#promoteUser .header {
+#promoteUser .title {
   font-weight: bold;
   color: #be7478;
-  font-size: 24px;
+  font-size: 28px;
   position: relative;
-  padding-top: 80px;
+  padding: 50px 0px 10px 0px;
 }
 
 #promoteUser .textBlock {
@@ -667,7 +667,7 @@ textarea {
 #jobCreator .jobHeader {
   font-weight: bold;
   color: #be7478;
-  font-size: 24px;
+  font-size: 28px;
   position: relative;
   left: 35%;
   padding-top: 20px;
@@ -686,7 +686,7 @@ textarea {
 }
 
 #jobCreator .jobInputContainer input[type="text"] {
-  font-size: 18px;
+  font-size: 16px;
   border-radius: 3px;
   border: 2px solid #efefef;
   width: calc(100%);

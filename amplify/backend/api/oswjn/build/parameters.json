@@ -1,8 +1,0 @@
-{
-    "AppSyncApiName": "oswjn",
-    "DynamoDBBillingMode": "PAY_PER_REQUEST",
-    "DynamoDBEnableServerSideEncryption": false,
-    "AuthModeLastUpdated": "2022-01-28T11:05:29.401Z",
-    "S3DeploymentBucket": "amplify-amplify4d75c65e9f4b4-staging-22035-deployment",
-    "S3DeploymentRootKey": "amplify-appsync-files/dd53ac5944be70aeea2600c223089e449d1b327d"
-}

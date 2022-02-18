@@ -2,10 +2,15 @@ import React, { useState } from "react";
 
 import * as firestore from "@firebase/firestore";
 
-import { Answer, QuestionType, Survey, SurveyQuestion } from "../../firebase/Types";
+import { Answer, QuestionType, Survey, SurveyQuestion, SurveyResponse } from "../../firebase/Types";
 import db from "../../firebase/Firestore";
+
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
+import { editSurvey, getSurveys, newSurvey } from "../../firebase/SurveyQueries";
+import { useEffect } from "react";
+import { updateSurveyList } from "../../redux/dataSlice.ts";
+import { firestoreInstance } from "../../firebase/Firebase";
 
 interface props {
 
@@ -15,7 +20,7 @@ const devQuestions: SurveyQuestion[] = [
     {
         prompt: "",
         questionType: QuestionType.MultipleChoice,
-        answers: [],
+        options: [],
     }
 ]
 
@@ -23,30 +28,29 @@ const SurverCreator: React.FC = (props: props) => {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
     const [questions, setQuestions] = useState<SurveyQuestion[]>(devQuestions);
-    const operationType = useAppSelector(s => s.navigation.operationType);
+    /** This is the current operation that is being done with surveys...usually creating/editing */
+    const currentOperation = useAppSelector(s => s.navigation.operationType);
+    /** This contains the old survey data. */
+    const reduxSurveyData = useAppSelector(s => s.navigation.operationData as Survey & { id: string });
     const dispatch = useAppDispatch();
 
     const saveSurvey = async () => {
         let survey: Survey = {
             title: title,
             description: desc,
-            questions: questions
+            questions: questions,
         }
+        if (currentOperation === OperationType.Creating)
+            await newSurvey(survey);
+        else
+            await editSurvey(reduxSurveyData.id, survey);
 
-
-        const surveyDoc = firestore.doc(db.Surveys, title);  // Refrence to a specific survey at 'survey/{title}'
-        await firestore.setDoc(surveyDoc, survey);
-
-        // Gets survey
-        await firestore.getDoc(surveyDoc).then(d => {
-            console.log(d.data()?.questions)
-        })
-
-        dispatch(changePage({type: PageType.AdminHome}));
+        dispatch(changePage({ type: PageType.AdminHome }));
+        dispatch(updateSurveyList(await getSurveys(firestoreInstance)));
     }
 
     const addNewQuestion = () => {
-        setQuestions(s => [...s, { prompt: "", answers: [], questionType: QuestionType.MultipleChoice }])
+        setQuestions(s => [...s, { prompt: "", options: [], questionType: QuestionType.MultipleChoice }])
     }
     const addNewAnswer = (qIndex: number) => {
         let cpyQuestions: any[] = [];
@@ -54,10 +58,10 @@ const SurverCreator: React.FC = (props: props) => {
             let value = q;
             if (i === qIndex) {
                 const newAnswer: Answer = { text: '', labels: [] };
-                const answers = q.answers ? [...q.answers, newAnswer] : [newAnswer];
+                const answers = q.options ? [...q.options, newAnswer] : [newAnswer];
                 value = {
                     ...q,
-                    answers: answers
+                    options: answers
                 };
             }
             cpyQuestions.push(value);
@@ -97,8 +101,8 @@ const SurverCreator: React.FC = (props: props) => {
         questions.forEach((q, qI) => {
             let changedQ = q;
             if (qI === qIndex) { //this is the question that needs to be modified
-                const answers: Answer[] = [];
-                (q.answers as Answer[]).forEach((a, aI) => {
+                const options: Answer[] = [];
+                (q.options as Answer[]).forEach((a, aI) => {
                     let changedA = a;
                     if (aI === aIndex) { //this is the answer that needs to be modified
                         changedA = {
@@ -106,18 +110,18 @@ const SurverCreator: React.FC = (props: props) => {
                             text: newText
                         }
                     }
-                    answers.push(changedA);
+                    options.push(changedA);
                 });
                 changedQ = {
                     ...q,
-                    answers: answers
+                    options: options
                 };
             }
             cpyQuestions.push(changedQ);
         });
         setQuestions(cpyQuestions);
         // questions.forEach(q => {
-        //     q.Answers?.forEach(a => {
+        //     q.options?.forEach(a => {
         //         console.log(a.text)
         //     });
         // });
@@ -134,20 +138,30 @@ const SurverCreator: React.FC = (props: props) => {
         questions.forEach((q, qi) => {
             if (qi === qIndex) {
                 let cpyQ = Object.assign(q);
-                const cpyAnswers: Answer[] = [];
-                q.answers?.forEach((a, ai) => {
+                const cpyOptions: Answer[] = [];
+                q.options?.forEach((a, ai) => {
                     if (ai !== aIndex)
-                        cpyAnswers.push(a)
+                        cpyOptions.push(a)
                 })
-                cpyQ.answers = cpyAnswers;
+                cpyQ.options = cpyOptions;
                 cpyQuestions.push(cpyQ);
             } else cpyQuestions.push(q);
         });
         setQuestions(cpyQuestions);
     }
 
+    useEffect(() => {
+        //copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
+        if (currentOperation === OperationType.Editing) {
+            setDesc(reduxSurveyData.description)
+            setTitle(reduxSurveyData.title);
+            setQuestions(reduxSurveyData.questions);
+        }
+    }, [reduxSurveyData, currentOperation]);
+
     return (
         <div className="surveyCreator">
+            <button className="red" onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
             <div className="surveyHeader">
                 <input type='text' className="surveyTitle" placeholder="Survey Title..." value={title} onChange={(e) => setTitle(e.target.value)} />
                 <textarea className="surveyDescription" placeholder="Survey Description..." value={desc} onChange={(e) => setDesc(e.target.value)} />
@@ -161,9 +175,9 @@ const SurverCreator: React.FC = (props: props) => {
                                     <input type='text' className="prompt" value={q.prompt} placeholder="Question Prompt..." onChange={(e) => changeQuestionPrompt(qIndex, e.target.value)} />
                                     <div className="questionType">
                                         <select name="questionType" title="Question Type" onChange={(e) => changeQuestionType(qIndex, e.target.value)}>
-                                            <option value="MULTIPLE_CHOICE">Multiple Choice</option>
-                                            <option value="SCALE">Scale</option>
-                                            <option value="FREE_RESPONSE">Free Response</option>
+                                            <option value="MultipleChoice" selected={q.questionType === QuestionType.MultipleChoice}>Multiple Choice</option>
+                                            <option value="Scale" selected={q.questionType === QuestionType.Scale}>Scale</option>
+                                            <option value="FreeResponse" selected={q.questionType === QuestionType.FreeResponse}>Free Response</option>
                                         </select>
                                     </div>
                                     <button className="delete red" onClick={() => deleteQuestion(qIndex)}>-</button>
@@ -172,10 +186,10 @@ const SurverCreator: React.FC = (props: props) => {
                                     q.questionType === QuestionType.MultipleChoice ?
                                         <div className='options'>
                                             {
-                                                q.answers?.map((answer, aIndex) => {
+                                                q.options?.map((option, aIndex) => {
                                                     return <div key={"answer" + aIndex} className="answer" >
                                                         <input type="radio" placeholder='N/A' />
-                                                        <input type="text" placeholder="Answer..." onChange={(e) => changeAnswerText(qIndex, aIndex, e.target.value)} value={answer.text} />
+                                                        <input type="text" placeholder="Answer..." onChange={(e) => changeAnswerText(qIndex, aIndex, e.target.value)} value={option.text} />
                                                         <button className="red delete" onClick={() => deleteAnswer(qIndex, aIndex)}>-</button>
                                                     </div >
                                                 })
@@ -211,11 +225,7 @@ const SurverCreator: React.FC = (props: props) => {
                 })
             }
             <button onClick={addNewQuestion}>New Question</button>
-            {
-                operationType == OperationType.Creating ?
-                    <button onClick={saveSurvey}>Save Survey</button>
-                    : null
-            }
+            <button onClick={saveSurvey}>{currentOperation === OperationType.Creating ? "Save Survey as New" : "Save Edits"}</button>
         </div>
     )
 }

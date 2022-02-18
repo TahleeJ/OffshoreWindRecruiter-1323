@@ -1,0 +1,364 @@
+
+type User @aws_iam @aws_api_key {
+  id: ID!
+  name: String!
+  email: AWSEmail!
+  isAdmin: Boolean!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+}
+
+type Survey @aws_iam @aws_api_key {
+  id: ID!
+  name: String!
+  description: String!
+  Questions(filter: ModelQuestionFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelQuestionConnection
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+}
+
+enum QuestionType {
+  Scale
+  MultipleChoice
+  FreeResponse
+}
+
+type Question @aws_iam @aws_api_key {
+  id: ID!
+  prompt: String!
+  answers(filter: ModelAnswerFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelAnswerConnection
+  questionType: QuestionType!
+  survey: Survey
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+  surveyQuestionsId: ID
+}
+
+type Answer @aws_iam @aws_api_key {
+  id: ID!
+  text: String!
+  labels: [String!]
+  question: Question
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  _version: Int!
+  _deleted: Boolean
+  _lastChangedAt: AWSTimestamp!
+  questionAnswersId: ID
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelUserConnection @aws_api_key @aws_iam {
+  items: [User!]!
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelUserFilterInput {
+  id: ModelIDInput
+  name: ModelStringInput
+  email: ModelStringInput
+  isAdmin: ModelBooleanInput
+  and: [ModelUserFilterInput]
+  or: [ModelUserFilterInput]
+  not: ModelUserFilterInput
+}
+
+type Query {
+  getUser(id: ID!): User @aws_api_key @aws_iam
+  listUsers(filter: ModelUserFilterInput, limit: Int, nextToken: String): ModelUserConnection @aws_api_key @aws_iam
+  syncUsers(filter: ModelUserFilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelUserConnection @aws_api_key @aws_iam
+  getSurvey(id: ID!): Survey @aws_api_key @aws_iam
+  listSurveys(filter: ModelSurveyFilterInput, limit: Int, nextToken: String): ModelSurveyConnection @aws_api_key @aws_iam
+  syncSurveys(filter: ModelSurveyFilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelSurveyConnection @aws_api_key @aws_iam
+  getQuestion(id: ID!): Question @aws_api_key @aws_iam
+  listQuestions(filter: ModelQuestionFilterInput, limit: Int, nextToken: String): ModelQuestionConnection @aws_api_key @aws_iam
+  syncQuestions(filter: ModelQuestionFilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelQuestionConnection @aws_api_key @aws_iam
+  getAnswer(id: ID!): Answer @aws_api_key @aws_iam
+  listAnswers(filter: ModelAnswerFilterInput, limit: Int, nextToken: String): ModelAnswerConnection @aws_api_key @aws_iam
+  syncAnswers(filter: ModelAnswerFilterInput, limit: Int, nextToken: String, lastSync: AWSTimestamp): ModelAnswerConnection @aws_api_key @aws_iam
+}
+
+input ModelUserConditionInput {
+  name: ModelStringInput
+  email: ModelStringInput
+  isAdmin: ModelBooleanInput
+  and: [ModelUserConditionInput]
+  or: [ModelUserConditionInput]
+  not: ModelUserConditionInput
+}
+
+input CreateUserInput {
+  id: ID
+  name: String!
+  email: AWSEmail!
+  isAdmin: Boolean!
+  _version: Int
+}
+
+input UpdateUserInput {
+  id: ID!
+  name: String
+  email: AWSEmail
+  isAdmin: Boolean
+  _version: Int
+}
+
+input DeleteUserInput {
+  id: ID!
+  _version: Int
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!, condition: ModelUserConditionInput): User @aws_api_key @aws_iam
+  updateUser(input: UpdateUserInput!, condition: ModelUserConditionInput): User @aws_api_key @aws_iam
+  deleteUser(input: DeleteUserInput!, condition: ModelUserConditionInput): User @aws_api_key @aws_iam
+  createSurvey(input: CreateSurveyInput!, condition: ModelSurveyConditionInput): Survey @aws_api_key @aws_iam
+  updateSurvey(input: UpdateSurveyInput!, condition: ModelSurveyConditionInput): Survey @aws_api_key @aws_iam
+  deleteSurvey(input: DeleteSurveyInput!, condition: ModelSurveyConditionInput): Survey @aws_api_key @aws_iam
+  createQuestion(input: CreateQuestionInput!, condition: ModelQuestionConditionInput): Question @aws_api_key @aws_iam
+  updateQuestion(input: UpdateQuestionInput!, condition: ModelQuestionConditionInput): Question @aws_api_key @aws_iam
+  deleteQuestion(input: DeleteQuestionInput!, condition: ModelQuestionConditionInput): Question @aws_api_key @aws_iam
+  createAnswer(input: CreateAnswerInput!, condition: ModelAnswerConditionInput): Answer @aws_api_key @aws_iam
+  updateAnswer(input: UpdateAnswerInput!, condition: ModelAnswerConditionInput): Answer @aws_api_key @aws_iam
+  deleteAnswer(input: DeleteAnswerInput!, condition: ModelAnswerConditionInput): Answer @aws_api_key @aws_iam
+}
+
+type ModelSurveyConnection @aws_api_key @aws_iam {
+  items: [Survey!]!
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelSurveyFilterInput {
+  id: ModelIDInput
+  name: ModelStringInput
+  description: ModelStringInput
+  and: [ModelSurveyFilterInput]
+  or: [ModelSurveyFilterInput]
+  not: ModelSurveyFilterInput
+}
+
+input ModelSurveyConditionInput {
+  name: ModelStringInput
+  description: ModelStringInput
+  and: [ModelSurveyConditionInput]
+  or: [ModelSurveyConditionInput]
+  not: ModelSurveyConditionInput
+}
+
+input CreateSurveyInput {
+  id: ID
+  name: String!
+  description: String!
+  _version: Int
+}
+
+input UpdateSurveyInput {
+  id: ID!
+  name: String
+  description: String
+  _version: Int
+}
+
+input DeleteSurveyInput {
+  id: ID!
+  _version: Int
+}
+
+type ModelQuestionConnection @aws_iam @aws_api_key {
+  items: [Question!]!
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelQuestionTypeInput {
+  eq: QuestionType
+  ne: QuestionType
+}
+
+input ModelQuestionFilterInput {
+  id: ModelIDInput
+  prompt: ModelStringInput
+  questionType: ModelQuestionTypeInput
+  and: [ModelQuestionFilterInput]
+  or: [ModelQuestionFilterInput]
+  not: ModelQuestionFilterInput
+  surveyQuestionsId: ModelIDInput
+}
+
+input ModelQuestionConditionInput {
+  prompt: ModelStringInput
+  questionType: ModelQuestionTypeInput
+  and: [ModelQuestionConditionInput]
+  or: [ModelQuestionConditionInput]
+  not: ModelQuestionConditionInput
+  surveyQuestionsId: ModelIDInput
+}
+
+input CreateQuestionInput {
+  id: ID
+  prompt: String!
+  questionType: QuestionType!
+  _version: Int
+  surveyQuestionsId: ID
+}
+
+input UpdateQuestionInput {
+  id: ID!
+  prompt: String
+  questionType: QuestionType
+  _version: Int
+  surveyQuestionsId: ID
+}
+
+input DeleteQuestionInput {
+  id: ID!
+  _version: Int
+}
+
+type ModelAnswerConnection @aws_iam @aws_api_key {
+  items: [Answer!]!
+  nextToken: String
+  startedAt: AWSTimestamp
+}
+
+input ModelAnswerFilterInput {
+  id: ModelIDInput
+  text: ModelStringInput
+  labels: ModelStringInput
+  and: [ModelAnswerFilterInput]
+  or: [ModelAnswerFilterInput]
+  not: ModelAnswerFilterInput
+  questionAnswersId: ModelIDInput
+}
+
+input ModelAnswerConditionInput {
+  text: ModelStringInput
+  labels: ModelStringInput
+  and: [ModelAnswerConditionInput]
+  or: [ModelAnswerConditionInput]
+  not: ModelAnswerConditionInput
+  questionAnswersId: ModelIDInput
+}
+
+input CreateAnswerInput {
+  id: ID
+  text: String!
+  labels: [String!]
+  _version: Int
+  questionAnswersId: ID
+}
+
+input UpdateAnswerInput {
+  id: ID!
+  text: String
+  labels: [String!]
+  _version: Int
+  questionAnswersId: ID
+}
+
+input DeleteAnswerInput {
+  id: ID!
+  _version: Int
+}
+

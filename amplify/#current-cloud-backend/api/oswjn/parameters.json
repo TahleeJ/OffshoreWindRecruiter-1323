@@ -1,0 +1,6 @@
+{
+  "AppSyncApiName": "oswjn",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthModeLastUpdated": "2022-01-28T11:05:29.401Z"
+}

@@ -18,11 +18,19 @@ To edit the frontend:
 ## v0.2
 ### Features
 - Removed redundant extra header button
+- Application uses Firebase instead of Amplify, reducing costs
+- Create new survey template
+- Edit survey template (title, description, questions)
+- Delete survey template
+- Hide admin dashboard from Navigators
+- Create new label
+- Edit existing labels
+- Delete labels
 ### Bug Fixes
 - Page overscroll issue
+- Survey lists pull from live database
 ### Known Issues
-
-
+- Deleting items does not provide a confirmation
 
 ## v0.1
 ### Features

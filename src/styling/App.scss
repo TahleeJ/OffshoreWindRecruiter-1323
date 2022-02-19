@@ -11,9 +11,10 @@ $dark-gray: #dadada;
 $headerHeight: 50px;
 $contentHeight: calc(100% - 50px);
 
-$normal-font-size: 14px;
-$large-font-size: 18px;
-$largest-font-size: 24px;
+$small-font-size: 14px;
+$normal-font-size: 16px;
+$large-font-size: 20px;
+$largest-font-size: 28px;
 
 $subtle-shadow: 0px 0px 3px 2px rgb(221, 221, 221);
 
@@ -151,7 +152,7 @@ textarea {
     input[type="text"],
     input[type="password"] {
         padding: 7px;
-        font-size: $large-font-size;
+        font-size: $normal-font-size;
         border: none;
         border-bottom: 1px solid black;
         background-color: transparent;
@@ -175,7 +176,7 @@ textarea {
         margin-bottom: 20px;
         padding: 7px;
         width: 100%;
-        font-size: $large-font-size;
+        font-size: $normal-font-size;
     }
     img {
         width: 30px;
@@ -214,22 +215,21 @@ textarea {
         font-size: 25px;
         padding: 5px;
         flex: 1;
+        margin: auto;
+        font-weight: 600;
     }
     @media screen and (max-width: 500px) {
         .title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-block: auto;
+            font-size: $large-font-size;
         }
     }
 }
 
 #adminHome {
     height: $contentHeight;
-    // background-color: ;
     font-family: "Roboto";
-    // color: #4e4e4e;
     padding: 10px;
+    font-size: $large-font-size;
     overflow-y: auto;
 
     .topGrid {
@@ -288,18 +288,16 @@ textarea {
 
             button {
                 display: block;
-                height: 50px;
                 width: 100%;
                 border-radius: 5px;
                 margin-bottom: 10px;
-                font-size: $largest-font-size;
+                // font-size: $largest-font-size;
                 text-align: center;
             }
         }
 
         .userInfo {
             background-color: $gray1;
-            font-size: $large-font-size;
             flex: 1;
             border-radius: 3px;
             line-height: 20px;
@@ -331,6 +329,7 @@ textarea {
     h1 {
         margin: 0;
         padding: 20px;
+        font-size: $largest-font-size;
     }
 
     #userEmail {
@@ -348,7 +347,7 @@ textarea {
 
     button {
         margin: 5px;
-        font-size: $large-font-size;
+        font-size: $normal-font-size;
     }
 
     .optionPage {
@@ -362,7 +361,7 @@ textarea {
         padding: 10px;
 
         input[type="text"] {
-            font-size: $large-font-size;
+            font-size: $normal-font-size;
             border-radius: 3px;
             border: 2px solid $gray1;
 
@@ -386,7 +385,7 @@ textarea {
             }
 
             .surveyDescription {
-                font-size: $large-font-size;
+                font-size: $normal-font-size;
                 width: 100%;
                 padding: 5px;
                 border: none;
@@ -412,7 +411,7 @@ textarea {
                     width: 130px;
                     height: 40px;
                     margin-left: 5px;
-                    font-size: $large-font-size;
+                    font-size: $normal-font-size;
                 }
             }
 
@@ -451,7 +450,7 @@ textarea {
         .survey {
             text-align: center;
             margin: 0px 25px;
-            font-size: $large-font-size;
+            font-size: $normal-font-size;
         }
 
         .surveyTitle {
@@ -486,7 +485,7 @@ textarea {
 
             .options {
                 padding: 5px;
-                font-size: $large-font-size;
+                font-size: $normal-font-size;
             }
 
             &.sq {
@@ -561,13 +560,14 @@ textarea {
 #promoteUser {
     text-align: center;
     padding: 10px;
+    font-size: $large-font-size;
 
-    .header {
+    .title {
         font-weight: bold;
         color: $rose-red;
         font-size: $largest-font-size;
         position: relative;
-        padding-top: 80px;
+        padding: 50px 0px 10px 0px;
     }
 
     .textBlock {
@@ -640,7 +640,7 @@ textarea {
         background-color: $dark-gray;
         width: calc(100% - 140px);
         input[type="text"] {
-            font-size: $large-font-size;
+            font-size: $normal-font-size;
             border-radius: 3px;
             border: 2px solid $gray1;
             width: calc(100%);

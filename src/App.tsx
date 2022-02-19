@@ -14,12 +14,13 @@ import AdminHome from './react components/AdminHome';
 import Header from './react components/Header';
 import SurveyHome from './react components/survey/SurveyHome';
 import AdminManager from './react components/AdminManager';
-import LabelManager from './react components/LabelManager';
+import LabelManager from './react components/label/LabelManager';
 import JobManager from './react components/Job/JobManager';
 import AuthPage from './react components/AuthPage';
 
 import { getSurveys } from './firebase/SurveyQueries';
-import { updateSurveyList } from './redux/dataSlice.ts';
+import { setLabels, setSurveys } from './redux/dataSlice.ts';
+import { getLabels } from './firebase/LabelQueries';
 
 
 const getOverallPageFromType = (type: PageType) => {
@@ -39,11 +40,16 @@ const App: React.FC = () => {
 
     async function setSurveyState() {
         const surveys = await getSurveys(firestoreInstance);
-        dispatch(updateSurveyList(surveys));
+        dispatch(setSurveys(surveys));
+    }
+    async function setLabelState() {
+        const labels = await getLabels();
+        dispatch(setLabels(labels));
     }
 
     useEffect(() => {
-        setSurveyState()
+        setSurveyState();
+        setLabelState();
 
         authInstance.onAuthStateChanged(async (user) => {
             if (!user) {

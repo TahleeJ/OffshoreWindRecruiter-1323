@@ -1,12 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Survey } from '../firebase/Types';
+import { Label, Survey } from '../firebase/Types';
 
-
+export interface hasId {
+    id: string 
+}
 interface dataState {
-    surveys: (Survey & { id: string })[];
+    surveys: (Survey & hasId)[];
     surveyResponses: any[];
     jobOpps: any[];
-    labels: any[];
+    labels: (Label & hasId)[];
     //add more here when we know what types they are
 }
 
@@ -23,15 +25,18 @@ const dataSlice = createSlice({
     name: 'data',
     initialState,
     reducers: {
-        setSurveys(state, { payload }: PayloadAction<(Survey & { id: string })[]>) {
+        setSurveys(state, { payload }: PayloadAction<(Survey & hasId)[]>) {
             state.surveys = payload;
         },
-        //add other methods here for when we know the types of labels, jobOpps, etc
+        setLabels(state, { payload }: PayloadAction<(Label & hasId)[]>) {
+            state.labels = payload;
+        }
+        //add other methods here for when we know the types of jobOpps, etc
     }
 })
 
 
 
 
-export const { setSurveys: updateSurveyList } = dataSlice.actions
+export const { setSurveys, setLabels } = dataSlice.actions
 export default dataSlice.reducer

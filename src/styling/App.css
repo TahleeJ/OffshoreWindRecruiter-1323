@@ -173,6 +173,7 @@ textarea {
 }
 
 #header {
+  font-family: 'Roboto';
   background-color: #efefef;
   color: #76beba;
   height: 50px;
@@ -226,6 +227,8 @@ textarea {
   padding: 10px;
   font-size: 20px;
   overflow-y: auto;
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 #adminHome .topGrid {
@@ -340,6 +343,138 @@ textarea {
   #adminHome .jobAndSurveyColumn {
     margin: 0;
   }
+}
+
+#labelPage {
+  text-align: center;
+  font-family: "Roboto";
+}
+
+#labelPage .labelHeader {
+  font-weight: bold;
+  color: #be7478;
+  font-size: 24px;
+  position: relative;
+  padding-top: 80px;
+}
+
+#labelPage .searchBar {
+  padding-block: 15px;
+}
+
+#labelPage .searchInput {
+  width: 30%;
+  min-width: 250px;
+  height: 30px;
+  border-radius: 20px;
+  border-width: .5px;
+  border-color: #4e4e4e;
+  border-style: solid;
+  padding: 1px 0 0 20px;
+}
+
+#labelPage .barRow {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  margin-inline: 20px;
+}
+
+#labelPage .addLabelBar {
+  text-align: left;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 50%;
+          flex: 1 1 50%;
+}
+
+#labelPage .addLabelPrompt {
+  text-align: left;
+  margin-left: 20px;
+  color: #be7478;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+#labelPage .labelSubmit {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 10%;
+          flex: 1 1 10%;
+  margin-left: 20px;
+}
+
+#labelPage .labelInput {
+  width: 100%;
+  height: 30px;
+  padding-left: 20px;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #acacac;
+}
+
+#labelPage .labelContainer {
+  margin-inline: auto;
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  border-radius: 10px;
+  max-width: 800px;
+}
+
+#labelPage .addLabelDiv {
+  height: 100px;
+  background-color: #efefef;
+  border-radius: 10px 10px 0 0;
+  padding-top: 10px;
+}
+
+#labelPage .addLabelDiv > * {
+  padding-block: 5px;
+}
+
+#labelPage .listViewer {
+  border-radius: 0 0 10px 10px;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+#labelEditor {
+  font-family: 'Roboto';
+  text-align: center;
+}
+
+#labelEditor .labelHeader {
+  font-size: 24px;
+  font-weight: bold;
+  color: #be7478;
+}
+
+#labelEditor .labelNameInput {
+  width: 80%;
+  max-width: 850px;
+  height: 30px;
+  padding-left: 20px;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #acacac;
+}
+
+#labelEditor .listContainer > * {
+  width: 90%;
+  max-width: 900px;
+  margin-inline: auto;
+  margin-block: 20px;
+}
+
+#labelEditor .listElement .edit {
+  display: none;
+}
+
+.labelEditor > * {
+  margin-block: 20px;
 }
 
 #home {

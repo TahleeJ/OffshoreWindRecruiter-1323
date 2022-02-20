@@ -4,8 +4,7 @@ import { changePage, PageType } from '../redux/navigationSlice';
 import ReactTooltip from 'react-tooltip';
 
 import * as firebaseAuth from "@firebase/auth";
-import * as functions from "@firebase/functions";
-import { authInstance, firestoreInstance, functionsInstance } from "../firebase/Firebase";
+import { authInstance} from "../firebase/Firebase";
 
 import * as firestore from "@firebase/firestore";
 import db from '../firebase/Firestore';

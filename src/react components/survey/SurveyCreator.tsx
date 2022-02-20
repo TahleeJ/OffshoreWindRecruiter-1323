@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
 import { editSurvey, getSurveys, newSurvey } from "../../firebase/SurveyQueries";
 import { useEffect } from "react";
-import { updateSurveyList } from "../../redux/dataSlice.ts";
+import { setSurveys } from "../../redux/dataSlice.ts";
 import { firestoreInstance } from "../../firebase/Firebase";
 
 interface props {
@@ -46,7 +46,7 @@ const SurverCreator: React.FC = (props: props) => {
             await editSurvey(reduxSurveyData.id, survey);
 
         dispatch(changePage({ type: PageType.AdminHome }));
-        dispatch(updateSurveyList(await getSurveys(firestoreInstance)));
+        dispatch(setSurveys(await getSurveys(firestoreInstance)));
     }
 
     const addNewQuestion = () => {

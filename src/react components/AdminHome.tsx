@@ -1,7 +1,7 @@
 import React from 'react';
 import { authInstance, firestoreInstance } from '../firebase/Firebase';
 import { deleteSurvey, getSurveys } from '../firebase/SurveyQueries';
-import { updateSurveyList } from '../redux/dataSlice.ts';
+import { setSurveys } from '../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import ListViewer from './ListViewer';
@@ -58,7 +58,7 @@ const AdminHome: React.FC<props> = (props) => {
                                         key={ind}
                                         name={survey.title}
                                         handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing, data: survey }))}
-                                        handleDelete={async () => { await deleteSurvey(survey.id); appDispatch(updateSurveyList(await getSurveys(firestoreInstance)))}}
+                                        handleDelete={async () => { await deleteSurvey(survey.id); appDispatch(setSurveys(await getSurveys(firestoreInstance)))}}
                                     />
                                 })
                                 : <div>Click the "New" button to create a new survey template</div>

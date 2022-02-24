@@ -7,6 +7,7 @@ export async function getJobOpps() {
 
     const jobs: (JobOpp & {id: string})[] = [];
     response.forEach(d => jobs.push({ ...d.data(), id: d.id } as any))
+    console.log(jobs);
     return jobs;
 }
 

@@ -57,7 +57,7 @@ const SurverCreator: React.FC = (props: props) => {
         questions.forEach((q, i) => {
             let value = q;
             if (i === qIndex) {
-                const newAnswer: Answer = { text: '', labels: [] };
+                const newAnswer: Answer = { text: '', labelIds: [] };
                 const answers = q.options ? [...q.options, newAnswer] : [newAnswer];
                 value = {
                     ...q,

@@ -28,5 +28,5 @@ export const updatePermissions = functions.httpsCallable(functionsInstance, 'upd
 export const checkAdmin = functions.httpsCallable(functionsInstance, 'checkAdmin');
 
 // Local function testing
-functions.connectFunctionsEmulator(functionsInstance, "localhost", 5001);
+// functions.connectFunctionsEmulator(functionsInstance, "localhost", 5001);
 

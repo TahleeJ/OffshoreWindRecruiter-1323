@@ -29,7 +29,11 @@ exports.addNewUser = functions.https.onCall(async (request, context) => {
     const uid = context.auth.uid;
     const email = context.auth.token.email;
     
-    await firestore.collection("User").doc(uid).set({email: email, permissionLevel: permissionLevels.None}, {merge: false});
+    try {
+        await firestore.collection("User").doc(uid).create({email: email, permissionLevel: permissionLevels.None});
+    } catch (error) {
+        return;
+    }
 });
 
 /**

@@ -173,7 +173,7 @@ textarea {
 }
 
 #header {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   background-color: #efefef;
   color: #76beba;
   height: 50px;
@@ -367,7 +367,7 @@ textarea {
   min-width: 250px;
   height: 30px;
   border-radius: 20px;
-  border-width: .5px;
+  border-width: 0.5px;
   border-color: #4e4e4e;
   border-style: solid;
   padding: 1px 0 0 20px;
@@ -441,7 +441,7 @@ textarea {
 }
 
 #labelEditor {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   text-align: center;
 }
 
@@ -602,6 +602,25 @@ textarea {
   display: -ms-flexbox;
   display: flex;
   width: 100%;
+}
+
+#surveyHome .surveyCreator .createdQuestion i {
+  width: 30px;
+  height: 30px;
+  background-color: #76beba;
+  color: white;
+  border: none;
+  padding: 6px 3px;
+  font-size: 20px;
+  cursor: pointer;
+  -webkit-transition: .1s;
+  transition: .1s;
+  border-radius: 3px;
+  margin: 5px;
+}
+
+#surveyHome .surveyCreator .createdQuestion i:hover {
+  background-color: #62aaa6;
 }
 
 #surveyHome .surveyCreator input[type="radio"] {

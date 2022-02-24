@@ -16,7 +16,7 @@ interface props {
 
 }
 
-const devQuestions: SurveyQuestion[] = [
+const initQuestions: SurveyQuestion[] = [
     {
         prompt: "",
         questionType: QuestionType.MultipleChoice,
@@ -27,7 +27,7 @@ const devQuestions: SurveyQuestion[] = [
 const SurverCreator: React.FC = (props: props) => {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
-    const [questions, setQuestions] = useState<SurveyQuestion[]>(devQuestions);
+    const [questions, setQuestions] = useState<SurveyQuestion[]>(initQuestions);
     /** This is the current operation that is being done with surveys...usually creating/editing */
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     /** This contains the old survey data. */
@@ -61,7 +61,7 @@ const SurverCreator: React.FC = (props: props) => {
                 const answers = q.options ? [...q.options, newAnswer] : [newAnswer];
                 value = {
                     ...q,
-                    options: answers
+                    options: answers,
                 };
             }
             cpyQuestions.push(value);
@@ -87,10 +87,16 @@ const SurverCreator: React.FC = (props: props) => {
         questions.forEach((q, i) => {
             let value = q;
             if (i === index) {
+                const curType = (QuestionType as any)[type];
                 value = {
                     ...q,
-                    questionType: (QuestionType as any)[type]
+                    questionType: curType
                 };
+                if (curType !== QuestionType.MultipleChoice)
+                    value.options = [{
+                        text: "",
+                        labelIds: [],
+                    }];
             }
             cpyQuestions.push(value);
         });
@@ -149,6 +155,12 @@ const SurverCreator: React.FC = (props: props) => {
         });
         setQuestions(cpyQuestions);
     }
+    const changeQLabels = (qIndex: number) => {
+
+    }
+    const changeLabels = (qIndex: number, aIndex: number) => {
+
+    }
 
     useEffect(() => {
         //copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
@@ -181,42 +193,45 @@ const SurverCreator: React.FC = (props: props) => {
                                         </select>
                                     </div>
                                     <button className="delete red" onClick={() => deleteQuestion(qIndex)}>-</button>
+                                    {q.questionType !== QuestionType.MultipleChoice ?
+                                        <i className="fas fa-tags" onClick={() => changeQLabels(qIndex)}></i>
+                                        : null
+                                    }
                                 </div>
-                                {
-                                    q.questionType === QuestionType.MultipleChoice ?
-                                        <div className='options'>
-                                            {
-                                                q.options?.map((option, aIndex) => {
-                                                    return <div key={"answer" + aIndex} className="answer" >
-                                                        <input type="radio" placeholder='N/A' />
-                                                        <input type="text" placeholder="Answer..." onChange={(e) => changeAnswerText(qIndex, aIndex, e.target.value)} value={option.text} />
-                                                        <button className="red delete" onClick={() => deleteAnswer(qIndex, aIndex)}>-</button>
-                                                    </div >
-                                                })
-                                            }
-                                            <button onClick={() => addNewAnswer(qIndex)}>Add Answer</button>
-                                        </div>
-                                        : null
+                                {q.questionType === QuestionType.MultipleChoice ?
+                                    <div className='options'>
+                                        {
+                                            q.options?.map((option, aIndex) => {
+                                                return <div key={"answer" + aIndex} className="answer" >
+                                                    <input type="radio" placeholder='N/A' />
+                                                    <input type="text" placeholder="Answer..." onChange={(e) => changeAnswerText(qIndex, aIndex, e.target.value)} value={option.text} />
+                                                    <i className="fas fa-tags" onClick={() => changeLabels(qIndex, aIndex)}></i>
+                                                    <button className="red delete" onClick={() => deleteAnswer(qIndex, aIndex)}>-</button>
+                                                    {/* <FontAwesomeIcon icon="fa-solid fa-tag" /> */}
+                                                </div >
+                                            })
+                                        }
+                                        <button onClick={() => addNewAnswer(qIndex)}>Add Answer</button>
+                                    </div>
+                                    : null
                                 }
-                                {
-                                    q.questionType === QuestionType.Scale ?
-                                        <div className='s-options'>
-                                            Strongly Disagree
-                                            <input type="radio" placeholder='N/A' />
-                                            <input type="radio" placeholder='N/A' />
-                                            <input type="radio" placeholder='N/A' />
-                                            <input type="radio" placeholder='N/A' />
-                                            <input type="radio" placeholder='N/A' />
-                                            Strongly Agree
-                                        </div>
-                                        : null
+                                {q.questionType === QuestionType.Scale ?
+                                    <div className='s-options'>
+                                        Strongly Disagree
+                                        <input type="radio" placeholder='N/A' />
+                                        <input type="radio" placeholder='N/A' />
+                                        <input type="radio" placeholder='N/A' />
+                                        <input type="radio" placeholder='N/A' />
+                                        <input type="radio" placeholder='N/A' />
+                                        Strongly Agree
+                                    </div>
+                                    : null
                                 }
-                                {
-                                    q.questionType === QuestionType.FreeResponse ?
-                                        <div>
-                                            During survey administering, the user will be presented with a text input field
-                                        </div>
-                                        : null
+                                {q.questionType === QuestionType.FreeResponse ?
+                                    <div>
+                                        During survey administering, the user will be presented with a text input field
+                                    </div>
+                                    : null
                                 }
                             </div>
                             <div></div>
@@ -226,7 +241,7 @@ const SurverCreator: React.FC = (props: props) => {
             }
             <button onClick={addNewQuestion}>New Question</button>
             <button onClick={saveSurvey}>{currentOperation === OperationType.Creating ? "Save Survey as New" : "Save Edits"}</button>
-        </div>
+        </div >
     )
 }
 

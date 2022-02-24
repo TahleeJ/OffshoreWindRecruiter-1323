@@ -73,7 +73,7 @@ const App: React.FC = () => {
                 firestore.setDoc(
                     firestore.doc(db.Users, user.uid), {
                     email: user.email,
-                    permissionLevel: PermissionLevel.Admin,
+                    permissionLevel: PermissionLevel.None,
                 });
             }
         });

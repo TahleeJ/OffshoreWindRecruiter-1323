@@ -11,6 +11,15 @@ const permissionLevels = {
     Owner: 2
 };
 
+const errors = {
+    invalidUser: new functions.https.HttpsError("failed-precondition", "Invalid argument!", "The selected user is not a member of this application."),
+     illegalArgument: {
+        userEmail: new functions.https.HttpsError("invalid-argument", "Invalid argument!", "You must choose a user to change permissions for."), 
+        permissionLevel: new functions.https.HttpsError("invalid-argument", "Invalid argument!", "You must choose a valid permission level using an integer value 0-2.")
+    }, 
+    unauthorized: new functions.https.HttpsError("permission-denied", "Unauthorized!", "You do not have the privileges necessary to make this call."), 
+    applicationDisabled: new functions.https.HttpsError("failed-precondition", "Unauthorized!", "The application has disabled this action.")
+};
 
 /**
  * Checks whether the signed in user has administrator priviliges
@@ -42,35 +51,89 @@ exports.checkAdmin = functions.https.onCall(async (request, context) => {
  *  }
  * 
  * @param context Function caller user's authentication information
+ * @throw HttpsError if the user has invalid permissions, 
+ *        the application has disabled the desired permissions action, or 
+ *        if the provided arguments are invalid
  */
-exports.updateAdmin = functions.https.onCall(async (request, context) => {
-    const uid = context.auth.uid;
+exports.updatePermissions = functions.https.onCall(async (request, context) => {
+    if (request.userEmail == undefined || request.userEmail == null) {
+        throw errors.illegalArgument.userEmail;
+    }
 
-    const isAdmin = await firestore.collection("User").doc(uid).get().then(snapshot => {
+    if (request.newPermissionLevel == undefined || request.newPermissionLevel == null || request.newPermissionLevel < 0 || request.newPermissionLevel > 2) {
+        throw errors.illegalArgument.permissionLevel;
+    }
+    
+    const uid = context.auth.uid;
+   
+    // Obtain the function caller's permission level
+    const callerPermissionLevel = await firestore.collection("User").doc(uid).get().then(snapshot => {
+        const data = snapshot.data();
+
+        return data.permissionLevel;
+    });
+    
+    // Flags to check in Firestore for legal owner permission change actions
+    const flags = await firestore.collection("Flag").get().then(res => {
+            return data = res.docs[0].data();
+    }); 
+
+    var userRecord = null;
+
+    // Obtain the selected user's information reference in Firestore
+    try {
+        userRecord = await auth.getUserByEmail(request.userEmail);
+    } catch (error) {
+        throw errors.invalidUser;
+    }
+
+    const userDoc = firestore.collection("User").doc(userRecord.uid);
+    const userPermissionLevel = await userDoc.get().then(snapshot => {
         const data = snapshot.data();
 
         return data.permissionLevel;
     });
 
-    if (isAdmin != permissionLevels.Owner) {
-        throw new functions.https.HttpsError("permission-denied", "You do not have the privileges necessary to make this call.");
+    var newLevel = userPermissionLevel;
+
+    // Determine new permissions level
+    switch (request.newPermissionLevel) {
+        case permissionLevels.Owner:
+            if (flags.ownerPromoteFlag) {
+                if (callerPermissionLevel != permissionLevels.Owner) {
+                    throw errors.unauthorized;
+                }
+
+                newLevel = permissionLevels.Owner;
+            } else {
+                throw errors.applicationDisabled;
+            }
+  
+            break;
+        case permissionLevels.Admin:
+            if (callerPermissionLevel < permissionLevels.Admin) {
+                throw errors.unauthorized;
+            }
+
+            newLevel = (userPermissionLevel > permissionLevels.Admin) ? userPermissionLevel : permissionLevels.Admin;
+
+            break;
+        case permissionLevels.None:
+            if (userPermissionLevel == permissionLevels.Owner) {
+                if (!flags.demoteOwner) {
+                    throw errors.applicationDisabled;
+                }
+            }
+
+            if (callerPermissionLevel != permissionLevels.Owner) {
+                throw errors.unauthorized;
+            }
+
+            newLevel = permissionLevels.None;
+
+            break;
     }
 
-    var userRecord = null;
-
-    try {
-        userRecord = await auth.getUserByEmail(request.userEmail);
-    } catch (error) {
-        throw new functions.https.HttpsError("failed-precondition", "The selected user is not a member of this application.");
-    }
-
-    const userDoc = firestore.collection("User").doc(userRecord.uid);
-
-    if (request.newPermissionLevel == undefined || request.newPermissionLevel == null) {
-        throw new functions.https.HttpsError("invalid-argument", "You must choose a user to change permission for and whether to promote or demote them using an integer value 0-2.");
-    }
-
-    await userDoc.update({permissionLevel: request.newPermissionLevel});
-
-    return;
+    // Update permissions level
+    await userDoc.update({permissionLevel: newLevel});
 });

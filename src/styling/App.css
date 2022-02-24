@@ -353,7 +353,7 @@ textarea {
 #labelPage .labelHeader {
   font-weight: bold;
   color: #be7478;
-  font-size: 24px;
+  font-size: 28px;
   position: relative;
   padding-top: 80px;
 }
@@ -446,7 +446,7 @@ textarea {
 }
 
 #labelEditor .labelHeader {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
   color: #be7478;
 }
@@ -846,5 +846,37 @@ textarea {
 
 #jobCreator .buttons .gray {
   margin-right: 100px;
+}
+
+#Popup {
+  position: fixed;
+  background-color: #efefef;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+}
+
+#Popup .popBox {
+  position: relative;
+  width: 70%;
+  margin: auto;
+  max-height: 70vh;
+  margin-top: calc(100vh - 85vh - 20px);
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px;
+  border: 1px solid #999;
+  overflow: auto;
+}
+
+#Popup .popBox .PopupText h1 {
+  color: #a76568;
+}
+
+#Popup .popBox .Buttons {
+  position: relative;
+  left: 35%;
+  margin-left: 40px;
 }
 /*# sourceMappingURL=App.css.map */

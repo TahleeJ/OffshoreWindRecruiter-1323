@@ -23,6 +23,9 @@ export const authInstance = firebaseAuth.getAuth(firebaseApp);
 export const firestoreInstance = firestore.getFirestore(firebaseApp);
 export const functionsInstance = functions.getFunctions(firebaseApp);
 
-export const updateAdmin = functions.httpsCallable(functionsInstance, 'updateAdmin');
+export const updatePermissions = functions.httpsCallable(functionsInstance, 'updatePermissions');
 export const checkAdmin = functions.httpsCallable(functionsInstance, 'checkAdmin');
+
+// Local function testing
+// functions.connectFunctionsEmulator(functionsInstance, "localhost", 5001);
 

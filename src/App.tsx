@@ -19,8 +19,9 @@ import JobManager from './react components/Job/JobManager';
 import AuthPage from './react components/AuthPage';
 
 import { getSurveys } from './firebase/SurveyQueries';
-import { setLabels, setSurveys } from './redux/dataSlice.ts';
+import { setLabels, setSurveys, setJobOpps } from './redux/dataSlice.ts';
 import { getLabels } from './firebase/LabelQueries';
+import { getJobOpps } from './firebase/JobQueries';
 
 
 const getOverallPageFromType = (type: PageType) => {
@@ -46,10 +47,16 @@ const App: React.FC = () => {
         const labels = await getLabels();
         dispatch(setLabels(labels));
     }
+    async function setJobState() {
+        const jobOpps = await getJobOpps();
+        dispatch(setJobOpps(jobOpps));
+        
+    }
 
     useEffect(() => {
         setSurveyState();
         setLabelState();
+        setJobState();
 
         authInstance.onAuthStateChanged(async (user) => {
             if (!user) {

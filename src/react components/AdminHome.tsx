@@ -1,5 +1,6 @@
 import React from 'react';
 import { authInstance, firestoreInstance } from '../firebase/Firebase';
+import { getJobOpps } from '../firebase/JobQueries';
 import { deleteSurvey, getSurveys } from '../firebase/SurveyQueries';
 import { setSurveys } from '../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -14,6 +15,7 @@ interface props {
 
 const AdminHome: React.FC<props> = (props) => {
     const surveys = useAppSelector(s => s.data.surveys);
+    const jobOpps = useAppSelector(s => s.data.jobOpps)
     const appDispatch = useAppDispatch();
     const user = authInstance.currentUser;
 
@@ -47,6 +49,17 @@ const AdminHome: React.FC<props> = (props) => {
                             <ListElement name="Test job opp" handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")} />
                             <ListElement name="Test job opp" handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")} />
                             <ListElement name="Test job opp" handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")} />
+                            {jobOpps.length > 0 ?
+                                jobOpps.map((jobOpp, ind) => {
+                                    return <ListElement
+                                        key={ind}
+                                        name={jobOpp.jobName}
+                                        handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing, data: jobOpp }))} // does not actually handle edits yet
+                                        handleDelete={() => alert("This function has not been completed yet.")}
+                                    />
+                                })
+                                : <div>Click the "New" button to create a new job opportunity</div>
+                            }
                         </ListViewer>
                     </div>
                     {/* <h3 id='surveyName'>Surveys</h3> */}

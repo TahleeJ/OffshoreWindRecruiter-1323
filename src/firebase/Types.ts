@@ -27,7 +27,7 @@ export interface Answer {
     labels: Label[]
 }
 
-export interface Job {
+export interface JobOpp {
     jobName: string
     companyName: string
     labels: Label[]
@@ -36,12 +36,12 @@ export interface Job {
 
 export interface RecommendedJobs {
     taker: SurveyTaker
-    jobs: Job[] | null
+    jobs: JobOpp[] | null
 }
 
 export interface Label {
     name: string
-    jobs: Job[]
+    jobs: JobOpp[]
 }
 
 export interface User {

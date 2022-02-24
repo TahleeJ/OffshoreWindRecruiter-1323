@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const functions = require('firebase-functions');
+
 admin.initializeApp();
 
 const firestore = admin.firestore();
@@ -20,6 +21,16 @@ const errors = {
     unauthorized: new functions.https.HttpsError("permission-denied", "Unauthorized!", "You do not have the privileges necessary to make this call."), 
     applicationDisabled: new functions.https.HttpsError("failed-precondition", "Unauthorized!", "The application has disabled this action.")
 };
+
+/**
+ * Adds a new user to Firestore with None as default permissions
+ */
+exports.addNewUser = functions.https.onCall(async (request, context) => {
+    const uid = context.auth.uid;
+    const email = context.auth.token.email;
+    
+    await firestore.collection("User").doc(uid).set({email: email, permissionLevel: permissionLevels.None}, {merge: false});
+});
 
 /**
  * Checks whether the signed in user has administrator priviliges

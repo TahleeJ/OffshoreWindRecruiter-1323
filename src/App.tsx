@@ -5,7 +5,7 @@ import * as firebaseAuth from "@firebase/auth";
 import * as firestore from "@firebase/firestore";
 import { authInstance, firestoreInstance } from './firebase/Firebase';
 import db from './firebase/Firestore';
-import { PermissionLevel } from './firebase/Types';
+import { addNewUser } from './firebase/Firebase';
 
 import Home from './react components/Home'
 import { useAppDispatch, useAppSelector } from './redux/hooks';
@@ -49,8 +49,7 @@ const App: React.FC = () => {
     }
     async function setJobState() {
         const jobOpps = await getJobOpps();
-        dispatch(setJobOpps(jobOpps));
-        
+        dispatch(setJobOpps(jobOpps));  
     }
 
     useEffect(() => {
@@ -67,15 +66,7 @@ const App: React.FC = () => {
             setLoggedIn(true);
 
             // Add new user to Firestore if not already present in database
-            var userDoc = await firestore.getDoc(firestore.doc(db.Users, user.uid));
-
-            if (!userDoc.exists()) {
-                firestore.setDoc(
-                    firestore.doc(db.Users, user.uid), {
-                    email: user.email,
-                    permissionLevel: PermissionLevel.None,
-                });
-            }
+            await addNewUser({});
         });
     }, [])
 

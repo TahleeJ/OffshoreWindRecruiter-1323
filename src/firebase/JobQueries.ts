@@ -2,12 +2,11 @@ import * as firestore from "@firebase/firestore";
 import { JobOpp } from "./Types";
 import db from "./Firestore";
 
+
 export async function getJobOpps() {
     const response = await firestore.getDocs(db.JobOpps);
 
-    const jobs: (JobOpp & {id: string})[] = [];
-    response.forEach(d => jobs.push({ ...d.data(), id: d.id } as any))
-    return jobs;
+    return response.docs.map(job => ({...job.data(), id: job.id }));
 }
 
 export async function getJobOpp(id: string) {

@@ -1,9 +1,9 @@
 // import * as firestore from "@firebase/firestore";
-import { PermissionLevel } from "./Types";
 // import db from "./Firestore";
 import { updatePermissions } from "./Firebase";
+import { PermissionLevel } from "./Types";
 
-export async function setUserPermissionLevel(email: string, newLevel: number): Promise<string> {
+export async function setUserPermissionLevel(email: string, newLevel: PermissionLevel): Promise<string> {
     try {
         const result = await updatePermissions({ userEmail: email, newPermissionLevel: newLevel });
 

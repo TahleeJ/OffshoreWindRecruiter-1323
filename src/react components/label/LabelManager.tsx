@@ -22,8 +22,7 @@ const LabelManager: React.FC<props> = (props) => {
 
     const createLabel = async () => {
         await newLabel({
-            name: newLabelName,
-            jobs: []
+            name: newLabelName
         });
         resetInput();
         appDispatch(setLabels(await getLabels()));

@@ -27,13 +27,9 @@ const errors = {
  */
 exports.addNewUser = functions.https.onCall(async (request, context) => {
     const uid = context.auth.uid;
-    const email = context.auth.token.email;
+    const userEmail = context.auth.token.email;
     
-    try {
-        await firestore.collection("User").doc(uid).create({email: email, permissionLevel: permissionLevels.None});
-    } catch (error) {
-        return;
-    }
+    await firestore.collection("User").doc(uid).set({email: userEmail, permissionLevel: permissionLevels.None}, {merge: true, mergeFields: email});
 });
 
 /**

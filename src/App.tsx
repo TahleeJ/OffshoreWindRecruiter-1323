@@ -5,7 +5,7 @@ import * as firebaseAuth from "@firebase/auth";
 import * as firestore from "@firebase/firestore";
 import { authInstance, firestoreInstance } from './firebase/Firebase';
 import db from './firebase/Firestore';
-import { addNewUser } from './firebase/Firebase';
+import { PermissionLevel } from './firebase/Types';
 
 import Home from './react components/Home'
 import { useAppDispatch, useAppSelector } from './redux/hooks';
@@ -66,7 +66,12 @@ const App: React.FC = () => {
             setLoggedIn(true);
 
             // Add new user to Firestore if not already present in database
-            await addNewUser({});
+            firestore.setDoc(
+                firestore.doc(db.Users, user.uid), {
+                    email: user.email,
+                    permissionLevel: PermissionLevel.None,
+                }
+            );
         });
     }, [])
 

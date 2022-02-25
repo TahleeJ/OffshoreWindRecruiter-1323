@@ -5,7 +5,6 @@ import * as firebaseAuth from "@firebase/auth";
 import * as firestore from "@firebase/firestore";
 import { authInstance, firestoreInstance } from './firebase/Firebase';
 import db from './firebase/Firestore';
-// import { addNewUser } from './firebase/Firebase';
 import { PermissionLevel } from './firebase/Types';
 
 import Home from './react components/Home'

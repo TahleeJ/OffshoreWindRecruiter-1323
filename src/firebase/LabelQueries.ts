@@ -1,13 +1,12 @@
 import * as firestore from "@firebase/firestore";
-import { Label, Survey } from "./Types";
+import { Label } from "./Types";
 import db from "./Firestore";
+
 
 export async function getLabels() {
     const response = await firestore.getDocs(db.Labels);
 
-    const labels: (Label & {id: string})[] = [];
-    response.forEach(d => labels.push({ ...d.data(), id: d.id } as any))
-    return labels;
+    return response.docs.map(label => ({...label.data(), id: label.id }));
 }
 
 export async function getLabel(id: string) {

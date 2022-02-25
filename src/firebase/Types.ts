@@ -10,12 +10,6 @@ export interface SurveyQuestion {
     questionType: QuestionType
 }
 
-export interface SurveyResponse {
-    questions: SurveyQuestion[]
-    answers: Answer[]
-    taker: SurveyTaker
-}
-
 export enum QuestionType {
     Scale,
     MultipleChoice,
@@ -27,6 +21,24 @@ export interface Answer {
     labelIds: string[]
 }
 
+export interface Label {
+    name: string
+}
+
+
+export interface SurveyResponse {
+    questions: SurveyQuestion[]
+    answers: Answer[]
+    taker: SurveyTaker
+}
+
+export interface SurveyTaker {
+    name: string
+    email: string
+    phone: string
+}
+
+
 export interface JobOpp {
     jobName: string;
     companyName: string;
@@ -35,24 +47,13 @@ export interface JobOpp {
 }
 
 export interface RecommendedJobs {
-    taker: SurveyTaker;
-    jobs: string[];
+    jobs: JobOpp[] | null
 }
 
-export interface Label {
-    name: string;
-    jobIds: string[];
-}
 
 export interface User {
     email: string | null
     permissionLevel: PermissionLevel
-}
-
-export interface SurveyTaker {
-    name: string
-    email: string
-    phone: string
 }
 
 export enum PermissionLevel {

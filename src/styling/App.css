@@ -500,6 +500,7 @@ textarea {
   text-align: center;
   height: calc(100% - 50px);
   overflow-y: auto;
+  background-color: #dadada;
 }
 
 #surveyHome button {
@@ -512,7 +513,6 @@ textarea {
 }
 
 #surveyHome .surveyCreator {
-  background-color: #dadada;
   max-width: 800px;
   margin: auto;
   padding: 10px;
@@ -520,8 +520,8 @@ textarea {
 
 #surveyHome .surveyCreator input[type="text"] {
   font-size: 16px;
-  border-radius: 3px;
-  border: 2px solid #efefef;
+  border: none;
+  border-bottom: 2px solid #efefef;
 }
 
 #surveyHome .surveyCreator input[type="text"]:focus {
@@ -540,6 +540,7 @@ textarea {
   padding: 5px;
   border: none;
   background-color: transparent;
+  border-bottom: 2px solid #efefef;
 }
 
 #surveyHome .surveyCreator .surveyHeader .surveyDescription {

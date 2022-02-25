@@ -7,6 +7,8 @@ $rose-red: #be7478;
 $dark-rose-red: #a76568;
 $gray1: #efefef;
 $dark-gray: #dadada;
+$purple: #9676be;
+$green: #9ebe76;
 
 $headerHeight: 50px;
 $contentHeight: calc(100% - 50px);
@@ -465,6 +467,7 @@ textarea {
     text-align: center;
     height: $contentHeight;
     overflow-y: auto;
+    background-color: $dark-gray;
 
     button {
         margin: 5px;
@@ -476,15 +479,14 @@ textarea {
     }
 
     .surveyCreator {
-        background-color: $dark-gray;
         max-width: 800px;
         margin: auto; //used for centering div
         padding: 10px;
 
         input[type="text"] {
             font-size: $normal-font-size;
-            border-radius: 3px;
-            border: 2px solid $gray1;
+            border: none;
+            border-bottom: 2px solid $gray1;
 
             &:focus {
                 border-bottom: 2px solid $pale-green;
@@ -503,6 +505,7 @@ textarea {
                 padding: 5px;
                 border: none;
                 background-color: transparent;
+                border-bottom: 2px solid $gray1;
             }
 
             .surveyDescription {
@@ -886,7 +889,7 @@ textarea {
 
 i {
     position: relative;
-    
+
     .labelCount {
         position: absolute;
         top: 5px;

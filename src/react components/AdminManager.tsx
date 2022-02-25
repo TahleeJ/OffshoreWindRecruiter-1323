@@ -29,7 +29,7 @@ const AdminManager: React.FC<props> = (props) => {
         // setUserPermissionLevel(email, 1)
     }
     const demote = () => {
-        setUserPermissionLevel(email, 0)
+        setUserPermissionLevel(email, PermissionLevel.None)
         dispatch(changePage({type: PageType.AdminHome}))
     }
     useEffect(() => { updateIsAdmin(); }, []);

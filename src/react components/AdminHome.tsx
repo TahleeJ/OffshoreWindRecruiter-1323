@@ -1,6 +1,5 @@
 import React from 'react';
 import { authInstance, firestoreInstance } from '../firebase/Firebase';
-import { getJobOpps } from '../firebase/JobQueries';
 import { deleteSurvey, getSurveys } from '../firebase/SurveyQueries';
 import { setSurveys } from '../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';

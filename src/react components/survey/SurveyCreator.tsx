@@ -1,9 +1,7 @@
 import React, { useState } from "react";
+import _ from "lodash"
 
-import * as firestore from "@firebase/firestore";
-
-import { Answer, QuestionType, Survey, SurveyQuestion, SurveyResponse } from "../../firebase/Types";
-import db from "../../firebase/Firestore";
+import { Answer, QuestionType, Survey, SurveyQuestion } from "../../firebase/Types";
 
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
@@ -52,102 +50,54 @@ const SurverCreator: React.FC = (props: props) => {
     const addNewQuestion = () => {
         setQuestions(s => [...s, { prompt: "", options: [], questionType: QuestionType.MultipleChoice }])
     }
+
     const addNewAnswer = (qIndex: number) => {
-        let cpyQuestions: any[] = [];
-        questions.forEach((q, i) => {
-            let value = q;
-            if (i === qIndex) {
-                const newAnswer: Answer = { text: '', labels: [] };
-                const answers = q.options ? [...q.options, newAnswer] : [newAnswer];
-                value = {
-                    ...q,
-                    options: answers
-                };
-            }
-            cpyQuestions.push(value);
-        });
-        setQuestions(cpyQuestions);
+        let cloneQuestions = _.cloneDeep(questions);
+        
+        const newAnswer: Answer = { text: '', labels: [] };
+        cloneQuestions[qIndex].options.push(newAnswer)
+        
+        setQuestions(cloneQuestions);
     }
-    const changeQuestionPrompt = (index: number, newPrompt: string) => {
-        let cpyQuestions: any[] = [];
-        questions.forEach((q, i) => {
-            let value = q;
-            if (i === index) {
-                value = {
-                    ...q,
-                    prompt: newPrompt
-                };
-            }
-            cpyQuestions.push(value);
-        });
-        setQuestions(cpyQuestions);
+
+    const changeQuestionPrompt = (qIndex: number, newPrompt: string) => {
+        let cloneQuestions = _.cloneDeep(questions);
+
+        cloneQuestions[qIndex].prompt = newPrompt;
+        
+        setQuestions(cloneQuestions);
     }
-    const changeQuestionType = (index: number, type: string) => {
-        let cpyQuestions: any[] = [];
-        questions.forEach((q, i) => {
-            let value = q;
-            if (i === index) {
-                value = {
-                    ...q,
-                    questionType: (QuestionType as any)[type]
-                };
-            }
-            cpyQuestions.push(value);
-        });
-        setQuestions(cpyQuestions);
+
+    const changeQuestionType = (qIndex: number, newType: QuestionType) => {
+        let cloneQuestions = _.cloneDeep(questions);
+
+        cloneQuestions[qIndex].questionType = newType;
+        
+        setQuestions(cloneQuestions);
     }
+
     const changeAnswerText = (qIndex: number, aIndex: number, newText: string) => {
-        let cpyQuestions: any[] = [];
-        questions.forEach((q, qI) => {
-            let changedQ = q;
-            if (qI === qIndex) { //this is the question that needs to be modified
-                const options: Answer[] = [];
-                (q.options as Answer[]).forEach((a, aI) => {
-                    let changedA = a;
-                    if (aI === aIndex) { //this is the answer that needs to be modified
-                        changedA = {
-                            ...a,
-                            text: newText
-                        }
-                    }
-                    options.push(changedA);
-                });
-                changedQ = {
-                    ...q,
-                    options: options
-                };
-            }
-            cpyQuestions.push(changedQ);
-        });
-        setQuestions(cpyQuestions);
-        // questions.forEach(q => {
-        //     q.options?.forEach(a => {
-        //         console.log(a.text)
-        //     });
-        // });
+        let cloneQuestions = _.cloneDeep(questions);
+
+        cloneQuestions[qIndex].options[aIndex].text = newText;
+        
+        setQuestions(cloneQuestions);
     }
+
     const deleteQuestion = (qIndex: number) => {
-        let cpyQuestions: any[] = [];
-        questions.forEach((q, i) => {
-            if (i !== qIndex) cpyQuestions.push(q);
-        });
-        setQuestions(cpyQuestions);
+        let cloneQuestions = _.cloneDeep(questions);
+
+        cloneQuestions.splice(qIndex, 1);
+        
+        setQuestions(cloneQuestions);
     }
+
     const deleteAnswer = (qIndex: number, aIndex: number) => {
-        let cpyQuestions: any[] = [];
-        questions.forEach((q, qi) => {
-            if (qi === qIndex) {
-                let cpyQ = Object.assign(q);
-                const cpyOptions: Answer[] = [];
-                q.options?.forEach((a, ai) => {
-                    if (ai !== aIndex)
-                        cpyOptions.push(a)
-                })
-                cpyQ.options = cpyOptions;
-                cpyQuestions.push(cpyQ);
-            } else cpyQuestions.push(q);
-        });
-        setQuestions(cpyQuestions);
+        let cloneQuestions = _.cloneDeep(questions);
+
+        cloneQuestions[qIndex].options.splice(aIndex, 1);
+        
+        setQuestions(cloneQuestions);
     }
 
     useEffect(() => {
@@ -174,7 +124,7 @@ const SurverCreator: React.FC = (props: props) => {
                                 <div className="header">
                                     <input type='text' className="prompt" value={q.prompt} placeholder="Question Prompt..." onChange={(e) => changeQuestionPrompt(qIndex, e.target.value)} />
                                     <div className="questionType">
-                                        <select name="questionType" title="Question Type" onChange={(e) => changeQuestionType(qIndex, e.target.value)}>
+                                        <select name="questionType" title="Question Type" onChange={e => changeQuestionType(qIndex, QuestionType[e.target.value as keyof typeof QuestionType])}>
                                             <option value="MultipleChoice" selected={q.questionType === QuestionType.MultipleChoice}>Multiple Choice</option>
                                             <option value="Scale" selected={q.questionType === QuestionType.Scale}>Scale</option>
                                             <option value="FreeResponse" selected={q.questionType === QuestionType.FreeResponse}>Free Response</option>

@@ -537,7 +537,12 @@ textarea {
             }
 
             .delete {
-                width: 30px;
+                background-color: $rose-red;
+                padding-left: 5px;
+
+                &:hover {
+                    background-color: $dark-rose-red;
+                }
             }
 
             .s-options {
@@ -571,7 +576,7 @@ textarea {
                 padding: 6px 3px;
                 font-size: 20px;
                 cursor: pointer;
-                transition: .1s;
+                transition: 0.1s;
                 border-radius: 3px;
                 margin: 5px;
 
@@ -807,10 +812,12 @@ textarea {
 #Popup {
     position: fixed;
     background-color: $gray1;
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     top: 0;
     left: 0;
+    z-index: 1;
+
     .popBox {
         position: relative;
         width: 70%;
@@ -832,5 +839,58 @@ textarea {
             left: 35%;
             margin-left: 40px;
         }
+    }
+}
+
+.transparentBackground {
+    position: fixed;
+    background-color: transparent;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 1;
+
+    .dropdown {
+        position: absolute;
+        background-color: $gray1;
+        border-radius: 5px;
+        box-shadow: $subtle-shadow;
+        font-size: $large-font-size;
+        padding: 5px;
+        width: 200px;
+        max-height: 400px;
+
+        .title {
+            text-align: center;
+            font-weight: bold;
+            color: $rose-red;
+            border-bottom: 1px solid $dark-gray;
+        }
+
+        .labelChoice {
+            padding: 5px;
+            border-bottom: 0.5px solid $dark-gray;
+            cursor: pointer;
+            border-radius: 3px;
+
+            &:hover,
+            &.active {
+                background-color: $dark-gray;
+                // text-decoration: underline;
+                // text-decoration-color: $pale-green;
+            }
+        }
+    }
+}
+
+i {
+    position: relative;
+    
+    .labelCount {
+        position: absolute;
+        top: 5px;
+        left: 7px;
+        color: black;
     }
 }

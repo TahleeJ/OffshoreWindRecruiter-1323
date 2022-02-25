@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './styling/App.css';
 
 import * as firebaseAuth from "@firebase/auth";
@@ -36,18 +36,18 @@ const App: React.FC = () => {
     const [isLoggedIn, setLoggedIn] = useState(false);
     const dispatch = useAppDispatch();
 
-    async function setSurveyState() {
+    const setSurveyState = useCallback(async () => {
         const surveys = await getSurveys(firestoreInstance);
         dispatch(setSurveys(surveys));
-    }
-    async function setLabelState() {
+    }, [dispatch]);
+    const setLabelState = useCallback(async () => {
         const labels = await getLabels();
         dispatch(setLabels(labels));
-    }
-    async function setJobState() {
+    }, [dispatch])
+    const setJobState = useCallback(async () => {
         const jobOpps = await getJobOpps();
-        dispatch(setJobOpps(jobOpps));  
-    }
+        dispatch(setJobOpps(jobOpps));
+    }, [dispatch]);
 
     useEffect(() => {
         setSurveyState();
@@ -62,7 +62,7 @@ const App: React.FC = () => {
 
             setLoggedIn(true);
         });
-    })
+    }, [setSurveyState, setLabelState, setJobState])
 
     const pageType = useAppSelector(s => s.navigation.currentPage);
 

@@ -577,7 +577,12 @@ textarea {
 }
 
 #surveyHome .surveyCreator .createdQuestion .delete {
-  width: 30px;
+  background-color: #be7478;
+  padding-left: 5px;
+}
+
+#surveyHome .surveyCreator .createdQuestion .delete:hover {
+  background-color: #a76568;
 }
 
 #surveyHome .surveyCreator .createdQuestion .s-options {
@@ -613,8 +618,8 @@ textarea {
   padding: 6px 3px;
   font-size: 20px;
   cursor: pointer;
-  -webkit-transition: .1s;
-  transition: .1s;
+  -webkit-transition: 0.1s;
+  transition: 0.1s;
   border-radius: 3px;
   margin: 5px;
 }
@@ -870,10 +875,11 @@ textarea {
 #Popup {
   position: fixed;
   background-color: #efefef;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   top: 0;
   left: 0;
+  z-index: 1;
 }
 
 #Popup .popBox {
@@ -897,5 +903,56 @@ textarea {
   position: relative;
   left: 35%;
   margin-left: 40px;
+}
+
+.transparentBackground {
+  position: fixed;
+  background-color: transparent;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.transparentBackground .dropdown {
+  position: absolute;
+  background-color: #efefef;
+  border-radius: 5px;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
+  font-size: 20px;
+  padding: 5px;
+  width: 200px;
+  max-height: 400px;
+}
+
+.transparentBackground .dropdown .title {
+  text-align: center;
+  font-weight: bold;
+  color: #be7478;
+  border-bottom: 1px solid #dadada;
+}
+
+.transparentBackground .dropdown .labelChoice {
+  padding: 5px;
+  border-bottom: 0.5px solid #dadada;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.transparentBackground .dropdown .labelChoice:hover, .transparentBackground .dropdown .labelChoice.active {
+  background-color: #dadada;
+}
+
+i {
+  position: relative;
+}
+
+i .labelCount {
+  position: absolute;
+  top: 5px;
+  left: 7px;
+  color: black;
 }
 /*# sourceMappingURL=App.css.map */

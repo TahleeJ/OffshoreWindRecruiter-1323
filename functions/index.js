@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 const functions = require('firebase-functions');
 
+
 admin.initializeApp();
 
 const firestore = admin.firestore();
@@ -22,15 +23,15 @@ const errors = {
     applicationDisabled: new functions.https.HttpsError("failed-precondition", "Unauthorized!", "The application has disabled this action.")
 };
 
+
 /**
- * Adds a new user to Firestore with None as default permissions
+ * Called when a user creates an account, makes a new User with None as default permissions
+ * https://firebase.google.com/docs/functions/auth-events
  */
-exports.addNewUser = functions.https.onCall(async (request, context) => {
-    const uid = context.auth.uid;
-    const userEmail = context.auth.token.email;
-    
-    await firestore.collection("User").doc(uid).set({email: userEmail, permissionLevel: permissionLevels.None}, {merge: true, mergeFields: email});
+exports.createNewUser = functions.auth.user().onCreate((user) => {
+    return firestore.collection("User").doc(user.uid).set({email: user.email, permissionLevel: permissionLevels.None})
 });
+
 
 /**
  * Checks whether the signed in user has administrator priviliges
@@ -50,6 +51,7 @@ exports.checkAdmin = functions.https.onCall(async (request, context) => {
         };
     });
 });
+
 
 /**
  * Given function caller's required privileges, a selected user can

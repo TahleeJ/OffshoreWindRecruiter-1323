@@ -6,11 +6,11 @@ export interface Survey {
 
 export interface SurveyQuestion {
     prompt: string
-    options: Answer[]
-    questionType: QuestionType
+    answers: Answer[]
+    questionType: Question
 }
 
-export enum QuestionType {
+export enum Question {
     Scale,
     MultipleChoice,
     FreeResponse

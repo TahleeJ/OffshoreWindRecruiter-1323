@@ -586,24 +586,24 @@ textarea {
   background-color: #a76568;
 }
 
-#surveyHome .surveyCreator .createdQuestion .s-options {
+#surveyHome .surveyCreator .createdQuestion .s-answers {
   text-align: center;
   padding-bottom: 10px;
 }
 
-#surveyHome .surveyCreator .createdQuestion .options {
+#surveyHome .surveyCreator .createdQuestion .answers {
   width: 100%;
   padding: 3px;
 }
 
-#surveyHome .surveyCreator .createdQuestion .options input[type="text"] {
+#surveyHome .surveyCreator .createdQuestion .answers input[type="text"] {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
   margin-top: 5px;
 }
 
-#surveyHome .surveyCreator .createdQuestion .options .answer {
+#surveyHome .surveyCreator .createdQuestion .answers .answer {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -670,7 +670,7 @@ textarea {
   font-size: 14px;
 }
 
-#surveyHome .administerSurveyPage .question .options {
+#surveyHome .administerSurveyPage .question .answers {
   padding: 5px;
   font-size: 16px;
 }

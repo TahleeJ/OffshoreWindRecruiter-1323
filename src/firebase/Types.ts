@@ -18,7 +18,7 @@ export enum QuestionType {
 
 export interface Answer {
     text: string
-    labels: Label[]
+    labelIds: string[]
 }
 
 export interface Label {
@@ -40,10 +40,10 @@ export interface SurveyTaker {
 
 
 export interface JobOpp {
-    jobName: string
-    companyName: string
-    labels: Label[]
-    jobDescription: string
+    jobName: string;
+    companyName: string;
+    labelIds: string[];
+    jobDescription: string;
 }
 
 export interface RecommendedJobs {

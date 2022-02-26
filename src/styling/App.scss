@@ -7,6 +7,8 @@ $rose-red: #be7478;
 $dark-rose-red: #a76568;
 $gray1: #efefef;
 $dark-gray: #dadada;
+$purple: #9676be;
+$green: #9ebe76;
 
 $headerHeight: 50px;
 $contentHeight: calc(100% - 50px);
@@ -184,7 +186,7 @@ textarea {
 }
 
 #header {
-    font-family: 'Roboto';
+    font-family: "Roboto";
     background-color: $gray1;
     color: #76beba;
     height: $headerHeight;
@@ -344,7 +346,7 @@ textarea {
         min-width: 250px;
         height: 30px;
         border-radius: 20px;
-        border-width: .5px;
+        border-width: 0.5px;
         border-color: #4e4e4e;
         border-style: solid;
         padding: 1px 0 0 20px;
@@ -396,7 +398,7 @@ textarea {
         height: 100px;
         background-color: $gray1;
         border-radius: 10px 10px 0 0;
-        padding-top:10px;
+        padding-top: 10px;
     }
 
     .addLabelDiv > * {
@@ -410,7 +412,7 @@ textarea {
 }
 
 #labelEditor {
-    font-family: 'Roboto';
+    font-family: "Roboto";
     text-align: center;
     .labelHeader {
         font-size: $largest-font-size;
@@ -465,6 +467,7 @@ textarea {
     text-align: center;
     height: $contentHeight;
     overflow-y: auto;
+    background-color: $dark-gray;
 
     button {
         margin: 5px;
@@ -476,15 +479,14 @@ textarea {
     }
 
     .surveyCreator {
-        background-color: $dark-gray;
         max-width: 800px;
         margin: auto; //used for centering div
         padding: 10px;
 
         input[type="text"] {
             font-size: $normal-font-size;
-            border-radius: 3px;
-            border: 2px solid $gray1;
+            border: none;
+            border-bottom: 2px solid $gray1;
 
             &:focus {
                 border-bottom: 2px solid $pale-green;
@@ -503,6 +505,7 @@ textarea {
                 padding: 5px;
                 border: none;
                 background-color: transparent;
+                border-bottom: 2px solid $gray1;
             }
 
             .surveyDescription {
@@ -537,7 +540,12 @@ textarea {
             }
 
             .delete {
-                width: 30px;
+                background-color: $rose-red;
+                padding-left: 5px;
+
+                &:hover {
+                    background-color: $dark-rose-red;
+                }
             }
 
             .s-options {
@@ -558,6 +566,25 @@ textarea {
                     // position: relative;
                     display: flex;
                     width: 100%;
+                }
+            }
+
+            i {
+                //this uses the font-awesome icon library
+                width: 30px;
+                height: 30px;
+                background-color: $pale-green;
+                color: white;
+                border: none;
+                padding: 6px 3px;
+                font-size: 20px;
+                cursor: pointer;
+                transition: 0.1s;
+                border-radius: 3px;
+                margin: 5px;
+
+                &:hover {
+                    background-color: $dark-pale-green;
                 }
             }
         }
@@ -788,14 +815,16 @@ textarea {
 #Popup {
     position: fixed;
     background-color: $gray1;
-    width:100%;
+    width: 100vw;
     height: 100vh;
-    top:0;
-    left:0;
+    top: 0;
+    left: 0;
+    z-index: 1;
+
     .popBox {
         position: relative;
         width: 70%;
-        margin:auto;
+        margin: auto;
         max-height: 70vh;
         margin-top: calc(100vh - 85vh - 20px);
         background: #fff;
@@ -805,7 +834,7 @@ textarea {
         overflow: auto;
         .PopupText {
             h1 {
-                color:#a76568;
+                color: #a76568;
             }
         }
         .Buttons {
@@ -813,5 +842,58 @@ textarea {
             left: 35%;
             margin-left: 40px;
         }
+    }
+}
+
+.transparentBackground {
+    position: fixed;
+    background-color: transparent;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 1;
+
+    .dropdown {
+        position: absolute;
+        background-color: $gray1;
+        border-radius: 5px;
+        box-shadow: $subtle-shadow;
+        font-size: $large-font-size;
+        padding: 5px;
+        width: 200px;
+        max-height: 400px;
+
+        .title {
+            text-align: center;
+            font-weight: bold;
+            color: $rose-red;
+            border-bottom: 1px solid $dark-gray;
+        }
+
+        .labelChoice {
+            padding: 5px;
+            border-bottom: 0.5px solid $dark-gray;
+            cursor: pointer;
+            border-radius: 3px;
+
+            &:hover,
+            &.active {
+                background-color: $dark-gray;
+                // text-decoration: underline;
+                // text-decoration-color: $pale-green;
+            }
+        }
+    }
+}
+
+i {
+    position: relative;
+
+    .labelCount {
+        position: absolute;
+        top: 5px;
+        left: 7px;
+        color: black;
     }
 }

@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { JobOpp, Label, Survey } from '../firebase/Types';
+import { JobOpp, Label, Survey, SurveyResponse } from '../firebase/Types';
 
 export interface hasId {
     id: string 
 }
 interface dataState {
     surveys: (Survey & hasId)[];
-    surveyResponses: any[];
+    surveyResponses: SurveyResponse[];
     jobOpps: (JobOpp & hasId)[];
     labels: (Label & hasId)[];
     //add more here when we know what types they are

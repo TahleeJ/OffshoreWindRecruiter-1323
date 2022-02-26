@@ -173,7 +173,7 @@ textarea {
 }
 
 #header {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   background-color: #efefef;
   color: #76beba;
   height: 50px;
@@ -367,7 +367,7 @@ textarea {
   min-width: 250px;
   height: 30px;
   border-radius: 20px;
-  border-width: .5px;
+  border-width: 0.5px;
   border-color: #4e4e4e;
   border-style: solid;
   padding: 1px 0 0 20px;
@@ -441,7 +441,7 @@ textarea {
 }
 
 #labelEditor {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   text-align: center;
 }
 
@@ -500,6 +500,7 @@ textarea {
   text-align: center;
   height: calc(100% - 50px);
   overflow-y: auto;
+  background-color: #dadada;
 }
 
 #surveyHome button {
@@ -512,7 +513,6 @@ textarea {
 }
 
 #surveyHome .surveyCreator {
-  background-color: #dadada;
   max-width: 800px;
   margin: auto;
   padding: 10px;
@@ -520,8 +520,8 @@ textarea {
 
 #surveyHome .surveyCreator input[type="text"] {
   font-size: 16px;
-  border-radius: 3px;
-  border: 2px solid #efefef;
+  border: none;
+  border-bottom: 2px solid #efefef;
 }
 
 #surveyHome .surveyCreator input[type="text"]:focus {
@@ -540,6 +540,7 @@ textarea {
   padding: 5px;
   border: none;
   background-color: transparent;
+  border-bottom: 2px solid #efefef;
 }
 
 #surveyHome .surveyCreator .surveyHeader .surveyDescription {
@@ -577,7 +578,12 @@ textarea {
 }
 
 #surveyHome .surveyCreator .createdQuestion .delete {
-  width: 30px;
+  background-color: #be7478;
+  padding-left: 5px;
+}
+
+#surveyHome .surveyCreator .createdQuestion .delete:hover {
+  background-color: #a76568;
 }
 
 #surveyHome .surveyCreator .createdQuestion .s-options {
@@ -602,6 +608,25 @@ textarea {
   display: -ms-flexbox;
   display: flex;
   width: 100%;
+}
+
+#surveyHome .surveyCreator .createdQuestion i {
+  width: 30px;
+  height: 30px;
+  background-color: #76beba;
+  color: white;
+  border: none;
+  padding: 6px 3px;
+  font-size: 20px;
+  cursor: pointer;
+  -webkit-transition: 0.1s;
+  transition: 0.1s;
+  border-radius: 3px;
+  margin: 5px;
+}
+
+#surveyHome .surveyCreator .createdQuestion i:hover {
+  background-color: #62aaa6;
 }
 
 #surveyHome .surveyCreator input[type="radio"] {
@@ -851,10 +876,11 @@ textarea {
 #Popup {
   position: fixed;
   background-color: #efefef;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   top: 0;
   left: 0;
+  z-index: 1;
 }
 
 #Popup .popBox {
@@ -878,5 +904,56 @@ textarea {
   position: relative;
   left: 35%;
   margin-left: 40px;
+}
+
+.transparentBackground {
+  position: fixed;
+  background-color: transparent;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.transparentBackground .dropdown {
+  position: absolute;
+  background-color: #efefef;
+  border-radius: 5px;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
+  font-size: 20px;
+  padding: 5px;
+  width: 200px;
+  max-height: 400px;
+}
+
+.transparentBackground .dropdown .title {
+  text-align: center;
+  font-weight: bold;
+  color: #be7478;
+  border-bottom: 1px solid #dadada;
+}
+
+.transparentBackground .dropdown .labelChoice {
+  padding: 5px;
+  border-bottom: 0.5px solid #dadada;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.transparentBackground .dropdown .labelChoice:hover, .transparentBackground .dropdown .labelChoice.active {
+  background-color: #dadada;
+}
+
+i {
+  position: relative;
+}
+
+i .labelCount {
+  position: absolute;
+  top: 5px;
+  left: 7px;
+  color: black;
 }
 /*# sourceMappingURL=App.css.map */

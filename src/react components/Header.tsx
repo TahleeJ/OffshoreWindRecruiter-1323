@@ -4,7 +4,7 @@ import { changePage, PageType } from '../redux/navigationSlice';
 import ReactTooltip from 'react-tooltip';
 
 import * as firebaseAuth from "@firebase/auth";
-import { authInstance} from "../firebase/Firebase";
+import { authInstance } from "../firebase/Firebase";
 
 import * as firestore from "@firebase/firestore";
 import db from '../firebase/Firestore';
@@ -25,10 +25,11 @@ const Header: React.FC<headerProps> = (p: headerProps) => {
         const uid = authInstance.currentUser?.uid as string;
         const results = await firestore.getDoc(firestore.doc(db.Users, uid));
         const isA = results.data()?.permissionLevel !== PermissionLevel.None;
-        
+        console.log("User is admin: " + isA);
+
         setIsAdmin(isA);
     }
-    useEffect(() => { updateIsAdmin(); }, []);
+    useEffect(() => { updateIsAdmin() }, []);
 
     return (
         <header id="header" >

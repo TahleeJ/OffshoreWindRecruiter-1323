@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import _ from "lodash"
+import lodash from "lodash"
 
 import { Answer, QuestionType, Survey, SurveyQuestion } from "../../firebase/Types";
 
@@ -9,12 +9,13 @@ import { editSurvey, getSurveys, newSurvey } from "../../firebase/SurveyQueries"
 import { useEffect } from "react";
 import { setSurveys } from "../../redux/dataSlice.ts";
 import { firestoreInstance } from "../../firebase/Firebase";
+import LabelConnector from "../label/LabelConnector";
 
 interface props {
 
 }
 
-const devQuestions: SurveyQuestion[] = [
+const initQuestions: SurveyQuestion[] = [
     {
         prompt: "",
         questionType: QuestionType.MultipleChoice,
@@ -25,11 +26,12 @@ const devQuestions: SurveyQuestion[] = [
 const SurverCreator: React.FC = (props: props) => {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
-    const [questions, setQuestions] = useState<SurveyQuestion[]>(devQuestions);
+    const [questions, setQuestions] = useState<SurveyQuestion[]>(initQuestions);
     /** This is the current operation that is being done with surveys...usually creating/editing */
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     /** This contains the old survey data. */
     const reduxSurveyData = useAppSelector(s => s.navigation.operationData as Survey & { id: string });
+    const labels = useAppSelector(s => s.data.labels);
     const dispatch = useAppDispatch();
 
     const saveSurvey = async () => {
@@ -52,52 +54,73 @@ const SurverCreator: React.FC = (props: props) => {
     }
 
     const addNewAnswer = (qIndex: number) => {
-        let cloneQuestions = _.cloneDeep(questions);
-        
-        const newAnswer: Answer = { text: '', labels: [] };
+        let cloneQuestions = lodash.cloneDeep(questions);
+
+        const newAnswer: Answer = { text: '', labelIds: [] };
         cloneQuestions[qIndex].options.push(newAnswer)
-        
+
         setQuestions(cloneQuestions);
     }
 
     const changeQuestionPrompt = (qIndex: number, newPrompt: string) => {
-        let cloneQuestions = _.cloneDeep(questions);
+        let cloneQuestions = lodash.cloneDeep(questions);
 
         cloneQuestions[qIndex].prompt = newPrompt;
-        
+
         setQuestions(cloneQuestions);
     }
-
     const changeQuestionType = (qIndex: number, newType: QuestionType) => {
-        let cloneQuestions = _.cloneDeep(questions);
+        let cloneQuestions = lodash.cloneDeep(questions);
 
         cloneQuestions[qIndex].questionType = newType;
-        
+        if (newType !== QuestionType.MultipleChoice)
+            cloneQuestions[qIndex].options = [{ text: "", labelIds: [] }]
         setQuestions(cloneQuestions);
-    }
 
+    }
     const changeAnswerText = (qIndex: number, aIndex: number, newText: string) => {
-        let cloneQuestions = _.cloneDeep(questions);
+        let cloneQuestions = lodash.cloneDeep(questions);
 
         cloneQuestions[qIndex].options[aIndex].text = newText;
-        
+
         setQuestions(cloneQuestions);
     }
 
     const deleteQuestion = (qIndex: number) => {
-        let cloneQuestions = _.cloneDeep(questions);
+        let cloneQuestions = lodash.cloneDeep(questions);
 
         cloneQuestions.splice(qIndex, 1);
-        
+
         setQuestions(cloneQuestions);
     }
 
     const deleteAnswer = (qIndex: number, aIndex: number) => {
-        let cloneQuestions = _.cloneDeep(questions);
+        let cloneQuestions = lodash.cloneDeep(questions);
 
         cloneQuestions[qIndex].options.splice(aIndex, 1);
-        
+
         setQuestions(cloneQuestions);
+    }
+    const changeLabels = (qIndex: number, aIndex: number, labelId: string) => {
+        let cloneQuestions = lodash.cloneDeep(questions);
+
+        const indexOfLabelId = questions[qIndex].options[aIndex].labelIds.indexOf(labelId);
+        if (indexOfLabelId === -1)
+            cloneQuestions[qIndex].options[aIndex].labelIds.push(labelId);
+        else
+            cloneQuestions[qIndex].options[aIndex].labelIds.splice(indexOfLabelId, 1);
+
+        setQuestions(cloneQuestions);
+    }
+
+    const getLabelConnections = (qIndex: number, aIndex: number) => {
+        return labels.map(l => {
+            // console.log(questions[qIndex].options[aIndex].labelIds);
+            return {
+                ...l,
+                isEnabled: questions[qIndex].options[aIndex].labelIds.indexOf(l.id) !== -1
+            }
+        });
     }
 
     useEffect(() => {
@@ -130,43 +153,51 @@ const SurverCreator: React.FC = (props: props) => {
                                             <option value="FreeResponse" selected={q.questionType === QuestionType.FreeResponse}>Free Response</option>
                                         </select>
                                     </div>
-                                    <button className="delete red" onClick={() => deleteQuestion(qIndex)}>-</button>
+                                    {q.questionType === QuestionType.Scale ?
+                                        <LabelConnector
+                                            toggleLabel={(labelId: string) => changeLabels(qIndex, 0, labelId)}
+                                            labels={getLabelConnections(qIndex, 0)}
+                                        />
+                                        : null
+                                    }
+                                    <i className="fas fa-trash-alt delete" onClick={() => deleteQuestion(qIndex)}></i>
                                 </div>
-                                {
-                                    q.questionType === QuestionType.MultipleChoice ?
-                                        <div className='options'>
-                                            {
-                                                q.options?.map((option, aIndex) => {
-                                                    return <div key={"answer" + aIndex} className="answer" >
-                                                        <input type="radio" placeholder='N/A' />
-                                                        <input type="text" placeholder="Answer..." onChange={(e) => changeAnswerText(qIndex, aIndex, e.target.value)} value={option.text} />
-                                                        <button className="red delete" onClick={() => deleteAnswer(qIndex, aIndex)}>-</button>
-                                                    </div >
-                                                })
-                                            }
-                                            <button onClick={() => addNewAnswer(qIndex)}>Add Answer</button>
-                                        </div>
-                                        : null
+                                {q.questionType === QuestionType.MultipleChoice ?
+                                    <div className='options'>
+                                        {
+                                            q.options?.map((option, aIndex) => {
+                                                return <div key={"answer" + aIndex} className="answer" >
+                                                    <input type="radio" placeholder='N/A' />
+                                                    <input type="text" placeholder="Answer..." onChange={(e) => changeAnswerText(qIndex, aIndex, e.target.value)} value={option.text} />
+                                                    <LabelConnector
+                                                        toggleLabel={(labelId: string) => changeLabels(qIndex, aIndex, labelId)}
+                                                        labels={getLabelConnections(qIndex, aIndex)}
+                                                    />
+                                                    <i className="fas fa-trash-alt delete" onClick={() => deleteAnswer(qIndex, aIndex)}></i>
+                                                </div >
+                                            })
+                                        }
+                                        <button onClick={() => addNewAnswer(qIndex)}>Add Answer</button>
+                                    </div>
+                                    : null
                                 }
-                                {
-                                    q.questionType === QuestionType.Scale ?
-                                        <div className='s-options'>
-                                            Strongly Disagree
-                                            <input type="radio" placeholder='N/A' />
-                                            <input type="radio" placeholder='N/A' />
-                                            <input type="radio" placeholder='N/A' />
-                                            <input type="radio" placeholder='N/A' />
-                                            <input type="radio" placeholder='N/A' />
-                                            Strongly Agree
-                                        </div>
-                                        : null
+                                {q.questionType === QuestionType.Scale ?
+                                    <div className='s-options'>
+                                        Strongly Disagree
+                                        <input type="radio" placeholder='N/A' />
+                                        <input type="radio" placeholder='N/A' />
+                                        <input type="radio" placeholder='N/A' />
+                                        <input type="radio" placeholder='N/A' />
+                                        <input type="radio" placeholder='N/A' />
+                                        Strongly Agree
+                                    </div>
+                                    : null
                                 }
-                                {
-                                    q.questionType === QuestionType.FreeResponse ?
-                                        <div>
-                                            During survey administering, the user will be presented with a text input field
-                                        </div>
-                                        : null
+                                {q.questionType === QuestionType.FreeResponse ?
+                                    <div>
+                                        During survey administering, the user will be presented with a text input field
+                                    </div>
+                                    : null
                                 }
                             </div>
                             <div></div>
@@ -176,7 +207,7 @@ const SurverCreator: React.FC = (props: props) => {
             }
             <button onClick={addNewQuestion}>New Question</button>
             <button onClick={saveSurvey}>{currentOperation === OperationType.Creating ? "Save Survey as New" : "Save Edits"}</button>
-        </div>
+        </div >
     )
 }
 

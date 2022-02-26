@@ -49,10 +49,8 @@ export async function getSurveyReferencesToLabel(labelID: id) {
 
     const surveys = await getSurveys();
     surveys.forEach(s => {
-        console.log(s)
         const foundQuestions = new Map<SurveyQuestion, Answer[]>();
         s.questions.forEach(q => {
-            console.log(q)
             const foundAnswers: Answer[] = []
             q.answers.forEach(o => {
                 if (o.labelIds.includes(labelID))

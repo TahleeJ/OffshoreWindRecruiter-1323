@@ -59,6 +59,7 @@ const LabelManager: React.FC<props> = (props) => {
                                     {labels.length > 0 ?
                                         labels.map((label, index) => {
                                             return <ListElement
+                                                type="label"
                                                 name={label.name}
                                                 key={index}
                                                 handleEdit={() => appDispatch(changePage({ type: PageType.LabelManage, operation: OperationType.Editing, data: label }))} handleDelete={() => removeLabel(label.id)}

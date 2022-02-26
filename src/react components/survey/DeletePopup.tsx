@@ -2,6 +2,8 @@ import React from 'react';
 
 /** The props (arguments) to create this element */
 interface props {
+    type?: String;
+    name: String;
     handleCancel: () => void;
     handleDelete: () => void;
 }
@@ -12,7 +14,7 @@ const DeletePopup: React.FC<props> = (props) => {
         <div id='Popup' className='Popup'>
             <div className = 'popBox'>
                 <div className='PopupText'>
-                    <h1>Are you sure you want to delete this opportunity?</h1>
+                    <h1>Are you sure you want to delete {props.type} {props.name}?</h1>
                     <p>This action is permanent</p>
                 </div>
                 <div className='Buttons'>

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { editLabel, getLabels } from '../../firebase/LabelQueries';
-import { Label } from '../../firebase/Types';
-import { hasId, setLabels } from '../../redux/dataSlice.ts';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { editLabel, getSurveyReferencesToLabel, getLabels } from '../../firebase/Queries/LabelQueries';
+import { Answer, hasId, Label, Survey, SurveyQuestion } from '../../firebase/Types';
+import { setLabels } from '../../redux/dataSlice.ts';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks'; 
 import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
 import ListViewer from '../ListViewer';
 import ListElement from '../survey/ListElement';
@@ -16,6 +16,7 @@ interface props {
 /** The header of the application. */
 const LabelManager: React.FC<props> = (props) => {
     const [labelName, setInputValue] = useState("");
+    const [surveyRefs, setSurveyRefs] = useState<Map<Survey & hasId, Map<SurveyQuestion, Answer[]>>>();
     const appDispatch = useAppDispatch();
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     const reduxLabel = useAppSelector(s => s.navigation.operationData as Label & hasId);
@@ -34,6 +35,9 @@ const LabelManager: React.FC<props> = (props) => {
         if (currentOperation === OperationType.Editing) {
             setInputValue(reduxLabel.name);
         }
+
+        getSurveyReferencesToLabel(reduxLabel.id).then(data => setSurveyRefs(data))
+        
     }, [reduxLabel, currentOperation]);
 
     return (
@@ -47,20 +51,27 @@ const LabelManager: React.FC<props> = (props) => {
             </div>
             <div className="listContainer">
                 <div className="questionsList">
-                    <ListViewer height="350px" title="Associated Questions">
-                        <ListElement name="Question Example" handleEdit={() => alert("This function has not been completed yet.")} handleDelete={() => alert("This function has not been completed yet.")} />
-                        <ListElement name="Question Example" handleEdit={() => alert("This function has not been completed yet.")} handleDelete={() => alert("This function has not been completed yet.")} />
-                        <ListElement name="Question Example" handleEdit={() => alert("This function has not been completed yet.")} handleDelete={() => alert("This function has not been completed yet.")} />
-                        <ListElement name="Question Example" handleEdit={() => alert("This function has not been completed yet.")} handleDelete={() => alert("This function has not been completed yet.")} />
-                        <ListElement name="Question Example" handleEdit={() => alert("This function has not been completed yet.")} handleDelete={() => alert("This function has not been completed yet.")} />
+                    <ListViewer height="350px" title="Associated Answers">
+                        {surveyRefs !== undefined ?
+                            [...surveyRefs].map(([survey, questionRefs]) => {
+                                return (<ListViewer height='100' title={survey.title}>
+                                {
+                                    [...questionRefs].map(([question, answers]) => {
+                                        return (<ListViewer height='100'  title={question.prompt}>
+                                        {
+                                            answers.map(answer => <ListElement name={answer.text ? answer.text : "scale"} handleEdit={() => alert("")} handleDelete={() => alert("")} />)
+                                        }
+                                        </ListViewer>)
+                                    })
+                                }
+                                </ListViewer>)
+                            })
+                            : null
+                        }
                     </ListViewer>
                 </div>
                 <div className="jobOpsList">
                     <ListViewer height="350px" title="Associated Job Opportunities">
-                        <ListElement name="Job Opportunity" handleEdit={() => alert("This function has not been completed yet.")} handleDelete={() => alert("This function has not been completed yet.")} />
-                        <ListElement name="Job Opportunity" handleEdit={() => alert("This function has not been completed yet.")} handleDelete={() => alert("This function has not been completed yet.")} />
-                        <ListElement name="Job Opportunity" handleEdit={() => alert("This function has not been completed yet.")} handleDelete={() => alert("This function has not been completed yet.")} />
-                        <ListElement name="Job Opportunity" handleEdit={() => alert("This function has not been completed yet.")} handleDelete={() => alert("This function has not been completed yet.")} />
                         <ListElement name="Job Opportunity" handleEdit={() => alert("This function has not been completed yet.")} handleDelete={() => alert("This function has not been completed yet.")} />
                     </ListViewer>
                 </div>

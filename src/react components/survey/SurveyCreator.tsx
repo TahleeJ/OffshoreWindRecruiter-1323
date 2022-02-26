@@ -5,7 +5,7 @@ import { Answer, Question, Survey, SurveyQuestion } from "../../firebase/Types";
 
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
-import { editSurvey, getSurveys, newSurvey } from "../../firebase/SurveyQueries";
+import { editSurvey, getSurveys, newSurvey } from "../../firebase/Queries/SurveyQueries";
 import { useEffect } from "react";
 import { setSurveys } from "../../redux/dataSlice.ts";
 import LabelConnector from "../label/LabelConnector";

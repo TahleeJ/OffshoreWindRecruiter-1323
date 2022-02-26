@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import './styling/App.css';
 
 import * as firebaseAuth from "@firebase/auth";
-import { authInstance, firestoreInstance } from './firebase/Firebase';
+import { authInstance } from './firebase/Firebase';
 
 import Home from './react components/Home'
 import { useAppDispatch, useAppSelector } from './redux/hooks';
@@ -15,10 +15,10 @@ import LabelManager from './react components/label/LabelManager';
 import JobManager from './react components/Job/JobManager';
 import AuthPage from './react components/AuthPage';
 
-import { getSurveys } from './firebase/SurveyQueries';
+import { getSurveys } from './firebase/Queries/SurveyQueries';
 import { setLabels, setSurveys, setJobOpps } from './redux/dataSlice.ts';
-import { getLabels } from './firebase/LabelQueries';
-import { getJobOpps } from './firebase/JobQueries';
+import { getLabels } from './firebase/Queries/LabelQueries';
+import { getJobOpps } from './firebase/Queries/JobQueries';
 
 
 const getOverallPageFromType = (type: PageType) => {
@@ -37,7 +37,7 @@ const App: React.FC = () => {
     const dispatch = useAppDispatch();
 
     const setSurveyState = useCallback(async () => {
-        const surveys = await getSurveys(firestoreInstance);
+        const surveys = await getSurveys();
         dispatch(setSurveys(surveys));
     }, [dispatch]);
     const setLabelState = useCallback(async () => {

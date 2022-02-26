@@ -1,5 +1,5 @@
-import { updatePermissions } from "./Firebase";
-import { PermissionLevel } from "./Types";
+import { updatePermissions } from "../Firebase";
+import { PermissionLevel } from "../Types";
 
 export async function setUserPermissionLevel(email: string, newLevel: PermissionLevel): Promise<string> {
     try {

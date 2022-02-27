@@ -10,17 +10,17 @@ export interface Survey {
 
 export interface SurveyQuestion {
     prompt: string
-    answers: Answer[]
-    questionType: Question
-}
+    answers: SurveyAnswer[]
+    questionType: QuestionType
+}   
 
-export enum Question {
+export enum QuestionType {
     Scale,
     MultipleChoice,
     FreeResponse
 }
 
-export interface Answer {
+export interface SurveyAnswer {
     text: string
     labelIds: id[]
 }
@@ -32,7 +32,7 @@ export interface Label {
 
 export interface SurveyResponse {
     questions: SurveyQuestion[]
-    answers: Answer[]
+    answers: SurveyAnswer[]
     taker: SurveyTaker
 }
 

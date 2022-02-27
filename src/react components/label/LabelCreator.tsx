@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { editLabel, getSurveyReferencesToLabel, getLabels } from '../../firebase/Queries/LabelQueries';
-import { Answer, hasId, Label, Survey, SurveyQuestion } from '../../firebase/Types';
+import { editLabel, getLabels, getSurveyReferencesToLabel } from '../../firebase/Queries/LabelQueries';
+import { hasId, Label, Survey, SurveyAnswer, SurveyQuestion } from '../../firebase/Types';
 import { setLabels } from '../../redux/dataSlice.ts';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks'; 
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
 import ListViewer from '../ListViewer';
 import ListElement from '../survey/ListElement';
@@ -16,7 +16,7 @@ interface props {
 /** The header of the application. */
 const LabelManager: React.FC<props> = (props) => {
     const [labelName, setInputValue] = useState("");
-    const [surveyRefs, setSurveyRefs] = useState<Map<Survey & hasId, Map<SurveyQuestion, Answer[]>>>();
+    const [surveyRefs, setSurveyRefs] = useState<Map<Survey & hasId, Map<SurveyQuestion, SurveyAnswer[]>>>();
     const appDispatch = useAppDispatch();
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     const reduxLabel = useAppSelector(s => s.navigation.operationData as Label & hasId);
@@ -31,11 +31,12 @@ const LabelManager: React.FC<props> = (props) => {
     }
 
     useEffect(() => {
-        //copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
+        // Copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
         if (currentOperation === OperationType.Editing) {
             setInputValue(reduxLabel.name);
         }
 
+        // Initialize surveyRefs here because getSurveyReferencesToLabel is async
         getSurveyReferencesToLabel(reduxLabel.id).then(data => setSurveyRefs(data))
         
     }, [reduxLabel, currentOperation]);

@@ -1,14 +1,12 @@
-import React, { useState } from "react";
-import lodash from "lodash"
-
-import { Answer, Question, Survey, SurveyQuestion } from "../../firebase/Types";
-
+import lodash from "lodash";
+import React, { useEffect, useState } from "react";
+import { editSurvey, getSurveys, newSurvey } from "../../firebase/Queries/SurveyQueries";
+import { QuestionType, Survey, SurveyAnswer, SurveyQuestion } from "../../firebase/Types";
+import { setSurveys } from "../../redux/dataSlice.ts";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
-import { editSurvey, getSurveys, newSurvey } from "../../firebase/Queries/SurveyQueries";
-import { useEffect } from "react";
-import { setSurveys } from "../../redux/dataSlice.ts";
 import LabelConnector from "../label/LabelConnector";
+
 
 interface props {
 
@@ -17,7 +15,7 @@ interface props {
 const initQuestions: SurveyQuestion[] = [
     {
         prompt: "",
-        questionType: Question.MultipleChoice,
+        questionType: QuestionType.MultipleChoice,
         answers: [],
     }
 ]
@@ -49,13 +47,13 @@ const SurverCreator: React.FC = (props: props) => {
     }
 
     const addNewQuestion = () => {
-        setQuestions(s => [...s, { prompt: "", answers: [], questionType: Question.MultipleChoice }])
+        setQuestions(s => [...s, { prompt: "", answers: [], questionType: QuestionType.MultipleChoice }])
     }
 
     const addNewAnswer = (qIndex: number) => {
         let cloneQuestions = lodash.cloneDeep(questions);
 
-        const newAnswer: Answer = { text: '', labelIds: [] };
+        const newAnswer: SurveyAnswer = { text: '', labelIds: [] };
         cloneQuestions[qIndex].answers.push(newAnswer)
 
         setQuestions(cloneQuestions);
@@ -68,11 +66,11 @@ const SurverCreator: React.FC = (props: props) => {
 
         setQuestions(cloneQuestions);
     }
-    const changeQuestionType = (qIndex: number, newType: Question) => {
+    const changeQuestionType = (qIndex: number, newType: QuestionType) => {
         let cloneQuestions = lodash.cloneDeep(questions);
 
         cloneQuestions[qIndex].questionType = newType;
-        if (newType !== Question.MultipleChoice)
+        if (newType !== QuestionType.MultipleChoice)
             cloneQuestions[qIndex].answers = [{ text: "", labelIds: [] }]
         setQuestions(cloneQuestions);
 
@@ -146,13 +144,13 @@ const SurverCreator: React.FC = (props: props) => {
                                 <div className="header">
                                     <input type='text' className="prompt" value={q.prompt} placeholder="Question Prompt..." onChange={(e) => changeQuestionPrompt(qIndex, e.target.value)} />
                                     <div className="questionType">
-                                        <select name="questionType" title="Question Type" onChange={e => changeQuestionType(qIndex, Question[e.target.value as keyof typeof Question])}>
-                                            <option value="MultipleChoice" selected={q.questionType === Question.MultipleChoice}>Multiple Choice</option>
-                                            <option value="Scale" selected={q.questionType === Question.Scale}>Scale</option>
-                                            <option value="FreeResponse" selected={q.questionType === Question.FreeResponse}>Free Response</option>
+                                        <select name="questionType" title="Question Type" onChange={e => changeQuestionType(qIndex, QuestionType[e.target.value as keyof typeof QuestionType])}>
+                                            <option value="MultipleChoice" selected={q.questionType === QuestionType.MultipleChoice}>Multiple Choice</option>
+                                            <option value="Scale" selected={q.questionType === QuestionType.Scale}>Scale</option>
+                                            <option value="FreeResponse" selected={q.questionType === QuestionType.FreeResponse}>Free Response</option>
                                         </select>
                                     </div>
-                                    {q.questionType === Question.Scale ?
+                                    {q.questionType === QuestionType.Scale ?
                                         <LabelConnector
                                             toggleLabel={(labelId: string) => changeLabels(qIndex, 0, labelId)}
                                             labels={getLabelConnections(qIndex, 0)}
@@ -161,7 +159,7 @@ const SurverCreator: React.FC = (props: props) => {
                                     }
                                     <i className="fas fa-trash-alt delete" onClick={() => deleteQuestion(qIndex)}></i>
                                 </div>
-                                {q.questionType === Question.MultipleChoice ?
+                                {q.questionType === QuestionType.MultipleChoice ?
                                     <div className='answers'>
                                         {
                                             q.answers?.map((option, aIndex) => {
@@ -180,7 +178,7 @@ const SurverCreator: React.FC = (props: props) => {
                                     </div>
                                     : null
                                 }
-                                {q.questionType === Question.Scale ?
+                                {q.questionType === QuestionType.Scale ?
                                     <div className='s-answers'>
                                         Strongly Disagree
                                         <input type="radio" placeholder='N/A' />
@@ -192,7 +190,7 @@ const SurverCreator: React.FC = (props: props) => {
                                     </div>
                                     : null
                                 }
-                                {q.questionType === Question.FreeResponse ?
+                                {q.questionType === QuestionType.FreeResponse ?
                                     <div>
                                         During survey administering, the user will be presented with a text input field
                                     </div>

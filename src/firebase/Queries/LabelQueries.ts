@@ -1,7 +1,7 @@
 import * as firestore from "firebase/firestore";
 
 import db from "../Firestore";
-import { Answer, id, Label, Survey, SurveyQuestion, hasId } from "../Types";
+import { hasId, id, Label, Survey, SurveyAnswer, SurveyQuestion } from "../Types";
 import { getSurveys } from "./SurveyQueries";
 
 
@@ -39,19 +39,19 @@ export async function getJobReferencesToLabel(labelID: id) {
 }
 
 /**
- * Returns any answers that are using a label
+ * Returns any answers that are using a label 
  * 
  * @param labelID label to search for
- * @returns {Survey: {Question: Answer[]}}
+ * @returns Map of Surveys to a map of Questions to an array of Answers that use the label
  */
 export async function getSurveyReferencesToLabel(labelID: id) {
-    const relationMap = new Map<Survey & hasId, Map<SurveyQuestion, Answer[]>>();
+    const relationMap = new Map<Survey & hasId, Map<SurveyQuestion, SurveyAnswer[]>>();
 
     const surveys = await getSurveys();
     surveys.forEach(s => {
-        const foundQuestions = new Map<SurveyQuestion, Answer[]>();
+        const foundQuestions = new Map<SurveyQuestion, SurveyAnswer[]>();
         s.questions.forEach(q => {
-            const foundAnswers: Answer[] = []
+            const foundAnswers: SurveyAnswer[] = []
             q.answers.forEach(o => {
                 if (o.labelIds.includes(labelID))
                     foundAnswers.push(o);

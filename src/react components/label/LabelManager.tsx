@@ -4,7 +4,7 @@ import { changePage, OperationType, PageType } from '../../redux/navigationSlice
 import ListViewer from '../ListViewer';
 import ListElement from '../survey/ListElement';
 import LabelCreator from './LabelCreator';
-import { deleteLabel, getLabels, newLabel } from '../../firebase/LabelQueries';
+import { deleteLabel, getLabels, newLabel } from '../../firebase/Queries/LabelQueries';
 import { setLabels } from '../../redux/dataSlice.ts';
 
 /** The props (arguments) to create this element */

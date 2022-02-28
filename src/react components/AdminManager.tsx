@@ -6,7 +6,7 @@ import * as firestore from "@firebase/firestore";
 import { authInstance } from '../firebase/Firebase';
 import { PermissionLevel } from '../firebase/Types';
 import db from '../firebase/Firestore';
-import { setUserPermissionLevel } from '../firebase/AdminQueries';
+import { setUserPermissionLevel } from '../firebase/Queries/AdminQueries';
 
 /** The props (arguments) to create this element */
 interface props {

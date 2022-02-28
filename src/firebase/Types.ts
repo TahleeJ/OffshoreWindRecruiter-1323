@@ -1,3 +1,7 @@
+export type id = string;
+export type hasId = { id: id };
+
+
 export interface Survey {
     title: string
     description: string
@@ -6,9 +10,9 @@ export interface Survey {
 
 export interface SurveyQuestion {
     prompt: string
-    options: Answer[]
+    answers: SurveyAnswer[]
     questionType: QuestionType
-}
+}   
 
 export enum QuestionType {
     Scale,
@@ -16,9 +20,9 @@ export enum QuestionType {
     FreeResponse
 }
 
-export interface Answer {
+export interface SurveyAnswer {
     text: string
-    labelIds: string[]
+    labelIds: id[]
 }
 
 export interface Label {
@@ -28,7 +32,7 @@ export interface Label {
 
 export interface SurveyResponse {
     questions: SurveyQuestion[]
-    answers: Answer[]
+    answers: SurveyAnswer[]
     taker: SurveyTaker
 }
 

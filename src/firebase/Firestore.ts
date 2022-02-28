@@ -1,30 +1,30 @@
 import { collection, CollectionReference } from "firebase/firestore";
-import _ from "lodash";
+import lodash from "lodash";
 
 import { firestoreInstance } from "./Firebase";
-import { Label, Survey, User, JobOpp} from "./Types";
+import { JobOpp, Label, Survey, User } from "./Types";
 
 
 const table = <T>(collectionPath: string) => collection(firestoreInstance, collectionPath) as CollectionReference<T>;
 
 // Lazy evaluated and memorized, hopefully there is a better way to do this
 class db {
-    _Users = _.once(() => table<User>('User'));
+    _Users = lodash.once(() => table<User>('User'));
     public get Users() {
         return this._Users();
     }
     
-    _Surveys = _.once(() => table<Survey>('Survey'));
+    _Surveys = lodash.once(() => table<Survey>('Survey'));
     public get Surveys() {
         return this._Surveys();
     }
     
-    _Labels = _.once(() => table<Label>('Labels'));
+    _Labels = lodash.once(() => table<Label>('Labels'));
     public get Labels() {
         return this._Labels();
     }
     
-    _JobOpps = _.once(() => table<JobOpp>('JobOpps'));
+    _JobOpps = lodash.once(() => table<JobOpp>('JobOpps'));
     public get JobOpps() {
         return this._JobOpps();
     }

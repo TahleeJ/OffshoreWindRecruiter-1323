@@ -1,6 +1,5 @@
 import React from 'react';
-import { Label } from '../../firebase/Types';
-import { hasId } from '../../redux/dataSlice.ts';
+import { hasId, Label } from '../../firebase/Types';
 
 /** The props (arguments) to create this element */
 interface props {

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Label } from "../../firebase/Types";
-import { hasId } from "../../redux/dataSlice.ts";
+import { hasId, Label } from "../../firebase/Types";
 import LabelSelector from "./LabelSelector";
 
 interface props {

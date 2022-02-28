@@ -1,15 +1,12 @@
-import React, { useState } from "react";
-import lodash from "lodash"
-
-import { Answer, QuestionType, Survey, SurveyQuestion } from "../../firebase/Types";
-
+import lodash from "lodash";
+import React, { useEffect, useState } from "react";
+import { editSurvey, getSurveys, newSurvey } from "../../firebase/Queries/SurveyQueries";
+import { QuestionType, Survey, SurveyAnswer, SurveyQuestion } from "../../firebase/Types";
+import { setSurveys } from "../../redux/dataSlice.ts";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
-import { editSurvey, getSurveys, newSurvey } from "../../firebase/SurveyQueries";
-import { useEffect } from "react";
-import { setSurveys } from "../../redux/dataSlice.ts";
-import { firestoreInstance } from "../../firebase/Firebase";
 import LabelConnector from "../label/LabelConnector";
+
 
 interface props {
 
@@ -19,7 +16,7 @@ const initQuestions: SurveyQuestion[] = [
     {
         prompt: "",
         questionType: QuestionType.MultipleChoice,
-        options: [],
+        answers: [],
     }
 ]
 
@@ -46,18 +43,18 @@ const SurverCreator: React.FC = (props: props) => {
             await editSurvey(reduxSurveyData.id, survey);
 
         dispatch(changePage({ type: PageType.AdminHome }));
-        dispatch(setSurveys(await getSurveys(firestoreInstance)));
+        dispatch(setSurveys(await getSurveys()));
     }
 
     const addNewQuestion = () => {
-        setQuestions(s => [...s, { prompt: "", options: [], questionType: QuestionType.MultipleChoice }])
+        setQuestions(s => [...s, { prompt: "", answers: [], questionType: QuestionType.MultipleChoice }])
     }
 
     const addNewAnswer = (qIndex: number) => {
         let cloneQuestions = lodash.cloneDeep(questions);
 
-        const newAnswer: Answer = { text: '', labelIds: [] };
-        cloneQuestions[qIndex].options.push(newAnswer)
+        const newAnswer: SurveyAnswer = { text: '', labelIds: [] };
+        cloneQuestions[qIndex].answers.push(newAnswer)
 
         setQuestions(cloneQuestions);
     }
@@ -74,14 +71,14 @@ const SurverCreator: React.FC = (props: props) => {
 
         cloneQuestions[qIndex].questionType = newType;
         if (newType !== QuestionType.MultipleChoice)
-            cloneQuestions[qIndex].options = [{ text: "", labelIds: [] }]
+            cloneQuestions[qIndex].answers = [{ text: "", labelIds: [] }]
         setQuestions(cloneQuestions);
 
     }
     const changeAnswerText = (qIndex: number, aIndex: number, newText: string) => {
         let cloneQuestions = lodash.cloneDeep(questions);
 
-        cloneQuestions[qIndex].options[aIndex].text = newText;
+        cloneQuestions[qIndex].answers[aIndex].text = newText;
 
         setQuestions(cloneQuestions);
     }
@@ -97,28 +94,28 @@ const SurverCreator: React.FC = (props: props) => {
     const deleteAnswer = (qIndex: number, aIndex: number) => {
         let cloneQuestions = lodash.cloneDeep(questions);
 
-        cloneQuestions[qIndex].options.splice(aIndex, 1);
+        cloneQuestions[qIndex].answers.splice(aIndex, 1);
 
         setQuestions(cloneQuestions);
     }
     const changeLabels = (qIndex: number, aIndex: number, labelId: string) => {
         let cloneQuestions = lodash.cloneDeep(questions);
 
-        const indexOfLabelId = questions[qIndex].options[aIndex].labelIds.indexOf(labelId);
+        const indexOfLabelId = questions[qIndex].answers[aIndex].labelIds.indexOf(labelId);
         if (indexOfLabelId === -1)
-            cloneQuestions[qIndex].options[aIndex].labelIds.push(labelId);
+            cloneQuestions[qIndex].answers[aIndex].labelIds.push(labelId);
         else
-            cloneQuestions[qIndex].options[aIndex].labelIds.splice(indexOfLabelId, 1);
+            cloneQuestions[qIndex].answers[aIndex].labelIds.splice(indexOfLabelId, 1);
 
         setQuestions(cloneQuestions);
     }
 
     const getLabelConnections = (qIndex: number, aIndex: number) => {
         return labels.map(l => {
-            // console.log(questions[qIndex].options[aIndex].labelIds);
+            // console.log(questions[qIndex].answers[aIndex].labelIds);
             return {
                 ...l,
-                isEnabled: questions[qIndex].options[aIndex].labelIds.indexOf(l.id) !== -1
+                isEnabled: questions[qIndex].answers[aIndex].labelIds.indexOf(l.id) !== -1
             }
         });
     }
@@ -163,9 +160,9 @@ const SurverCreator: React.FC = (props: props) => {
                                     <i className="fas fa-trash-alt delete" onClick={() => deleteQuestion(qIndex)}></i>
                                 </div>
                                 {q.questionType === QuestionType.MultipleChoice ?
-                                    <div className='options'>
+                                    <div className='answers'>
                                         {
-                                            q.options?.map((option, aIndex) => {
+                                            q.answers?.map((option, aIndex) => {
                                                 return <div key={"answer" + aIndex} className="answer" >
                                                     <input type="radio" placeholder='N/A' />
                                                     <input type="text" placeholder="Answer..." onChange={(e) => changeAnswerText(qIndex, aIndex, e.target.value)} value={option.text} />
@@ -182,7 +179,7 @@ const SurverCreator: React.FC = (props: props) => {
                                     : null
                                 }
                                 {q.questionType === QuestionType.Scale ?
-                                    <div className='s-options'>
+                                    <div className='s-answers'>
                                         Strongly Disagree
                                         <input type="radio" placeholder='N/A' />
                                         <input type="radio" placeholder='N/A' />

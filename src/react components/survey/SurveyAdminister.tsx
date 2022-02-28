@@ -26,7 +26,7 @@ const SurveyAdminister: React.FC = (p: props) => {
                     </div>
                     <div className='question sq'>
                         <div className='title'>This is an Scaled Question! What do you think of it?</div>
-                        <div className='options'>
+                        <div className='answers'>
                             Strongly Disagree
                             <input type="radio" id="QUESTION_ID_1" name="QUESTIONID" placeholder='N/A' />
                             <input type="radio" id="QUESTION_ID_2" name="QUESTIONID" placeholder='N/A' />
@@ -38,7 +38,7 @@ const SurveyAdminister: React.FC = (p: props) => {
                     </div>
                     <div className='question mcq'>
                         <div className='title'>This is a multiple choice question! What do you think of it?</div>
-                        <div className='options'>
+                        <div className='answers'>
                             <input type="radio" id="QUESTION2_ID_1" name="QUESTIONID2" placeholder='N/A' />
                             <label htmlFor='QUESTION_ID_1'>Option 1</label>
                             <br />

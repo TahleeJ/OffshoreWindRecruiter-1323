@@ -820,8 +820,8 @@ textarea {
 }
 
 #jobCreator {
-  position: relative;
-  left: 5%;
+  font-family: 'Roboto';
+  color: #4e4e4e;
 }
 
 #jobCreator .jobHeader {
@@ -829,7 +829,8 @@ textarea {
   color: #be7478;
   font-size: 28px;
   position: relative;
-  left: 35%;
+  text-align: right;
+  margin-right: 5%;
   padding-top: 20px;
 }
 
@@ -839,16 +840,18 @@ textarea {
 }
 
 #jobCreator .jobInputContainer {
-  position: relative;
+  margin-inline: auto;
   margin-top: 40px;
-  background-color: #dadada;
-  width: calc(100% - 140px);
+  width: 90%;
 }
 
 #jobCreator .jobInputContainer input[type="text"] {
+  height: 33px;
+  padding-left: 10px;
+  font-family: 'Roboto';
   font-size: 16px;
-  border-radius: 3px;
-  border: 2px solid #efefef;
+  border-radius: 7px;
+  border: none;
   width: calc(100%);
 }
 
@@ -857,29 +860,67 @@ textarea {
 }
 
 #jobCreator .jobInputContainer textarea {
+  padding-top: 10px;
+  padding-left: 10px;
+  height: 150px;
+  font-size: 16px;
   width: calc(100%);
-  border: 2px solid #efefef;
+  border: none;
   resize: none;
-  border-radius: 5px;
-  font-size: 14px;
+  border-radius: 7px;
+  font-family: 'Roboto';
+}
+
+#jobCreator .dropdown {
+  position: relative;
+  left: unset !important;
+  margin-inline: auto;
+  width: 90%;
+}
+
+#jobCreator .dropdown .title {
+  display: none;
 }
 
 #jobCreator .buttons {
-  margin-top: 40px;
-  margin-left: 40%;
+  text-align: right;
+  margin-top: 10px;
+  margin-right: 5%;
 }
 
-#jobCreator .buttons .gray {
-  margin-right: 100px;
+#jobCreator i {
+  width: 100%;
+  height: 35px;
+  text-align: left;
+  background-color: #76beba;
+  color: white;
+  border: none;
+  padding-top: 8px;
+  padding-left: 15px;
+  font-size: 20px;
+  cursor: pointer;
+  -webkit-transition: 0.1s;
+  transition: 0.1s;
+  border-radius: 7px;
+}
+
+#jobCreator i:hover {
+  background-color: #62aaa6;
+}
+
+#jobCreator i .labelCount {
+  font-family: 'Roboto';
+  text-align: right;
+  top: 7px;
+  right: 15px;
+  color: #fff;
 }
 
 #Popup {
   position: fixed;
   background-color: #efefef;
-
   width: 100vw;
   height: 100vh;
-
   top: 0;
   left: 0;
   z-index: 1;
@@ -889,7 +930,7 @@ textarea {
   position: relative;
   width: 70%;
   margin: auto;
-  max-height: 70%;
+  max-height: 70vh;
   margin-top: calc(100vh - 85vh - 20px);
   background: #fff;
   border-radius: 4px;

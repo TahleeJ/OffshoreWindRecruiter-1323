@@ -6,6 +6,7 @@ body,
   overflow: hidden;
   height: 100vh;
   width: 100vw;
+  font-family: "Roboto";
 }
 
 * {
@@ -85,7 +86,6 @@ textarea {
 .listViewer .listElements {
   overflow-y: auto;
   overflow-x: hidden;
-  height: calc(100% - 25px);
 }
 
 .listViewer .listElements > * {
@@ -347,7 +347,17 @@ textarea {
 
 #labelPage {
   text-align: center;
-  font-family: "Roboto";
+}
+
+#labelPage .labelContainer {
+  border-radius: 10px;
+  max-width: 800px;
+  padding: 5px;
+  margin: auto;
+}
+
+#labelPage .goBack {
+  margin: 10px;
 }
 
 #labelPage .labelHeader {
@@ -356,10 +366,6 @@ textarea {
   font-size: 28px;
   position: relative;
   padding-top: 80px;
-}
-
-#labelPage .searchBar {
-  padding-block: 15px;
 }
 
 #labelPage .searchInput {
@@ -373,28 +379,41 @@ textarea {
   padding: 1px 0 0 20px;
 }
 
-#labelPage .barRow {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-  margin-inline: 20px;
+#labelPage .addLabel {
+  height: 100px;
+  background-color: #efefef;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 20px;
+  text-align: left;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
 }
 
-#labelPage .addLabelBar {
+#labelPage .addLabel .addLabelPrompt {
   text-align: left;
-  -webkit-box-flex: 1;
-      -ms-flex: 1 1 50%;
-          flex: 1 1 50%;
-}
-
-#labelPage .addLabelPrompt {
-  text-align: left;
-  margin-left: 20px;
   color: #be7478;
-  font-weight: 500;
-  font-size: 15px;
+  font-weight: bold;
+  font-size: 28px;
+}
+
+#labelPage .addLabel .labelInput {
+  width: calc(100% - 80px);
+  padding: 5px;
+  border-radius: 2px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #acacac;
+  font-size: 20px;
+  border: none;
+  border-bottom: 2px solid #efefef;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+#labelPage .addLabel .labelInput:focus, #labelPage .addLabel .labelInput:hover {
+  border-radius: 0px;
+  border-bottom: 2px solid #76beba;
 }
 
 #labelPage .labelSubmit {
@@ -404,82 +423,88 @@ textarea {
   margin-left: 20px;
 }
 
-#labelPage .labelInput {
-  width: 100%;
-  height: 30px;
-  padding-left: 20px;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #acacac;
-}
-
-#labelPage .labelContainer {
-  margin-inline: auto;
-  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  width: 80%;
-  border-radius: 10px;
-  max-width: 800px;
-}
-
-#labelPage .addLabelDiv {
-  height: 100px;
-  background-color: #efefef;
-  border-radius: 10px 10px 0 0;
-  padding-top: 10px;
-}
-
-#labelPage .addLabelDiv > * {
-  padding-block: 5px;
-}
-
 #labelPage .listViewer {
-  border-radius: 0 0 10px 10px;
+  border-radius: 5px;
   -webkit-box-shadow: none;
           box-shadow: none;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
 }
 
 #labelEditor {
-  font-family: "Roboto";
   text-align: center;
-}
-
-#labelEditor .labelHeader {
-  font-size: 28px;
-  font-weight: bold;
-  color: #be7478;
-}
-
-#labelEditor .labelNameInput {
-  width: 80%;
-  max-width: 850px;
-  height: 30px;
-  padding-left: 20px;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #acacac;
+  background-color: #dadada;
+  height: calc(100% - 50px);
+  overflow-y: auto;
 }
 
 #labelEditor .listContainer > * {
-  width: 90%;
-  max-width: 900px;
-  margin-inline: auto;
-  margin-block: 20px;
+  max-width: 800px;
+  margin: auto;
+  padding: 5px;
 }
 
-#labelEditor .listElement .edit {
+#labelEditor .labelNamePrompt {
+  text-align: left;
+}
+
+#labelEditor .labelNamePrompt .title {
+  font-size: 20px;
+}
+
+#labelEditor .labelNamePrompt .labelNameInput {
+  font-size: 20px;
+  width: 100%;
+  padding: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 2px;
+  border-bottom: 2px solid transparent;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+#labelEditor .labelNamePrompt .labelNameInput:focus {
+  border-bottom: 2px solid #76beba;
+}
+
+#labelEditor .listViewer {
+  margin-bottom: 10px;
+}
+
+#labelEditor .listViewer .listElement .edit {
   display: none;
 }
 
-.labelEditor > * {
-  margin-block: 20px;
+#labelEditor .association {
+  background-color: white;
+  text-align: left;
+  font-size: 20px;
+}
+
+#labelEditor .association .surveyTitle {
+  font-weight: bold;
+}
+
+#labelEditor .association .questionTitle {
+  padding-left: 20px;
+}
+
+#labelEditor .association .answerTitle {
+  padding-left: 40px;
+}
+
+#labelEditor .buttons button {
+  margin: 5px;
 }
 
 #home {
   height: calc(100% - 50px);
   text-align: center;
+  max-width: 800px;
+  margin: auto;
+  padding: 5px;
 }
 
 #home h1 {
@@ -820,7 +845,7 @@ textarea {
 }
 
 #jobCreator {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   color: #4e4e4e;
 }
 
@@ -848,7 +873,7 @@ textarea {
 #jobCreator .jobInputContainer input[type="text"] {
   height: 33px;
   padding-left: 10px;
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-size: 16px;
   border-radius: 7px;
   border: none;
@@ -868,7 +893,7 @@ textarea {
   border: none;
   resize: none;
   border-radius: 7px;
-  font-family: 'Roboto';
+  font-family: "Roboto";
 }
 
 #jobCreator .dropdown {
@@ -909,7 +934,7 @@ textarea {
 }
 
 #jobCreator i .labelCount {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   text-align: right;
   top: 7px;
   right: 15px;

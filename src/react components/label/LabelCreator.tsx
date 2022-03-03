@@ -16,7 +16,7 @@ interface props {
 /** The header of the application. */
 const LabelManager: React.FC<props> = (props) => {
     const [labelName, setInputValue] = useState("");
-    const [surveyRefs, setSurveyRefs] = useState<Map<Survey & hasId, Map<SurveyQuestion, SurveyAnswer[]>>>();
+    const [surveyRefs, setSurveyRefs] = useState<Map<Survey & hasId, Map<SurveyQuestion, SurveyAnswer[]>>>(new Map());
     const appDispatch = useAppDispatch();
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     const reduxLabel = useAppSelector(s => s.navigation.operationData as Label & hasId);
@@ -37,45 +37,39 @@ const LabelManager: React.FC<props> = (props) => {
         }
 
         // Initialize surveyRefs here because getSurveyReferencesToLabel is async
-        getSurveyReferencesToLabel(reduxLabel.id).then(data => setSurveyRefs(data))
-        
+        getSurveyReferencesToLabel(reduxLabel.id)
+            .then(data => setSurveyRefs(data));
+
     }, [reduxLabel, currentOperation]);
 
     return (
-        <div id='labelEditor' className='labelEditor'>
-            <div className='labelHeader'>
-                <div className='labelTitle'>Edit Label</div>
-            </div>
-            <div className="labelNamePrompt">
-                <div className="title">Edit Label Name:</div>
-                <input type="text" className="labelNameInput" value={labelName} onChange={(e) => setInputValue(e.target.value)} placeholder='Label Name'></input>
-            </div>
+        <div id='labelEditor'>
             <div className="listContainer">
-                <div className="questionsList">
-                    <ListViewer height="350px" title="Associated Answers">
-                        {surveyRefs !== undefined ?
-                            [...surveyRefs].map(([survey, questionRefs]) => {
-                                return (<ListViewer height='100' title={survey.title}>
-                                {
-                                    [...questionRefs].map(([question, answers]) => {
-                                        return (<ListViewer height='100'  title={question.prompt}>
-                                        {
-                                            answers.map(answer => <ListElement name={answer.text ? answer.text : "scale"} handleEdit={() => alert("")} handleDelete={() => alert("")} />)
-                                        }
-                                        </ListViewer>)
-                                    })
+                {/* <div className='labelTitle'>Edit Label</div> */}
+                <div className="labelNamePrompt">
+                    <div className="title">Label Name:</div>
+                    <input type="text" className="labelNameInput" value={labelName} onChange={(e) => setInputValue(e.target.value)} placeholder='Label Name'></input>
+                </div>
+                <ListViewer height="350px" title="Associated Answers">
+                    {surveyRefs ?
+                        [...surveyRefs].map(([survey, questionRefs]) => {
+                            return <div className='association'>
+                                <div className='surveyTitle'>Survey: {survey.title}</div>
+                                {[...questionRefs].map(([question, answers]) => {
+                                    return <div>
+                                        <div className='questionTitle'>Question: {question.prompt}</div>
+                                        {answers.map(answer => <div className='answerTitle'>Answer: {answer.text}</div>)}
+                                    </div>
+                                })
                                 }
-                                </ListViewer>)
-                            })
-                            : null
-                        }
-                    </ListViewer>
-                </div>
-                <div className="jobOpsList">
-                    <ListViewer height="350px" title="Associated Job Opportunities">
-                        <ListElement name="Job Opportunity" handleEdit={() => alert("This function has not been completed yet.")} handleDelete={() => alert("This function has not been completed yet.")} />
-                    </ListViewer>
-                </div>
+                            </div>
+                        })
+                        : null
+                    }
+                </ListViewer>
+                <ListViewer height="350px" title="Associated Job Opportunities">
+                    <ListElement name="NOT DONE YET" handleEdit={() => alert("This function has not been completed yet.")} handleDelete={() => alert("This function has not been completed yet.")} />
+                </ListViewer>
             </div>
             <div className="buttons">
                 <button className='gray' onClick={() => { appDispatch(changePage({ type: PageType.LabelManage })) }}>Cancel</button>

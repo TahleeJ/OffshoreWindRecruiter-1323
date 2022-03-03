@@ -28,6 +28,8 @@ body,
     overflow: hidden;
     height: 100vh;
     width: 100vw;
+
+    font-family: "Roboto";
 }
 
 * {
@@ -103,7 +105,7 @@ textarea {
     .listElements {
         overflow-y: auto;
         overflow-x: hidden;
-        height: calc(100% - 25px);
+        // height: calc(100% - 25px);
 
         & > * {
             padding: 7px 5px;
@@ -327,7 +329,18 @@ textarea {
 
 #labelPage {
     text-align: center;
-    font-family: "Roboto";
+
+    .labelContainer {
+        border-radius: 10px;
+        max-width: 800px;
+        padding: 5px;
+        margin: auto;
+        // margin-top: 30px;
+    }
+
+    .goBack {
+        margin: 10px;
+    }
 
     .labelHeader {
         font-weight: bold;
@@ -335,10 +348,6 @@ textarea {
         font-size: $largest-font-size;
         position: relative;
         padding-top: 80px;
-    }
-
-    .searchBar {
-        padding-block: 15px;
     }
 
     .searchInput {
@@ -352,23 +361,40 @@ textarea {
         padding: 1px 0 0 20px;
     }
 
-    .barRow {
-        display: flex;
-        flex-wrap: wrap;
-        margin-inline: 20px;
-    }
-
-    .addLabelBar {
+    .addLabel {
+        height: 100px;
+        background-color: $gray1;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 20px;
         text-align: left;
-        flex: 1 1 50%;
-    }
+        box-shadow: $subtle-shadow;
 
-    .addLabelPrompt {
-        text-align: left;
-        margin-left: 20px;
-        color: $rose-red;
-        font-weight: 500;
-        font-size: 15px;
+        .addLabelPrompt {
+            text-align: left;
+            color: $rose-red;
+            font-weight: bold;
+            font-size: $largest-font-size;
+        }
+
+        .labelInput {
+            width: calc(100% - 80px);
+            padding: 5px;
+            border-radius: 2px;
+            border-style: solid;
+            border-width: 1px;
+            border-color: #acacac;
+            font-size: $large-font-size;
+            border: none;
+            border-bottom: 2px solid $gray1;
+            transition: 0.2s;
+
+            &:focus,
+            &:hover {
+                border-radius: 0px;
+                border-bottom: 2px solid $pale-green;
+            }
+        }
     }
 
     .labelSubmit {
@@ -376,38 +402,10 @@ textarea {
         margin-left: 20px;
     }
 
-    .labelInput {
-        width: 100%;
-        height: 30px;
-        padding-left: 20px;
-        border-radius: 5px;
-        border-style: solid;
-        border-width: 1px;
-        border-color: #acacac;
-    }
-
-    .labelContainer {
-        margin-inline: auto;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        width: 80%;
-        border-radius: 10px;
-        max-width: 800px;
-    }
-
-    .addLabelDiv {
-        height: 100px;
-        background-color: $gray1;
-        border-radius: 10px 10px 0 0;
-        padding-top: 10px;
-    }
-
-    .addLabelDiv > * {
-        padding-block: 5px;
-    }
-
     .listViewer {
-        border-radius: 0 0 10px 10px;
+        border-radius: 5px;
         box-shadow: none;
+        box-shadow: $subtle-shadow;
     }
 }
 
@@ -768,8 +766,8 @@ textarea {
     }
 }
 #jobCreator {
-    font-family: 'Roboto';
-    color:#4e4e4e;
+    font-family: "Roboto";
+    color: #4e4e4e;
 
     .jobHeader {
         font-weight: bold;
@@ -791,7 +789,7 @@ textarea {
         input[type="text"] {
             height: 33px;
             padding-left: 10px;
-            font-family: 'Roboto';
+            font-family: "Roboto";
             font-size: $normal-font-size;
             border-radius: 7px;
             // border: 1px solid $gray1;
@@ -811,22 +809,21 @@ textarea {
             border: none;
             resize: none;
             border-radius: 7px;
-            font-family: 'Roboto';
+            font-family: "Roboto";
         }
     }
     .dropdown {
-        position:relative;
-        left:unset !important;
+        position: relative;
+        left: unset !important;
         margin-inline: auto;
-        width:90%;
+        width: 90%;
         .title {
             display: none;
         }
-
     }
     .buttons {
         text-align: right;
-        margin-top:10px;
+        margin-top: 10px;
         margin-right: 5%;
     }
     i {
@@ -851,11 +848,11 @@ textarea {
             background-color: $dark-pale-green;
         }
         .labelCount {
-            font-family: 'Roboto';
+            font-family: "Roboto";
             text-align: right;
             top: 7px;
             right: 15px;
-            color:#fff;
+            color: #fff;
         }
     }
 }

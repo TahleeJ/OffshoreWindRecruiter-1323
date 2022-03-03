@@ -31,6 +31,9 @@ const LabelManager: React.FC<props> = (props) => {
         await deleteLabel(id);
         appDispatch(setLabels(await getLabels()));
     }
+    const changeLabelFilter = (filterText: string) => {
+        //this is not implemented! feel free to do it if you wish
+    }
 
     const getSectionFromOType = (type: OperationType) => {
         switch (type) {
@@ -40,42 +43,36 @@ const LabelManager: React.FC<props> = (props) => {
             default:
                 return (
                     <div id="labelPage">
-                        <div className='labelHeader'>Manage Labels</div>
-                        <div className='searchBar'>
-                            <input type="text" className='searchInput' value={newLabelName} onChange={(e) => setLabelName(e.target.value)} placeholder='Search'></input>
-                        </div>
+                        {/* <div className='labelHeader'>Manage Labels</div> */}
                         <div className='labelContainer'>
-                            <div className='addLabelDiv'>
+                            <button className='gray goBack' onClick={() => appDispatch(changePage({ type: PageType.AdminHome }))}>Go back</button>
+                            <div className='addLabel'>
                                 <div className='addLabelPrompt'>Add A New Label</div>
-                                <div className='barRow'>
-                                    <div className='addLabelBar'>
-                                        <input type="text" className='labelInput' value={newLabelName} onChange={(e) => setLabelName(e.target.value)} placeholder='Label Name'></input>
-                                    </div>
-                                    <button className='labelSubmit' onClick={createLabel}>Submit</button>
-                                </div>
+                                <input type="text" className='labelInput' value={newLabelName} onChange={(e) => setLabelName(e.target.value)} placeholder='Label Name' />
+                                <button className='labelSubmit' onClick={createLabel}>Create</button>
                             </div>
-                            <div className='labelList'>
-                                <ListViewer height="350px">
-                                    {labels.length > 0 ?
-                                        labels.map((label, index) => {
-                                            return <ListElement
-                                                type="label"
-                                                name={label.name}
-                                                key={index}
-                                                handleEdit={() => appDispatch(changePage({ type: PageType.LabelManage, operation: OperationType.Editing, data: label }))} handleDelete={() => removeLabel(label.id)}
-                                            />
-                                        })
-                                        : <div>There are currently no labels. Create a new one above</div>
-                                    }
-                                </ListViewer>
-                            </div>
+
+                            {/* <input type="text" className='filterLabels' value={newLabelName} onChange={(e) => changeLabelFilter(e.target.value)} placeholder='Search'></input> */}
+                            <ListViewer height="350px" title='Current Labels'>
+                                {labels.length > 0 ?
+                                    labels.map((label, index) => {
+                                        return <ListElement
+                                            type="label"
+                                            name={label.name}
+                                            key={index}
+                                            handleEdit={() => appDispatch(changePage({ type: PageType.LabelManage, operation: OperationType.Editing, data: label }))} handleDelete={() => removeLabel(label.id)}
+                                        />
+                                    })
+                                    : <div>There are currently no labels. Create a new one above</div>
+                                }
+                            </ListViewer>
                         </div>
-                    </div>
+                    </div >
                 );
         }
     }
 
-    return (<div id="surveyHome">{getSectionFromOType(operationType)}</div>)
+    return getSectionFromOType(operationType)
 }
 
 export default LabelManager;

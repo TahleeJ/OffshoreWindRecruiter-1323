@@ -1,5 +1,6 @@
-const admin = require('firebase-admin');
-const functions = require('firebase-functions');
+import * as admin from 'firebase-admin';
+import * as functions from 'firebase-functions';
+import { AuthData } from 'firebase-functions/lib/common/providers/https';
 
 
 admin.initializeApp();
@@ -7,15 +8,15 @@ admin.initializeApp();
 const firestore = admin.firestore();
 const auth = admin.auth();
 
-const permissionLevels = {
-    None: 0,
-    Admin: 1,
-    Owner: 2
+enum PermissionLevel {
+    None  = 0,
+    Admin = 1,
+    Owner = 2
 };
 
 const errors = {
     invalidUser: new functions.https.HttpsError("failed-precondition", "Invalid argument!", "The selected user is not a member of this application."),
-     illegalArgument: {
+    illegalArgument: {
         userEmail: new functions.https.HttpsError("invalid-argument", "Invalid argument!", "You must choose a user to change permissions for."), 
         permissionLevel: new functions.https.HttpsError("invalid-argument", "Invalid argument!", "You must choose a valid permission level using an integer value 0-2.")
     }, 
@@ -24,12 +25,34 @@ const errors = {
 };
 
 
+function assertValidRequest(context: functions.https.CallableContext): asserts context is (functions.https.CallableContext & { auth: AuthData }) {
+    if (context.auth === undefined) {
+        functions.logger.log("Unauthorized function request with context: ", context);
+        throw errors.unauthorized;
+    }
+}
+
+
+async function getPermissionLevelByUid(uid: string): Promise<PermissionLevel>  {
+    return (await firestore.collection("User").doc(uid).get()).data()?.permissionLevel;
+}
+
+
 /**
  * Called when a user creates an account, makes a new User with None as default permissions
  * https://firebase.google.com/docs/functions/auth-events
  */
-exports.createNewUser = functions.auth.user().onCreate((user) => {
-    return firestore.collection("User").doc(user.uid).set({email: user.email, permissionLevel: permissionLevels.None})
+exports.createNewUser = functions.auth.user().onCreate(async (user) => {
+    return await firestore.collection("User").doc(user.uid)
+        .set({ email: user.email, permissionLevel: PermissionLevel.None })
+});
+
+
+/**
+ * Stores submitted survey in Firestore then the recomended jobs.
+ */
+exports.submitSurvey = functions.https.onCall(async (request, context) => {
+    assertValidRequest(context);
 });
 
 
@@ -41,16 +64,13 @@ exports.createNewUser = functions.auth.user().onCreate((user) => {
  * @return whether the signed in user has at least administrator permissions
  */
 exports.checkAdmin = functions.https.onCall(async (request, context) => {
-    const uid = context.auth.uid;
+    assertValidRequest(context);
+    
+    const permissionLevel = await getPermissionLevelByUid(context.auth.uid);
 
-    return await firestore.collection("User").doc(uid).get().then(snapshot => {
-        const data = snapshot.data();
-
-        return { 
-            isAdmin: data.permissionLevel != permissionLevels.None
-        };
-    });
+    return { isAdmin: permissionLevel != PermissionLevel.None };
 });
+
 
 
 /**
@@ -58,95 +78,82 @@ exports.checkAdmin = functions.https.onCall(async (request, context) => {
  * remove or give another user administrator privileges
  * 
  * @param request Parameters sent through function call:
- *  {
- *      userEmail: <string>,
- *      newPermissionLevel: <integer>
- *  }
+ * {
+ *      userEmail: string,
+ *      newPermissionLevel: integer
+ * }
  * 
  * @param context Function caller user's authentication information
  * @throw HttpsError if the user has invalid permissions, 
  *        the application has disabled the desired permissions action, or 
  *        if the provided arguments are invalid
  */
-exports.updatePermissions = functions.https.onCall(async (request, context) => {
-    if (request.userEmail == undefined || request.userEmail == null) {
+exports.updatePermissions = functions.https.onCall(async (request: { userEmail: string, newPermissionLevel: number }, context) => {
+    assertValidRequest(context);
+
+
+    if (request.userEmail == null)
         throw errors.illegalArgument.userEmail;
-    }
 
-    if (request.newPermissionLevel == undefined || request.newPermissionLevel == null || request.newPermissionLevel < 0 || request.newPermissionLevel > 2) {
+    if (request.newPermissionLevel == null || !(request.newPermissionLevel in PermissionLevel))
         throw errors.illegalArgument.permissionLevel;
-    }
     
-    const uid = context.auth.uid;
-   
+    
     // Obtain the function caller's permission level
-    const callerPermissionLevel = await firestore.collection("User").doc(uid).get().then(snapshot => {
-        const data = snapshot.data();
-
-        return data.permissionLevel;
-    });
+    const callerPermissionLevel = await getPermissionLevelByUid(context.auth.uid);
     
     // Flags to check in Firestore for legal owner permission change actions
-    const flags = await firestore.collection("Flag").get().then(res => {
-            return data = res.docs[0].data();
-    }); 
-
-    var userRecord = null;
+    const flags = await firestore.collection("Flag").get().then(res => res.docs[0].data());
 
     // Obtain the selected user's information reference in Firestore
+    let userRecord = null;
     try {
         userRecord = await auth.getUserByEmail(request.userEmail);
     } catch (error) {
         throw errors.invalidUser;
     }
 
-    const userDoc = firestore.collection("User").doc(userRecord.uid);
-    const userPermissionLevel = await userDoc.get().then(snapshot => {
-        const data = snapshot.data();
-
-        return data.permissionLevel;
-    });
-
-    var newLevel = userPermissionLevel;
-
+    const userPermissionLevel = await getPermissionLevelByUid(userRecord.uid);
+    
     // Determine new permissions level
+    let newLevel = userPermissionLevel;
     switch (request.newPermissionLevel) {
-        case permissionLevels.Owner:
+        case PermissionLevel.Owner:
             if (flags.ownerPromoteFlag) {
-                if (callerPermissionLevel != permissionLevels.Owner) {
+                if (callerPermissionLevel != PermissionLevel.Owner) {
                     throw errors.unauthorized;
                 }
 
-                newLevel = permissionLevels.Owner;
+                newLevel = PermissionLevel.Owner;
             } else {
                 throw errors.applicationDisabled;
             }
   
             break;
-        case permissionLevels.Admin:
-            if (callerPermissionLevel < permissionLevels.Admin) {
+        case PermissionLevel.Admin:
+            if (callerPermissionLevel < PermissionLevel.Admin) {
                 throw errors.unauthorized;
             }
 
-            newLevel = (userPermissionLevel > permissionLevels.Admin) ? userPermissionLevel : permissionLevels.Admin;
+            newLevel = (userPermissionLevel > PermissionLevel.Admin) ? userPermissionLevel : PermissionLevel.Admin;
 
             break;
-        case permissionLevels.None:
-            if (userPermissionLevel == permissionLevels.Owner) {
+        case PermissionLevel.None:
+            if (userPermissionLevel == PermissionLevel.Owner) {
                 if (!flags.demoteOwner) {
                     throw errors.applicationDisabled;
                 }
             }
 
-            if (callerPermissionLevel != permissionLevels.Owner) {
+            if (callerPermissionLevel != PermissionLevel.Owner) {
                 throw errors.unauthorized;
             }
 
-            newLevel = permissionLevels.None;
+            newLevel = PermissionLevel.None;
 
             break;
     }
 
     // Update permissions level
-    await userDoc.update({permissionLevel: newLevel});
+    await firestore.collection("User").doc(userRecord.uid).update({permissionLevel: newLevel});
 });

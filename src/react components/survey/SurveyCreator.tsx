@@ -144,10 +144,10 @@ const SurverCreator: React.FC = (props: props) => {
                                 <div className="header">
                                     <input type='text' className="prompt" value={q.prompt} placeholder="Question Prompt..." onChange={(e) => changeQuestionPrompt(qIndex, e.target.value)} />
                                     <div className="questionType">
-                                        <select name="questionType" title="Question Type" onChange={e => changeQuestionType(qIndex, QuestionType[e.target.value as keyof typeof QuestionType])}>
-                                            <option value="MultipleChoice" selected={q.questionType === QuestionType.MultipleChoice}>Multiple Choice</option>
-                                            <option value="Scale" selected={q.questionType === QuestionType.Scale}>Scale</option>
-                                            <option value="FreeResponse" selected={q.questionType === QuestionType.FreeResponse}>Free Response</option>
+                                        <select name="questionType" title="Question Type" onChange={e => changeQuestionType(qIndex, e.target.selectedIndex)} value={q.questionType}>
+                                            <option value={0}>Multiple Choice</option>
+                                            <option value={1}>Scale</option>
+                                            <option value={2}>Free Response</option>
                                         </select>
                                     </div>
                                     {q.questionType === QuestionType.Scale ?

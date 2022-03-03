@@ -15,9 +15,9 @@ export interface SurveyQuestion {
 }   
 
 export enum QuestionType {
-    Scale,
-    MultipleChoice,
-    FreeResponse
+    MultipleChoice = 0,
+    Scale = 1,
+    FreeResponse = 2
 }
 
 export interface SurveyAnswer {

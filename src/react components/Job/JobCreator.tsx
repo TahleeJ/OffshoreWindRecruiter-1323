@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, PageType, OperationType } from '../../redux/navigationSlice';
 import { useEffect } from "react";
 import { JobOpp } from "../../firebase/Types";
-import {getJobOpps, newJobOpp, editJobOpp} from '../../firebase/JobQueries';
+import {getJobOpps, newJobOpp, editJobOpp} from '../../firebase/Queries/JobQueries';
 import { setJobOpps } from "../../redux/dataSlice.ts";
 import LabelConnector from "../label/LabelConnector";
 

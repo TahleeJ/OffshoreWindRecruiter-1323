@@ -6,6 +6,7 @@ import { setSurveys } from "../../redux/dataSlice.ts";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
 import LabelConnector from "../label/LabelConnector";
+import DeletePopup from "./DeletePopup";
 
 
 interface props {
@@ -30,6 +31,10 @@ const SurverCreator: React.FC = (props: props) => {
     const reduxSurveyData = useAppSelector(s => s.navigation.operationData as Survey & { id: string });
     const labels = useAppSelector(s => s.data.labels);
     const dispatch = useAppDispatch();
+    const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+    const togglePopup = () => {
+        setPopupvisible(!popupVisible);
+    }
 
     const saveSurvey = async () => {
         let survey: Survey = {
@@ -119,6 +124,14 @@ const SurverCreator: React.FC = (props: props) => {
             }
         });
     }
+    const checkEmpty = () => {
+        if (!title.trim()) {
+            togglePopup();
+        } else {
+            
+            saveSurvey();
+        }
+    }
 
     useEffect(() => {
         //copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
@@ -133,7 +146,7 @@ const SurverCreator: React.FC = (props: props) => {
         <div className="surveyCreator">
             <button className="red" onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
             <div className="surveyHeader">
-                <input type='text' className="surveyTitle" placeholder="Survey Title..." value={title} onChange={(e) => setTitle(e.target.value)} />
+                <input type='text' className="surveyTitle" placeholder="Survey Title*..." value={title} onChange={(e) => setTitle(e.target.value)} />
                 <textarea className="surveyDescription" placeholder="Survey Description..." value={desc} onChange={(e) => setDesc(e.target.value)} />
             </div>
             {
@@ -203,7 +216,8 @@ const SurverCreator: React.FC = (props: props) => {
                 })
             }
             <button onClick={addNewQuestion}>New Question</button>
-            <button onClick={saveSurvey}>{currentOperation === OperationType.Creating ? "Save Survey as New" : "Save Edits"}</button>
+            <button onClick={checkEmpty}>{currentOperation === OperationType.Creating ? "Save Survey as New" : "Save Edits"}</button>
+            {popupVisible && <DeletePopup style = "check" handleCancel={togglePopup}></DeletePopup>}
         </div >
     )
 }

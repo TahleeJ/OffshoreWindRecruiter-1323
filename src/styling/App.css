@@ -6,12 +6,12 @@ body,
   overflow: hidden;
   height: 100vh;
   width: 100vw;
-  font-family: "Roboto";
 }
 
 * {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  font-family: 'Roboto';
 }
 
 .pointer {
@@ -24,7 +24,7 @@ button {
   padding: 5px 5px;
   font-size: 15px;
   border-radius: 3px;
-  background-color: #76beba;
+  background-color: #7ba1ff;
   cursor: pointer;
 }
 
@@ -38,15 +38,15 @@ button.gray:hover {
 }
 
 button.red {
-  background-color: #be7478;
+  background-color: #d16161;
 }
 
 button.red:hover {
-  background-color: #a76568;
+  background-color: #cc5050;
 }
 
 button:hover {
-  background-color: #62aaa6;
+  background-color: #5f8dff;
 }
 
 input,
@@ -54,9 +54,55 @@ textarea {
   outline: 0px;
 }
 
+.edit,
+.labelIcon,
+.delete {
+  color: #d16161;
+  padding-left: 5px;
+  border-radius: 3px;
+  padding: 5px;
+  -webkit-transition: 0.1s;
+  transition: 0.1s;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.edit:hover,
+.labelIcon:hover,
+.delete:hover {
+  background-color: #d16161;
+  color: white;
+}
+
+.labelIcon {
+  color: #7ba1ff;
+  position: relative;
+}
+
+.labelIcon .labelCount {
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  color: black;
+}
+
+.labelIcon:hover {
+  background-color: #7ba1ff;
+}
+
+.edit {
+  color: #7ba1ff;
+}
+
+.edit:hover {
+  background-color: #7ba1ff;
+}
+
 .container {
   text-align: center;
   max-width: 800px;
+  margin: auto;
+  padding: 7px;
 }
 
 .listViewer {
@@ -71,16 +117,28 @@ textarea {
 
 .listViewer .title {
   font-weight: bold;
-  color: #be7478;
+  background-color: white;
+  color: #7ba1ff;
   text-align: left;
   font-size: 28px;
   padding: 3px 8px;
+  border-bottom: 1px solid #7ba1ff;
 }
 
 .listViewer .addNew {
   position: absolute;
   right: 3px;
   top: 3px;
+  padding: 6px;
+  color: #7ba1ff;
+  width: 30px;
+  height: 30px;
+  border-radius: 2px;
+}
+
+.listViewer .addNew:hover {
+  background-color: #7ba1ff;
+  color: white;
 }
 
 .listViewer .listElements {
@@ -110,7 +168,7 @@ textarea {
   padding: 4px;
 }
 
-.listViewer .listElements .listElement button {
+.listViewer .listElements .listElement .edit {
   margin-right: 5px;
 }
 
@@ -124,7 +182,7 @@ textarea {
 }
 
 #authPage .title {
-  color: #be7478;
+  color: #d16161;
   font-weight: bold;
   padding-top: 10px;
 }
@@ -132,7 +190,7 @@ textarea {
 #authPage .error {
   margin: 5px;
   padding: 3px;
-  background: #be7478;
+  background: #d16161;
   color: white;
   border-radius: 3px;
 }
@@ -174,8 +232,8 @@ textarea {
 
 #header {
   font-family: "Roboto";
-  background-color: #efefef;
-  color: #76beba;
+  background-color: #7ba1ff;
+  color: white;
   height: 50px;
   text-align: center;
   display: -webkit-box;
@@ -184,24 +242,30 @@ textarea {
   position: relative;
 }
 
-#header i {
-  height: 100%;
-  color: #76beba;
-  border: none;
-  padding: 10px 10px;
-  font-size: 30px;
-  cursor: pointer;
-}
-
-#header i:hover {
-  background-color: #76beba;
-  color: white;
-}
-
 #header .buttonGroup {
   height: 100%;
   -ms-flex-negative: 2;
       flex-shrink: 2;
+}
+
+#header .buttonGroup i {
+  height: 100%;
+  color: white;
+  border: none;
+  padding: 10px 10px;
+  font-size: 30px;
+  cursor: pointer;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+#header .buttonGroup i:hover {
+  background-color: #5f8dff;
+  color: white;
+}
+
+#header .buttonGroup i:last-child:hover {
+  background-color: #d16161;
 }
 
 #header .title {
@@ -352,31 +416,11 @@ textarea {
 #labelPage .labelContainer {
   border-radius: 10px;
   max-width: 800px;
-  padding: 5px;
   margin: auto;
 }
 
 #labelPage .goBack {
   margin: 10px;
-}
-
-#labelPage .labelHeader {
-  font-weight: bold;
-  color: #be7478;
-  font-size: 28px;
-  position: relative;
-  padding-top: 80px;
-}
-
-#labelPage .searchInput {
-  width: 30%;
-  min-width: 250px;
-  height: 30px;
-  border-radius: 20px;
-  border-width: 0.5px;
-  border-color: #4e4e4e;
-  border-style: solid;
-  padding: 1px 0 0 20px;
 }
 
 #labelPage .addLabel {
@@ -392,7 +436,7 @@ textarea {
 
 #labelPage .addLabel .addLabelPrompt {
   text-align: left;
-  color: #be7478;
+  color: #7ba1ff;
   font-weight: bold;
   font-size: 28px;
 }
@@ -413,7 +457,7 @@ textarea {
 
 #labelPage .addLabel .labelInput:focus, #labelPage .addLabel .labelInput:hover {
   border-radius: 0px;
-  border-bottom: 2px solid #76beba;
+  border-bottom: 2px solid #7ba1ff;
 }
 
 #labelPage .labelSubmit {
@@ -433,12 +477,12 @@ textarea {
 
 #labelEditor {
   text-align: center;
-  background-color: #dadada;
+  background-color: white;
   height: calc(100% - 50px);
   overflow-y: auto;
 }
 
-#labelEditor .listContainer > * {
+#labelEditor .listContainer {
   max-width: 800px;
   margin: auto;
   padding: 5px;
@@ -446,6 +490,10 @@ textarea {
 
 #labelEditor .labelNamePrompt {
   text-align: left;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 #labelEditor .labelNamePrompt .title {
@@ -456,8 +504,6 @@ textarea {
   font-size: 20px;
   width: 100%;
   padding: 5px;
-  margin-top: 10px;
-  margin-bottom: 10px;
   border: none;
   border-radius: 2px;
   border-bottom: 2px solid transparent;
@@ -466,11 +512,13 @@ textarea {
 }
 
 #labelEditor .labelNamePrompt .labelNameInput:focus {
-  border-bottom: 2px solid #76beba;
+  border-bottom: 2px solid #7ba1ff;
 }
 
 #labelEditor .listViewer {
   margin-bottom: 10px;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
 }
 
 #labelEditor .listViewer .listElement .edit {
@@ -518,14 +566,14 @@ textarea {
 }
 
 #home #account {
-  color: #be7478;
+  color: #d16161;
 }
 
 #surveyHome {
   text-align: center;
   height: calc(100% - 50px);
   overflow-y: auto;
-  background-color: #dadada;
+  background-color: #efefef;
 }
 
 #surveyHome button {
@@ -550,7 +598,7 @@ textarea {
 }
 
 #surveyHome .surveyCreator input[type="text"]:focus {
-  border-bottom: 2px solid #76beba;
+  border-bottom: 2px solid #7ba1ff;
 }
 
 #surveyHome .surveyCreator .surveyHeader {
@@ -602,15 +650,6 @@ textarea {
   font-size: 16px;
 }
 
-#surveyHome .surveyCreator .createdQuestion .delete {
-  background-color: #be7478;
-  padding-left: 5px;
-}
-
-#surveyHome .surveyCreator .createdQuestion .delete:hover {
-  background-color: #a76568;
-}
-
 #surveyHome .surveyCreator .createdQuestion .s-answers {
   text-align: center;
   padding-bottom: 10px;
@@ -635,25 +674,6 @@ textarea {
   width: 100%;
 }
 
-#surveyHome .surveyCreator .createdQuestion i {
-  width: 30px;
-  height: 30px;
-  background-color: #76beba;
-  color: white;
-  border: none;
-  padding: 6px 3px;
-  font-size: 20px;
-  cursor: pointer;
-  -webkit-transition: 0.1s;
-  transition: 0.1s;
-  border-radius: 3px;
-  margin: 5px;
-}
-
-#surveyHome .surveyCreator .createdQuestion i:hover {
-  background-color: #62aaa6;
-}
-
 #surveyHome .surveyCreator input[type="radio"] {
   pointer-events: none;
 }
@@ -666,7 +686,7 @@ textarea {
 
 #surveyHome .administerSurveyPage .surveyTitle {
   font-weight: bold;
-  color: #be7478;
+  color: #d16161;
   text-align: left;
   font-size: 24px;
   padding: 3px 8px;
@@ -714,7 +734,7 @@ textarea {
   appearance: none;
   width: 30px;
   height: 30px;
-  border: 2px solid #76beba;
+  border: 2px solid #7ba1ff;
   -webkit-transition: 0.1s all;
   transition: 0.1s all;
   margin-right: 5px;
@@ -726,13 +746,13 @@ textarea {
 }
 
 #surveyHome input[type="radio"]:hover {
-  border: 3px solid #76beba;
+  border: 3px solid #7ba1ff;
   outline: unset !important;
   /* I added this one for Edge (chromium) support */
 }
 
 #surveyHome input[type="radio"]:checked {
-  border: 10px solid #76beba;
+  border: 10px solid #7ba1ff;
   outline: unset !important;
   /* I added this one for Edge (chromium) support */
 }
@@ -743,7 +763,7 @@ textarea {
 
 #jobManager .jobTitle {
   font-weight: bold;
-  color: #be7478;
+  color: #d16161;
   text-align: left;
   font-size: 24px;
   padding: 3px 8px;
@@ -783,7 +803,7 @@ textarea {
 
 #promoteUser .title {
   font-weight: bold;
-  color: #be7478;
+  color: #d16161;
   font-size: 28px;
   position: relative;
   padding: 50px 0px 10px 0px;
@@ -837,113 +857,79 @@ textarea {
 }
 
 #jobList .buttons .red {
-  background-color: #be7478;
+  background-color: #d16161;
 }
 
 #jobList .buttons .red:hover {
-  background-color: #a76568;
+  background-color: #cc5050;
 }
 
 #jobCreator {
-  font-family: "Roboto";
-  color: #4e4e4e;
+  background-color: #efefef;
+  height: calc(100% - 50px);
 }
 
 #jobCreator .jobHeader {
   font-weight: bold;
-  color: #be7478;
+  color: #7ba1ff;
   font-size: 28px;
   position: relative;
-  text-align: right;
+  text-align: left;
   margin-right: 5%;
   padding-top: 20px;
 }
 
-#jobCreator .title {
-  font-weight: bold;
-  margin-bottom: 5px;
+#jobCreator .jobInputContainer {
+  margin: auto;
+  margin-top: 20px;
+  text-align: left;
 }
 
-#jobCreator .jobInputContainer {
-  margin-inline: auto;
-  margin-top: 40px;
-  width: 90%;
+#jobCreator .jobInputContainer .title {
+  text-align: left;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 #jobCreator .jobInputContainer input[type="text"] {
-  height: 33px;
-  padding-left: 10px;
-  font-family: "Roboto";
-  font-size: 16px;
-  border-radius: 7px;
+  padding: 7px;
+  font-size: 20px;
+  border-radius: 3px;
   border: none;
   width: calc(100%);
+  border-bottom: 2px solid transparent;
 }
 
 #jobCreator .jobInputContainer input[type="text"]:focus {
-  border-bottom: 2px solid #76beba;
+  border-bottom: 2px solid #7ba1ff;
 }
 
 #jobCreator .jobInputContainer textarea {
-  padding-top: 10px;
-  padding-left: 10px;
-  height: 150px;
+  padding: 10px;
   font-size: 16px;
   width: calc(100%);
   border: none;
   resize: none;
-  border-radius: 7px;
-  font-family: "Roboto";
+  border-radius: 3px;
 }
 
-#jobCreator .dropdown {
-  position: relative;
-  left: unset !important;
-  margin-inline: auto;
-  width: 90%;
-}
-
-#jobCreator .dropdown .title {
-  display: none;
+#jobCreator .labelChoice {
+  cursor: pointer;
 }
 
 #jobCreator .buttons {
   text-align: right;
   margin-top: 10px;
-  margin-right: 5%;
 }
 
-#jobCreator i {
-  width: 100%;
-  height: 35px;
-  text-align: left;
-  background-color: #76beba;
-  color: white;
-  border: none;
-  padding-top: 8px;
-  padding-left: 15px;
-  font-size: 20px;
-  cursor: pointer;
-  -webkit-transition: 0.1s;
-  transition: 0.1s;
-  border-radius: 7px;
-}
-
-#jobCreator i:hover {
-  background-color: #62aaa6;
-}
-
-#jobCreator i .labelCount {
-  font-family: "Roboto";
-  text-align: right;
-  top: 7px;
-  right: 15px;
-  color: #fff;
+#jobCreator button {
+  margin: 5px;
 }
 
 #Popup {
   position: fixed;
-  background-color: #efefef;
+  background-color: rgba(0, 0, 0, 0.3);
+  text-align: center;
   width: 100vw;
   height: 100vh;
   top: 0;
@@ -955,23 +941,20 @@ textarea {
   position: relative;
   width: 70%;
   margin: auto;
-  max-height: 70vh;
-  margin-top: calc(100vh - 85vh - 20px);
-  background: #fff;
+  margin-top: 150px;
+  background: white;
   border-radius: 4px;
   padding: 20px;
-  border: 1px solid #999;
-  overflow: auto;
+  overflow: none;
 }
 
 #Popup .popBox .PopupText h1 {
-  color: #a76568;
+  color: #d16161;
 }
 
-#Popup .popBox .Buttons {
-  position: relative;
-  left: 35%;
-  margin-left: 40px;
+#Popup .popBox button {
+  font-size: 20px;
+  margin: 5px;
 }
 
 .transparentBackground {
@@ -999,7 +982,7 @@ textarea {
 .transparentBackground .dropdown .title {
   text-align: center;
   font-weight: bold;
-  color: #be7478;
+  color: #d16161;
   border-bottom: 1px solid #dadada;
 }
 
@@ -1012,16 +995,5 @@ textarea {
 
 .transparentBackground .dropdown .labelChoice:hover, .transparentBackground .dropdown .labelChoice.active {
   background-color: #dadada;
-}
-
-i {
-  position: relative;
-}
-
-i .labelCount {
-  position: absolute;
-  top: 5px;
-  left: 7px;
-  color: black;
 }
 /*# sourceMappingURL=App.css.map */

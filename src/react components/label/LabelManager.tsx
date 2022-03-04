@@ -61,7 +61,7 @@ const LabelManager: React.FC<props> = (props) => {
                             <button className='gray goBack' onClick={() => appDispatch(changePage({ type: PageType.AdminHome }))}>Go back</button>
                             <div className='addLabel'>
                                 <div className='addLabelPrompt'>Add A New Label</div>
-                                <input type="text" className='labelInput*' value={newLabelName} onChange={(e) => setLabelName(e.target.value)} placeholder='Label Name' />
+                                <input type="text" className='labelInput' value={newLabelName} onChange={(e) => setLabelName(e.target.value)} placeholder='Label Name' />
 
                                 <button className='labelSubmit' onClick={checkEmpty}>Create</button>
                                 {popupVisible && <DeletePopup style = "check" name="Label Name" handleCancel={togglePopup}></DeletePopup>}

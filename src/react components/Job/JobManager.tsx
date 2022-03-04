@@ -53,7 +53,7 @@ const JobManager: React.FC<props> = (props) => {
         }
     }
 
-    return (<div id="surveyHome">{getSectionFromOType(operationType)}</div>)
+    return getSectionFromOType(operationType)
 }
 
 export default JobManager;

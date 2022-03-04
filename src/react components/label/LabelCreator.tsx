@@ -47,18 +47,17 @@ const LabelManager: React.FC<props> = (props) => {
             <div className="listContainer">
                 {/* <div className='labelTitle'>Edit Label</div> */}
                 <div className="labelNamePrompt">
-                    <div className="title">Label Name:</div>
                     <input type="text" className="labelNameInput" value={labelName} onChange={(e) => setInputValue(e.target.value)} placeholder='Label Name'></input>
                 </div>
                 <ListViewer height="350px" title="Associated Answers">
                     {surveyRefs ?
-                        [...surveyRefs].map(([survey, questionRefs]) => {
-                            return <div className='association'>
+                        [...surveyRefs].map(([survey, questionRefs], sI) => {
+                            return <div className='association' key={sI}>
                                 <div className='surveyTitle'>Survey: {survey.title}</div>
-                                {[...questionRefs].map(([question, answers]) => {
-                                    return <div>
+                                {[...questionRefs].map(([question, answers], qI) => {
+                                    return <div key={qI}>
                                         <div className='questionTitle'>Question: {question.prompt}</div>
-                                        {answers.map(answer => <div className='answerTitle'>Answer: {answer.text}</div>)}
+                                        {answers.map((answer, aI) => <div className='answerTitle' key={aI}>Answer: {answer.text}</div>)}
                                     </div>
                                 })
                                 }

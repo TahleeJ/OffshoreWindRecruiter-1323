@@ -4,10 +4,11 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, PageType, OperationType } from '../../redux/navigationSlice';
 import { useEffect } from "react";
 import { JobOpp } from "../../firebase/Types";
-import {getJobOpps, newJobOpp, editJobOpp} from '../../firebase/Queries/JobQueries';
+import { getJobOpps, newJobOpp, editJobOpp } from '../../firebase/Queries/JobQueries';
 import { setJobOpps } from "../../redux/dataSlice.ts";
 import LabelConnector from "../label/LabelConnector";
 import DeletePopup from '../survey/DeletePopup';
+import ListViewer from '../ListViewer';
 
 
 
@@ -54,7 +55,7 @@ const JobCreator: React.FC<props> = (props) => {
             cloneLabels.push(labelId);
         else
             cloneLabels.splice(indexOfLabelId, 1);
-        
+
         setLabelsAssc(cloneLabels);
     }
 
@@ -68,12 +69,10 @@ const JobCreator: React.FC<props> = (props) => {
         });
     }
     const checkEmpty = () => {
-        if (!jobOppName.trim() || !companyName.trim() || labels == null) {
+        if (!jobOppName.trim() || !companyName.trim() || labels == null)
             togglePopup();
-        } else {
-            
+        else
             saveJobOpp();
-        }
     }
     useEffect(() => {
         if (currentOperation === OperationType.Editing) {
@@ -83,39 +82,44 @@ const JobCreator: React.FC<props> = (props) => {
             setDescription(reduxJobOppData.jobDescription);
         }
     }, [reduxJobOppData, currentOperation]);
-    
+
     return (
-        <div id='jobCreator' className='jobCreator'>
-            <div className='jobHeader'>
-                <div className='jobTitle'>
+        <div id='jobCreator'>
+            <div className='container'>
+                <div className='jobHeader'>
                     Job Opportunity
                 </div>
+                <div className="jobInputContainer">
+                    <div className="title">Opportunity Name:</div>
+                    <input type="text" value={jobOppName} onChange={(e) => setJobOppName(e.target.value)} placeholder='Job Name'></input>
+                </div>
+                <div className="jobInputContainer">
+                    <div className="title">Company Name:</div>
+                    <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder='Company Name'></input>
+                </div>
+                <div className="jobInputContainer">
+                    <div className="title">Job Description:</div>
+                    <textarea rows={5} value={description} onChange={(e) => setDescription(e.target.value)} placeholder='Description...' />
+                </div>
+                <div className="jobInputContainer">
+                    <span className="title"></span>
+                    <ListViewer height='200px' title='Labels (Click to Toggle):'>
+                        {getLabelConnections().map((label, ind) => (
+                            <div key={ind} className={"labelChoice" + (label.isEnabled ? " active" : "")} onClick={() => changeLabels(label.id)
+                            }>
+                                {/* {label.isEnabled ? <i className="fas fa-link"></i> : null} */}
+                                {label.isEnabled ? "✓ " : null}
+                                {label.name}
+                            </div>
+                        ))}
+                    </ListViewer>
+                </div>
+                <div className="buttons">
+                    <button className='gray' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })) }}>Cancel</button>
+                    <button onClick={checkEmpty}>{currentOperation === OperationType.Editing ? "Save Edits" : "Create"}</button>
+                </div>
+                {popupVisible && <DeletePopup style="check" handleCancel={togglePopup}></DeletePopup>}
             </div>
-            <div className="jobInputContainer">
-                <div className="title">Opportunity Name *:</div>
-                <input type="text" value={jobOppName} onChange={(e) => setJobOppName(e.target.value)} placeholder='Job Name'></input>
-            </div>
-            <div className="jobInputContainer">
-                <div className="title">Company Name *:</div>
-                <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder='Company Name'></input>
-            </div>
-            <div className="jobInputContainer">
-                <div className="title">Associated Labels *:</div>
-                {/* <input type="text" value={labelsAssc} onChange={(e) => setLabelsAssc(e.target.value.split("," || ", "))} placeholder='Label1, Label2...'></input> */}
-                <LabelConnector
-                    toggleLabel={(labelId: string) => changeLabels(labelId)}
-                    labels={getLabelConnections()}
-                />
-            </div>
-            <div className="jobInputContainer">
-                <div className="title">Job Description:</div>
-                <textarea rows={5} value={description} onChange={(e) => setDescription(e.target.value)} placeholder='Description...' />
-            </div>
-            <div className="buttons">
-                <button className='gray' onClick={() => {appDispatch(changePage({ type: PageType.AdminHome })) }}>Cancel</button>
-                <button className="green" onClick={checkEmpty}>Create</button>
-            </div>
-            {popupVisible && <DeletePopup style = "check" handleCancel={togglePopup}></DeletePopup>}
         </div>
     );
 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import { authInstance } from '../firebase/Firebase';
+import { newJobOpp } from '../firebase/Queries/JobQueries';
 import { deleteSurvey, getSurveys } from '../firebase/Queries/SurveyQueries';
+import { JobOpp } from '../firebase/Types';
 import { setSurveys } from '../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
@@ -17,6 +19,21 @@ const AdminHome: React.FC<props> = (props) => {
     const jobOpps = useAppSelector(s => s.data.jobOpps)
     const appDispatch = useAppDispatch();
     const user = authInstance.currentUser;
+
+    const scrapeJobs = async () => {
+        const response = await fetch('http://api.ecodistricthamptonroads.org/Jobs');
+        const myJson = await response.json(); //extract JSON from the http response
+        // do something with myJson
+        for (let i = 0; i < myJson.length; i++) {
+            let jobOpp: JobOpp = {
+                jobName: myJson[i].title,
+                companyName: myJson[i].company,
+                labelIds: new Array(),
+                jobDescription: myJson[i].Description,
+            }
+            newJobOpp(jobOpp);
+        }
+    }
 
     return (
         <div id="adminHome" className='adminContainer'> {/*Contains the whole page*/}

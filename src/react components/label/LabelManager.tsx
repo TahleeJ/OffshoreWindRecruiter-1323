@@ -6,6 +6,7 @@ import ListElement from '../survey/ListElement';
 import LabelCreator from './LabelCreator';
 import { deleteLabel, getLabels, newLabel } from '../../firebase/Queries/LabelQueries';
 import { setLabels } from '../../redux/dataSlice.ts';
+import DeletePopup from '../survey/DeletePopup';
 
 /** The props (arguments) to create this element */
 interface props {
@@ -19,7 +20,10 @@ const LabelManager: React.FC<props> = (props) => {
     const operationType = useAppSelector(s => s.navigation.operationType);
     const labels = useAppSelector(s => s.data.labels);
     const appDispatch = useAppDispatch();
-
+    const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+    const togglePopup = () => {
+        setPopupvisible(!popupVisible);
+    }
     const createLabel = async () => {
         await newLabel({
             name: newLabelName
@@ -27,6 +31,15 @@ const LabelManager: React.FC<props> = (props) => {
         resetInput();
         appDispatch(setLabels(await getLabels()));
     }
+    const checkEmpty = () => {
+        if (newLabelName.trim()) {
+            console.log(newLabelName);
+            createLabel();
+        } else {
+            togglePopup();
+        }
+    }
+    
     const removeLabel = async (id: string) => {
         await deleteLabel(id);
         appDispatch(setLabels(await getLabels()));
@@ -48,8 +61,10 @@ const LabelManager: React.FC<props> = (props) => {
                             <button className='gray goBack' onClick={() => appDispatch(changePage({ type: PageType.AdminHome }))}>Go back</button>
                             <div className='addLabel'>
                                 <div className='addLabelPrompt'>Add A New Label</div>
-                                <input type="text" className='labelInput' value={newLabelName} onChange={(e) => setLabelName(e.target.value)} placeholder='Label Name' />
-                                <button className='labelSubmit' onClick={createLabel}>Create</button>
+                                <input type="text" className='labelInput*' value={newLabelName} onChange={(e) => setLabelName(e.target.value)} placeholder='Label Name' />
+
+                                <button className='labelSubmit' onClick={checkEmpty}>Create</button>
+                                {popupVisible && <DeletePopup style = "check" name="Label Name" handleCancel={togglePopup}></DeletePopup>}
                             </div>
 
                             {/* <input type="text" className='filterLabels' value={newLabelName} onChange={(e) => changeLabelFilter(e.target.value)} placeholder='Search'></input> */}

@@ -7,6 +7,7 @@ import { JobOpp } from "../../firebase/Types";
 import {getJobOpps, newJobOpp, editJobOpp} from '../../firebase/Queries/JobQueries';
 import { setJobOpps } from "../../redux/dataSlice.ts";
 import LabelConnector from "../label/LabelConnector";
+import DeletePopup from '../survey/DeletePopup';
 
 
 
@@ -25,7 +26,10 @@ const JobCreator: React.FC<props> = (props) => {
     const appDispatch = useAppDispatch();
     const reduxJobOppData = useAppSelector(s => s.navigation.operationData as JobOpp & { id: string });
     const labels = useAppSelector(s => s.data.labels);
-
+    const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+    const togglePopup = () => {
+        setPopupvisible(!popupVisible);
+    }
     const saveJobOpp = async () => {
         let jobOpp: JobOpp = {
             jobName: jobOppName,
@@ -63,7 +67,14 @@ const JobCreator: React.FC<props> = (props) => {
             }
         });
     }
-
+    const checkEmpty = () => {
+        if (!jobOppName.trim() || !companyName.trim() || labels == null) {
+            togglePopup();
+        } else {
+            
+            saveJobOpp();
+        }
+    }
     useEffect(() => {
         if (currentOperation === OperationType.Editing) {
             setJobOppName(reduxJobOppData.jobName);
@@ -81,15 +92,15 @@ const JobCreator: React.FC<props> = (props) => {
                 </div>
             </div>
             <div className="jobInputContainer">
-                <div className="title">Opportunity Name:</div>
+                <div className="title">Opportunity Name *:</div>
                 <input type="text" value={jobOppName} onChange={(e) => setJobOppName(e.target.value)} placeholder='Job Name'></input>
             </div>
             <div className="jobInputContainer">
-                <div className="title">Company Name:</div>
+                <div className="title">Company Name *:</div>
                 <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder='Company Name'></input>
             </div>
             <div className="jobInputContainer">
-                <div className="title">Associated Labels:</div>
+                <div className="title">Associated Labels *:</div>
                 {/* <input type="text" value={labelsAssc} onChange={(e) => setLabelsAssc(e.target.value.split("," || ", "))} placeholder='Label1, Label2...'></input> */}
                 <LabelConnector
                     toggleLabel={(labelId: string) => changeLabels(labelId)}
@@ -102,8 +113,9 @@ const JobCreator: React.FC<props> = (props) => {
             </div>
             <div className="buttons">
                 <button className='gray' onClick={() => {appDispatch(changePage({ type: PageType.AdminHome })) }}>Cancel</button>
-                <button className="green" onClick={saveJobOpp}>Create</button>
+                <button className="green" onClick={checkEmpty}>Create</button>
             </div>
+            {popupVisible && <DeletePopup style = "check" handleCancel={togglePopup}></DeletePopup>}
         </div>
     );
 }

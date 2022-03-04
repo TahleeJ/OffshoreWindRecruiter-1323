@@ -62,17 +62,17 @@ const AdminHome: React.FC<props> = (props) => {
                     {/* <h3 id='jobName'>Job Opportunities</h3> */}
                     <div className='jobContainer'>
                         <ListViewer height="350px" title='Job Opportunities' handleNew={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Creating }))} >
-                            <ListElement type = "Job Opportunity" name="Test job opp" handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")} />
-                            <ListElement type = "Job Opportunity" name="Test job opp" handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")} />
-                            <ListElement type = "Job Opportunity" name="Test job opp" handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing }))} handleDelete={() => alert("This function has not been completed yet.")} />
                             {jobOpps.length > 0 ?
                                 jobOpps.map((jobOpp, ind) => {
                                     return <ListElement
                                         key={ind}
-                                        type = "Job Opportunity"
+                                        type="Job Opportunity"
                                         name={jobOpp.jobName}
                                         handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing, data: jobOpp }))} // does not actually handle edits yet
-                                        handleDelete={() => alert("This function has not been completed yet.")}
+                                        handleDelete={async () => {
+                                            await deleteJobOpp(jobOpp.id);
+                                            appDispatch(setJobOpps(await getJobOpps()));
+                                        }}
                                     />
                                 })
                                 : <div>Click the "New" button to create a new job opportunity</div>
@@ -86,10 +86,10 @@ const AdminHome: React.FC<props> = (props) => {
                                 surveys.map((survey, ind) => {
                                     return <ListElement
                                         key={ind}
-                                        type = "Survey"
+                                        type="Survey"
                                         name={survey.title}
                                         handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing, data: survey }))}
-                                        handleDelete={async () => { await deleteSurvey(survey.id); appDispatch(setSurveys(await getSurveys()))}}
+                                        handleDelete={async () => { await deleteSurvey(survey.id); appDispatch(setSurveys(await getSurveys())) }}
                                     />
                                 })
                                 : <div>Click the "New" button to create a new survey template</div>

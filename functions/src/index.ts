@@ -2,26 +2,24 @@ import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import { AuthData } from 'firebase-functions/lib/common/providers/https';
 
+import { JobOpp, PermissionLevel, QuestionType, Survey, SurveyResponse } from '../../src/firebase/Types';
+
 
 admin.initializeApp();
 
 const firestore = admin.firestore();
 const auth = admin.auth();
 
-enum PermissionLevel {
-    None  = 0,
-    Admin = 1,
-    Owner = 2
-};
 
 const errors = {
     invalidUser: new functions.https.HttpsError("failed-precondition", "Invalid argument!", "The selected user is not a member of this application."),
     illegalArgument: {
         userEmail: new functions.https.HttpsError("invalid-argument", "Invalid argument!", "You must choose a user to change permissions for."), 
-        permissionLevel: new functions.https.HttpsError("invalid-argument", "Invalid argument!", "You must choose a valid permission level using an integer value 0-2.")
+        permissionLevel: new functions.https.HttpsError("invalid-argument", "Invalid argument!", "You must choose a valid permission level using an integer value 0-2."),
+        surveyResponse: new functions.https.HttpsError("invalid-argument", "Invalid argument!", "Submitted survey not in correct format."),
     }, 
     unauthorized: new functions.https.HttpsError("permission-denied", "Unauthorized!", "You do not have the privileges necessary to make this call."), 
-    applicationDisabled: new functions.https.HttpsError("failed-precondition", "Unauthorized!", "The application has disabled this action.")
+    applicationDisabled: new functions.https.HttpsError("failed-precondition", "Unauthorized!", "The application has disabled this action."),
 };
 
 
@@ -49,10 +47,98 @@ exports.createNewUser = functions.auth.user().onCreate(async (user) => {
 
 
 /**
- * Stores submitted survey in Firestore then the recomended jobs.
+ * Stores submitted survey in Firestore then returns the recomended jobs.
  */
-exports.submitSurvey = functions.https.onCall(async (request, context) => {
+exports.submitSurvey = functions.https.onCall(async (request: SurveyResponse, context) => {
     assertValidRequest(context);
+    
+    const survey = (await firestore.collection("Survey").doc(request.surveyId).get()).data() as Survey | undefined;
+    if (survey === undefined || survey.questions.length !== request.answers.length)
+        throw errors.illegalArgument.surveyResponse;
+
+
+    // Calculate scores for each label
+    
+    const scores = new Map<string, number[] | number>(); // Maps labelIds to [Answered scores, Expected score, Max score] and later to the percentile
+
+    function incrementScores(scoreIndex: number, labelIds: string[], incrementValue: number) {
+        labelIds.forEach(l => {
+            if (!scores.has(l))
+                scores.set(l, [0, 0, 0]);
+
+            (scores.get(l) as number[])[scoreIndex] += incrementValue;
+        });
+    }
+
+    for (let currentQuestionIndex = 0; currentQuestionIndex < survey.questions.length; currentQuestionIndex++) {
+        const currentAnswers = survey.questions[currentQuestionIndex].answers;
+
+        /**
+         * Scale: [0-4]
+         * MultipleChoice: [0-n]
+         * FreeResponse: string
+         */
+        const chosenAnswer = request.answers[currentQuestionIndex]; 
+        let expectedScore: number;
+        
+        // Increment labels that were answered
+        switch (survey.questions[currentQuestionIndex].questionType) {
+            case QuestionType.MultipleChoice:
+                incrementScores(0, currentAnswers[chosenAnswer as number].labelIds, 1);
+
+                expectedScore = 1 / currentAnswers.length;
+                break;
+            case QuestionType.Scale:
+                const normalizedAnswer = chosenAnswer as number / 4;
+                incrementScores(0, currentAnswers[0].labelIds, normalizedAnswer);
+
+                expectedScore = .5;
+                break;
+            case QuestionType.FreeResponse:
+                continue;
+        }
+        
+        // Increment labels that could have been answered
+        currentAnswers.forEach(a => incrementScores(1, a.labelIds, expectedScore));
+        currentAnswers.forEach(a => incrementScores(2, a.labelIds, 1));
+    }
+    
+
+    // Calulate score vector where each element is in the range (-1, 1)
+
+    const getPercentile = (x: number) => Math.tanh(x);  // Approximating CDF of normal distribution scaled to (-1, 1)
+
+    for (const [key, value] of scores) {
+        const [x, mean, n] = value as number[];
+        const stdDev = Math.sqrt(mean * (1 - mean / n));
+        const score = getPercentile((x - mean) / stdDev);
+        
+        scores.set(key, score);  // Reuse map for memory performance, probably not worth it
+    }
+
+
+    // Get magnitude of each score vector projected onto job vector
+
+    const jobOpps = await firestore.collection("JobOpps").get();
+    const rankings: [number, JobOpp][] = [];
+
+    jobOpps.forEach(job => {
+        let jobScore = 0;
+        const jobData = job.data as unknown as JobOpp;
+
+        jobData.labelIds.forEach(l => {
+            jobScore += scores.has(l) ? scores.get(l) as number : 0;
+        })
+
+        rankings.push([jobScore, jobData]);
+    });
+
+    rankings.sort((a, b) => a[0] - b[0]);
+
+
+    // Return top 5 recomended jobs
+
+    return rankings.slice(0, 5);
 });
 
 
@@ -68,7 +154,7 @@ exports.checkAdmin = functions.https.onCall(async (request, context) => {
     
     const permissionLevel = await getPermissionLevelByUid(context.auth.uid);
 
-    return { isAdmin: permissionLevel != PermissionLevel.None };
+    return { isAdmin: permissionLevel !== PermissionLevel.None };
 });
 
 
@@ -120,7 +206,7 @@ exports.updatePermissions = functions.https.onCall(async (request: { userEmail: 
     switch (request.newPermissionLevel) {
         case PermissionLevel.Owner:
             if (flags.ownerPromoteFlag) {
-                if (callerPermissionLevel != PermissionLevel.Owner) {
+                if (callerPermissionLevel !== PermissionLevel.Owner) {
                     throw errors.unauthorized;
                 }
 
@@ -139,13 +225,13 @@ exports.updatePermissions = functions.https.onCall(async (request: { userEmail: 
 
             break;
         case PermissionLevel.None:
-            if (userPermissionLevel == PermissionLevel.Owner) {
+            if (userPermissionLevel === PermissionLevel.Owner) {
                 if (!flags.demoteOwner) {
                     throw errors.applicationDisabled;
                 }
             }
 
-            if (callerPermissionLevel != PermissionLevel.Owner) {
+            if (callerPermissionLevel !== PermissionLevel.Owner) {
                 throw errors.unauthorized;
             }
 

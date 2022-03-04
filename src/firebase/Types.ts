@@ -31,9 +31,15 @@ export interface Label {
 
 
 export interface SurveyResponse {
-    questions: SurveyQuestion[]
-    answers: SurveyAnswer[]
+    surveyId: id 
     taker: SurveyTaker
+
+    /**
+     * Scale: [0-4]
+     * MultipleChoice: [0-n]
+     * FreeResponse: string
+     */
+    answers: (number | string)[]  
 }
 
 export interface SurveyTaker {
@@ -44,10 +50,11 @@ export interface SurveyTaker {
 
 
 export interface JobOpp {
-    jobName: string;
-    companyName: string;
-    labelIds: string[];
-    jobDescription: string;
+    jobName: string
+    companyName: string
+    jobDescription: string
+
+    labelIds: id[]
 }
 
 export interface RecommendedJobs {

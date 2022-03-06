@@ -26,7 +26,7 @@ const LabelConnector: React.FC<props> = (p) => {
 
     return (
         <>
-            <i className="fas fa-tags" onClick={toggleSelector} ref={elementRef}>
+            <i className="fas fa-tags labelIcon" onClick={toggleSelector} ref={elementRef}>
                 {labelCount > 0 ? <span className="labelCount">{labelCount}</span> : null}
             </i>
 

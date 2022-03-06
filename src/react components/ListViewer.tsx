@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 
 /** The props (arguments) to create this element */
@@ -17,7 +18,7 @@ const ListViewer: React.FC<props> = (props) => {
                 : null
             }
             {props.handleNew ?
-                <button className='addNew' onClick={props.handleNew}>New</button>
+                <i className="fas fa-plus addNew" onClick={props.handleNew} />
                 : null
             }
             <div className='listElements'>

@@ -23,9 +23,9 @@ const Home: React.FC<props> = (props) => {
 
     return (
         <div id="home">
-            <h1 id="account">Administer Survey:</h1>
+            {/* <h1 id="account">Administer Survey:</h1> */}
             <p id="userEmail">{user?.email}</p>
-            <ListViewer height="calc(100% - 300px)" title='Survey Templates'>
+            <ListViewer height="calc(100% - 100px)" title='Administer Survey'>
                 {
                     surveys.length > 0 ?
                         surveys.map((survey, ind) => {

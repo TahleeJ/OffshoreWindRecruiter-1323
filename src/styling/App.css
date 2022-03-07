@@ -678,18 +678,18 @@ textarea {
   pointer-events: none;
 }
 
-#surveyHome .administerSurveyPage .survey {
-  text-align: center;
-  margin: 0px 25px;
-  font-size: 16px;
-}
-
 #surveyHome .administerSurveyPage .surveyTitle {
   font-weight: bold;
-  color: #d16161;
+  color: #7ba1ff;
   text-align: left;
-  font-size: 24px;
-  padding: 3px 8px;
+  font-size: 28px;
+  padding: 5px;
+}
+
+#surveyHome .administerSurveyPage .description {
+  font-size: 20px;
+  text-align: left;
+  padding: 5px;
 }
 
 #surveyHome .administerSurveyPage .title {
@@ -700,17 +700,19 @@ textarea {
 }
 
 #surveyHome .administerSurveyPage .question {
-  background-color: #efefef;
+  background-color: white;
   border-radius: 5px;
   margin-bottom: 15px;
   padding: 5px;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
 }
 
 #surveyHome .administerSurveyPage .question textarea {
   width: calc(100% - 10px);
   margin: 0px 5px;
   resize: none;
-  border: none;
+  border: 1px solid #efefef;
   border-radius: 5px;
   font-size: 14px;
 }
@@ -720,11 +722,11 @@ textarea {
   font-size: 16px;
 }
 
-#surveyHome .administerSurveyPage .question.sq {
+#surveyHome .administerSurveyPage .question.Scale {
   padding-bottom: 5px;
 }
 
-#surveyHome .administerSurveyPage .question.mcq {
+#surveyHome .administerSurveyPage .question.MultipleChoice {
   text-align: left;
 }
 

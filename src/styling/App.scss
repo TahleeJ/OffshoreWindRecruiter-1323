@@ -644,18 +644,19 @@ textarea {
     }
 
     .administerSurveyPage {
-        .survey {
-            text-align: center;
-            margin: 0px 25px;
-            font-size: $normal-font-size;
-        }
 
         .surveyTitle {
             font-weight: bold;
-            color: $contrastColor;
+            color: $mainColor;
             text-align: left;
-            font-size: 24px;
-            padding: 3px 8px;
+            font-size: $largest-font-size;
+            padding: 5px;
+        }
+
+        .description {
+            font-size: $large-font-size;
+            text-align: left;
+            padding: 5px;
         }
 
         .title {
@@ -666,16 +667,17 @@ textarea {
         }
 
         .question {
-            background-color: $gray1;
+            background-color: white;
             border-radius: 5px;
             margin-bottom: 15px;
             padding: 5px;
+            box-shadow: $subtle-shadow;
 
             textarea {
                 width: calc(100% - 10px);
                 margin: 0px 5px;
                 resize: none;
-                border: none;
+                border: 1px solid $gray1;
                 border-radius: 5px;
                 font-size: 14px;
             }
@@ -685,11 +687,11 @@ textarea {
                 font-size: $normal-font-size;
             }
 
-            &.sq {
+            &.Scale {
                 padding-bottom: 5px;
             }
 
-            &.mcq {
+            &.MultipleChoice {
                 text-align: left;
             }
         }

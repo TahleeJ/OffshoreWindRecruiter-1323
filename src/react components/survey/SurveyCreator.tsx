@@ -1,12 +1,12 @@
 import lodash from "lodash";
 import React, { useEffect, useState } from "react";
 import { editSurvey, getSurveys, newSurvey } from "../../firebase/Queries/SurveyQueries";
-import { QuestionType, Survey, SurveyAnswer, SurveyQuestion } from "../../firebase/Types";
+import { QuestionType, SurveyTemplate, SurveyAnswer, SurveyQuestion } from "../../firebase/Types";
 import { setSurveys } from "../../redux/dataSlice.ts";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
 import LabelConnector from "../label/LabelConnector";
-import DeletePopup from "./DeletePopup";
+import Prompt from "../Prompt";
 
 
 interface props {
@@ -28,29 +28,12 @@ const SurverCreator: React.FC = (props: props) => {
     /** This is the current operation that is being done with surveys...usually creating/editing */
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     /** This contains the old survey data. */
-    const reduxSurveyData = useAppSelector(s => s.navigation.operationData as Survey & { id: string });
+    const reduxSurveyData = useAppSelector(s => s.navigation.operationData as SurveyTemplate & { id: string });
     const labels = useAppSelector(s => s.data.labels);
     const dispatch = useAppDispatch();
     const [popupVisible, setPopupvisible] = useState<Boolean>(false);
-    const togglePopup = () => {
-        setPopupvisible(!popupVisible);
-    }
 
-    const saveSurvey = async () => {
-        let survey: Survey = {
-            title: title,
-            description: desc,
-            questions: questions,
-        }
-        if (currentOperation === OperationType.Creating)
-            await newSurvey(survey);
-        else
-            await editSurvey(reduxSurveyData.id, survey);
-
-        dispatch(changePage({ type: PageType.AdminHome }));
-        dispatch(setSurveys(await getSurveys()));
-    }
-
+    const togglePopup = () => setPopupvisible(!popupVisible);
     const addNewQuestion = () => {
         setQuestions(s => [...s, { prompt: "", answers: [], questionType: QuestionType.MultipleChoice }])
     }
@@ -124,12 +107,22 @@ const SurverCreator: React.FC = (props: props) => {
             }
         });
     }
-    const checkEmpty = () => {
+    const conditionallySave = async () => {
         if (!title.trim()) {
             togglePopup();
         } else {
-            
-            saveSurvey();
+            let survey: SurveyTemplate = {
+                title: title,
+                description: desc,
+                questions: questions,
+            }
+            if (currentOperation === OperationType.Creating)
+                await newSurvey(survey);
+            else
+                await editSurvey(reduxSurveyData.id, survey);
+
+            dispatch(changePage({ type: PageType.AdminHome }));
+            dispatch(setSurveys(await getSurveys()));
         }
     }
 
@@ -216,8 +209,14 @@ const SurverCreator: React.FC = (props: props) => {
                 })
             }
             <button onClick={addNewQuestion}>New Question</button>
-            <button onClick={checkEmpty}>{currentOperation === OperationType.Creating ? "Save Survey as New" : "Save Edits"}</button>
-            {popupVisible && <DeletePopup style = "check" handleCancel={togglePopup}></DeletePopup>}
+            <button onClick={conditionallySave}>{currentOperation === OperationType.Creating ? "Save Survey as New" : "Save Edits"}</button>
+            {popupVisible &&
+                <Prompt
+                    title="Empty Input"
+                    message="There are currently some empty text input fields. Please fill them all in before saving"
+                    handleCancel={togglePopup}
+                />
+            }
         </div >
     )
 }

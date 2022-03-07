@@ -2,7 +2,7 @@ export type id = string;
 export type hasId = { id: id };
 
 
-export interface Survey {
+export interface SurveyTemplate {
     title: string
     description: string
     questions: SurveyQuestion[]

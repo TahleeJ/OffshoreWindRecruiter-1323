@@ -6,8 +6,7 @@ import { useEffect } from "react";
 import { JobOpp } from "../../firebase/Types";
 import { getJobOpps, newJobOpp, editJobOpp } from '../../firebase/Queries/JobQueries';
 import { setJobOpps } from "../../redux/dataSlice.ts";
-import LabelConnector from "../label/LabelConnector";
-import DeletePopup from '../survey/DeletePopup';
+import Prompt from '../Prompt';
 import ListViewer from '../ListViewer';
 
 
@@ -27,26 +26,9 @@ const JobCreator: React.FC<props> = (props) => {
     const appDispatch = useAppDispatch();
     const reduxJobOppData = useAppSelector(s => s.navigation.operationData as JobOpp & { id: string });
     const labels = useAppSelector(s => s.data.labels);
-    const [popupVisible, setPopupvisible] = useState<Boolean>(false);
-    const togglePopup = () => {
-        setPopupvisible(!popupVisible);
-    }
-    const saveJobOpp = async () => {
-        let jobOpp: JobOpp = {
-            jobName: jobOppName,
-            companyName: companyName,
-            labelIds: labelsAssc,
-            jobDescription: description,
+    const [popupVisible, setPopupvisible] = useState(false);
 
-        }
-        if (currentOperation === OperationType.Creating)
-            await newJobOpp(jobOpp);
-        else
-            await editJobOpp(reduxJobOppData.id, jobOpp);
-        appDispatch(changePage({ type: PageType.AdminHome }));
-        appDispatch(setJobOpps(await getJobOpps()));
-    }
-
+    const togglePopup = () => setPopupvisible(!popupVisible);
     const changeLabels = (labelId: string) => {
         let cloneLabels = lodash.cloneDeep(labelsAssc);
 
@@ -58,7 +40,6 @@ const JobCreator: React.FC<props> = (props) => {
 
         setLabelsAssc(cloneLabels);
     }
-
     const getLabelConnections = () => {
         return labels.map(l => {
             // console.log(questions[qIndex].options[aIndex].labelIds);
@@ -68,11 +49,25 @@ const JobCreator: React.FC<props> = (props) => {
             }
         });
     }
-    const checkEmpty = () => {
+    const saveIfValidInput = async () => {
         if (!jobOppName.trim() || !companyName.trim() || labels == null)
             togglePopup();
-        else
-            saveJobOpp();
+        else {
+            let jobOpp: JobOpp = {
+                jobName: jobOppName,
+                companyName: companyName,
+                labelIds: labelsAssc,
+                jobDescription: description,
+
+            }
+            if (currentOperation === OperationType.Creating)
+                await newJobOpp(jobOpp);
+            else
+                await editJobOpp(reduxJobOppData.id, jobOpp);
+
+            appDispatch(changePage({ type: PageType.AdminHome }));
+            appDispatch(setJobOpps(await getJobOpps()));
+        }
     }
     useEffect(() => {
         if (currentOperation === OperationType.Editing) {
@@ -116,9 +111,15 @@ const JobCreator: React.FC<props> = (props) => {
                 </div>
                 <div className="buttons">
                     <button className='gray' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })) }}>Cancel</button>
-                    <button onClick={checkEmpty}>{currentOperation === OperationType.Editing ? "Save Edits" : "Create"}</button>
+                    <button onClick={saveIfValidInput}>{currentOperation === OperationType.Editing ? "Save Edits" : "Create"}</button>
                 </div>
-                {popupVisible && <DeletePopup style="check" handleCancel={togglePopup}></DeletePopup>}
+                {popupVisible &&
+                    <Prompt
+                        title="Input Validation"
+                        message="Please fill out all the fields before saving"
+                        handleCancel={togglePopup}
+                    />
+                }
             </div>
         </div>
     );

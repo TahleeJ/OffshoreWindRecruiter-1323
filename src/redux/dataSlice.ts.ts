@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { hasId, JobOpp, Label, Survey, SurveyResponse } from '../firebase/Types';
+import { hasId, JobOpp, Label, SurveyTemplate, SurveyResponse } from '../firebase/Types';
 
 
 interface dataState {
-    surveys: (Survey & hasId)[];
+    surveys: (SurveyTemplate & hasId)[];
     surveyResponses: SurveyResponse[];
     jobOpps: (JobOpp & hasId)[];
     labels: (Label & hasId)[];
@@ -23,7 +23,7 @@ const dataSlice = createSlice({
     name: 'data',
     initialState,
     reducers: {
-        setSurveys(state, { payload }: PayloadAction<(Survey & hasId)[]>) {
+        setSurveys(state, { payload }: PayloadAction<(SurveyTemplate & hasId)[]>) {
             state.surveys = payload;
         },
         setLabels(state, { payload }: PayloadAction<(Label & hasId)[]>) {

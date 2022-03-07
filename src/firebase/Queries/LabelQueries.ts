@@ -1,7 +1,7 @@
 import * as firestore from "firebase/firestore";
 
 import db from "../Firestore";
-import { hasId, id, Label, Survey, SurveyAnswer, SurveyQuestion } from "../Types";
+import { hasId, id, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion } from "../Types";
 import { getSurveys } from "./SurveyQueries";
 
 
@@ -45,7 +45,7 @@ export async function getJobReferencesToLabel(labelID: id) {
  * @returns Map of Surveys to a map of Questions to an array of Answers that use the label
  */
 export async function getSurveyReferencesToLabel(labelID: id) {
-    const relationMap = new Map<Survey & hasId, Map<SurveyQuestion, SurveyAnswer[]>>();
+    const relationMap = new Map<SurveyTemplate & hasId, Map<SurveyQuestion, SurveyAnswer[]>>();
 
     const surveys = await getSurveys();
     surveys.forEach(s => {

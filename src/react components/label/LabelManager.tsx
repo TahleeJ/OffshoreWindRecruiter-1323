@@ -6,7 +6,7 @@ import ListElement from '../survey/ListElement';
 import LabelCreator from './LabelCreator';
 import { deleteLabel, getLabels, newLabel } from '../../firebase/Queries/LabelQueries';
 import { setLabels } from '../../redux/dataSlice.ts';
-import DeletePopup from '../survey/DeletePopup';
+import Prompt from '../Prompt';
 
 /** The props (arguments) to create this element */
 interface props {
@@ -21,20 +21,15 @@ const LabelManager: React.FC<props> = (props) => {
     const labels = useAppSelector(s => s.data.labels);
     const appDispatch = useAppDispatch();
     const [popupVisible, setPopupvisible] = useState<Boolean>(false);
-    const togglePopup = () => {
-        setPopupvisible(!popupVisible);
-    }
-    const createLabel = async () => {
-        await newLabel({
-            name: newLabelName
-        });
-        resetInput();
-        appDispatch(setLabels(await getLabels()));
-    }
-    const checkEmpty = () => {
+
+    const togglePopup = () => setPopupvisible(!popupVisible);
+    const checkEmpty = async () => {
         if (newLabelName.trim()) {
-            console.log(newLabelName);
-            createLabel();
+            await newLabel({
+                name: newLabelName
+            });
+            resetInput();
+            appDispatch(setLabels(await getLabels()));
         } else {
             togglePopup();
         }
@@ -43,9 +38,6 @@ const LabelManager: React.FC<props> = (props) => {
     const removeLabel = async (id: string) => {
         await deleteLabel(id);
         appDispatch(setLabels(await getLabels()));
-    }
-    const changeLabelFilter = (filterText: string) => {
-        //this is not implemented! feel free to do it if you wish
     }
 
     const getSectionFromOType = (type: OperationType) => {
@@ -56,7 +48,6 @@ const LabelManager: React.FC<props> = (props) => {
             default:
                 return (
                     <div id="labelPage">
-                        {/* <div className='labelHeader'>Manage Labels</div> */}
                         <div className='labelContainer'>
                             <button className='gray goBack' onClick={() => appDispatch(changePage({ type: PageType.AdminHome }))}>Go back</button>
                             <div className='addLabel'>
@@ -64,10 +55,8 @@ const LabelManager: React.FC<props> = (props) => {
                                 <input type="text" className='labelInput' value={newLabelName} onChange={(e) => setLabelName(e.target.value)} placeholder='Label Name' />
 
                                 <button className='labelSubmit' onClick={checkEmpty}>Create</button>
-                                {popupVisible && <DeletePopup style = "check" name="Label Name" handleCancel={togglePopup}></DeletePopup>}
+                                {popupVisible && <Prompt title="Empty Input" message="You must provide text in order to create a new label" handleCancel={togglePopup} />}
                             </div>
-
-                            {/* <input type="text" className='filterLabels' value={newLabelName} onChange={(e) => changeLabelFilter(e.target.value)} placeholder='Search'></input> */}
                             <ListViewer height="350px" title='Current Labels'>
                                 {labels.length > 0 ?
                                     labels.map((label, index) => {

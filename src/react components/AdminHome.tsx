@@ -22,18 +22,18 @@ const AdminHome: React.FC<props> = (props) => {
 
     const scrapeJobs = async () => {
         const response = await fetch('http://api.ecodistricthamptonroads.org/Jobs');
-        const myJson = await response.json(); //extract JSON from the http response
-        // do something with myJson
-        for (let i = 0; i < myJson.length; i++) {
-            let jobOpp: JobOpp = {
-                jobName: myJson[i].title,
-                companyName: myJson[i].company,
-                labelIds: new Array(),
-                jobDescription: myJson[i].Description,
+        const jsonResponse = await response.json(); //extract JSON from the http response
+
+        jsonResponse.forEach((jR: any) => {
+            const jobOpp: JobOpp = {
+                jobName: jR.title,
+                companyName: jR.company,
+                labelIds: [],
+                jobDescription: jR.Description,
             }
             newJobOpp(jobOpp);
-        }
-      }
+        });
+    }
 
     return (
         <div id="adminHome" className='adminContainer'> {/*Contains the whole page*/}

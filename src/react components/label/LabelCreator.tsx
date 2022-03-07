@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { editLabel, getLabels, getSurveyReferencesToLabel } from '../../firebase/Queries/LabelQueries';
-import { hasId, Label, Survey, SurveyAnswer, SurveyQuestion } from '../../firebase/Types';
+import { hasId, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion } from '../../firebase/Types';
 import { setLabels } from '../../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
@@ -16,7 +16,7 @@ interface props {
 /** The header of the application. */
 const LabelManager: React.FC<props> = (props) => {
     const [labelName, setInputValue] = useState("");
-    const [surveyRefs, setSurveyRefs] = useState<Map<Survey & hasId, Map<SurveyQuestion, SurveyAnswer[]>>>(new Map());
+    const [surveyRefs, setSurveyRefs] = useState<Map<SurveyTemplate & hasId, Map<SurveyQuestion, SurveyAnswer[]>>>(new Map());
     const appDispatch = useAppDispatch();
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     const reduxLabel = useAppSelector(s => s.navigation.operationData as Label & hasId);

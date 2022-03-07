@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import DeletePopup from "./DeletePopup";
+import Prompt from "../Prompt";
 
 
 
@@ -23,12 +23,11 @@ const ListElement: React.FC<props> = (p) => {
             <i className="fas fa-trash-alt delete" onClick={togglePopup} />
 
             {popupVisible &&
-                <DeletePopup
-                    style="delete"
-                    type={p.type?.toUpperCase()}
-                    name={p.name}
+                <Prompt
+                    title={"Are you sure you want to delete '" + p.name + "'?"}
+                    message="Deleting this item is not reversible"
                     handleCancel={togglePopup}
-                    handleDelete={() => { p.handleDelete(); togglePopup() }}
+                    handleAction={() => { p.handleDelete(); togglePopup() }}
                 />
             }
         </div>

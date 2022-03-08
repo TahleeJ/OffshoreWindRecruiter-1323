@@ -174,9 +174,8 @@ exports.checkAdmin = functions.https.onCall(async (request, context) => {
  *        the application has disabled the desired permissions action, or 
  *        if the provided arguments are invalid
  */
-exports.updatePermissions = functions.https.onCall(async (request: { userEmail: string, newPermissionLevel: number }, context) => {
+exports.updatePermissions = functions.runWith({secrets: ["FLAG_OWNER_PROMOTION", "FLAG_OWNER_DEMOTION"]}).https.onCall(async (request: { userEmail: string, newPermissionLevel: number }, context) => {
     assertValidRequest(context);
-
 
     if (request.userEmail == null)
         throw errors.illegalArgument.userEmail;
@@ -189,7 +188,12 @@ exports.updatePermissions = functions.https.onCall(async (request: { userEmail: 
     const callerPermissionLevel = await getPermissionLevelByUid(context.auth.uid);
     
     // Flags to check in Firestore for legal owner permission change actions
-    const flags = await firestore.collection("Flag").get().then(res => res.docs[0].data());
+    const flags = {
+        ownerPromote: process.env.FLAG_OWNER_PROMOTION,
+        ownerDemote: process.env.FLAG_OWNER_DEMOTION
+    };
+
+    const flagsRef = await firestore.collection("Flag").get().then(res => res.docs[0].data());
 
     // Obtain the selected user's information reference in Firestore
     let userRecord = null;
@@ -205,7 +209,7 @@ exports.updatePermissions = functions.https.onCall(async (request: { userEmail: 
     let newLevel = userPermissionLevel;
     switch (request.newPermissionLevel) {
         case PermissionLevel.Owner:
-            if (flags.ownerPromoteFlag) {
+            if (flagsRef.get(flags.ownerPromote)) {
                 if (callerPermissionLevel !== PermissionLevel.Owner) {
                     throw errors.unauthorized;
                 }
@@ -221,12 +225,20 @@ exports.updatePermissions = functions.https.onCall(async (request: { userEmail: 
                 throw errors.unauthorized;
             }
 
-            newLevel = (userPermissionLevel > PermissionLevel.Admin) ? userPermissionLevel : PermissionLevel.Admin;
+            if (userPermissionLevel > PermissionLevel.Admin) {
+                if (flagsRef.get(flags.ownerDemote)) {
+                    newLevel = userPermissionLevel;
+                } else {
+                    throw errors.applicationDisabled;
+                }
+            } else {
+                newLevel = PermissionLevel.Admin;
+            }
 
             break;
         case PermissionLevel.None:
             if (userPermissionLevel === PermissionLevel.Owner) {
-                if (!flags.demoteOwner) {
+                if (!flagsRef.get(flags.ownerDemote)) {
                     throw errors.applicationDisabled;
                 }
             }

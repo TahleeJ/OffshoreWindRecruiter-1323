@@ -15,7 +15,7 @@ To edit the frontend:
 
 # Release Notes v1.0.0
 
-## v0.2
+## v0.3
 ### Features
 - Added ability to connect labels to survey questions as well as to job opportunities 
 - Create a new job opportunity

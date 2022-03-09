@@ -17,6 +17,18 @@ To edit the frontend:
 
 ## v0.2
 ### Features
+- Added ability to connect labels to survey questions as well as to job opportunities 
+- Create a new job opportunity
+- Edit an existing job opportunity (job name, company name, description, labels attached)
+- Delete an existing job opportunity
+### Bug Fixes
+- Couldn't promote a user to owner level
+- submitSurvey function not adding the survey response to FireStore database
+### Known Issues
+- 
+
+## v0.2
+### Features
 - Removed redundant extra header button
 - Application uses Firebase instead of Amplify, reducing costs
 - Create new survey template

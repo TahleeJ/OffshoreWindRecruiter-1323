@@ -35,3 +35,4 @@ export async function deleteSurvey(id: string) {
 export async function newSurveyResponse(survey: SurveyResponse) {
     await firestore.addDoc(db.SurveyResponse, survey);
 }
+

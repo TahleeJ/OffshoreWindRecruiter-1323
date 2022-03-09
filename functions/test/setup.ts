@@ -1,20 +1,10 @@
-import { initializeApp } from "firebase/app";
 import * as admin from 'firebase-admin';
 import { PermissionLevel} from '../../src/firebase/Types';
 import { CallableContextOptions } from 'firebase-functions-test/lib/main'
 import * as firebaseAuth from '@firebase/auth';
+import { firebaseApp } from '../../src/firebase/Firebase';
 
-const firebaseConfig = {
-    apiKey: process.env.REACT_APP_FIREBASE_KEY,
-    authDomain: process.env.REACT_APP_FIREBASE_DOMAIN,
-    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_FIREBASE_SENDER_ID,
-    appId: process.env.REACT_APP_FIREBASE_APP_ID
-};
-
-const firebaseApp = initializeApp(firebaseConfig);
-const authInstance = firebaseAuth.getAuth(firebaseApp);
+require('dotenv').config({ path: `.env.dev`});
 
 const testEmails = {
     none: process.env.TEST_EMAIL_NONE,
@@ -23,17 +13,12 @@ const testEmails = {
 };
 
 const firestore = admin.firestore();
+const authInstance = firebaseAuth.getAuth(firebaseApp);
 
-var testUserContext = {
-    none: <CallableContextOptions> null,
-    admin: <CallableContextOptions> null,
-    owner: <CallableContextOptions> null
-}
-
-async function setUpTestUsers() {
-    testUserContext.none = await getTestUserToken(process.env.TEST_EMAIL_NONE, process.env.TEST_PASS_NONE);
-    testUserContext.admin = await getTestUserToken(process.env.TEST_EMAIL_ADMIN, process.env.TEST_PASS_ADMIN);
-    testUserContext.owner = await getTestUserToken(process.env.TEST_EMAIL_OWNER, process.env.TEST_PASS_OWNER);
+export var testUserContext = {
+    none: getTestUserToken(process.env.TEST_EMAIL_NONE!, process.env.TEST_PASS_NONE!),
+    admin: getTestUserToken(process.env.TEST_EMAIL_ADMIN!, process.env.TEST_PASS_ADMIN!),
+    owner: getTestUserToken(process.env.TEST_EMAIL_OWNER!, process.env.TEST_PASS_OWNER!)
 }
 
 async function getTestUserToken(email: string, password: string): Promise<CallableContextOptions> {
@@ -41,8 +26,12 @@ async function getTestUserToken(email: string, password: string): Promise<Callab
         return userCredential.user;
     });
 
-    const userToken = await user.getIdToken();
-    const userContext = contextCreator(user.uid, userToken);
+    const userContext = await user.getIdToken().then((token) => {
+        return contextCreator(user.uid, token);
+    })
+
+    // const userToken = await user.getIdToken();
+    // const userContext = contextCreator(user.uid, userToken);
 
     authInstance.signOut();
 
@@ -58,19 +47,19 @@ function contextCreator(uid: string, token: string): CallableContextOptions{
     }
 }
 
-const docRefs = {
+export const docRefs = {
     testUser: {
-        none: firestore.collection("User").doc(process.env.TEST_UID_NONE),
-        admin: firestore.collection("User").doc(process.env.TEST_UID_ADMIN),
-        owner: firestore.collection("User").doc(process.env.TEST_UID_OWNER)
+        none: firestore.collection("User").doc(process.env.TEST_UID_NONE!),
+        admin: firestore.collection("User").doc(process.env.TEST_UID_ADMIN!),
+        owner: firestore.collection("User").doc(process.env.TEST_UID_OWNER!)
     },
     flag: {
-        ownerPromote: firestore.collection("Flag").doc(process.env.FLAG_OWNER_PROMOTION),
-        ownerDemote: firestore.collection("Flag").doc(process.env.FLAG_OWNER_DEMOTION)
+        ownerPromote: firestore.collection("Flag").doc(process.env.FLAG_OWNER_PROMOTION!),
+        ownerDemote: firestore.collection("Flag").doc(process.env.FLAG_OWNER_DEMOTION!)
     }
 }
 
-async function devDefaultReset() {
+export async function devDefaultReset() {
     await docRefs.testUser.none.update({permissionLevel: PermissionLevel.None});
     await docRefs.testUser.admin.update({permissionLevel: PermissionLevel.Admin});
     await docRefs.testUser.owner.update({permissionLevel: PermissionLevel.Owner});
@@ -79,7 +68,7 @@ async function devDefaultReset() {
     await docRefs.flag.ownerDemote.update({demoteOwnerDev: false});
 }
 
-const updateTransactions = {
+export const updateTransactions = {
     onNone: {
         toNone: {
             userEmail: testEmails.none,
@@ -122,14 +111,6 @@ const updateTransactions = {
             newPermissionLevel: PermissionLevel.Owner
         }
     }
-};
-
-export default {
-    devDefaultReset,
-    setUpTestUsers,
-    testUserContext,
-    docRefs,
-    updateTransactions
 };
 
 // export async function authSetup() {

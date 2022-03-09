@@ -209,7 +209,7 @@ exports.updatePermissions = functions.https.onCall(async (request: { userEmail: 
     let newLevel = userPermissionLevel;
     switch (request.newPermissionLevel) {
         case PermissionLevel.Owner:
-            if (flags.ownerPromoteFlag) {
+            if (flags.promoteToOwner) {
                 if (callerPermissionLevel !== PermissionLevel.Owner) {
                     throw errors.unauthorized;
                 }

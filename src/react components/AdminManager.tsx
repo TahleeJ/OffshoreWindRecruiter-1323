@@ -7,6 +7,8 @@ import { authInstance } from '../firebase/Firebase';
 import { PermissionLevel } from '../firebase/Types';
 import db from '../firebase/Firestore';
 import { setUserPermissionLevel } from '../firebase/Queries/AdminQueries';
+import Prompt from './Prompt';
+
 
 /** The props (arguments) to create this element */
 interface props {
@@ -18,15 +20,34 @@ const AdminManager: React.FC<props> = (props) => {
     const [email, setEmail] = useState("");
     const [permissionLevel, setPermission] = useState(PermissionLevel.None);
     const dispatch = useAppDispatch();
-
+    const [changeLevel, setChangeLevel] = useState("Admin");
+    
     const updateIsAdmin = async () => {
         const uid = authInstance.currentUser?.uid as string;
         const results = await firestore.getDoc(firestore.doc(db.Users, uid));
 
         setPermission(results.data()?.permissionLevel as PermissionLevel);
+        //console.log("update" + permissionLevel);
     }
-    const promote = () => {
-        // setUserPermissionLevel(email, 1)
+    const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+
+    const togglePopup = () => setPopupvisible(!popupVisible);
+    const promote = async () => {
+        console.log(changeLevel);
+        var get;
+        if (changeLevel === "Owner") {
+            console.log(2);
+            get = await setUserPermissionLevel(email, PermissionLevel.Owner);
+        } else if (changeLevel === "Admin") {
+            console.log(1);
+            get = await setUserPermissionLevel(email, PermissionLevel.Admin);
+        }
+        //const get = await setUserPermissionLevel(email, PermissionLevel.Owner);
+        if (get !== "Update success!") {
+            togglePopup();
+        }
+        console.log(get);
+        //setUserPermissionLevel(email, 2);
     }
     const demote = () => {
         setUserPermissionLevel(email, PermissionLevel.None)
@@ -44,6 +65,19 @@ const AdminManager: React.FC<props> = (props) => {
                 <div className="userEmail">User Email:</div>
                 <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder='example@gmail.com'></input>
             </div>
+            <div className = "dropDown">
+                <div className = "dropText">Promote to: </div>
+                <form>
+                <select value = {changeLevel} onChange={(e) => setChangeLevel(e.target.value)}>
+                    <option value = "Admin">Admin</option>
+                    {
+                        permissionLevel === PermissionLevel.Owner ? <option value = "Owner">Owner</option>
+                        : null
+                    }
+                
+                </select>
+                </form>
+            </div>
             <div className="buttonContainer">
                 <button className="gray" onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
                 <button onClick={promote}>Promote</button>
@@ -52,7 +86,15 @@ const AdminManager: React.FC<props> = (props) => {
                         <button className='red' onClick={demote}>Demote</button>
                         : null
                 }
+                {popupVisible &&
+                <Prompt
+                    title="Wrong Email Address"
+                    message="This email address does not exist. Please check your input."
+                    handleCancel={togglePopup}
+                />
+            }
             </div>
+            
         </div>
     );
 }

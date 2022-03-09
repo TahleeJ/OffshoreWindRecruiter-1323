@@ -831,6 +831,15 @@ textarea {
   border: none;
 }
 
+#promoteUser .dropDown {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+#promoteUser .dropDown .dropText {
+  padding-bottom: 10px;
+}
+
 #promoteUser .buttonContainer {
   margin-top: 40px;
 }

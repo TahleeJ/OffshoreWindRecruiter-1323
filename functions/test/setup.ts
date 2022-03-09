@@ -1,10 +1,12 @@
-import * as admin from 'firebase-admin';
+// import { initializeApp } from 'firebase/app';
+import { firebaseAuth, authInstance, admin } from './init';
 import { PermissionLevel} from '../../src/firebase/Types';
 import { CallableContextOptions } from 'firebase-functions-test/lib/main'
-import * as firebaseAuth from '@firebase/auth';
-import { firebaseApp } from '../../src/firebase/Firebase';
+// import * as firebaseAuth from '@firebase/auth';
+// import { FirebaseApp } from 'firebase/app';
+// import { firebaseApp } from '../../src/firebase/Firebase';
 
-require('dotenv').config({ path: `.env.dev`});
+require('custom-env').env('dev');
 
 const testEmails = {
     none: process.env.TEST_EMAIL_NONE,
@@ -13,7 +15,6 @@ const testEmails = {
 };
 
 const firestore = admin.firestore();
-const authInstance = firebaseAuth.getAuth(firebaseApp);
 
 export var testUserContext = {
     none: getTestUserToken(process.env.TEST_EMAIL_NONE!, process.env.TEST_PASS_NONE!),

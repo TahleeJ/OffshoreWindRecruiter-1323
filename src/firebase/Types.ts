@@ -40,6 +40,8 @@ export interface SurveyResponse {
      * FreeResponse: string
      */
     answers: (number | string)[]  
+
+    recomendedJobs: [number, JobOpp][] | null
 }
 
 export interface SurveyTaker {

@@ -2,7 +2,7 @@ import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import { AuthData } from 'firebase-functions/lib/common/providers/https';
 
-import { JobOpp, PermissionLevel, QuestionType, Survey, SurveyResponse } from '../../src/firebase/Types';
+import { JobOpp, PermissionLevel, QuestionType, SurveyTemplate, SurveyResponse } from '../../src/firebase/Types';
 
 
 admin.initializeApp();
@@ -52,7 +52,8 @@ exports.createNewUser = functions.auth.user().onCreate(async (user) => {
 exports.submitSurvey = functions.https.onCall(async (request: SurveyResponse, context) => {
     assertValidRequest(context);
     
-    const survey = (await firestore.collection("Survey").doc(request.surveyId).get()).data() as Survey | undefined;
+    
+    const survey = (await firestore.collection("Survey").doc(request.surveyId).get()).data() as SurveyTemplate | undefined;
     if (survey === undefined || survey.questions.length !== request.answers.length)
         throw errors.illegalArgument.surveyResponse;
 
@@ -106,7 +107,7 @@ exports.submitSurvey = functions.https.onCall(async (request: SurveyResponse, co
 
     // Calulate score vector where each element is in the range (-1, 1)
 
-    const getPercentile = (x: number) => Math.tanh(x);  // Approximating CDF of normal distribution scaled to (-1, 1)
+    const getPercentile = (x: number) => Math.tanh(x / 1.1757849338635604);  // Approximating CDF of normal distribution scaled to (-1, 1) https://www.desmos.com/calculator/cfq0o771eq
 
     for (const [key, value] of scores) {
         const [x, mean, n] = value as number[];
@@ -132,13 +133,16 @@ exports.submitSurvey = functions.https.onCall(async (request: SurveyResponse, co
 
         rankings.push([jobScore, jobData]);
     });
-
+    
     rankings.sort((a, b) => a[0] - b[0]);
 
 
     // Return top 5 recomended jobs
 
-    return rankings.slice(0, 5);
+    request.recomendedJobs = rankings.slice(0, 5)
+    firestore.collection("SurveyResponse").add(request);
+
+    return request.recomendedJobs;
 });
 
 

@@ -17,7 +17,8 @@ const initialResponse: SurveyResponse = {
         email: "",
         phone: "",
     },
-    answers: []
+    answers: [],
+    recomendedJobs: null
 }
 
 const SurveyAdminister: React.FC = (p: props) => {
@@ -56,7 +57,8 @@ const SurveyAdminister: React.FC = (p: props) => {
                     email: responseState.taker.email,
                     phone: responseState.taker.phone,
                 },
-                answers: responseState.answers
+                answers: responseState.answers,
+                recomendedJobs: null
             }
             await newSurveyResponse(survey);
 

@@ -4,6 +4,8 @@ import * as firebaseAuth from "@firebase/auth";
 import * as firestore from "@firebase/firestore";
 import * as functions from "@firebase/functions";
 
+import { JobOpp, PermissionLevel, SurveyResponse } from './Types';
+
 
 require('dotenv').config();
 
@@ -23,9 +25,9 @@ export const authInstance = firebaseAuth.getAuth(firebaseApp);
 export const firestoreInstance = firestore.getFirestore(firebaseApp);
 export const functionsInstance = functions.getFunctions(firebaseApp);
 
-export const addNewUser = functions.httpsCallable(functionsInstance, 'addNewUser');
-export const updatePermissions = functions.httpsCallable(functionsInstance, 'updatePermissions');
-export const checkAdmin = functions.httpsCallable(functionsInstance, 'checkAdmin');
+export const updatePermissions = functions.httpsCallable<string, boolean>(functionsInstance, 'updatePermissions');
+export const checkAdmin = functions.httpsCallable<null, { isAdmin: PermissionLevel }>(functionsInstance, 'checkAdmin');
+export const submitSurvey = functions.httpsCallable<SurveyResponse, [number, JobOpp][]>(functionsInstance, 'submitSurvey');
 
 // Local function testing
 // functions.connectFunctionsEmulator(functionsInstance, "localhost", 5001);

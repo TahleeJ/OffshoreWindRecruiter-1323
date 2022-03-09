@@ -23,5 +23,6 @@
     "mocha": "^9.2.1",
     "typescript": "^3.8.0"
   },
-  "private": true
+  "private": true,
+  "type": "module"
 }

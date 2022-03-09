@@ -29,4 +29,3 @@ export const checkAdmin = functions.httpsCallable(functionsInstance, 'checkAdmin
 
 // Local function testing
 // functions.connectFunctionsEmulator(functionsInstance, "localhost", 5001);
-

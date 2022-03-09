@@ -1,81 +1,70 @@
-import * as admin from 'firebase-admin';
-import * as testLib from 'firebase-functions-test';
+import * as functions from 'firebase-functions';
+import { before } from 'lodash';
+import { PermissionLevel } from '../../src/firebase/Types';
+import  { authInstance, devDefaultReset, docRefs, updateTransactions, setUpTestUsers, testUserContext } from './setup';
+import chai from 'chai';
+import checkError from 'check-error';
 
 require('dotenv').config();
 
-const testInstance = require('firebase-functions-test')({
+export const testInstance = require('firebase-functions-test')({
     projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID
 });
 
-const chai = require('chai');
+var myFunctions;
+
 const assert = chai.assert;
-
-const myFunctions = require('../index.js');
-
-const testEmails = {
-    none: "none@oswjn.com",
-    admin: "admin@oswjn.com",
-    owner: "owner@oswjn.com"
-};
-
-const testUsers = {
-    none: testInstance.auth.makeUserRecord({email: testEmails.none}),
-    admin: testInstance.auth.makeUserRecord({email: testEmails.admin}),
-    owner: testInstance.auth.makeUserRecord({email: testEmails.owner})
-};
-
-const auth = admin.auth();
-
-const testUserss = {
-    none: auth.getUserByEmail(testEmails.none),
-    admin: auth.getUserByEmail(testEmails.admin),
-    owner: auth.getUserByEmail(testEmails.owner)
-}
-
-var testUserAuthInfo = {
-    token: {
-        none: null,
-        admin: null,
-        owner: null
-    },
-    uid: {
-        none: null,
-        admin: null,
-        owner: null
-    }
-};
-
-var testUserAuth = {
-    none: {
-        uid: testUserAuthInfo.uid.none,
-        token: testUserAuthInfo.token.none
-    },
-    admin: {
-        uid: testUserAuthInfo.uid.admin,
-        token: testUserAuthInfo.token.admin
-    },
-    owner: {
-        uid: testUserAuthInfo.uid.owner,
-        token: testUserAuthInfo.token.owner
-    },
-}
-
-async function authSetup() {
-    testUserAuthInfo.uid.none = testUsers.none.uid;
-    testUserAuthInfo.uid.admin = testUsers.admin.uid;
-    testUserAuthInfo.uid.owner = testUsers.owner.uid;
-
-    testUserAuthInfo.token.none = await testUsers.none.getIdToken();
-    testUserAuthInfo.token.admin = await testUsers.admin.getIdToken();
-    testUserAuthInfo.token.owner = await testUsers.owner.getIdToken();
-}
 
 describe("Update Permissions Function Unit Tests", () => {
     const updatePermissions = testInstance.wrap(myFunctions.updatePermissions);
-    
-    describe("None level call", () => {
-        it("should fail to promote a none-level user to any level", async () => {
 
+    let error = null;
+
+    beforeAll(() => {
+        myFunctions = require('../index.js');
+        setUpTestUsers();
+    })
+   
+    beforeEach(async () => {
+        devDefaultReset();
+        error = null;
+    });
+
+    afterEach(async() => {
+        authInstance.signOut();
+    })
+
+    describe("None-level caller", () => {
+        it("should fail to promote a none-level user to none-level", async () => {     
+            try {
+                updatePermissions(updateTransactions.onNone.toNone, testUserContext.none)
+            } catch (e) {
+                error = e;
+            }
+
+            checkError.compatibleConstructor(error, functions.https.HttpsError);
+        });
+
+        it("should fail to promote a none-level user to admin-level", async () => {     
+            try {
+                updatePermissions(updateTransactions.onNone.toAdmin, testUserContext.none)
+            } catch (e) {
+                error = e;
+            }
+
+            checkError.compatibleConstructor(error, functions.https.HttpsError);
+        });
+
+        it("should fail to promote a none-level user to owner-level for owner promotion enabled", async () => {   
+            
+            
+            try {
+                updatePermissions(updateTransactions.onNone.toNone, testUserContext.none)
+            } catch (e) {
+                error = e;
+            }
+
+            checkError.compatibleConstructor(error, functions.https.HttpsError);
         });
 
         it("should fail to promote an admin-level user to any level", async () => {
@@ -95,7 +84,7 @@ describe("Update Permissions Function Unit Tests", () => {
         });
     });
 
-    describe("Admin-level call", () => {
+    describe("Admin-level caller", () => {
         it("should promote/demote a none-level user to none-level", async () => {
 
         });
@@ -161,7 +150,7 @@ describe("Update Permissions Function Unit Tests", () => {
         });
     });
 
-    describe("Owner-level call", () => {
+    describe("Owner-level caller", () => {
         it("should promote/demote a none-level user to none-level", async () => {
 
         });

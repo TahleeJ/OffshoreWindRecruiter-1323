@@ -16,3 +16,17 @@ export function assertValidRequest(context: functions.https.CallableContext): as
         throw errors.unauthorized;
     }
 }
+
+
+// Add getOrDefault to Map
+
+declare global {
+    interface Map<K, V> {
+        getOrDefault(key: K, value: V): V;
+    }
+}
+
+// eslint-disable-next-line no-extend-native
+Map.prototype.getOrDefault = function<K, V>(key: K, value: V): V {
+    return this.has(key) ? this.get(key) : value
+}

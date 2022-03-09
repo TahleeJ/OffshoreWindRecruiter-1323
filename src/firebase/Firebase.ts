@@ -26,9 +26,8 @@ export const firestoreInstance = firestore.getFirestore(firebaseApp);
 export const functionsInstance = functions.getFunctions(firebaseApp);
 
 export const updatePermissions = functions.httpsCallable<{ userEmail: string, newPermissionLevel: number }, null>(functionsInstance, 'updatePermissions');
-export const checkAdmin = functions.httpsCallable<null, { isAdmin: PermissionLevel }>(functionsInstance, 'checkAdmin');
-export const submitSurvey = functions.httpsCallable<SurveyResponse, [number, JobOpp][]>(functionsInstance, 'submitSurvey');
+export const checkAdmin = functions.httpsCallable<undefined, { isAdmin: PermissionLevel }>(functionsInstance, 'checkAdmin');
+export const submitSurvey = functions.httpsCallable<SurveyResponse, { score: number, jobOpp: JobOpp }[]>(functionsInstance, 'submitSurvey');
 
 // Local function testing
 // functions.connectFunctionsEmulator(functionsInstance, "localhost", 5001);
-

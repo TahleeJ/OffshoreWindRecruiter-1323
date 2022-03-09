@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 
 import { assertValidRequest, firestore } from './Utility';
 import { errors } from "./Errors";
-import { JobOpp, QuestionType, SurveyResponse, SurveyTemplate } from '../../src/firebase/Types';
+import { JobOpp, QuestionType, RecomendedJob, SurveyResponse, SurveyTemplate } from '../../src/firebase/Types';
 
 
 /**
@@ -12,21 +12,24 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
     assertValidRequest(context);
     
     
-    const survey = (await firestore.collection("Survey").doc(request.surveyId).get()).data() as SurveyTemplate | undefined;
+    const jobOpps = (firestore.collection("JobOpps") as FirebaseFirestore.CollectionReference<JobOpp>).get();  // Start loading early
+    const survey = (await (firestore.collection("Survey") as FirebaseFirestore.CollectionReference<SurveyTemplate>)
+        .doc(request.surveyId).get()).data();
     if (survey === undefined || survey.questions.length !== request.answers.length)
         throw errors.illegalArgument.surveyResponse;
 
 
-    // Calculate scores for each label
+    // Calculate raw scores for each label
     
-    const scores = new Map<string, number[] | number>(); // Maps labelIds to [Answered scores, Expected score, Max score] and later to the percentile
+    const rawScores = new Map<string, number[]>();  // Maps labelIds to [Answered scores, Expected score, Max score]
 
+    // Increments scores[scoreIndex] for each label by incrementValue
     function incrementScores(scoreIndex: number, labelIds: string[], incrementValue: number) {
         labelIds.forEach(l => {
-            if (!scores.has(l))
-                scores.set(l, [0, 0, 0]);
+            if (!rawScores.has(l))
+                rawScores.set(l, [0, 0, 0]);
 
-            (scores.get(l) as number[])[scoreIndex] += incrementValue;
+            rawScores.get(l)![scoreIndex] += incrementValue;
         });
     }
 
@@ -62,44 +65,46 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
         currentAnswers.forEach(a => incrementScores(1, a.labelIds, expectedScore));
         currentAnswers.forEach(a => incrementScores(2, a.labelIds, 1));
     }
+
     
+    // Calculate score vector where each element is the percentile score for a label normalized to (-1, 1)
 
-    // Calulate score vector where each element is in the range (-1, 1)
+    const getPercentile = (x: number) => Math.tanh(x / 1.1757849338635604);  // Approximating CDF of normal distribution normalized to (-1, 1) https://www.desmos.com/calculator/cfq0o771eq
 
-    const getPercentile = (x: number) => Math.tanh(x / 1.1757849338635604);  // Approximating CDF of normal distribution scaled to (-1, 1) https://www.desmos.com/calculator/cfq0o771eq
-
-    for (const [key, value] of scores) {
-        const [x, mean, n] = value as number[];
+    const scores = new Map<string, number>();
+    for (const [key, value] of rawScores) {
+        const [x, mean, n] = value;
         const stdDev = Math.sqrt(mean * (1 - mean / n));
         const score = getPercentile((x - mean) / stdDev);
         
-        scores.set(key, score);  // Reuse map for memory performance, probably not worth it
+        scores.set(key, score);
     }
 
 
-    // Get magnitude of each score vector projected onto job vector
+    // Calulate dot product of the score vector and each job vector then normalize to (-1, 1)
 
-    const jobOpps = await firestore.collection("JobOpps").get();
-    const rankings: [number, JobOpp][] = [];
+    const rankings: (RecomendedJob & { jobOpp: JobOpp})[] = [];
 
-    jobOpps.forEach(job => {
-        let jobScore = 0;
-        const jobData = job.data as unknown as JobOpp;
+    (await jobOpps).forEach(job => {
+        const jobData = job.data();
 
-        jobData.labelIds.forEach(l => {
-            jobScore += scores.has(l) ? scores.get(l) as number : 0;
-        })
+        let jobScore = jobData.labelIds.reduce((sum, l) => sum + scores.getOrDefault(l, 0), 0);
+        jobScore /= jobData.labelIds.length;  // Normalize score to (-1, 1)
 
-        rankings.push([jobScore, jobData]);
+        rankings.push({ score: jobScore, jobOppId: job.id, jobOpp: jobData });
     });
     
-    rankings.sort((a, b) => a[0] - b[0]);
+    rankings.sort((a, b) => a.score - b.score);
 
 
-    // Return top 5 recomended jobs
+    // Save SurveyResponse with job rankings and then return the top 5 recomended jobs
+    
+    firestore.collection("SurveyResponse").add({
+        surveyId: request.surveyId,
+        taker: request.taker,
+        answers: request.answers,
+        recomendedJobs: rankings.map(j => ({score: j.score, jobOppId: j.jobOppId}))
+    } as SurveyResponse);
 
-    request.recomendedJobs = rankings.slice(0, 5)
-    firestore.collection("SurveyResponse").add(request);
-
-    return request.recomendedJobs;
+    return rankings.map(j => ({score: j.score, jobOpp: j.jobOpp})).slice(0, 5);
 });

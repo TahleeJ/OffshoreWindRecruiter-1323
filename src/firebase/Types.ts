@@ -41,13 +41,18 @@ export interface SurveyResponse {
      */
     answers: (number | string)[]  
 
-    recomendedJobs: [number, JobOpp][] | null
+    recomendedJobs?: RecomendedJob[]
 }
 
 export interface SurveyTaker {
     name: string
     email: string
     phone: string
+}
+
+export interface RecomendedJob {
+    score: number
+    jobOppId: id
 }
 
 
@@ -57,10 +62,6 @@ export interface JobOpp {
     jobDescription: string
 
     labelIds: id[]
-}
-
-export interface RecommendedJobs {
-    jobs: JobOpp[] | null
 }
 
 

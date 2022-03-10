@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 
 import { assertValidRequest, auth, firestore } from './Utility';
 import { errors } from "./Errors";
-import { PermissionLevel } from '../../src/firebase/Types';
+import { ApplicationFlags, PermissionLevel } from '../../src/firebase/Types';
 
 
 /**
@@ -72,7 +72,7 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
     const callerPermissionLevel = await getPermissionLevelByUid(context.auth.uid);
     
     // Flags to check in Firestore for legal owner permission change actions
-    const flags = await firestore.collection("Flag").get().then(res => res.docs[0].data());
+    const flags = await firestore.collection("Flag").get().then(res => res.docs[0].data()) as ApplicationFlags;
 
     // Obtain the selected user's information reference in Firestore
     let userRecord = null;
@@ -88,7 +88,7 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
     let newLevel = userPermissionLevel;
     switch (request.newPermissionLevel) {
         case PermissionLevel.Owner:
-            if (flags.ownerPromoteFlag) {
+            if (flags.promoteToOwner) {
                 if (callerPermissionLevel !== PermissionLevel.Owner) {
                     throw errors.unauthorized;
                 }

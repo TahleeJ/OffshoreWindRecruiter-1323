@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch } from '../redux/hooks';
 import { changePage, PageType } from '../redux/navigationSlice';
 
-import * as firestore from "@firebase/firestore";
 import { authInstance } from '../firebase/Firebase';
 import { PermissionLevel } from '../firebase/Types';
-import db from '../firebase/Firestore';
-import { setUserPermissionLevel } from '../firebase/Queries/AdminQueries';
+import { getUser, setUserPermissionLevel } from '../firebase/Queries/AdminQueries';
+
 import Prompt from './Prompt';
 
 
@@ -23,30 +22,27 @@ const AdminManager: React.FC<props> = (props) => {
     const [changeLevel, setChangeLevel] = useState("Admin");
     
     const updateIsAdmin = async () => {
-        const uid = authInstance.currentUser?.uid as string;
-        const results = await firestore.getDoc(firestore.doc(db.Users, uid));
+        const uid = authInstance.currentUser?.uid!;
+        const userDoc = await getUser(uid);
 
-        setPermission(results.data()?.permissionLevel as PermissionLevel);
-        //console.log("update" + permissionLevel);
+        if (userDoc !== undefined)
+            setPermission(userDoc.permissionLevel);
     }
+
     const [popupVisible, setPopupvisible] = useState<Boolean>(false);
 
     const togglePopup = () => setPopupvisible(!popupVisible);
     const promote = async () => {
-        console.log(changeLevel);
         var get;
         if (changeLevel === "Owner") {
-            console.log(2);
             get = await setUserPermissionLevel(email, PermissionLevel.Owner);
         } else if (changeLevel === "Admin") {
-            console.log(1);
             get = await setUserPermissionLevel(email, PermissionLevel.Admin);
         }
         //const get = await setUserPermissionLevel(email, PermissionLevel.Owner);
         if (get !== "Update success!") {
             togglePopup();
         }
-        console.log(get);
         //setUserPermissionLevel(email, 2);
     }
     const demote = () => {

@@ -1,12 +1,28 @@
-import * as functions from 'firebase-functions';
-import { WrappedFunction } from 'firebase-functions-test/lib/main';
+const functions = require('firebase-functions');
+const path = require('path');
+const functionsTest = require('firebase-functions-test');
+
+const projectConfig = {
+    projectId: process.env.REACT_APP_FIREBASE_KEY,
+    databaseUrl: process.env.REACT_APP_FIREBASE_DATABASE
+};
+const testEnv = functionsTest(projectConfig, path.resolve('serviceAccountKey.json'));;
+// import { testEnv } from './init';
+
+// import * as functions from 'firebase-functions';
+import { CallableContextOptions, WrappedFunction } from 'firebase-functions-test/lib/main';
 // import { PermissionLevel } from '../../src/firebase/Types';
 // import  { authInstance, devDefaultReset, docRefs, updateTransactions, setUpTestUsers, testUserContext } from './setup';
 import * as chai from 'chai';
-import { beforeAll } from 'mocha';
 
 // import * as checkError from 'check-error';
-import { devDefaultReset, updateTransactions, testUserContext } from './setup';
+import { devDefaultReset, testUserContext, updateTransactions } from './setup';
+
+// import * as functions from 'firebase-functions';
+
+// import 'firebase-functions';
+
+// require('firebase-admin');
 
 // const functions = require('firebase-functions');
 // const setup = require('./setup.ts');
@@ -15,51 +31,62 @@ import { devDefaultReset, updateTransactions, testUserContext } from './setup';
 // require('dotenv').config({ path: `/OffshoreWindJobNavigator/.env.prod` });
 require('custom-env').env('prod');
 
-const testEnv = require('firebase-functions-test')({
-    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID
-}, '../../serviceAccountKey.json');
-
 let myFunctions: { updatePermissions: any; };
 let updatePermissionsWrapped: WrappedFunction;
+
+var contexts = {
+    none: <CallableContextOptions> <unknown>null,
+    admin: <CallableContextOptions> <unknown>null,
+    owner:<CallableContextOptions> <unknown>null  
+};
 
 // const assert = chai.assert;
 const expect = chai.expect;
 
 describe("Update Permissions Function Unit Tests", () => {
-    beforeAll(() => {
-        myFunctions = require('../src/index');
+    before(async () => {
+        myFunctions = require('../src/index.js');
         updatePermissionsWrapped = testEnv.wrap(myFunctions.updatePermissions);
+
+        contexts.none = await testUserContext.none;
+        contexts.admin = await testUserContext.admin;
+        contexts.owner = await testUserContext.owner;
     });
 
     beforeEach(async () => {
-        devDefaultReset();
+        await devDefaultReset();
     });
 
-    afterAll(() => {
+    afterEach(async () => {
+        await devDefaultReset();
+    })
+
+    after(() => {
         testEnv.cleanup();
     });
 
     describe("None-level caller", () => {
         it("should fail to promote a none-level user to none-level", async () => {     
-            expect(async function(){
-                updatePermissionsWrapped(updateTransactions.onNone.toNone, await testUserContext.none);
+            expect(function(){
+                console.log(contexts.none);
+                updatePermissionsWrapped(updateTransactions.onNone.toNone, contexts.none);
             }).to.throw(functions.https.HttpsError);
 
         });
 
-        it("should fail to promote a none-level user to admin-level", async () => {     
-            expect(async function(){
-                updatePermissionsWrapped(updateTransactions.onNone.toNone, await testUserContext.none);
-            }).to.throw(functions.https.HttpsError);
+        // it("should fail to promote a none-level user to admin-level", async () => {     
+        //     expect(function(){
+        //         updatePermissionsWrapped(updateTransactions.onNone.toAdmin, contexts.none);
+        //     }).to.throw(functions.https.HttpsError);
 
-        });
+        // });
 
-        it("should fail to promote a none-level user to owner-level for owner promotion enabled", async () => {   
-            expect(async function(){
-                updatePermissionsWrapped(updateTransactions.onNone.toNone, await testUserContext.none);
-            }).to.throw(functions.https.HttpsError);
+        // it("should fail to promote a none-level user to owner-level for owner promotion enabled", async () => {   
+        //     expect(function(){
+        //         updatePermissionsWrapped(updateTransactions.onNone.toOwner, contexts.none);
+        //     }).to.throw(functions.https.HttpsError);
 
-        });
+        // });
 
         // it("should fail to promote an admin-level user to any level", async () => {
 

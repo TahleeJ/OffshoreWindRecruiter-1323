@@ -1,45 +1,65 @@
 // import { initializeApp } from 'firebase/app';
-import { firebaseAuth, authInstance, admin } from './init';
+// import { firebaseAuth, authInstance } from './init';
+
 import { PermissionLevel} from '../../src/firebase/Types';
-import { CallableContextOptions } from 'firebase-functions-test/lib/main'
+import { CallableContextOptions } from 'firebase-functions-test/lib/main';
+import { adminAuthInstance, adminFirestoreInstance } from './init';
+// import { firestore } from 'firebase-admin';
+// import * as firestore from "@firebase/firestore";
+
 // import * as firebaseAuth from '@firebase/auth';
 // import { FirebaseApp } from 'firebase/app';
 // import { firebaseApp } from '../../src/firebase/Firebase';
 
 require('custom-env').env('dev');
 
-const testEmails = {
-    none: process.env.TEST_EMAIL_NONE,
-    admin: process.env.TEST_EMAIL_ADMIN,
-    owner: process.env.TEST_EMAIL_OWNER
+const testCreds = {
+    uids: {
+        none: process.env.TEST_UID_NONE,
+        admin: process.env.TEST_UID_ADMIN,
+        owner: process.env.TEST_UID_OWNER
+    },
+    emails: {
+        none: process.env.TEST_EMAIL_NONE,
+        admin: process.env.TEST_EMAIL_ADMIN,
+        owner: process.env.TEST_EMAIL_OWNER
+    },
+    passwords: {
+        none: process.env.TEST_PASS_NONE,
+        admin: process.env.TEST_PASS_ADMIN,
+        owner: process.env.TEST_PASS_OWNER
+    }
 };
 
-const firestore = admin.firestore();
+// const firestore = admin.firestore();
 
 export var testUserContext = {
-    none: getTestUserToken(process.env.TEST_EMAIL_NONE!, process.env.TEST_PASS_NONE!),
-    admin: getTestUserToken(process.env.TEST_EMAIL_ADMIN!, process.env.TEST_PASS_ADMIN!),
-    owner: getTestUserToken(process.env.TEST_EMAIL_OWNER!, process.env.TEST_PASS_OWNER!)
+    none: getTestUserToken(testCreds.emails.none!, testCreds.passwords.none!, testCreds.uids.none!),
+    admin: getTestUserToken(testCreds.emails.admin!, testCreds.passwords.admin!, testCreds.uids.admin!),
+    owner: getTestUserToken(testCreds.emails.owner!, testCreds.passwords.owner!, testCreds.uids.owner!)
 }
 
-async function getTestUserToken(email: string, password: string): Promise<CallableContextOptions> {
-    const user = await firebaseAuth.signInWithEmailAndPassword(authInstance, email, password).then((userCredential) => {
-        return userCredential.user;
-    });
+async function getTestUserToken(email: string, password: string, uid: string): Promise<CallableContextOptions> {
+    // const user = await firebaseAuth.signInWithEmailAndPassword(authInstance, email, password).then((userCredential) => {
+    //     console.log(`${authInstance!}, ${email}, ${password}`);
+    //     return userCredential.user;
+    // });
 
-    const userContext = await user.getIdToken().then((token) => {
-        return contextCreator(user.uid, token);
-    })
+    const userToken = await adminAuthInstance.createCustomToken(uid);
 
     // const userToken = await user.getIdToken();
-    // const userContext = contextCreator(user.uid, userToken);
+    const userContext = contextCreator(uid, userToken);
 
-    authInstance.signOut();
+    // authInstance.signOut();
 
     return userContext;
 }
 
-function contextCreator(uid: string, token: string): CallableContextOptions{
+// function getTestUserContext(email: string, password: string, uid: string): CallableContextOptions {
+//     const token = getTestUserToken(email, password)
+// }
+
+function contextCreator(uid: string, token: string): CallableContextOptions {
     return {
         auth: {
             uid: uid,
@@ -48,67 +68,73 @@ function contextCreator(uid: string, token: string): CallableContextOptions{
     }
 }
 
-export const docRefs = {
-    testUser: {
-        none: firestore.collection("User").doc(process.env.TEST_UID_NONE!),
-        admin: firestore.collection("User").doc(process.env.TEST_UID_ADMIN!),
-        owner: firestore.collection("User").doc(process.env.TEST_UID_OWNER!)
-    },
-    flag: {
-        ownerPromote: firestore.collection("Flag").doc(process.env.FLAG_OWNER_PROMOTION!),
-        ownerDemote: firestore.collection("Flag").doc(process.env.FLAG_OWNER_DEMOTION!)
-    }
-}
+// const testUserDocRefs = {
+//     none: firestore.doc(firestoreInstance, `User/${process.env.TEST_UID_NONE!}`),
+//     admin: firestore.doc(firestoreInstance, `User/${process.env.TEST_UID_ADMIN!}`),
+//     owner: firestore.doc(firestoreInstance, `User/${process.env.TEST_UID_OWNER!}`)
+// }
 
 export async function devDefaultReset() {
-    await docRefs.testUser.none.update({permissionLevel: PermissionLevel.None});
-    await docRefs.testUser.admin.update({permissionLevel: PermissionLevel.Admin});
-    await docRefs.testUser.owner.update({permissionLevel: PermissionLevel.Owner});
+    // await firestore.updateDoc(testUserDocRefs.none, {permissionLevel: PermissionLevel.None});
+    // await firestore.updateDoc(testUserDocRefs.admin, {permissionLevel: PermissionLevel.Admin});
+    // await firestore.updateDoc(testUserDocRefs.owner, {permissionLevel: PermissionLevel.Owner});
 
-    await docRefs.flag.ownerPromote.update({promoteToOwnerDev: true});
-    await docRefs.flag.ownerDemote.update({demoteOwnerDev: false});
+    // const flagQuerySnapshot = await firestore.getDocs(firestore.collection(firestoreInstance, "Flag"));
+    // const flagDocId = flagQuerySnapshot.forEach((doc) => {
+    //     return doc.id;
+    // });
+
+    // const flagDocRef = firestore.doc(firestoreInstance, `Flag/${flagDocId}`);
+
+    // await firestore.updateDoc(flagDocRef, {promoteToOwnerDev: process.env.FLAG_OWNER_PROMOTION, demoteOwnerDev: process.env.FLAG_OWNER_DEMOTION});
+
+    await adminFirestoreInstance.collection("User").doc(testCreds.uids.none!).update({permissionLevel: PermissionLevel.None});
+    await adminFirestoreInstance.collection("User").doc(testCreds.uids.admin!).update({permissionLevel: PermissionLevel.Admin});
+    await adminFirestoreInstance.collection("User").doc(testCreds.uids.owner!).update({permissionLevel: PermissionLevel.Owner});
+
+    await adminFirestoreInstance.collection("Flag").doc(process.env.FLAG_REF_ID!).update({promoteToOwnerDev: process.env.FLAG_OWNER_PROMOTION, demoteOwnerDev: process.env.FLAG_OWNER_DEMOTION})
 }
 
 export const updateTransactions = {
     onNone: {
         toNone: {
-            userEmail: testEmails.none,
+            userEmail: testCreds.emails.none,
             newPermissionLevel: PermissionLevel.None
         },
         toAdmin: {
-            userEmail: testEmails.none,
+            userEmail: testCreds.emails.none,
             newPermissionLevel: PermissionLevel.Admin
         },
         toOwner: {
-            userEmail: testEmails.none,
+            userEmail: testCreds.emails.none,
             newPermissionLevel: PermissionLevel.Owner
         }
     },
     onAdmin: {
         toNone: {
-            userEmail: testEmails.admin,
+            userEmail: testCreds.emails.admin,
             newPermissionLevel: PermissionLevel.None
         },
         toAdmin: {
-            userEmail: testEmails.admin,
+            userEmail: testCreds.emails.admin,
             newPermissionLevel: PermissionLevel.Admin
         },
         toOwner: {
-            userEmail: testEmails.admin,
+            userEmail: testCreds.emails.admin,
             newPermissionLevel: PermissionLevel.Owner
         }
     },
     onOwner: {
         toNone: {
-            userEmail: testEmails.owner,
+            userEmail: testCreds.emails.owner,
             newPermissionLevel: PermissionLevel.None
         },
         toAdmin: {
-            userEmail: testEmails.owner,
+            userEmail: testCreds.emails.owner,
             newPermissionLevel: PermissionLevel.Admin
         },
         toOwner: {
-            userEmail: testEmails.owner,
+            userEmail: testCreds.emails.owner,
             newPermissionLevel: PermissionLevel.Owner
         }
     }

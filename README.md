@@ -21,6 +21,9 @@ To edit the frontend:
 - Create a new job opportunity
 - Edit an existing job opportunity (job name, company name, description, labels attached)
 - Delete an existing job opportunity
+- Allow admins and owners to promote other users
+- Allow surveys to be administered
+- Calculate recommended jobs based on a survey response
 ### Bug Fixes
 - Couldn't promote a user to owner level
 - submitSurvey function not adding the survey response to FireStore database

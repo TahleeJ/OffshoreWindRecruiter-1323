@@ -19,52 +19,48 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
         throw errors.illegalArgument.surveyResponse;
 
 
-    // Calculate raw scores for each label
+    // Calculate raw scores [Answered score, Expected score, Max score] for each label
     
-    const rawScores = new Map<string, number[]>();  // Maps labelIds to [Answered scores, Expected score, Max score]
+    const rawScores = new Map<string, number[]>();  // Maps labelIds to [Answered score, Expected score, Max score]
 
-    // Increments scores[scoreIndex] for each label by incrementValue
+    // Increments rawScores[scoreIndex] for each label by incrementValue
     function incrementScores(scoreIndex: number, labelIds: string[], incrementValue: number) {
-        labelIds.forEach(l => {
-            if (!rawScores.has(l))
-                rawScores.set(l, [0, 0, 0]);
-
-            rawScores.get(l)![scoreIndex] += incrementValue;
-        });
+        labelIds.forEach(l => rawScores.getOrDefault(l, [0, 0, 0])[scoreIndex] += incrementValue);
     }
 
-    for (let currentQuestionIndex = 0; currentQuestionIndex < survey.questions.length; currentQuestionIndex++) {
-        const currentAnswers = survey.questions[currentQuestionIndex].answers;
+    survey.questions.forEach((currentQuestion, currentQuestionIndex) => {
+        const currentAnswers = currentQuestion.answers;
 
         /**
          * Scale: [0-4]
          * MultipleChoice: [0-n]
          * FreeResponse: string
          */
-        const chosenAnswer = request.answers[currentQuestionIndex]; 
+        const chosenAnswer = request.answers[currentQuestionIndex] as number; 
         let expectedScore: number;
         
         // Increment labels that were answered
-        switch (survey.questions[currentQuestionIndex].questionType) {
-            case QuestionType.MultipleChoice:
-                incrementScores(0, currentAnswers[chosenAnswer as number].labelIds, 1);
-
-                expectedScore = 1 / currentAnswers.length;
-                break;
+        switch (currentQuestion.questionType) {
             case QuestionType.Scale:
-                const normalizedAnswer = chosenAnswer as number / 4;
+                const normalizedAnswer = chosenAnswer / 4;
                 incrementScores(0, currentAnswers[0].labelIds, normalizedAnswer);
 
                 expectedScore = .5;
                 break;
+            case QuestionType.MultipleChoice:
+                incrementScores(0, currentAnswers[chosenAnswer].labelIds, 1);
+
+                expectedScore = 1 / currentAnswers.length;
+                break;
             case QuestionType.FreeResponse:
-                continue;
+                // Skip any free response questions
+                return;
         }
         
-        // Increment labels that could have been answered
+        // Increment scores for labels that could have been answered
         currentAnswers.forEach(a => incrementScores(1, a.labelIds, expectedScore));
         currentAnswers.forEach(a => incrementScores(2, a.labelIds, 1));
-    }
+    });
 
     
     // Calculate score vector where each element is the percentile score for a label normalized to (-1, 1)

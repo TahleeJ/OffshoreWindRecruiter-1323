@@ -66,7 +66,7 @@ export interface JobOpp {
 
 
 export interface User {
-    email: string | null
+    email: string
     permissionLevel: PermissionLevel
 }
 

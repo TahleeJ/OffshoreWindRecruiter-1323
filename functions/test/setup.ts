@@ -92,7 +92,7 @@ export async function devDefaultReset() {
     await adminFirestoreInstance.collection("User").doc(testCreds.uids.admin!).update({permissionLevel: PermissionLevel.Admin});
     await adminFirestoreInstance.collection("User").doc(testCreds.uids.owner!).update({permissionLevel: PermissionLevel.Owner});
 
-    await adminFirestoreInstance.collection("Flag").doc(process.env.FLAG_REF_ID!).update({promoteToOwnerDev: process.env.FLAG_OWNER_PROMOTION, demoteOwnerDev: process.env.FLAG_OWNER_DEMOTION})
+    await adminFirestoreInstance.collection("Flag").doc(process.env.FLAG_REF_ID!).update({promoteToOwnerDev: true, demoteOwnerDev: false})
 }
 
 export const updateTransactions = {

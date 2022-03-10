@@ -1,6 +1,7 @@
-import * as admin from 'firebase-admin';
+const admin = require('firebase-admin');
 import * as functions from 'firebase-functions';
 import { AuthData } from 'firebase-functions/lib/common/providers/https';
+// import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 
 import { JobOpp, PermissionLevel, QuestionType, SurveyTemplate, SurveyResponse } from '../../src/firebase/Types';
 
@@ -121,7 +122,7 @@ exports.submitSurvey = functions.https.onCall(async (request: SurveyResponse, co
     const jobOpps = await firestore.collection("JobOpps").get();
     const rankings: [number, JobOpp][] = [];
 
-    jobOpps.forEach(job => {
+    jobOpps.forEach((job: { data: unknown; }) => {
         let jobScore = 0;
         const jobData = job.data as unknown as JobOpp;
 
@@ -176,7 +177,8 @@ exports.checkAdmin = functions.https.onCall(async (request, context) => {
  *        the application has disabled the desired permissions action, or 
  *        if the provided arguments are invalid
  */
-exports.updatePermissions = functions.runWith({secrets: ["FLAG_OWNER_PROMOTION", "FLAG_OWNER_DEMOTION"]}).https.onCall(async (request: { userEmail: string, newPermissionLevel: number }, context) => {
+exports.updatePermissions = functions.https.onCall(async (request: { userEmail: string, newPermissionLevel: number }, context) => {
+    
     assertValidRequest(context);
 
     if (request.userEmail == null)
@@ -188,14 +190,17 @@ exports.updatePermissions = functions.runWith({secrets: ["FLAG_OWNER_PROMOTION",
     
     // Obtain the function caller's permission level
     const callerPermissionLevel = await getPermissionLevelByUid(context.auth.uid);
+
+    // const callerPermissionLevel = 1;
     
     // Flags to check in Firestore for legal owner permission change actions
     const flags = {
-        ownerPromote: process.env.FLAG_OWNER_PROMOTION,
-        ownerDemote: process.env.FLAG_OWNER_DEMOTION
+        ownerPromote: "promoteToOwnerDev",
+        ownerDemote: "demoteOwnerDev"
     };
 
-    const flagsRef = await firestore.collection("Flag").get().then(res => res.docs[0].data());
+    const flagsRef = (await firestore.collection("Flag").doc("test").get()).data();
+    // throw Error;
 
     // Obtain the selected user's information reference in Firestore
     let userRecord = null;
@@ -212,6 +217,7 @@ exports.updatePermissions = functions.runWith({secrets: ["FLAG_OWNER_PROMOTION",
     switch (request.newPermissionLevel) {
         case PermissionLevel.Owner:
             if (flagsRef.get(flags.ownerPromote)) {
+                //owner
                 if (callerPermissionLevel !== PermissionLevel.Owner) {
                     throw errors.unauthorized;
                 }
@@ -245,6 +251,7 @@ exports.updatePermissions = functions.runWith({secrets: ["FLAG_OWNER_PROMOTION",
                 }
             }
 
+            //owner
             if (callerPermissionLevel !== PermissionLevel.Owner) {
                 throw errors.unauthorized;
             }
@@ -256,4 +263,5 @@ exports.updatePermissions = functions.runWith({secrets: ["FLAG_OWNER_PROMOTION",
 
     // Update permissions level
     await firestore.collection("User").doc(userRecord.uid).update({permissionLevel: newLevel});
+    return;
 });

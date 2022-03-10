@@ -79,4 +79,5 @@ export enum PermissionLevel {
 
 export interface ApplicationFlags {
     promoteToOwner: boolean
+    demoteOwner: boolean
 }

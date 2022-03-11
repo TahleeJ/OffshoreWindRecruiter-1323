@@ -27,6 +27,9 @@ const JobCreator: React.FC<props> = (props) => {
     const reduxJobOppData = useAppSelector(s => s.navigation.operationData as JobOpp & { id: string });
     const labels = useAppSelector(s => s.data.labels);
     const [popupVisible, setPopupvisible] = useState(false);
+    const [oppNameError, setOppNameError] = useState("");
+    const [compNameError, setCompNameError] = useState("");
+    const [labelError, setLabelError] = useState("");
 
     const togglePopup = () => setPopupvisible(!popupVisible);
     const changeLabels = (labelId: string) => {
@@ -50,8 +53,25 @@ const JobCreator: React.FC<props> = (props) => {
         });
     }
     const saveIfValidInput = async () => {
-        if (!jobOppName.trim() || !companyName.trim() || labels == null)
+        let errorMessage ="*This field is required";
+        if (!jobOppName.trim() || !companyName.trim() || labelsAssc.length == 0) {
             togglePopup();
+            if (!jobOppName.trim()) {
+                setOppNameError(errorMessage);
+            } else {
+                setOppNameError("");
+            }
+            if (!companyName.trim()) {
+                setCompNameError(errorMessage);
+            } else {
+                setCompNameError("");
+            }
+            if (labelsAssc.length == 0) {
+                setLabelError(errorMessage);
+            } else {
+                setLabelError("");
+            }
+        }
         else {
             let jobOpp: JobOpp = {
                 jobName: jobOppName,
@@ -87,10 +107,12 @@ const JobCreator: React.FC<props> = (props) => {
                 <div className="jobInputContainer">
                     <div className="title">Opportunity Name:</div>
                     <input type="text" value={jobOppName} onChange={(e) => setJobOppName(e.target.value)} placeholder='Job Name'></input>
+                    <div className="error">{oppNameError}</div>
                 </div>
                 <div className="jobInputContainer">
                     <div className="title">Company Name:</div>
                     <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder='Company Name'></input>
+                    <div className="error">{compNameError}</div>
                 </div>
                 <div className="jobInputContainer">
                     <div className="title">Job Description:</div>
@@ -108,6 +130,7 @@ const JobCreator: React.FC<props> = (props) => {
                             </div>
                         ))}
                     </ListViewer>
+                    <div className="error">{labelError}</div>
                 </div>
                 <div className="buttons">
                     <button className='gray' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })) }}>Cancel</button>

@@ -181,6 +181,10 @@ textarea {
         }
     }
 }
+.error {
+    font-size: 13px;
+    color: $contrastDark;
+}
 
 #authPage {
     text-align: center;
@@ -399,7 +403,6 @@ textarea {
     }
 
     .addLabel {
-        height: 100px;
         background-color: $gray1;
         border-radius: 5px;
         padding: 10px;

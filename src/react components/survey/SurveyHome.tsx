@@ -2,7 +2,7 @@ import React from 'react';
 import { useAppSelector } from '../../redux/hooks';
 import { OperationType } from '../../redux/navigationSlice';
 import SurveyAmdminister from './SurveyAdminister';
-import SurverCreator from './SurveyCreator';
+import SurveyCreator from './SurveyCreator';
 
 /** The props (arguments) to create this element */
 interface props {
@@ -21,7 +21,7 @@ const SurveyHome: React.FC<props> = (props) => {
                 return <SurveyAmdminister/>;
             case OperationType.Editing:
             case OperationType.Creating:
-                return <SurverCreator />
+                return <SurveyCreator />
             default:
                 return (
                     <div className='optionPage'> Not actually sure how you got here... </div>

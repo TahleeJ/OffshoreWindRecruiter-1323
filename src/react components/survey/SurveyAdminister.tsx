@@ -17,8 +17,7 @@ const initialResponse: SurveyResponse = {
         email: "",
         phone: "",
     },
-    answers: [],
-    recomendedJobs: null
+    answers: []
 }
 
 const SurveyAdminister: React.FC = (p: props) => {
@@ -57,10 +56,11 @@ const SurveyAdminister: React.FC = (p: props) => {
                     email: responseState.taker.email,
                     phone: responseState.taker.phone,
                 },
-                answers: responseState.answers,
-                recomendedJobs: null
+                answers: responseState.answers
             }
-            await newSurveyResponse(survey);
+            
+            // This call can take up to 5 seconds so UI shouldn't wait on it
+            const recomendedJobs = await newSurveyResponse(survey);
 
             dispatch(changePage({ type: PageType.Home }));
             //TODO: Get survey responses

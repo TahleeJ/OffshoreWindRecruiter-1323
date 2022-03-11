@@ -41,13 +41,18 @@ export interface SurveyResponse {
      */
     answers: (number | string)[]  
 
-    recomendedJobs: [number, JobOpp][] | null
+    recomendedJobs?: RecomendedJob[]
 }
 
 export interface SurveyTaker {
     name: string
     email: string
     phone: string
+}
+
+export interface RecomendedJob {
+    score: number
+    jobOppId: id
 }
 
 
@@ -59,13 +64,9 @@ export interface JobOpp {
     labelIds: id[]
 }
 
-export interface RecommendedJobs {
-    jobs: JobOpp[] | null
-}
-
 
 export interface User {
-    email: string | null
+    email: string
     permissionLevel: PermissionLevel
 }
 
@@ -73,4 +74,10 @@ export enum PermissionLevel {
     None,
     Admin,
     Owner
+}
+
+
+export interface ApplicationFlags {
+    promoteToOwner: boolean
+    demoteOwner: boolean
 }

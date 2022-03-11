@@ -25,11 +25,11 @@ export async function newLabel(label: Label) {
     await firestore.addDoc(db.Labels, label);
 }
 
-export async function editLabel(id: string, label: Label) {
+export async function editLabel(id: id, label: Label) {
     await firestore.updateDoc(firestore.doc(db.Labels, id), label);
 }
 
-export async function deleteLabel(id: string) {
+export async function deleteLabel(id: id) {
     await firestore.deleteDoc(firestore.doc(db.Labels, id));
 }
 

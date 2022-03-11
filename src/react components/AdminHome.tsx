@@ -1,13 +1,17 @@
-import React from 'react';
-import { authInstance } from '../firebase/Firebase';
-import { deleteJobOpp, getJobOpps, newJobOpp } from '../firebase/Queries/JobQueries';
-import { deleteSurvey, getSurveys } from '../firebase/Queries/SurveyQueries';
-import { JobOpp } from '../firebase/Types';
+import React, { useEffect, useState } from 'react';
 import { setJobOpps, setSurveys } from '../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
+
+import { authInstance } from '../firebase/Firebase';
+import { getUser } from '../firebase/Queries/AdminQueries';
+import { deleteJobOpp, getJobOpps, newJobOpp } from '../firebase/Queries/JobQueries';
+import { deleteSurvey, getSurveys } from '../firebase/Queries/SurveyQueries';
+import { JobOpp, PermissionLevel } from '../firebase/Types';
+
 import ListViewer from './ListViewer';
 import ListElement from './survey/ListElement';
+
 
 /** The props (arguments) to create this element */
 interface props {
@@ -19,6 +23,25 @@ const AdminHome: React.FC<props> = (props) => {
     const jobOpps = useAppSelector(s => s.data.jobOpps)
     const appDispatch = useAppDispatch();
     const user = authInstance.currentUser;
+    //const User = useAppSelector(s => s.User);
+    const [level, setLevel] = useState(PermissionLevel.None);
+    const getPermissionLevel = async () => {
+        const uid = authInstance.currentUser?.uid!;
+        const userDoc = await getUser(uid);
+
+        if (userDoc !== undefined)
+            setLevel(userDoc.permissionLevel);
+    }
+    //const level = getPermissionLevel()
+    const levelInfo = () => {
+        if (level === PermissionLevel.None) {
+            return "User";
+        } else if (level === PermissionLevel.Admin) {
+            return "Administrator"
+        } else if (level === PermissionLevel.Owner) {
+            return "Owner"
+        }
+    }
 
     const scrapeJobs = async () => {
         const response = await fetch('http://api.ecodistricthamptonroads.org/Jobs');
@@ -34,7 +57,8 @@ const AdminHome: React.FC<props> = (props) => {
             newJobOpp(jobOpp);
         });
     }
-
+    
+    useEffect(() => { getPermissionLevel(); }, []);
     return (
         <div id="adminHome" className='adminContainer'> {/*Contains the whole page*/}
             <div className='topGrid'> {/*top part (notif center, job ops, surveys*/}
@@ -102,7 +126,7 @@ const AdminHome: React.FC<props> = (props) => {
                         <p>
                             {user?.email}
                             <br />
-                            Administrator
+                            {levelInfo()}
                         </p>
                     </div>
                     <div className='adminButtons'>

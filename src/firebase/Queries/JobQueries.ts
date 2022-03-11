@@ -1,7 +1,7 @@
 import * as firestore from "@firebase/firestore";
 
 import db from "../Firestore";
-import { JobOpp, hasId } from "../Types";
+import { JobOpp, hasId, id } from "../Types";
 
 
 export async function getJobOpps() {
@@ -10,7 +10,7 @@ export async function getJobOpps() {
     return response.docs.map(job => ({...job.data(), id: job.id } as JobOpp & hasId));
 }
 
-export async function getJobOpp(id: string) {
+export async function getJobOpp(id: id) {
     const response = await firestore.getDoc(firestore.doc(db.JobOpps, id));
     const data = response.data();
 
@@ -24,10 +24,10 @@ export async function newJobOpp(jobOpp: JobOpp) {
     await firestore.addDoc(db.JobOpps, jobOpp);
 }
 
-export async function editJobOpp(id: string, jobOpp: JobOpp) {
+export async function editJobOpp(id: id, jobOpp: JobOpp) {
     await firestore.updateDoc(firestore.doc(db.JobOpps, id), jobOpp);
 }
 
-export async function deleteJobOpp(id: string) {
+export async function deleteJobOpp(id: id) {
     await firestore.deleteDoc(firestore.doc(db.JobOpps, id));
 }

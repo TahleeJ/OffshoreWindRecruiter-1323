@@ -1,5 +1,10 @@
+import * as firestore from "@firebase/firestore";
+
+import db from "../Firestore";
 import { updatePermissions } from "../Firebase";
-import { PermissionLevel } from "../Types";
+import { id, PermissionLevel } from "../Types";
+
+
 
 export async function setUserPermissionLevel(email: string, newLevel: PermissionLevel): Promise<string> {
     try {
@@ -11,4 +16,10 @@ export async function setUserPermissionLevel(email: string, newLevel: Permission
 
         return details;
     }
+}
+
+export async function getUser(id: id) {
+    const response = await firestore.getDoc(firestore.doc(db.Users, id));
+
+    return response.data();
 }

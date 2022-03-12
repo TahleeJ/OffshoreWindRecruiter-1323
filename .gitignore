@@ -201,8 +201,7 @@ dist
 
 firestore.rules
 serviceAccountKey.json
-.env.prod
-.env.dev
+
 # Support for Project snippet scope
 
 # End of https://www.toptal.com/developers/gitignore/api/firebase,macos,node,visualstudiocode

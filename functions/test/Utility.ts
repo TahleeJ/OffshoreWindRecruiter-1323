@@ -1,9 +1,13 @@
-import { auth, firestore } from './Init';
+import { auth, firestore } from '../src/Utility';
 import { PermissionLevel } from '../../src/firebase/Types';
 import { CallableContextOptions } from 'firebase-functions-test/lib/main';
 import { CreateRequest, UserRecord } from 'firebase-admin/auth';
+import { DocumentReference, QuerySnapshot } from 'firebase-admin/firestore';
 
-// require('custom-env').env('dev');
+export enum ApplicationFlagType {
+    promoteToOwner,
+    demoteOwner
+}
 
 const testUserEmails = {
     none: "none@oswjn.com",
@@ -23,24 +27,35 @@ export var testUserContext = {
     owner: <CallableContextOptions> <unknown> null
 }
 
+export var testUserDocRef = {
+    none: <DocumentReference> <unknown> null,
+    admin: <DocumentReference> <unknown> null,
+    owner: <DocumentReference> <unknown> null
+}
+
 export async function initTestDocs() {
-    var docRef = await createTestUserDoc(testUserEmails.none, PermissionLevel.None);
+    var docRef: string;
+    
+    docRef = await createTestUserDoc(testUserEmails.none, PermissionLevel.None);
     testUsers.none = await auth.createUser(<CreateRequest> {email: testUserEmails.none, uid: docRef});
     testUserContext.none = await createTestUserContext(docRef);
+    testUserDocRef.none = firestore.collection("User").doc(docRef);
 
     docRef = await createTestUserDoc(testUserEmails.admin, PermissionLevel.Admin);
     testUsers.admin = await auth.createUser(<CreateRequest> {email: testUserEmails.admin, uid: docRef});
     testUserContext.admin = await createTestUserContext(docRef);
+    testUserDocRef.admin = firestore.collection("User").doc(docRef);
 
     docRef = await createTestUserDoc(testUserEmails.owner, PermissionLevel.Owner);
     testUsers.owner = await auth.createUser(<CreateRequest> {email: testUserEmails.owner, uid: docRef});
     testUserContext.owner = await createTestUserContext(docRef);
+    testUserDocRef.owner = firestore.collection("User").doc(docRef);
 
     await firestore.collection("Flag").add({promoteToOwner: true, demoteOwner: false});
 }
 
 async function createTestUserDoc(email: string, permissionLevel: PermissionLevel): Promise<string> {
-    return (await firestore.collection("User").add({email: email, permissionLevel: permissionLevel}).then((documentReference) => {return documentReference.id}));
+    return (await firestore.collection("User").add({email: email, permissionLevel: permissionLevel}).then((documentReference: DocumentReference) => {return documentReference.id}));
 }
 
 
@@ -65,12 +80,27 @@ export async function resetTestDocs() {
     await firestore.collection("User").doc(testUsers.admin.uid!).update({permissionLevel: PermissionLevel.Admin});
     await firestore.collection("User").doc(testUsers.owner.uid!).update({permissionLevel: PermissionLevel.Owner});
 
-    const flagDocId = await firestore.collection("Flag").get().then((querySnapshot) => {return querySnapshot.docs[0].id});
+    const flagDocId = await firestore.collection("Flag").get().then((querySnapshot: QuerySnapshot) => {return querySnapshot.docs[0].id});
 
     await firestore.collection("Flag").doc(flagDocId).update({promoteToOwnerDev: true, demoteOwnerDev: false});
 }
 
-export async function setFlag()
+export async function setApplicationFlag(flag: ApplicationFlagType, value: boolean) {
+    const flagDocId = await firestore.collection("Flag").get().then((querySnapshot: QuerySnapshot) => {return querySnapshot.docs[0].id});
+
+    switch (flag) {
+        case ApplicationFlagType.promoteToOwner:
+            await firestore.collection("Flag").doc(flagDocId).update({promoteToOwner: value});
+
+            break;
+        case ApplicationFlagType.demoteOwner:
+            await firestore.collection("Flag").doc(flagDocId).update({demoteOwner: value});
+    }
+}
+
+export async function getTestUserPermissionLevel(ref: DocumentReference): Promise<PermissionLevel> {
+    return (await ref.get().then((documentSnapshot) => {return documentSnapshot.data()?.permissionLevel}));
+}
 
 export const updateTransactions = {
     onNone: {

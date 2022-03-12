@@ -16,9 +16,11 @@
   "main": "lib/functions/src/index.js",
   "dependencies": {
     "@types/jest": "^27.4.1",
+    "@types/sinon": "^10.0.11",
     "custom-env": "^2.0.1",
     "dotenv": "^16.0.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "sinon": "^13.0.1"
   },
   "devDependencies": {
     "@types/chai": "^4.3.0",
@@ -34,5 +36,10 @@
     "mocha": "^9.2.1",
     "typescript": "^4.6.2"
   },
-  "private": true
+  "private": true,
+  "eslintConfig": {
+    "rules": {
+      "import/first": "off"
+    }
+  }
 }

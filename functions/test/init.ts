@@ -1,18 +1,25 @@
-import * as functionsTest from 'firebase-functions-test';
-import * as adminApp from 'firebase-admin/app';
-import * as adminAuth from 'firebase-admin/auth';
-import * as adminFirestore from 'firebase-admin/firestore';
-import * as path from 'path';
+/**
+ * **WARNING:**
+ * 
+ * This file is crucial to the set up of the testing environment. 
+ * The ordering of everything in this file is important and should 
+ * NOT be touched or rearranged!
+ */
 
-// require('custom-env').env('dev');
+import * as functionsTest from 'firebase-functions-test';
+import * as path from 'path';
+import { initTestDocs } from './Utility';
 
 const serviceAccount = path.resolve("serviceAccountKey.json");
+export const testEnv = functionsTest({
+    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+}, serviceAccount);
 
-const myApp = adminApp.initializeApp({
-    credential: adminApp.cert(serviceAccount),
-    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID
-}, "admin app");
 
-export const auth = adminAuth.getAuth(myApp);
-export const firestore = adminFirestore.getFirestore(myApp);
-export const testEnv = functionsTest({}, serviceAccount);
+export async function initializeTestEnvironment() {
+    let myFunctions = require('../src/index.js');
+
+    await initTestDocs();
+
+    return myFunctions;
+}

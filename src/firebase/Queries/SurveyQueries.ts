@@ -1,4 +1,5 @@
 import * as firestore from "@firebase/firestore";
+import { submitSurvey } from "../Firebase";
 
 import db from "../Firestore";
 import { id, SurveyTemplate, hasId, SurveyResponse } from "../Types";
@@ -24,15 +25,14 @@ export async function newSurvey(survey: SurveyTemplate) {
     await firestore.addDoc(db.Surveys, survey);
 }
 
-export async function editSurvey(id: string, survey: SurveyTemplate) {
+export async function editSurvey(id: id, survey: SurveyTemplate) {
     await firestore.updateDoc(firestore.doc(db.Surveys, id), survey);
 }
 
-export async function deleteSurvey(id: string) {
+export async function deleteSurvey(id: id) {
     await firestore.deleteDoc(firestore.doc(db.Surveys, id));
 }
 
 export async function newSurveyResponse(survey: SurveyResponse) {
-    await firestore.addDoc(db.SurveyResponse, survey);
+    return await submitSurvey(survey);
 }
-

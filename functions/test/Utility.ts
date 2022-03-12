@@ -16,38 +16,38 @@ const testUserEmails = {
 }
 
 var testUsers = {
-    none: <UserRecord> <unknown> null,
-    admin: <UserRecord> <unknown> null,
-    owner: <UserRecord> <unknown> null
+    none: null as unknown as UserRecord,
+    admin: null as unknown as UserRecord,
+    owner: null as unknown as UserRecord
 }
 
 export var testUserContext = {
-    none: <CallableContextOptions> <unknown> null,
-    admin: <CallableContextOptions> <unknown> null,
-    owner: <CallableContextOptions> <unknown> null
+    none: null as unknown as CallableContextOptions,
+    admin: null as unknown as CallableContextOptions,
+    owner: null as unknown as CallableContextOptions
 }
 
 export var testUserDocRef = {
-    none: <DocumentReference> <unknown> null,
-    admin: <DocumentReference> <unknown> null,
-    owner: <DocumentReference> <unknown> null
+    none: null as unknown as DocumentReference,
+    admin: null as unknown as DocumentReference,
+    owner: null as unknown as DocumentReference
 }
 
 export async function initTestDocs() {
     var docRef: string;
     
     docRef = await createTestUserDoc(testUserEmails.none, PermissionLevel.None);
-    testUsers.none = await auth.createUser(<CreateRequest> {email: testUserEmails.none, uid: docRef});
+    testUsers.none = await auth.createUser({ email: testUserEmails.none, uid: docRef } as CreateRequest);
     testUserContext.none = await createTestUserContext(docRef);
     testUserDocRef.none = firestore.collection("User").doc(docRef);
 
     docRef = await createTestUserDoc(testUserEmails.admin, PermissionLevel.Admin);
-    testUsers.admin = await auth.createUser(<CreateRequest> {email: testUserEmails.admin, uid: docRef});
+    testUsers.admin = await auth.createUser({ email: testUserEmails.admin, uid: docRef } as CreateRequest);
     testUserContext.admin = await createTestUserContext(docRef);
     testUserDocRef.admin = firestore.collection("User").doc(docRef);
 
     docRef = await createTestUserDoc(testUserEmails.owner, PermissionLevel.Owner);
-    testUsers.owner = await auth.createUser(<CreateRequest> {email: testUserEmails.owner, uid: docRef});
+    testUsers.owner = await auth.createUser({ email: testUserEmails.owner, uid: docRef } as CreateRequest);
     testUserContext.owner = await createTestUserContext(docRef);
     testUserDocRef.owner = firestore.collection("User").doc(docRef);
 

@@ -1,5 +1,5 @@
 import { auth, firestore } from './Init';
-import { PermissionLevel} from '../../src/firebase/Types';
+import { PermissionLevel } from '../../src/firebase/Types';
 import { CallableContextOptions } from 'firebase-functions-test/lib/main';
 import { CreateRequest, UserRecord } from 'firebase-admin/auth';
 
@@ -69,6 +69,8 @@ export async function resetTestDocs() {
 
     await firestore.collection("Flag").doc(flagDocId).update({promoteToOwnerDev: true, demoteOwnerDev: false});
 }
+
+export async function setFlag()
 
 export const updateTransactions = {
     onNone: {

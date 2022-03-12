@@ -34,98 +34,103 @@ describe("Update Permissions Function Unit Tests", () => {
         });
 
         it("should fail to promote a none-level user to admin-level", async () => {     
+            await updatePermissionsWrapped(updateTransactions.onNone.toAdmin, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to promote a none-level user to owner-level for owner promotion enabled", async () => {   
+            await updatePermissionsWrapped(updateTransactions.onNone.toOwner, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to demote an admin-level user to none-level", async () => {
             await updatePermissionsWrapped(updateTransactions.onAdmin.toNone, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
-        // it("should fail to promote a none-level user to owner-level for owner promotion enabled", async () => {   
-        //     expect(function(){
-        //         updatePermissionsWrapped(updateTransactions.onNone.toOwner, contexts.none);
-        //     }).to.throw(functions.https.HttpsError);
+        it("should fail to promote/demote an admin-level user to admin-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onAdmin.toAdmin, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
 
-        // });
+        it("should fail to promote an admin-level user to owner-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onAdmin.toOwner, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
 
-        // it("should fail to promote an admin-level user to any level", async () => {
+        it("should fail to demote an owner-level user to none-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onOwner.toNone, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
 
-        // });
+        it("should fail to demote an owner-level user to admin-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onOwner.toAdmin, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
 
-        // it("should fail to demote an admin-level user to any level", async () => {
-
-        // });
-
-        // it("should fail to promote an owner-level user to any level", async () => {
-
-        // });
-
-        // it("should fail to demote an owner-level user to any level", async () => {
-
-        // });
+        it("should fail to promote/demote an owner-level user to owner-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onOwner.toOwner, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
     });
 
-    // describe("Admin-level caller", () => {
-    //     it("should promote/demote a none-level user to none-level", async () => {
+    describe("Admin-level caller", () => {
+        it("should promote/demote a none-level user to none-level", async () => {
 
-    //     });
+        });
         
-    //     it("should promote a none-level user to admin-level", async () => {
+        it("should promote a none-level user to admin-level", async () => {
 
-    //     });
+        });
 
-    //     it("should fail to promote a none-level user to owner-level for enabled owner promotion flag", async () => {
+        it("should fail to promote a none-level user to owner-level for enabled owner promotion flag", async () => {
 
-    //     });
+        });
 
-    //     it("should fail to promote a none-level user to owner-level for disabled owner promotion flag", async () => {
+        it("should fail to promote a none-level user to owner-level for disabled owner promotion flag", async () => {
 
-    //     });
+        });
 
-    //     it("should fail to demote an admin-level user to admin-level", async () => {
+        it("should fail to demote an admin-level user to none-level", async () => {
 
-    //     });
+        });
 
-    //     it("should promote an admin-level user to admin-level", async () => {
+        it("should promote an admin-level user to admin-level", async () => {
 
-    //     });
+        });
 
-    //     it("should fail to promote an admin-level user to owner-level for enabled owner promotion", async () => {
+        it("should fail to promote an admin-level user to owner-level for enabled owner promotion", async () => {
 
-    //     });
+        });
 
-    //     it("should fail to promote an admin-level user to owner-level for disabled owner promotion", async () => {
+        it("should fail to promote an admin-level user to owner-level for disabled owner promotion", async () => {
 
-    //     });
+        });
 
-    //     it("should fail to demote an owner-level user to none-level", async () => {
+        it("should fail to demote an owner-level user to none-level", async () => {
 
-    //     });
+        });
 
-    //     it("should fail to demote an owner-level user to admin-level", async () => {
+        it("should fail to demote an owner-level user to admin-level", async () => {
 
-    //     });
+        });
 
-    //     it("should fail to demote an owner-level user to none-level for enabled owner demotion", async () => {
+        it("should fail to demote an owner-level user to none-level for enabled owner demotion", async () => {
 
-    //     });
+        });
 
-    //     it("should fail to demote an owner-level user to none-level for disabled owner demotion", async () => {
+        it("should fail to demote an owner-level user to none-level for disabled owner demotion", async () => {
 
-    //     });
+        });
 
-    //     it("should fail to demote an owner-level user to admin-level for enabled owner demotion", async () => {
+        it("should fail to demote an owner-level user to admin-level for enabled owner demotion", async () => {
 
-    //     });
+        });
 
-    //     it("should fail to demote an owner-level user to admin-level for disabled owner demotion", async () => {
+        it("should fail to demote an owner-level user to admin-level for disabled owner demotion", async () => {
 
-    //     });
+        });
 
-    //     it("should fail to promote an owner-level user to owner-level for enabled owner promotion", async () => {
+        it("should fail to promote an owner-level user to owner-level for enabled owner promotion", async () => {
 
-    //     });
+        });
 
-    //     it("should fail to promote an owner-level user to owner-level for disabled owner promotion", async () => {
+        it("should fail to promote an owner-level user to owner-level for disabled owner promotion", async () => {
 
-    //     });
-    // });
+        });
+    });
 
     // describe("Owner-level caller", () => {
     //     it("should promote/demote a none-level user to none-level", async () => {

@@ -1,23 +1,24 @@
-import * as functions from 'firebase-functions';
-import { initializeTestEnvironment, testEnv } from './Init';
-import { WrappedFunction } from 'firebase-functions-test/lib/main';
-import { resetTestDocs, testUserContext, updateTransactions, setApplicationFlag, ApplicationFlagType, testUserDocRef, getTestUserPermissionLevel } from './Utility';
-import { PermissionLevel } from '../../src/firebase/Types';
 import * as chai from 'chai';
+import { assert } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
+import * as functions from 'firebase-functions';
+import { WrappedFunction } from 'firebase-functions-test/lib/main';
+
+import { PermissionLevel } from '../../src/firebase/Types';
+import { initializeTestEnvironment, testEnv } from './Init';
+import { ApplicationFlagType, getTestUserPermissionLevel, resetTestDocs, setApplicationFlag, testUserContext, testUserDocRef, updateTransactions } from './Utility';
 
 chai.use(chaiAsPromised);
 chai.should();
 
-const assert = chai.assert;
 
 let myFunctions = null;
 let updatePermissionsWrapped: WrappedFunction;
 
 describe("Update Permissions Function Unit Tests", () => {
-    before(async () => { 
+    before(async () => {
         myFunctions = await initializeTestEnvironment();
-        
+
         updatePermissionsWrapped = testEnv.wrap(myFunctions.updatePermissions);
     });
 
@@ -31,20 +32,20 @@ describe("Update Permissions Function Unit Tests", () => {
 
     describe("None-level caller", () => {
         it("should fail to set a none-level user to none-level", async () => {
-            await updatePermissionsWrapped(updateTransactions.onNone.toNone, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);    
+            await updatePermissionsWrapped(updateTransactions.onNone.toNone, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
-        it("should fail to set a none-level user to admin-level", async () => {     
+        it("should fail to set a none-level user to admin-level", async () => {
             await updatePermissionsWrapped(updateTransactions.onNone.toAdmin, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
-        it("should fail to set a none-level user to owner-level for enabled owner promotion", async () => {   
+        it("should fail to set a none-level user to owner-level for enabled owner promotion", async () => {
             await setApplicationFlag(ApplicationFlagType.promoteToOwner, true);
             await updatePermissionsWrapped(updateTransactions.onNone.toOwner, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
-        it("should fail to set a none-level user to owner-level for disabled owner promotion", async () => {  
-            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false); 
+        it("should fail to set a none-level user to owner-level for disabled owner promotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false);
             await updatePermissionsWrapped(updateTransactions.onNone.toOwner, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
@@ -57,12 +58,12 @@ describe("Update Permissions Function Unit Tests", () => {
         });
 
         it("should fail to set an admin-level user to owner-level for enabled owner promotion", async () => {
-            await setApplicationFlag(ApplicationFlagType.promoteToOwner, true); 
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, true);
             await updatePermissionsWrapped(updateTransactions.onAdmin.toOwner, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
         it("should fail to set an admin-level user to owner-level for disabled owner promotion", async () => {
-            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false); 
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false);
             await updatePermissionsWrapped(updateTransactions.onAdmin.toOwner, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
@@ -72,7 +73,7 @@ describe("Update Permissions Function Unit Tests", () => {
         });
 
         it("should fail to set an owner-level user to none-level for disabled owner demotion", async () => {
-            await setApplicationFlag(ApplicationFlagType.demoteOwner, false); 
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, false);
             await updatePermissionsWrapped(updateTransactions.onOwner.toNone, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
@@ -86,7 +87,7 @@ describe("Update Permissions Function Unit Tests", () => {
         });
 
         it("should fail to set an owner-level user to owner-level for disabled owner promotion", async () => {
-            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false); 
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false);
             await updatePermissionsWrapped(updateTransactions.onOwner.toOwner, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
     });
@@ -95,7 +96,7 @@ describe("Update Permissions Function Unit Tests", () => {
         it("should set a none-level user to none-level", async () => {
             await updatePermissionsWrapped(updateTransactions.onNone.toNone, testUserContext.admin).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
-        
+
         it("should set a none-level user to admin-level", async () => {
             await updatePermissionsWrapped(updateTransactions.onNone.toAdmin, testUserContext.admin);
             const permissionLevel = await getTestUserPermissionLevel(testUserDocRef.none);
@@ -104,12 +105,12 @@ describe("Update Permissions Function Unit Tests", () => {
         });
 
         it("should fail to set a none-level user to owner-level for enabled owner promotion", async () => {
-            await setApplicationFlag(ApplicationFlagType.promoteToOwner, true); 
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, true);
             await updatePermissionsWrapped(updateTransactions.onNone.toOwner, testUserContext.admin).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
         it("should fail to set a none-level user to owner-level for disabled owner promotion", async () => {
-            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false); 
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false);
             await updatePermissionsWrapped(updateTransactions.onNone.toOwner, testUserContext.admin).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
@@ -130,7 +131,7 @@ describe("Update Permissions Function Unit Tests", () => {
         });
 
         it("should fail to set an admin-level user to owner-level for disabled owner promotion", async () => {
-            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false); 
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false);
             await updatePermissionsWrapped(updateTransactions.onAdmin.toOwner, testUserContext.admin).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
@@ -160,7 +161,7 @@ describe("Update Permissions Function Unit Tests", () => {
         });
 
         it("should fail to set an owner-level user to owner-level for disabled owner promotion", async () => {
-            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false); 
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false);
             await updatePermissionsWrapped(updateTransactions.onOwner.toOwner, testUserContext.admin).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
     });
@@ -194,7 +195,7 @@ describe("Update Permissions Function Unit Tests", () => {
             await updatePermissionsWrapped(updateTransactions.onNone.toOwner, testUserContext.owner).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
-        it("should set an admin-level user to none-level", async() => {
+        it("should set an admin-level user to none-level", async () => {
             await updatePermissionsWrapped(updateTransactions.onAdmin.toNone, testUserContext.owner);
             const permissionLevel = await getTestUserPermissionLevel(testUserDocRef.admin);
 
@@ -217,7 +218,7 @@ describe("Update Permissions Function Unit Tests", () => {
             assert.equal(permissionLevel, PermissionLevel.Owner);
         });
 
-        it("should fail to set an admin-level user to owner-level for disabled owner promotion", async() => {
+        it("should fail to set an admin-level user to owner-level for disabled owner promotion", async () => {
             await setApplicationFlag(ApplicationFlagType.promoteToOwner, false);
             await updatePermissionsWrapped(updateTransactions.onAdmin.toOwner, testUserContext.owner).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });

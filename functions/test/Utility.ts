@@ -55,7 +55,7 @@ export async function initTestDocs() {
 }
 
 async function createTestUserDoc(email: string, permissionLevel: PermissionLevel): Promise<string> {
-    return (await firestore.collection("User").add({email: email, permissionLevel: permissionLevel}).then((documentReference: DocumentReference) => {return documentReference.id}));
+    return (await firestore.collection("User").add({ email: email, permissionLevel: permissionLevel })).id;
 }
 
 
@@ -80,13 +80,13 @@ export async function resetTestDocs() {
     await firestore.collection("User").doc(testUsers.admin.uid!).update({permissionLevel: PermissionLevel.Admin});
     await firestore.collection("User").doc(testUsers.owner.uid!).update({permissionLevel: PermissionLevel.Owner});
 
-    const flagDocId = await firestore.collection("Flag").get().then((querySnapshot: QuerySnapshot) => {return querySnapshot.docs[0].id});
+    const flagDocId = (await firestore.collection("Flag").get()).docs[0].id;
 
     await firestore.collection("Flag").doc(flagDocId).update({promoteToOwnerDev: true, demoteOwnerDev: false});
 }
 
 export async function setApplicationFlag(flag: ApplicationFlagType, value: boolean) {
-    const flagDocId = await firestore.collection("Flag").get().then((querySnapshot: QuerySnapshot) => {return querySnapshot.docs[0].id});
+    const flagDocId = (await firestore.collection("Flag").get()).docs[0].id;
 
     switch (flag) {
         case ApplicationFlagType.promoteToOwner:
@@ -99,7 +99,7 @@ export async function setApplicationFlag(flag: ApplicationFlagType, value: boole
 }
 
 export async function getTestUserPermissionLevel(ref: DocumentReference): Promise<PermissionLevel> {
-    return (await ref.get().then((documentSnapshot) => {return documentSnapshot.data()?.permissionLevel}));
+    return (await ref.get()).data()?.permissionLevel;
 }
 
 export const updateTransactions = {

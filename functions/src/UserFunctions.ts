@@ -3,6 +3,7 @@ import * as functions from 'firebase-functions';
 import { assertValidRequest, auth, firestore } from './Utility';
 import { errors } from "./Errors";
 import { ApplicationFlags, PermissionLevel } from '../../src/firebase/Types';
+import { UserRecord } from 'firebase-admin/auth';
 
 
 /**
@@ -60,7 +61,6 @@ export const checkAdmin = functions.https.onCall(async (request, context) => {
 export const updatePermissions = functions.https.onCall(async (request: { userEmail: string, newPermissionLevel: number }, context) => {
     assertValidRequest(context);
 
-
     if (request.userEmail == null)
         throw errors.illegalArgument.userEmail;
 
@@ -72,10 +72,10 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
     const callerPermissionLevel = await getPermissionLevelByUid(context.auth.uid);
     
     // Flags to check in Firestore for legal owner permission change actions
-    const flags = await firestore.collection("Flag").get().then(res => res.docs[0].data()) as ApplicationFlags;
+    const flags = await firestore.collection("Flag").get().then(res => res.docs[0]?.data()) as ApplicationFlags;
 
     // Obtain the selected user's information reference in Firestore
-    let userRecord = null;
+    let userRecord = <UserRecord> <unknown> null;
     try {
         userRecord = await auth.getUserByEmail(request.userEmail);
     } catch (error) {
@@ -100,11 +100,19 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
   
             break;
         case PermissionLevel.Admin:
-            if (callerPermissionLevel < PermissionLevel.Admin) {
+            if (callerPermissionLevel < PermissionLevel.Admin || userPermissionLevel > callerPermissionLevel) {
                 throw errors.unauthorized;
             }
 
-            newLevel = (userPermissionLevel > PermissionLevel.Admin) ? userPermissionLevel : PermissionLevel.Admin;
+            if (userPermissionLevel > PermissionLevel.Admin) {
+                if (flags.demoteOwner) {
+                    newLevel = PermissionLevel.Admin;
+                } else {
+                    throw errors.applicationDisabled;
+                }
+            } else {
+                newLevel = PermissionLevel.Admin;
+            }
 
             break;
         case PermissionLevel.None:
@@ -125,4 +133,6 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
 
     // Update permissions level
     await firestore.collection("User").doc(userRecord.uid).update({permissionLevel: newLevel});
+
+    return;
 });

@@ -10,6 +10,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "custom-env": "^2.0.1",
     "dotenv": "^16.0.0",
     "firebase": "^9.6.7",
     "firebase-admin": "^10.0.2",
@@ -46,9 +47,13 @@
     ]
   },
   "devDependencies": {
+    "@types/chai": "^4.3.0",
+    "@types/check-error": "^1.0.0",
     "@types/lodash": "^4.14.178",
     "@types/node": "^16.11.10",
     "@types/react": "^17.0.36",
-    "typescript": "^4.5.2"
+    "check-error": "^1.0.2",
+    "firebase-tools": "^10.2.2",
+    "typescript": "^4.6.2"
   }
 }

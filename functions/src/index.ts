@@ -1,8 +1,7 @@
 import './Utility';
 
-
-import { createNewUser, checkAdmin, updatePermissions } from './UserFunctions';
-export { createNewUser, checkAdmin, updatePermissions }
+import { checkAdmin, createNewUser, updatePermissions } from './UserFunctions';
+export { checkAdmin, createNewUser,updatePermissions }
 
 import { submitSurvey } from './SurveyFunctions';
 export { submitSurvey };

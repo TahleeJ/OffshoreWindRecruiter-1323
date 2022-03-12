@@ -7,7 +7,7 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "test": "npm run build && npx firebase emulators:exec \"npm run mocha-test\"",
+    "test": "npm run build && npx firebase emulators:exec --only functions,firestore,auth \"npm run mocha-test\"",
     "mocha-test": "mocha --exit --reporter spec --timeout 15000 lib/functions/test/*.spec.js"
   },
   "engines": {

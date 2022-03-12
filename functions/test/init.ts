@@ -4,7 +4,7 @@ import * as adminAuth from 'firebase-admin/auth';
 import * as adminFirestore from 'firebase-admin/firestore';
 import * as path from 'path';
 
-require('custom-env').env('dev');
+// require('custom-env').env('dev');
 
 const serviceAccount = path.resolve("serviceAccountKey.json");
 

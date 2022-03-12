@@ -1,4 +1,5 @@
-const admin = require('firebase-admin');
+import * as admin from 'firebase-admin';
+import { QuerySnapshot } from 'firebase-admin/firestore';
 import * as functions from 'firebase-functions';
 import { AuthData } from 'firebase-functions/lib/common/providers/https';
 // import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
@@ -190,16 +191,9 @@ exports.updatePermissions = functions.https.onCall(async (request: { userEmail: 
     
     // Obtain the function caller's permission level
     const callerPermissionLevel = await getPermissionLevelByUid(context.auth.uid);
-
-    // const callerPermissionLevel = 1;
-    
+    // throw Error;
     // Flags to check in Firestore for legal owner permission change actions
-    const flags = {
-        ownerPromote: "promoteToOwnerDev",
-        ownerDemote: "demoteOwnerDev"
-    };
-
-    const flagsRef = (await firestore.collection("Flag").doc("test").get()).data();
+    const flags = await firestore.collection("Flag").get().then((querySnapshot: QuerySnapshot) => {return querySnapshot.docs[0]?.data()});
     // throw Error;
 
     // Obtain the selected user's information reference in Firestore
@@ -216,7 +210,7 @@ exports.updatePermissions = functions.https.onCall(async (request: { userEmail: 
     let newLevel = userPermissionLevel;
     switch (request.newPermissionLevel) {
         case PermissionLevel.Owner:
-            if (flagsRef.get(flags.ownerPromote)) {
+            if (flags.get(flags.promoteToOwner)) {
                 //owner
                 if (callerPermissionLevel !== PermissionLevel.Owner) {
                     throw errors.unauthorized;
@@ -234,7 +228,7 @@ exports.updatePermissions = functions.https.onCall(async (request: { userEmail: 
             }
 
             if (userPermissionLevel > PermissionLevel.Admin) {
-                if (flagsRef.get(flags.ownerDemote)) {
+                if (flags.get(flags.demoteOwner)) {
                     newLevel = userPermissionLevel;
                 } else {
                     throw errors.applicationDisabled;
@@ -246,7 +240,7 @@ exports.updatePermissions = functions.https.onCall(async (request: { userEmail: 
             break;
         case PermissionLevel.None:
             if (userPermissionLevel === PermissionLevel.Owner) {
-                if (!flagsRef.get(flags.ownerDemote)) {
+                if (!flags.get(flags.demoteOwner)) {
                     throw errors.applicationDisabled;
                 }
             }

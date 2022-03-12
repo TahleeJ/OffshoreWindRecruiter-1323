@@ -1,37 +1,28 @@
 import * as functions from 'firebase-functions';
-import { CallableContextOptions, WrappedFunction } from 'firebase-functions-test/lib/main';
-import { createUsers, testUserContext, devDefaultReset, updateTransactions } from './Utility';
+import { WrappedFunction } from 'firebase-functions-test/lib/main';
+import { initTestDocs, resetTestDocs, testUserContext, updateTransactions } from './Utility';
 import { testEnv } from './Init';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
+import { afterEach } from 'mocha';
 
 chai.use(chaiAsPromised);
 chai.should();
-
-var contexts = {
-    none: <CallableContextOptions> <unknown>null,
-    admin: <CallableContextOptions> <unknown>null,
-    owner:<CallableContextOptions> <unknown>null  
-};
 
 let myFunctions: { updatePermissions: any; };
 let updatePermissionsWrapped: WrappedFunction;
 
 describe("Update Permissions Function Unit Tests", () => {
     before(async () => {
-        await createUsers();
+        await initTestDocs();
 
         myFunctions = require('../src/index.js');
         updatePermissionsWrapped = testEnv.wrap(myFunctions.updatePermissions);
-
-        contexts.none = await testUserContext.none;
-        contexts.admin = await testUserContext.admin;
-        contexts.owner = await testUserContext.owner;
     });
 
-    beforeEach(async () => {
-        await devDefaultReset();
-    });
+    afterEach(async () => {
+        await resetTestDocs();
+    })
 
     after(() => {
         testEnv.cleanup();
@@ -39,11 +30,11 @@ describe("Update Permissions Function Unit Tests", () => {
 
     describe("None-level caller", () => {
         it("should fail to promote a none-level user to none-level", async () => {
-            await updatePermissionsWrapped(updateTransactions.onNone.toNone, contexts.none).should.eventually.be.rejectedWith(functions.https.HttpsError);    
+            await updatePermissionsWrapped(updateTransactions.onNone.toNone, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);    
         });
 
         it("should fail to promote a none-level user to admin-level", async () => {     
-            await updatePermissionsWrapped(updateTransactions.onAdmin.toNone, contexts.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
+            await updatePermissionsWrapped(updateTransactions.onAdmin.toNone, testUserContext.none).should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
         // it("should fail to promote a none-level user to owner-level for owner promotion enabled", async () => {   

@@ -1,7 +1,7 @@
 # Testing Environment
 
 ## Configuration
-The testing environment for this project is constructed to work entirely with local Firebase emulators with no interaction with the production environment. All test suite-specific files are under the `functions/test/` directory. The current emulators in use are `functions, firestore, auth`. Cloud functions are tested using the code in `functions/src/index.ts` using the `functions` emulator, and the Admin SDK used in the testing environment (`test/`) is initialized in `index.ts` as well.
+The testing environment for this project is constructed to work entirely with local Firebase emulators in an online mode that directly interacts with the current project source code and does not communicate with the production environment. All test suite-specific files are under the `functions/test/` directory. The current emulators in use are `functions, firestore, auth`. Cloud functions are tested using the code in `functions/src/index.ts` using the `functions` emulator, and the Admin SDK used in the testing environment (`test/`) is initialized in `index.ts` as well.
 
 
 ## Usage

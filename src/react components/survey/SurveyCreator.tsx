@@ -32,6 +32,7 @@ const SurverCreator: React.FC = (props: props) => {
     const labels = useAppSelector(s => s.data.labels);
     const dispatch = useAppDispatch();
     const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const togglePopup = () => setPopupvisible(!popupVisible);
     const addNewQuestion = () => {
@@ -110,6 +111,7 @@ const SurverCreator: React.FC = (props: props) => {
     const conditionallySave = async () => {
         if (!title.trim()) {
             togglePopup();
+            setErrorMessage("*This field is required");
         } else {
             let survey: SurveyTemplate = {
                 title: title,
@@ -140,6 +142,7 @@ const SurverCreator: React.FC = (props: props) => {
             <button className="red" onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
             <div className="surveyHeader">
                 <input type='text' className="surveyTitle" placeholder="Survey Title*..." value={title} onChange={(e) => setTitle(e.target.value)} />
+                <div className="error">{errorMessage}</div>
                 <textarea className="surveyDescription" placeholder="Survey Description..." value={desc} onChange={(e) => setDesc(e.target.value)} />
             </div>
             {

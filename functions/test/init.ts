@@ -9,7 +9,6 @@
 import * as functionsTest from 'firebase-functions-test';
 import { initTestDocs } from './Utility';
 
-
 export const testEnv = functionsTest();
 
 export async function initializeTestEnvironment() {

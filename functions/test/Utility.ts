@@ -11,6 +11,14 @@ export enum ApplicationFlagType {
     demoteOwner
 }
 
+export interface UpdateTransaction {
+    context: CallableContextOptions,
+    updateUser: {
+        userEmail: string,
+        newPermissionLevel: PermissionLevel
+    }
+}
+
 const testUserEmails = {
     none: "none@oswjn.com",
     admin: "admin@oswjn.com",

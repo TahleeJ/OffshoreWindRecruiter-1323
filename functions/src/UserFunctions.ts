@@ -72,7 +72,7 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
     const callerPermissionLevel = await getPermissionLevelByUid(context.auth.uid);
     
     // Flags to check in Firestore for legal owner permission change actions
-    const flags = await firestore.collection("Flag").get().then(res => res.docs[0]?.data()) as ApplicationFlags;
+    const flags = (await firestore.collection("Flag").get()).docs[0]?.data() as ApplicationFlags;
 
     // Obtain the selected user's information reference in Firestore
     let userRecord = <UserRecord> <unknown> null;

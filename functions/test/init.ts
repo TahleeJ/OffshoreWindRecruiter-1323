@@ -7,14 +7,9 @@
  */
 
 import * as functionsTest from 'firebase-functions-test';
-import * as path from 'path';
 import { initTestDocs } from './Utility';
 
-const serviceAccount = path.resolve("serviceAccountKey.json");
-export const testEnv = functionsTest({
-    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-}, serviceAccount);
-
+export const testEnv = functionsTest();
 
 export async function initializeTestEnvironment() {
     let myFunctions = require('../src/index.js');

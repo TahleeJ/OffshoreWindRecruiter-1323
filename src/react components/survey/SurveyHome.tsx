@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppSelector } from '../../redux/hooks';
 import { OperationType } from '../../redux/navigationSlice';
-import SurveyAmdminister from './SurveyAdminister';
+import SurveyAdminister from './SurveyAdminister';
 import SurveyCreator from './SurveyCreator';
 
 /** The props (arguments) to create this element */
@@ -18,7 +18,7 @@ const SurveyHome: React.FC<props> = (props) => {
     const getSectionFromOType = (type: OperationType) => {
         switch (type) {
             case OperationType.Administering:   //This will be shown when the survey is being administered
-                return <SurveyAmdminister/>;
+                return <SurveyAdminister/>;
             case OperationType.Editing:
             case OperationType.Creating:
                 return <SurveyCreator />

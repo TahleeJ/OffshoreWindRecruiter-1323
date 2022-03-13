@@ -172,6 +172,11 @@ textarea {
   margin-right: 5px;
 }
 
+.error {
+  font-size: 13px;
+  color: #cc5050;
+}
+
 #authPage {
   text-align: center;
   font-size: 28px;
@@ -424,7 +429,6 @@ textarea {
 }
 
 #labelPage .addLabel {
-  height: 100px;
   background-color: #efefef;
   border-radius: 5px;
   padding: 10px;

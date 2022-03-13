@@ -20,7 +20,14 @@ const AdminManager: React.FC<props> = (props) => {
     const [permissionLevel, setPermission] = useState(PermissionLevel.None);
     const dispatch = useAppDispatch();
     const [changeLevel, setChangeLevel] = useState("Admin");
-    
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const isValid = () => {
+        if (!email.trim()) {
+            setErrorMessage("*This field is required");
+        }
+    }
+
     const updateIsAdmin = async () => {
         const uid = authInstance.currentUser?.uid!;
         const userDoc = await getUser(uid);
@@ -60,6 +67,7 @@ const AdminManager: React.FC<props> = (props) => {
             <div className="inputContainer">
                 <div className="userEmail">User Email:</div>
                 <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder='example@gmail.com'></input>
+                <div className="error">{errorMessage}</div>
             </div>
             <div className = "dropDown">
                 <div className = "dropText">Promote to: </div>
@@ -76,7 +84,7 @@ const AdminManager: React.FC<props> = (props) => {
             </div>
             <div className="buttonContainer">
                 <button className="gray" onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
-                <button onClick={promote}>Promote</button>
+                <button onClick={isValid}>Promote</button>
                 {
                     permissionLevel === PermissionLevel.Owner ?
                         <button className='red' onClick={demote}>Demote</button>

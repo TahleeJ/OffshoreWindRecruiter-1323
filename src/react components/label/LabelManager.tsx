@@ -21,6 +21,7 @@ const LabelManager: React.FC<props> = (props) => {
     const labels = useAppSelector(s => s.data.labels);
     const appDispatch = useAppDispatch();
     const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const togglePopup = () => setPopupvisible(!popupVisible);
     const checkEmpty = async () => {
@@ -30,8 +31,10 @@ const LabelManager: React.FC<props> = (props) => {
             });
             resetInput();
             appDispatch(setLabels(await getLabels()));
+            setErrorMessage("");
         } else {
             togglePopup();
+            setErrorMessage("*This field is required");
         }
     }
     
@@ -56,6 +59,7 @@ const LabelManager: React.FC<props> = (props) => {
 
                                 <button className='labelSubmit' onClick={checkEmpty}>Create</button>
                                 {popupVisible && <Prompt title="Empty Input" message="You must provide text in order to create a new label" handleCancel={togglePopup} />}
+                                <div className="error">{errorMessage}</div>
                             </div>
                             <ListViewer height="350px" title='Current Labels'>
                                 {labels.length > 0 ?

@@ -6,9 +6,7 @@ import * as functions from "@firebase/functions";
 
 import { JobOpp, PermissionLevel, SurveyResponse } from './Types';
 
-
-require('dotenv').config({ path: `../../.env.prod` });
-
+    
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_KEY,
     authDomain: process.env.REACT_APP_FIREBASE_DOMAIN,

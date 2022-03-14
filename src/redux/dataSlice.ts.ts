@@ -37,7 +37,5 @@ const dataSlice = createSlice({
 })
 
 
-
-
 export const { setSurveys, setLabels, setJobOpps } = dataSlice.actions
 export default dataSlice.reducer

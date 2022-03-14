@@ -54,7 +54,7 @@ const JobCreator: React.FC<props> = (props) => {
     }
     const saveIfValidInput = async () => {
         let errorMessage ="*This field is required";
-        if (!jobOppName.trim() || !companyName.trim() || labelsAssc.length == 0) {
+        if (!jobOppName.trim() || !companyName.trim() || labelsAssc.length === 0) {
             togglePopup();
             if (!jobOppName.trim()) {
                 setOppNameError(errorMessage);
@@ -66,7 +66,7 @@ const JobCreator: React.FC<props> = (props) => {
             } else {
                 setCompNameError("");
             }
-            if (labelsAssc.length == 0) {
+            if (labelsAssc.length === 0) {
                 setLabelError(errorMessage);
             } else {
                 setLabelError("");

@@ -25,7 +25,12 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
 
     // Increments rawScores[scoreIndex] for each label by incrementValue
     function incrementScores(scoreIndex: number, labelIds: string[], incrementValue: number) {
-        labelIds.forEach(l => rawScores.getOrDefault(l, [0, 0, 0])[scoreIndex] += incrementValue);
+        labelIds.forEach(l => {
+            if (!rawScores.has(l))
+                rawScores.set(l, [0, 0, 0]);
+
+            rawScores.get(l)![scoreIndex] += incrementValue;
+        });
     }
 
     survey.questions.forEach((currentQuestion, currentQuestionIndex) => {
@@ -83,6 +88,8 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
 
     (await jobOpps).forEach(job => {
         const jobData = job.data();
+        if (jobData.labelIds.length === 0)
+            return;
 
         let jobScore = jobData.labelIds.reduce((sum, l) => sum + scores.getOrDefault(l, 0), 0);
         jobScore /= jobData.labelIds.length;  // Normalize score to (-1, 1)

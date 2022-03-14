@@ -7,7 +7,8 @@ import { JobOpp, hasId, id } from "../Types";
 export async function getJobOpps() {
     const response = await firestore.getDocs(db.JobOpps);
 
-    return response.docs.map(job => ({...job.data(), id: job.id } as JobOpp & hasId));
+    return response.docs.map(job => ({...job.data(), id: job.id } as JobOpp & hasId))
+        .sort((a, b) => a.companyName.localeCompare(b.companyName));
 }
 
 export async function getJobOpp(id: id) {

@@ -1,12 +1,12 @@
-import { configureStore } from '@reduxjs/toolkit'
-//we can add all of our frontend state "slices" as imports here:
-import example from './sampleSlice';
-import navigation from './navigationSlice';
+import { configureStore } from '@reduxjs/toolkit';
+
 import data from './dataSlice.ts';
+import navigation from './navigationSlice';
+import example from './sampleSlice';
 
 
 export const store = configureStore({
-    //we now add all of our state "slices" into a single reducer element
+    // We now add all of our state "slices" into a single reducer element
     reducer: {
         /** DO NOT USE...this is just an example if you wish to create another one */
         example,
@@ -17,6 +17,6 @@ export const store = configureStore({
     }
 })
 
-/** This is the root state (a redux thing) of the application. Get values using `useAppSelector` and change using `useAppDispatch` from hooks.ts -sean */
+/** This is the root state (a redux thing) of the application. Get values using `useAppSelector` and change using `useAppDispatch` from hooks.ts */
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch

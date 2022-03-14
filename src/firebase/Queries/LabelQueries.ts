@@ -8,7 +8,8 @@ import { getSurveys } from "./SurveyQueries";
 export async function getLabels() {
     const response = await firestore.getDocs(db.Labels);
 
-    return response.docs.map(label => ({ ...label.data(), id: label.id } as Label & hasId));
+    return response.docs.map(label => ({ ...label.data(), id: label.id } as Label & hasId))
+        .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function getLabel(id: id) {

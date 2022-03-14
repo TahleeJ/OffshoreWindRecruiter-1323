@@ -1,9 +1,8 @@
 import lodash from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { newSurveyResponse } from '../../firebase/Queries/SurveyQueries';
 import { hasId, QuestionType, SurveyResponse, SurveyTemplate } from '../../firebase/Types';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { changePage, PageType } from '../../redux/navigationSlice';
+import { changeOperation, changePage, OperationType, PageType, submitSurveyResponse } from '../../redux/navigationSlice';
 import Prompt from '../Prompt';
 
 interface props {
@@ -59,12 +58,8 @@ const SurveyAdminister: React.FC = (p: props) => {
                 answers: responseState.answers
             }
             
-            // This call can take up to 5 seconds so UI shouldn't wait on it
-            const recomendedJobs = await newSurveyResponse(survey);
-
-            dispatch(changePage({ type: PageType.Home }));
-            //TODO: Get survey responses
-            // dispatch();
+            dispatch(submitSurveyResponse(survey))
+            dispatch(changeOperation({ operation: OperationType.Reviewing }));
         }
     }
 

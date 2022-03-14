@@ -1,4 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { newSurveyResponse } from '../firebase/Queries/SurveyQueries';
+import { SurveyResponse } from '../firebase/Types';
+
 
 /** This enum is used to distinguish between different types of pages */
 export enum PageType {
@@ -17,7 +20,8 @@ export enum OperationType {
     Editing,
     Deleting,
     Creating,
-    Administering
+    Administering,
+    Reviewing
 }
 
 /** The slice of state for navigating to different types of pages in the application. */
@@ -26,11 +30,14 @@ interface navigationState {
     operationType: OperationType;
     /** This value is null if the operation type doesn't need it. Otherwise contains the necessary information to render the page. */
     operationData: any | null;
+
+    status: 'idle' | 'pending' | 'fulfilled' | 'rejected';
 }
 
 const initialState = {
     currentPage: PageType.Home,
-    operationData: null
+    operationData: null,
+    status: 'idle'
 } as navigationState;
 
 /** The slice of the state that deals with navigating to parts of the application*/
@@ -51,10 +58,22 @@ const navigationSlice = createSlice({
         changeOperationData(state, { payload }: PayloadAction<any | null>) {
             state.operationData = payload;
         }
-    }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(submitSurveyResponse.fulfilled, (state, action) => {
+            state.operationData = action.payload.data.sort((a,b) => b.score - a.score);
+            state.status = 'fulfilled';
+        });
+        builder.addCase(submitSurveyResponse.rejected, (state, action) => {
+            state.operationData = action.error;
+            state.status = 'rejected';
+        });
+      },
 })
 
 
+export const submitSurveyResponse = createAsyncThunk('navigation/submitSurveyResponse', 
+    async (survey: SurveyResponse) => await newSurveyResponse(survey));
 
 
 export const { changePage, changeOperation, changeOperationData } = navigationSlice.actions

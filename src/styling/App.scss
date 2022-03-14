@@ -156,7 +156,7 @@ textarea {
     .listElements {
         overflow-y: auto;
         overflow-x: hidden;
-        // height: calc(100% - 25px);
+        height: calc(100% - 32px);
 
         & > * {
             padding: 7px 5px;

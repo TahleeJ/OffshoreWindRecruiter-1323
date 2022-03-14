@@ -144,6 +144,7 @@ textarea {
 .listViewer .listElements {
   overflow-y: auto;
   overflow-x: hidden;
+  height: calc(100% - 32px);
 }
 
 .listViewer .listElements > * {

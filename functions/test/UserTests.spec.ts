@@ -6,6 +6,7 @@ import { WrappedFunction } from 'firebase-functions-test/lib/main';
 
 import { PermissionLevel } from '../../src/firebase/Types';
 import { initializeTestEnvironment, testEnv } from './Init';
+
 import { ApplicationFlagType, getTestUserPermissionLevel, resetTestDocs, setApplicationFlag, testUserContext, testUserDocRef, updateTransactions } from './Utility';
 
 chai.use(chaiAsPromised);

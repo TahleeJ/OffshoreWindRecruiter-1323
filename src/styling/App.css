@@ -11,7 +11,7 @@ body,
 * {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  font-family: 'Roboto';
+  font-family: "Roboto";
 }
 
 .pointer {
@@ -144,7 +144,7 @@ textarea {
 .listViewer .listElements {
   overflow-y: auto;
   overflow-x: hidden;
-  height: calc(100% - 32px);
+  height: calc(100% - 38px);
 }
 
 .listViewer .listElements > * {
@@ -294,7 +294,6 @@ textarea {
 #adminHome {
   height: calc(100% - 50px);
   font-family: "Roboto";
-  padding: 10px;
   font-size: 20px;
   overflow-y: auto;
   -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -317,44 +316,20 @@ textarea {
   padding: 7px;
 }
 
-#adminHome .leftColumn .notifContainer {
-  height: 100%;
-  border-radius: 10px;
-}
-
-#adminHome .leftColumn .notifHeading {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-}
-
-#adminHome .leftColumn .notifHeading .notifNumCircle {
-  margin: 8px;
-  height: 25px;
-  width: 25px;
-  border-radius: 50%;
-  background-color: #be7478;
-  margin-right: 5px;
-  padding: 4px;
-}
-
-#adminHome .leftColumn .notifHeading #notifNum {
-  font-size: 15px;
-  color: #ffffff;
-  text-align: center;
-  margin: auto;
-}
-
 #adminHome .middleColumn {
   -webkit-box-flex: 1;
       -ms-flex: 1 1 50%;
           flex: 1 1 50%;
+  padding: 7px;
 }
 
-#adminHome .middleColumn .jobContainer,
-#adminHome .middleColumn .surveyContainer {
-  border-radius: 10px;
-  padding: 7px;
+#adminHome .middleColumn .listViewer {
+  min-height: 346.5px;
+  max-height: calc(50% - 3.5px);
+}
+
+#adminHome .middleColumn .listViewer:first-child {
+  margin-bottom: 7px;
 }
 
 #adminHome .rightColumn {

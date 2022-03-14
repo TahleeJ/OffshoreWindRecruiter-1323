@@ -43,3 +43,7 @@ export async function getSurveyResponses() {
 export async function newSurveyResponse(survey: SurveyResponse) {
     return await submitSurvey(survey);
 }
+
+export async function deleteSurveyResponse(id: id) {
+    await firestore.deleteDoc(firestore.doc(db.SurveyResponse, id));
+}

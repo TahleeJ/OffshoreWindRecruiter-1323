@@ -37,7 +37,7 @@ const LabelManager: React.FC<props> = (props) => {
             setErrorMessage("*This field is required");
         }
     }
-    
+
     const removeLabel = async (id: string) => {
         await deleteLabel(id);
         appDispatch(setLabels(await getLabels()));
@@ -65,10 +65,10 @@ const LabelManager: React.FC<props> = (props) => {
                                 {labels.length > 0 ?
                                     labels.map((label, index) => {
                                         return <ListElement
-                                            type="label"
                                             name={label.name}
                                             key={index}
-                                            handleEdit={() => appDispatch(changePage({ type: PageType.LabelManage, operation: OperationType.Editing, data: label }))} handleDelete={() => removeLabel(label.id)}
+                                            handleEdit={() => appDispatch(changePage({ type: PageType.LabelManage, operation: OperationType.Editing, data: label }))}
+                                            handleDelete={() => removeLabel(label.id)}
                                         />
                                     })
                                     : <div>There are currently no labels. Create a new one above</div>

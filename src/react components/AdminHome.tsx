@@ -20,11 +20,12 @@ interface props {
 
 const AdminHome: React.FC<props> = (props) => {
     const surveys = useAppSelector(s => s.data.surveys);
-    const jobOpps = useAppSelector(s => s.data.jobOpps)
+    const jobOpps = useAppSelector(s => s.data.jobOpps);
+    const responses = useAppSelector(s => s.data.surveyResponses);
     const appDispatch = useAppDispatch();
     const user = authInstance.currentUser;
-    //const User = useAppSelector(s => s.User);
     const [level, setLevel] = useState(PermissionLevel.None);
+
     const getPermissionLevel = async () => {
         const uid = authInstance.currentUser?.uid!;
         const userDoc = await getUser(uid);
@@ -32,15 +33,10 @@ const AdminHome: React.FC<props> = (props) => {
         if (userDoc !== undefined)
             setLevel(userDoc.permissionLevel);
     }
-    //const level = getPermissionLevel()
     const levelInfo = () => {
-        if (level === PermissionLevel.None) {
-            return "User";
-        } else if (level === PermissionLevel.Admin) {
-            return "Administrator"
-        } else if (level === PermissionLevel.Owner) {
-            return "Owner"
-        }
+        if (level === PermissionLevel.Owner) return "Owner";
+        else if (level === PermissionLevel.Admin) return "Administrator";
+        else return "User";
     }
 
     const scrapeJobs = async () => {
@@ -57,40 +53,34 @@ const AdminHome: React.FC<props> = (props) => {
             newJobOpp(jobOpp);
         });
     }
-    
+
     useEffect(() => { getPermissionLevel(); }, []);
     return (
         <div id="adminHome" className='adminContainer'> {/*Contains the whole page*/}
             <div className='topGrid'> {/*top part (notif center, job ops, surveys*/}
                 <div className='leftColumn'>
-                    {/* <div className='notifHeading'>
-                        <div className='notifNumCircle'>
-                            <h3 id='notifNum'>{unresolvedResponses}</h3>
-                        </div>
-                        <h3 id='newResponsePrompt'>New Responses</h3>
-                    </div> */}
                     <div className='notifContainer'>
-                        <ListViewer height="100%" title='New Responses'>
-                            <div>TODO: Add responses</div>
-                            <div>TODO: Add responses</div>
-                            <div>TODO: Add responses</div>
-                            <div>TODO: Add responses</div>
-                            <div>TODO: Add responses</div>
-                            <div>TODO: Add responses</div>
-                            <div>TODO: Add responses</div>
-                            <div>TODO: Add responses</div>
+                        <ListViewer height="100%" title='Responses'>
+                            {responses.length > 0 ?
+                                responses.map((res, ind) => {
+                                    return <ListElement
+                                        key={ind}
+                                        name={res.taker.name}
+                                        handleDelete={async () => null}
+                                    />
+                                })
+                                : <div>There are currently no survey responses</div>
+                            }
                         </ListViewer>
                     </div>
                 </div>
                 <div className='middleColumn'>
-                    {/* <h3 id='jobName'>Job Opportunities</h3> */}
                     <div className='jobContainer'>
                         <ListViewer height="350px" title='Job Opportunities' handleNew={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Creating }))} >
                             {jobOpps.length > 0 ?
                                 jobOpps.map((jobOpp, ind) => {
                                     return <ListElement
                                         key={ind}
-                                        type="Job Opportunity"
                                         name={jobOpp.jobName}
                                         handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing, data: jobOpp }))} // does not actually handle edits yet
                                         handleDelete={async () => {
@@ -103,14 +93,12 @@ const AdminHome: React.FC<props> = (props) => {
                             }
                         </ListViewer>
                     </div>
-                    {/* <h3 id='surveyName'>Surveys</h3> */}
                     <div className='surveyContainer'>
                         <ListViewer height="350px" title='Survey Templates' handleNew={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Creating }))}>
                             {surveys.length > 0 ?
                                 surveys.map((survey, ind) => {
                                     return <ListElement
                                         key={ind}
-                                        type="Survey"
                                         name={survey.title}
                                         handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Editing, data: survey }))}
                                         handleDelete={async () => { await deleteSurvey(survey.id); appDispatch(setSurveys(await getSurveys())) }}
@@ -130,8 +118,8 @@ const AdminHome: React.FC<props> = (props) => {
                         </p>
                     </div>
                     <div className='adminButtons'>
-                        <button className='manageLabel' onClick={() => { appDispatch(changePage({ type: PageType.LabelManage })) }}>Manage Labels</button>
-                        <button className='red' onClick={() => { appDispatch(changePage({ type: PageType.AdminManage })) }}>Manage Admins</button>
+                        <button onClick={() => { appDispatch(changePage({ type: PageType.LabelManage })) }}>Manage Labels</button>
+                        <button onClick={() => { appDispatch(changePage({ type: PageType.AdminManage })) }}>Manage Admins</button>
                     </div>
                 </div>
             </div>

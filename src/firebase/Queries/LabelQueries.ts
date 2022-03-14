@@ -36,7 +36,7 @@ export async function deleteLabel(id: id) {
 
 
 export async function getJobReferencesToLabel(labelID: id) {
-    return firestore.getDocs(firestore.query(db.JobOpps, firestore.where("labels", "array-contains", labelID)));
+    return firestore.getDocs(firestore.query(db.JobOpps, firestore.where("labelIds", "array-contains", labelID)));
 }
 
 /**

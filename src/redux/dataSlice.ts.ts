@@ -4,7 +4,7 @@ import { hasId, JobOpp, Label, SurveyTemplate, SurveyResponse } from '../firebas
 
 interface dataState {
     surveys: (SurveyTemplate & hasId)[];
-    surveyResponses: SurveyResponse[];
+    surveyResponses: (SurveyResponse & hasId)[];
     jobOpps: (JobOpp & hasId)[];
     labels: (Label & hasId)[];
     //add more here when we know what types they are
@@ -32,10 +32,13 @@ const dataSlice = createSlice({
         setJobOpps(state, { payload }: PayloadAction<(JobOpp & hasId)[]>) {
             state.jobOpps = payload;
         },
+        setSurveyResponses(state, { payload }: PayloadAction<(SurveyResponse & hasId)[]>) {
+            state.surveyResponses = payload;
+        },
         //add other methods here for when we know the types of jobOpps, etc
     }
 })
 
 
-export const { setSurveys, setLabels, setJobOpps } = dataSlice.actions
+export const { setSurveys, setLabels, setJobOpps, setSurveyResponses } = dataSlice.actions
 export default dataSlice.reducer

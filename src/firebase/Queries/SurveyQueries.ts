@@ -8,7 +8,8 @@ import { id, SurveyTemplate, hasId, SurveyResponse } from "../Types";
 export async function getSurveys() {
     const response = await firestore.getDocs(db.Surveys);
 
-    return response.docs.map(survey => ({...survey.data(), id: survey.id } as SurveyTemplate & hasId));
+    return response.docs.map(survey => ({ ...survey.data(), id: survey.id } as SurveyTemplate & hasId))
+        .sort((a, b) => a.title.localeCompare(b.title));
 }
 
 export async function getSurvey(id: id) {

@@ -350,7 +350,7 @@ describe("Create New User Function Unit Tests", () => {
         testEnv.cleanup();
     });
 
-    it("should succeed with a supplied uid", async () => {
+    it("should create a None-level document in User/ path with a supplied uid", async () => {
         const testUid = `user-${new Date().getTime()}`;
         const testEmail = "new@oswjn.com";
 

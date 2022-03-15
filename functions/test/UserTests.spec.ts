@@ -6,8 +6,10 @@ import { WrappedFunction } from 'firebase-functions-test/lib/main';
 
 import { PermissionLevel } from '../../src/firebase/Types';
 import { initializeTestEnvironment, testEnv } from './Init';
+import { auth, firestore } from '../src/Utility';
 
 import { ApplicationFlagType, getTestUserPermissionLevel, resetTestDocs, setApplicationFlag, testUserContext, testUserDocRef, updateTransactions } from './Utility';
+import { CreateRequest } from 'firebase-admin/auth';
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -294,5 +296,67 @@ describe("Update Permissions Function Unit Tests", () => {
             await updatePermissionsWrapped(updateTransactions.onOwner.toOwner, testUserContext.owner)
                 .should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
+    });
+
+    describe("Invalid arguments", () => {
+        it("should fail with a non-signed in user", async () => {
+            await updatePermissionsWrapped(updateTransactions.invalidArg.notSignedIn)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail with an unsupplied target user email", async () => {
+            await updatePermissionsWrapped(updateTransactions.invalidArg.absentEmail, testUserContext.invalidArg)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail with a null target user email", async () => {
+            await updatePermissionsWrapped(updateTransactions.invalidArg.nullEmail, testUserContext.invalidArg)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail a non-member target user", async () => {
+            await updatePermissionsWrapped(updateTransactions.invalidArg.nonMember, testUserContext.invalidArg)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });  
+
+        it("should fail with an unsupplied permission level", async () => {
+            await updatePermissionsWrapped(updateTransactions.invalidArg.absentPermissionLevel, testUserContext.invalidArg)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        }); 
+
+        it("should fail with a null permission level", async () => {
+            await updatePermissionsWrapped(updateTransactions.invalidArg.nullPermissionLevel, testUserContext.invalidArg)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        }); 
+        
+        it("should fail with a negative out of bounds permission level", async () => {
+            await updatePermissionsWrapped(updateTransactions.invalidArg.negativePermissionLevel, testUserContext.invalidArg)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail with a positive out of bounds permission level", async () => {
+            await updatePermissionsWrapped(updateTransactions.invalidArg.tooLargePermissionLevel, testUserContext.invalidArg)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });   
+    });
+});
+
+describe("Create New User Function Unit Tests", () => {
+    const dummyUid = `user-${new Date().getTime()}`;
+    console.log(dummyUid);
+
+    after(() => {
+        auth.deleteUser(dummyUid);
+        testEnv.cleanup();
+    });
+
+    it("should succeed with a supplied uid", async () => {
+        const testUid = `user-${new Date().getTime()}`;
+        const testEmail = "new@oswjn.com";
+
+        await auth.createUser({ email: testEmail, uid: testUid} as CreateRequest);
+
+        assert.equal((await firestore.collection("User").doc(testUid).get()).exists, true);
+        assert.equal((await firestore.collection("User").doc(testUid).get()).data()?.permissionLevel, PermissionLevel.None);
     });
 });

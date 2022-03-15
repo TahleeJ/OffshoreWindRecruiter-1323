@@ -10,22 +10,26 @@ export enum ApplicationFlagType {
     demoteOwner
 }
 
-const testUserEmails = {
+export const testUserEmails = {
     none: "none@oswjn.com",
     admin: "admin@oswjn.com",
-    owner: "owner@oswjn.com"
+    owner: "owner@oswjn.com",
+    member: "test@oswjn.com",
+    nonMember: "not@oswjn.com"
 }
 
 var testUsers = {
     none: null as unknown as UserRecord,
     admin: null as unknown as UserRecord,
-    owner: null as unknown as UserRecord
+    owner: null as unknown as UserRecord,
+    invalidArg: null as unknown as UserRecord
 }
 
 export var testUserContext = {
     none: null as unknown as CallableContextOptions,
     admin: null as unknown as CallableContextOptions,
-    owner: null as unknown as CallableContextOptions
+    owner: null as unknown as CallableContextOptions,
+    invalidArg: null as unknown as CallableContextOptions
 }
 
 export var testUserDocRef = {
@@ -62,6 +66,10 @@ export async function initTestDocs() {
 
     // Application flag initialization
     await firestore.collection("Flag").add({ promoteToOwner: true, demoteOwner: false });
+
+    const dummyUid = `user-${new Date().getTime()}`;
+    testUsers.invalidArg = await auth.createUser({ email: testUserEmails.member, uid: dummyUid } as CreateRequest);
+    testUserContext.invalidArg = await createTestUserContext(dummyUid);
 }
 
 /**
@@ -177,6 +185,38 @@ export const updateTransactions = {
         toOwner: {
             userEmail: testUserEmails.owner,
             newPermissionLevel: PermissionLevel.Owner
+        }
+    },
+    invalidArg: {
+        notSignedIn: {
+            userEmail: testUserEmails.member,
+            newPermissionLevel: PermissionLevel.None
+        },
+        absentEmail: {
+            newPermissionLevel: PermissionLevel.None
+        },
+        nullEmail: {
+            userEmail: null,
+            newPermissionLevel: PermissionLevel.None
+        },
+        absentPermissionLevel: {
+            userEmail: testUserEmails.member
+        },
+        nullPermissionLevel: {
+            userEmail: testUserEmails.member,
+            newPermissionLevel: null
+        },
+        nonMember: {
+            userEmail: testUserEmails.nonMember,
+            newPermissionLevel: PermissionLevel.None
+        },
+        negativePermissionLevel: {
+            userEmail: testUserEmails.member,
+            newPermissionLevel: -1
+        },
+        tooLargePermissionLevel: {
+            userEmail: testUserEmails.member,
+            newPermissionLevel: 3
         }
     }
 };

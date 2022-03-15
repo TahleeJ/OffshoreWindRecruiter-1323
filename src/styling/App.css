@@ -688,6 +688,7 @@ textarea {
           box-shadow: 0px 0px 3px 2px #dddddd;
 }
 
+#surveyHome .administerSurveyPage .question input[type="text"],
 #surveyHome .administerSurveyPage .question textarea {
   width: calc(100% - 10px);
   margin: 0px 5px;
@@ -708,6 +709,35 @@ textarea {
 
 #surveyHome .administerSurveyPage .question.MultipleChoice {
   text-align: left;
+}
+
+#surveyHome .administerSurveyPage .recommendation {
+  width: calc(100% - 40px);
+  margin: 20px;
+  border-radius: 5px;
+  padding: 5px;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
+}
+
+#surveyHome .administerSurveyPage .recommendation .title {
+  color: white;
+}
+
+#surveyHome .administerSurveyPage .recommendation.neutral {
+  background-color: white;
+}
+
+#surveyHome .administerSurveyPage .recommendation.neutral .title {
+  color: black;
+}
+
+#surveyHome .administerSurveyPage .recommendation.positive {
+  background-color: #7ba1ff;
+}
+
+#surveyHome .administerSurveyPage .recommendation.negative {
+  background-color: #d16161;
 }
 
 #surveyHome input[type="radio"] {

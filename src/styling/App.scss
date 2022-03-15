@@ -314,7 +314,7 @@ textarea {
         .listViewer {
             min-height: 346.5px;
             max-height: calc(50% - 3.5px);
-            
+
             &:first-child {
                 margin-bottom: 7px;
             }
@@ -655,6 +655,7 @@ textarea {
             padding: 5px;
             box-shadow: $subtle-shadow;
 
+            input[type="text"],
             textarea {
                 width: calc(100% - 10px);
                 margin: 0px 5px;
@@ -675,6 +676,34 @@ textarea {
 
             &.MultipleChoice {
                 text-align: left;
+            }
+        }
+
+        .recommendation {
+            width: calc(100% - 40px);
+            margin: 20px;
+            border-radius: 5px;
+            padding: 5px;
+            box-shadow: $subtle-shadow;
+
+            .title {
+                color: white;
+            }
+
+            &.neutral {
+                background-color: white;
+
+                .title {
+                    color: black;
+                }
+            }
+
+            &.positive {
+                background-color: $mainColor;
+            }
+
+            &.negative {
+                background-color: $contrastColor;
             }
         }
     }

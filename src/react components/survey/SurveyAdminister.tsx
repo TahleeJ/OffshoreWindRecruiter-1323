@@ -64,15 +64,15 @@ const SurveyAdminister: React.FC = (p: props) => {
                 <div className='questions'>
                     <div className={'question ' + QuestionType.FreeResponse}>
                         <div className='title'>Name:</div>
-                        <textarea rows={1} placeholder='John Doe...' value={name} onChange={(e) => setName(e.target.value)} />
+                        <input type="text" placeholder='John Doe...' value={name} onChange={(e) => setName(e.target.value)} />
                     </div>
                     <div className={'question ' + QuestionType.FreeResponse}>
                         <div className='title'>Phone Number (optional):</div>
-                        <textarea rows={1} placeholder='John Doe...' value={phone} onChange={(e) => setPhone(e.target.value)} />
+                        <input type="text" placeholder='111 222 3456' value={phone} onChange={(e) => setPhone(e.target.value)} />
                     </div>
                     <div className={'question ' + QuestionType.FreeResponse}>
                         <div className='title'>Email (optional):</div>
-                        <textarea rows={1} placeholder='John Doe...' value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <input type="text" placeholder='example@email.com' value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     {reduxSurveyData.questions.map((question, qI) => {
                         return (

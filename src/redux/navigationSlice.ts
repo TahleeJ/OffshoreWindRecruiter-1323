@@ -24,6 +24,13 @@ export enum OperationType {
     Reviewing
 }
 
+export enum Status {
+    idle = "idle",
+    pending = "pending",
+    fulfilled = 'fulfilled',
+    rejected = 'rejected'
+}
+
 /** The slice of state for navigating to different types of pages in the application. */
 interface navigationState {
     currentPage: PageType;
@@ -31,13 +38,13 @@ interface navigationState {
     /** This value is null if the operation type doesn't need it. Otherwise contains the necessary information to render the page. */
     operationData: any | null;
 
-    status: 'idle' | 'pending' | 'fulfilled' | 'rejected';
+    status: Status;
 }
 
 const initialState = {
     currentPage: PageType.Home,
     operationData: null,
-    status: 'idle'
+    status: Status.idle
 } as navigationState;
 
 /** The slice of the state that deals with navigating to parts of the application*/
@@ -61,19 +68,22 @@ const navigationSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(submitSurveyResponse.fulfilled, (state, action) => {
-            state.operationData = action.payload.data.sort((a,b) => b.score - a.score);
-            state.status = 'fulfilled';
+            state.operationData = action.payload.data.sort((a, b) => b.score - a.score);
+            state.status = Status.fulfilled;
         });
         builder.addCase(submitSurveyResponse.rejected, (state, action) => {
             state.operationData = action.error;
-            state.status = 'rejected';
+            state.status = Status.rejected;
         });
-      },
+    },
 })
 
 
-export const submitSurveyResponse = createAsyncThunk('navigation/submitSurveyResponse', 
-    async (survey: SurveyResponse) => await newSurveyResponse(survey));
+export const submitSurveyResponse = createAsyncThunk('navigation/submitSurveyResponse',
+    async (survey: SurveyResponse) => {
+        return await newSurveyResponse(survey);
+    }
+);
 
 
 export const { changePage, changeOperation, changeOperationData } = navigationSlice.actions

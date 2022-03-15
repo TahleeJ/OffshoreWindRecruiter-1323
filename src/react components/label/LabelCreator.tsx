@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { editLabel, getLabels, getSurveyReferencesToLabel } from '../../firebase/Queries/LabelQueries';
-import { hasId, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion } from '../../firebase/Types';
+import { editLabel, getJobReferencesToLabel, getLabels, getSurveyReferencesToLabel } from '../../firebase/Queries/LabelQueries';
+import { hasId, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion, JobOpp } from '../../firebase/Types';
 import { setLabels } from '../../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
@@ -17,6 +17,7 @@ interface props {
 const LabelManager: React.FC<props> = (props) => {
     const [labelName, setInputValue] = useState("");
     const [surveyRefs, setSurveyRefs] = useState<Map<SurveyTemplate & hasId, Map<SurveyQuestion, SurveyAnswer[]>>>(new Map());
+    const [jobRefs, setJobRefs] = useState<JobOpp[]>([]);
     const appDispatch = useAppDispatch();
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     const reduxLabel = useAppSelector(s => s.navigation.operationData as Label & hasId);
@@ -39,6 +40,9 @@ const LabelManager: React.FC<props> = (props) => {
         // Initialize surveyRefs here because getSurveyReferencesToLabel is async
         getSurveyReferencesToLabel(reduxLabel.id)
             .then(data => setSurveyRefs(data));
+
+        getJobReferencesToLabel(reduxLabel.id)
+            .then(data => setJobRefs(data.docs.map(d => d.data())))
 
     }, [reduxLabel, currentOperation]);
 
@@ -67,7 +71,11 @@ const LabelManager: React.FC<props> = (props) => {
                     }
                 </ListViewer>
                 <ListViewer height="350px" title="Associated Job Opportunities">
-                    <ListElement name="NOT DONE YET" handleEdit={() => alert("This function has not been completed yet.")} handleDelete={() => alert("This function has not been completed yet.")} />
+                    {
+                        jobRefs.map((ref, index) => {
+                            return <ListElement name={ref.jobName} key={index} />
+                        })
+                    }
                 </ListViewer>
             </div>
             <div className="buttons">

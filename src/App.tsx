@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './styling/App.css';
 
 import * as firebaseAuth from "@firebase/auth";
@@ -15,8 +15,8 @@ import LabelManager from './react components/label/LabelManager';
 import JobManager from './react components/Job/JobManager';
 import AuthPage from './react components/AuthPage';
 
-import { getSurveys } from './firebase/Queries/SurveyQueries';
-import { setLabels, setSurveys, setJobOpps } from './redux/dataSlice.ts';
+import { getSurveyResponses, getSurveys } from './firebase/Queries/SurveyQueries';
+import { setLabels, setSurveys, setJobOpps, setSurveyResponses } from './redux/dataSlice.ts';
 import { getLabels } from './firebase/Queries/LabelQueries';
 import { getJobOpps } from './firebase/Queries/JobQueries';
 
@@ -34,39 +34,34 @@ const getOverallPageFromType = (type: PageType) => {
 
 const App: React.FC = () => {
     const [isLoggedIn, setLoggedIn] = useState(false);
+    const pageType = useAppSelector(s => s.navigation.currentPage);
     const dispatch = useAppDispatch();
 
-    const setSurveyState = useCallback(async () => {
-        const surveys = await getSurveys();
-        dispatch(setSurveys(surveys));
-    }, [dispatch]);
-    const setLabelState = useCallback(async () => {
-        const labels = await getLabels();
-        dispatch(setLabels(labels));
-    }, [dispatch])
-    const setJobState = useCallback(async () => {
-        const jobOpps = await getJobOpps();
-        dispatch(setJobOpps(jobOpps));
-    }, [dispatch]);
+    firebaseAuth.setPersistence(authInstance, firebaseAuth.browserLocalPersistence);
 
     useEffect(() => {
-        setSurveyState();
-        setLabelState();
-        setJobState();
+        //we now set the redux state with the firebase values:
+        (async function f() {
+            const surveys = await getSurveys();
+            dispatch(setSurveys(surveys));
+        })();
+        (async function f() {
+            const labels = await getLabels();
+            dispatch(setLabels(labels));
+        })();
+        (async function f() {
+            const jobOpps = await getJobOpps();
+            dispatch(setJobOpps(jobOpps));
+        })();
+        (async function f() {
+            const surveyResponses = await getSurveyResponses();
+            dispatch(setSurveyResponses(surveyResponses));
+        })();
 
         authInstance.onAuthStateChanged(async (user) => {
-            if (!user) {
-                setLoggedIn(false);
-                return;
-            }
-
-            setLoggedIn(true);
+            setLoggedIn(user !== null && user !== undefined);
         });
-    }, [setSurveyState, setLabelState, setJobState])
-
-    const pageType = useAppSelector(s => s.navigation.currentPage);
-
-    firebaseAuth.setPersistence(authInstance, firebaseAuth.browserLocalPersistence);
+    })
 
     return (
         <>

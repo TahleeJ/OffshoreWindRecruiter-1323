@@ -9,66 +9,51 @@ interface props {
 
 }
 
-const initialResponse: SurveyResponse = {
-    surveyId: "",
-    taker: {
-        name: "",
-        email: "",
-        phone: "",
-    },
-    answers: []
-}
+
 
 const SurveyAdminister: React.FC = (p: props) => {
     const reduxSurveyData = useAppSelector(s => s.navigation.operationData as SurveyTemplate & hasId);
-    const [responseState, setResponseState] = useState<SurveyResponse>(initialResponse);
-    const dispatch = useAppDispatch();
+    const [answers, setAnswers] = useState<(string | number)[]>([]);
+    const [name, setName] = useState("");
+    const [phone, setPhone] = useState("");
+    const [email, setEmail] = useState("");
     const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+    const dispatch = useAppDispatch();
 
     const togglePopup = () => setPopupvisible(!popupVisible);
     const handleRadioChange = (qI: number, aI: number) => {
-        let clone = lodash.cloneDeep(responseState.answers);
+        let clone = lodash.cloneDeep(answers);
         clone[qI] = aI;
 
-        setResponseState({
-            ...responseState,
-            answers: clone
-        })
+        setAnswers(clone)
     }
     const handleTextChange = (qI: number, text: string) => {
-        let clone = lodash.cloneDeep(responseState.answers);
+        let clone = lodash.cloneDeep(answers);
         clone[qI] = text;
 
-        setResponseState({
-            ...responseState,
-            answers: clone
-        })
+        setAnswers(clone)
     }
     const conditionallySave = async () => {
-        if (responseState.answers.filter(a => a === "").length > 0) {
+        if (answers.filter(a => a === "").length > 0) {
             togglePopup();
         } else {
             let survey: SurveyResponse = {
-                surveyId: responseState.surveyId,
+                surveyId: reduxSurveyData.id,
                 taker: {
-                    name: responseState.taker.name,
-                    email: responseState.taker.email,
-                    phone: responseState.taker.phone,
+                    name: name,
+                    email: email,
+                    phone: phone,
                 },
-                answers: responseState.answers
+                answers: answers
             }
-            
+
             dispatch(submitSurveyResponse(survey))
             dispatch(changeOperation({ operation: OperationType.Reviewing }));
         }
     }
 
     useEffect(() => {
-        setResponseState({
-            ...initialResponse,
-            surveyId: reduxSurveyData.id,
-            answers: reduxSurveyData.questions.map(q => "")
-        })
+        setAnswers(reduxSurveyData.questions.map(q => ""))
     }, [reduxSurveyData]);
 
     return (
@@ -77,49 +62,61 @@ const SurveyAdminister: React.FC = (p: props) => {
                 <div className='surveyTitle'>{reduxSurveyData.title}</div>
                 <div className='description'>{reduxSurveyData.description}</div>
                 <div className='questions'>
-                    {
-                        reduxSurveyData.questions.map((question, qI) => {
-                            return (
-                                <div className={'question ' + QuestionType[question.questionType]} key={qI}>
-                                    <div className='title'>{question.prompt}</div>
-                                    {question.questionType === QuestionType.FreeResponse &&
-                                        <textarea rows={5} placeholder='Answer...' value={responseState.answers[qI]} onChange={(e) => handleTextChange(qI, e.target.value)} />
-                                    }
-                                    {question.questionType === QuestionType.MultipleChoice &&
-                                        <div className='answers'>
-                                            {question.answers.map((answer, aI) => {
-                                                return (
-                                                    <React.Fragment key={aI}>
-                                                        <input type="radio" id={qI + "," + aI} name={qI.toString()} placeholder='N/A' checked={responseState.answers[qI] === aI} onChange={() => handleRadioChange(qI, aI)} />
-                                                        <label htmlFor={qI + "," + aI}>{answer.text}</label>
-                                                        <br />
-                                                    </React.Fragment>
-                                                )
-                                            })
-                                            }
-                                        </div>
-                                    }
-                                    {question.questionType === QuestionType.Scale &&
-                                        <div className='answers'>
-                                            Strongly Disagree
-                                            {[0, 1, 2, 3, 4].map((index) => {
-                                                return (
-                                                    <input key={index} type="radio" id={qI + "," + index} name={qI.toString()} placeholder='N/A' checked={responseState.answers[qI] === index} onChange={() => handleRadioChange(qI, index)} />
-                                                )
-                                            })}
+                    <div className={'question ' + QuestionType.FreeResponse}>
+                        <div className='title'>Name:</div>
+                        <input type="text" placeholder='John Doe...' value={name} onChange={(e) => setName(e.target.value)} />
+                    </div>
+                    <div className={'question ' + QuestionType.FreeResponse}>
+                        <div className='title'>Phone Number (optional):</div>
+                        <input type="text" placeholder='111 222 3456' value={phone} onChange={(e) => setPhone(e.target.value)} />
+                    </div>
+                    <div className={'question ' + QuestionType.FreeResponse}>
+                        <div className='title'>Email (optional):</div>
+                        <input type="text" placeholder='example@email.com' value={email} onChange={(e) => setEmail(e.target.value)} />
+                    </div>
+                    {reduxSurveyData.questions.map((question, qI) => {
+                        return (
+                            <div className={'question ' + QuestionType[question.questionType]} key={qI}>
+                                <div className='title'>{question.prompt}</div>
+                                {question.questionType === QuestionType.FreeResponse &&
+                                    <textarea rows={5} placeholder='Answer...' value={answers[qI]} onChange={(e) => handleTextChange(qI, e.target.value)} />
+                                }
+                                {question.questionType === QuestionType.MultipleChoice &&
+                                    <div className='answers'>
+                                        {question.answers.map((answer, aI) => {
+                                            return (
+                                                <React.Fragment key={aI}>
+                                                    <input type="radio" id={qI + "," + aI} name={qI.toString()} placeholder='N/A' checked={answers[qI] === aI} onChange={() => handleRadioChange(qI, aI)} />
+                                                    <label htmlFor={qI + "," + aI}>{answer.text}</label>
+                                                    <br />
+                                                </React.Fragment>
+                                            )
+                                        })
+                                        }
+                                    </div>
+                                }
+                                {question.questionType === QuestionType.Scale &&
+                                    <div className='answers'>
+                                        Strongly Disagree
+                                        {[0, 1, 2, 3, 4].map((index) => {
+                                            return (
+                                                <input key={index} type="radio" id={qI + "," + index} name={qI.toString()} placeholder='N/A' checked={answers[qI] === index} onChange={() => handleRadioChange(qI, index)} />
+                                            )
+                                        })}
 
 
-                                            Strongly Agree
-                                        </div>
-                                    }
-                                </div>
-                            )
-                        })
-                    }
+                                        Strongly Agree
+                                    </div>
+                                }
+                            </div>
+                        )
+                    })}
                     <button
                         onClick={() => dispatch(changePage({ type: PageType.Home }))}
-                        className='gray'
-                    >Cancel Survey</button>
+                        className='red'
+                    >
+                        Cancel Survey
+                    </button>
                     <button onClick={conditionallySave}>Submit</button>
                 </div>
             </div>

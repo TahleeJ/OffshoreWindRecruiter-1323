@@ -32,7 +32,7 @@ body,
 
 * {
     box-sizing: border-box;
-    font-family: 'Roboto';
+    font-family: "Roboto";
 }
 
 .pointer {
@@ -156,7 +156,7 @@ textarea {
     .listElements {
         overflow-y: auto;
         overflow-x: hidden;
-        // height: calc(100% - 25px);
+        height: calc(100% - 38px);
 
         & > * {
             padding: 7px 5px;
@@ -293,7 +293,6 @@ textarea {
 #adminHome {
     height: $contentHeight;
     font-family: "Roboto";
-    padding: 10px;
     font-size: $large-font-size;
     overflow-y: auto;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -306,38 +305,19 @@ textarea {
         vertical-align: top;
         flex: 1 1 25%;
         padding: 7px;
-
-        .notifContainer {
-            height: 100%;
-            border-radius: 10px;
-        }
-        .notifHeading {
-            display: flex;
-
-            .notifNumCircle {
-                margin: 8px;
-                height: 25px;
-                width: 25px;
-                border-radius: 50%;
-                background-color: #be7478;
-                margin-right: 5px;
-                padding: 4px;
-            }
-            #notifNum {
-                font-size: 15px;
-                color: #ffffff;
-                text-align: center;
-                margin: auto;
-            }
-        }
     }
     .middleColumn {
+        // height: 100%;
         flex: 1 1 50%;
+        padding: 7px;
 
-        .jobContainer,
-        .surveyContainer {
-            border-radius: 10px;
-            padding: 7px;
+        .listViewer {
+            min-height: 346.5px;
+            max-height: calc(50% - 3.5px);
+
+            &:first-child {
+                margin-bottom: 7px;
+            }
         }
     }
 
@@ -647,7 +627,6 @@ textarea {
     }
 
     .administerSurveyPage {
-
         .surveyTitle {
             font-weight: bold;
             color: $mainColor;
@@ -676,6 +655,7 @@ textarea {
             padding: 5px;
             box-shadow: $subtle-shadow;
 
+            input[type="text"],
             textarea {
                 width: calc(100% - 10px);
                 margin: 0px 5px;
@@ -696,6 +676,34 @@ textarea {
 
             &.MultipleChoice {
                 text-align: left;
+            }
+        }
+
+        .recommendation {
+            width: calc(100% - 40px);
+            margin: 20px;
+            border-radius: 5px;
+            padding: 5px;
+            box-shadow: $subtle-shadow;
+
+            .title {
+                color: white;
+            }
+
+            &.neutral {
+                background-color: white;
+
+                .title {
+                    color: black;
+                }
+            }
+
+            &.positive {
+                background-color: $mainColor;
+            }
+
+            &.negative {
+                background-color: $contrastColor;
             }
         }
     }

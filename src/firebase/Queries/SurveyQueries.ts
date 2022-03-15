@@ -34,6 +34,16 @@ export async function deleteSurvey(id: id) {
     await firestore.deleteDoc(firestore.doc(db.Surveys, id));
 }
 
+export async function getSurveyResponses() {
+    const response = await firestore.getDocs(db.SurveyResponse);
+
+    return response.docs.map(s => ({ ...s.data(), id: s.id } as SurveyResponse & hasId));
+}
+
 export async function newSurveyResponse(survey: SurveyResponse) {
     return await submitSurvey(survey);
+}
+
+export async function deleteSurveyResponse(id: id) {
+    await firestore.deleteDoc(firestore.doc(db.SurveyResponse, id));
 }

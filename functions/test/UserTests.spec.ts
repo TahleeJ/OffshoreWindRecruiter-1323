@@ -6,20 +6,22 @@ import { WrappedFunction } from 'firebase-functions-test/lib/main';
 
 import { PermissionLevel } from '../../src/firebase/Types';
 import { initializeTestEnvironment, testEnv } from './Init';
-import { auth, firestore } from '../src/Utility';
+import { firestore } from '../src/Utility';
 
 import { ApplicationFlagType, getTestUserPermissionLevel, resetTestDocs, setApplicationFlag, testUserContext, testUserDocRef, updateTransactions } from './Utility';
-import { CreateRequest } from 'firebase-admin/auth';
 
 chai.use(chaiAsPromised);
 chai.should();
 
-let myFunctions = null;
+let myFunctions: { updatePermissions: functions.CloudFunction<unknown>; createNewUser: functions.CloudFunction<unknown>; };
 let updatePermissionsWrapped: WrappedFunction;
+let createNewUserWrapped: WrappedFunction;
 
 describe("Update Permissions Function Unit Tests", () => {
     before(async () => {
-        myFunctions = await initializeTestEnvironment();
+        try {
+            myFunctions = await initializeTestEnvironment();
+        } catch(e){}
 
         updatePermissionsWrapped = testEnv.wrap(myFunctions.updatePermissions);
     });
@@ -342,21 +344,24 @@ describe("Update Permissions Function Unit Tests", () => {
 });
 
 describe("Create New User Function Unit Tests", () => {
-    const dummyUid = `user-${new Date().getTime()}`;
-    console.log(dummyUid);
+    before(async () => {
+        try {
+            myFunctions = await initializeTestEnvironment();
+        } catch(e){}
 
+        createNewUserWrapped = testEnv.wrap(myFunctions.createNewUser);
+    });
+    
     after(() => {
-        auth.deleteUser(dummyUid);
         testEnv.cleanup();
     });
 
     it("should create a None-level document in User/ path with a supplied uid", async () => {
-        const testUid = `user-${new Date().getTime()}`;
-        const testEmail = "new@oswjn.com";
+        const newUser = testEnv.auth.exampleUserRecord();
 
-        await auth.createUser({ email: testEmail, uid: testUid} as CreateRequest);
+        await createNewUserWrapped(newUser);
 
-        assert.equal((await firestore.collection("User").doc(testUid).get()).exists, true);
-        assert.equal((await firestore.collection("User").doc(testUid).get()).data()?.permissionLevel, PermissionLevel.None);
+        assert.equal((await firestore.collection("User").doc(newUser.uid).get()).exists, true);
+        assert.equal((await firestore.collection("User").doc(newUser.uid).get()).data()?.permissionLevel, PermissionLevel.None);
     });
 });

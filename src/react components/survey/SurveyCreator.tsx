@@ -1,3 +1,4 @@
+import { verify } from "crypto";
 import lodash from "lodash";
 import React, { useEffect, useState } from "react";
 import { editSurvey, getSurveys, newSurvey } from "../../firebase/Queries/SurveyQueries";
@@ -28,23 +29,28 @@ const SurverCreator: React.FC = (props: props) => {
     /** This is the current operation that is being done with surveys...usually creating/editing */
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     /** This contains the old survey data. */
-    const reduxSurveyData = useAppSelector(s => s.navigation.operationData as SurveyTemplate & { id: string });
-    const labels = useAppSelector(s => s.data.labels);
+    const reduxSurveyData = useAppSelector(s => s.navigation.operationData as SurveyTemplate & { id: string });let labels = useAppSelector(s => s.data.labels);
     const dispatch = useAppDispatch();
     const [popupVisible, setPopupvisible] = useState<Boolean>(false);
     const [errorMessage, setErrorMessage] = useState("");
-
+    const [popupVisible2, setPopupvisible2] = useState<Boolean>(false);
+    // const [countLabel, setCountLabel] = useState(0);
+    // const [countAns, setCountAns] = useState(0);
+    // let varifyLabel = 0;
+    // let countAns = 0;
     const togglePopup = () => setPopupvisible(!popupVisible);
+    const togglePopup2 = () => setPopupvisible2(!popupVisible2);
     const addNewQuestion = () => {
         setQuestions(s => [...s, { prompt: "", answers: [], questionType: QuestionType.MultipleChoice }])
     }
 
     const addNewAnswer = (qIndex: number) => {
         let cloneQuestions = lodash.cloneDeep(questions);
-
         const newAnswer: SurveyAnswer = { text: '', labelIds: [] };
         cloneQuestions[qIndex].answers.push(newAnswer)
-
+        //setCountAns(cloneQuestions[qIndex].answers.length);
+        
+        //console.log(countAns);
         setQuestions(cloneQuestions);
     }
 
@@ -100,19 +106,37 @@ const SurverCreator: React.FC = (props: props) => {
     }
 
     const getLabelConnections = (qIndex: number, aIndex: number) => {
+        
         return labels.map(l => {
-            // console.log(questions[qIndex].answers[aIndex].labelIds);
+            //console.log(questions[qIndex].answers[aIndex].labelIds);
+            //setCountLabel(questions[qIndex].answers[aIndex].labelIds.length)
+            //varifyLabel = questions[qIndex].answers[aIndex].labelIds.length;
+            //console.log(l);
             return {
                 ...l,
                 isEnabled: questions[qIndex].answers[aIndex].labelIds.indexOf(l.id) !== -1
+                
             }
         });
     }
     const conditionallySave = async () => {
+        let hasLabel = true;
+        console.log(questions);
+        questions.map(q =>{
+            q.answers.map(a => {
+                if (a.labelIds.length == 0) {
+                    hasLabel = false;
+                }
+            })
+        })
         if (!title.trim()) {
             togglePopup();
             setErrorMessage("*This field is required");
-        } else {
+        } else if (!hasLabel) {
+            togglePopup2();
+        }
+        else {
+            console.log(hasLabel);
             let survey: SurveyTemplate = {
                 title: title,
                 description: desc,
@@ -127,7 +151,7 @@ const SurverCreator: React.FC = (props: props) => {
             dispatch(setSurveys(await getSurveys()));
         }
     }
-
+    
     useEffect(() => {
         //copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
         if (currentOperation === OperationType.Editing) {
@@ -218,6 +242,13 @@ const SurverCreator: React.FC = (props: props) => {
                     title="Empty Input"
                     message="There are currently some empty text input fields. Please fill them all in before saving"
                     handleCancel={togglePopup}
+                />
+            }
+            {popupVisible2 &&
+                <Prompt
+                    title="Missing Label"
+                    message="At least one label must be connected to answer"
+                    handleCancel={togglePopup2}
                 />
             }
         </div >

@@ -29,7 +29,8 @@ const SurverCreator: React.FC = (props: props) => {
     /** This is the current operation that is being done with surveys...usually creating/editing */
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     /** This contains the old survey data. */
-    const reduxSurveyData = useAppSelector(s => s.navigation.operationData as SurveyTemplate & { id: string });let labels = useAppSelector(s => s.data.labels);
+    const reduxSurveyData = useAppSelector(s => s.navigation.operationData as SurveyTemplate & { id: string });
+    const labels = useAppSelector(s => s.data.labels);
     const dispatch = useAppDispatch();
     const [popupVisible, setPopupvisible] = useState<Boolean>(false);
     const [errorMessage, setErrorMessage] = useState("");

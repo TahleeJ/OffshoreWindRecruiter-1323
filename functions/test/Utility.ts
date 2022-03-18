@@ -4,6 +4,7 @@ import { CallableContextOptions } from 'firebase-functions-test/lib/main';
 
 import { id, PermissionLevel } from '../../src/firebase/Types';
 import { auth, firestore } from '../src/Utility';
+import { surveyTestData } from './SurveyTestData';
 
 export enum ApplicationFlagType {
     promoteToOwner,
@@ -18,21 +19,21 @@ export const testUserEmails = {
     nonMember: "not@oswjn.com"
 }
 
-var testUsers = {
+const testUsers = {
     none: null as unknown as UserRecord,
     admin: null as unknown as UserRecord,
     owner: null as unknown as UserRecord,
     invalidArg: null as unknown as UserRecord
 }
 
-export var testUserContext = {
+export const testUserContext = {
     none: null as unknown as CallableContextOptions,
     admin: null as unknown as CallableContextOptions,
     owner: null as unknown as CallableContextOptions,
     invalidArg: null as unknown as CallableContextOptions
-}
+}   
 
-export var testUserDocRef = {
+export const testUserDocRef = {
     none: null as unknown as DocumentReference,
     admin: null as unknown as DocumentReference,
     owner: null as unknown as DocumentReference
@@ -70,6 +71,18 @@ export async function initTestDocs() {
     const dummyUid = `user-${new Date().getTime()}`;
     testUsers.invalidArg = await auth.createUser({ email: testUserEmails.member, uid: dummyUid } as CreateRequest);
     testUserContext.invalidArg = await createTestUserContext(dummyUid);
+
+
+    // Survey initialization
+    for (let [id, value] of Object.entries(surveyTestData.labels)) {
+        await firestore.collection("Label").doc(id).set(value);
+    }
+
+    surveyTestData.jobOpps.forEach(async job => await firestore.collection("JobOpps").add(job));
+
+    for (let [id, value] of Object.entries(surveyTestData.surveyTemplate)) {
+        await firestore.collection("Survey").doc(id).set(value);
+    }
 }
 
 /**

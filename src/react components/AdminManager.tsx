@@ -22,12 +22,6 @@ const AdminManager: React.FC<props> = (props) => {
     const [changeLevel, setChangeLevel] = useState("Admin");
     const [errorMessage, setErrorMessage] = useState("");
 
-    const isValid = () => {
-        if (!email.trim()) {
-            setErrorMessage("*This field is required");
-        }
-    }
-
     const updateIsAdmin = async () => {
         const uid = authInstance.currentUser?.uid!;
         const userDoc = await getUser(uid);
@@ -40,6 +34,9 @@ const AdminManager: React.FC<props> = (props) => {
 
     const togglePopup = () => setPopupvisible(!popupVisible);
     const promote = async () => {
+        if (!email.trim()) {
+            setErrorMessage("*This field is required");
+        }
         var get;
         if (changeLevel === "Owner") {
             get = await setUserPermissionLevel(email, PermissionLevel.Owner);
@@ -84,7 +81,7 @@ const AdminManager: React.FC<props> = (props) => {
             </div>
             <div className="buttonContainer">
                 <button className="gray" onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
-                <button onClick={isValid}>Promote</button>
+                <button onClick={promote}>Promote</button>
                 {
                     permissionLevel === PermissionLevel.Owner ?
                         <button className='red' onClick={demote}>Demote</button>

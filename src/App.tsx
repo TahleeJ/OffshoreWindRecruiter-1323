@@ -59,7 +59,7 @@ const App: React.FC = () => {
         })();
 
         authInstance.onAuthStateChanged(async (user) => {
-            setLoggedIn(user !== null && user !== undefined);
+            setLoggedIn(user != null);
         });
     })
 

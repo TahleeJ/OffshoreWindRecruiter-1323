@@ -42,7 +42,7 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
          * FreeResponse: string
          */
         const chosenAnswer = request.answers[currentQuestionIndex] as number; 
-        let expectedScore: number;
+        let expectedScore: number = 0;
         
         // Increment labels that were answered
         switch (currentQuestion.questionType) {

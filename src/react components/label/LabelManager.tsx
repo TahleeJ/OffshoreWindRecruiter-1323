@@ -39,6 +39,8 @@ const LabelManager: React.FC<props> = (props) => {
     }
 
     const removeLabel = async (id: string) => {
+        // Should add some confirmation here
+
         await deleteLabel(id);
         appDispatch(setLabels(await getLabels()));
     }

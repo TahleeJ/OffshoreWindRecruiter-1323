@@ -2,7 +2,7 @@ import { CreateRequest, UserRecord } from 'firebase-admin/auth';
 import { DocumentReference } from 'firebase-admin/firestore';
 import { CallableContextOptions } from 'firebase-functions-test/lib/main';
 
-import { PermissionLevel } from '../../src/firebase/Types';
+import { id, PermissionLevel } from '../../src/firebase/Types';
 import { auth, firestore } from '../src/Utility';
 
 export enum ApplicationFlagType {
@@ -44,25 +44,25 @@ export var testUserDocRef = {
  * Authentication and Firestore services
  */
 export async function initTestDocs() {
-    var docRef: string;
+    let docId: id;
 
     // None-level test user initialization
-    docRef = await createTestUserDoc(testUserEmails.none, PermissionLevel.None);
-    testUsers.none = await auth.createUser({ email: testUserEmails.none, uid: docRef } as CreateRequest);
-    testUserContext.none = await createTestUserContext(docRef);
-    testUserDocRef.none = firestore.collection("User").doc(docRef);
+    docId = await createTestUserDoc(testUserEmails.none, PermissionLevel.None);
+    testUsers.none = await auth.createUser({ email: testUserEmails.none, uid: docId } as CreateRequest);
+    testUserContext.none = await createTestUserContext(docId);
+    testUserDocRef.none = firestore.collection("User").doc(docId);
 
     // Admin-level test user initialization
-    docRef = await createTestUserDoc(testUserEmails.admin, PermissionLevel.Admin);
-    testUsers.admin = await auth.createUser({ email: testUserEmails.admin, uid: docRef } as CreateRequest);
-    testUserContext.admin = await createTestUserContext(docRef);
-    testUserDocRef.admin = firestore.collection("User").doc(docRef);
+    docId = await createTestUserDoc(testUserEmails.admin, PermissionLevel.Admin);
+    testUsers.admin = await auth.createUser({ email: testUserEmails.admin, uid: docId } as CreateRequest);
+    testUserContext.admin = await createTestUserContext(docId);
+    testUserDocRef.admin = firestore.collection("User").doc(docId);
 
     // Owner-level test user initialization
-    docRef = await createTestUserDoc(testUserEmails.owner, PermissionLevel.Owner);
-    testUsers.owner = await auth.createUser({ email: testUserEmails.owner, uid: docRef } as CreateRequest);
-    testUserContext.owner = await createTestUserContext(docRef);
-    testUserDocRef.owner = firestore.collection("User").doc(docRef);
+    docId = await createTestUserDoc(testUserEmails.owner, PermissionLevel.Owner);
+    testUsers.owner = await auth.createUser({ email: testUserEmails.owner, uid: docId } as CreateRequest);
+    testUserContext.owner = await createTestUserContext(docId);
+    testUserDocRef.owner = firestore.collection("User").doc(docId);
 
     // Application flag initialization
     await firestore.collection("Flag").add({ promoteToOwner: true, demoteOwner: false });
@@ -79,7 +79,7 @@ export async function initTestDocs() {
  * @param permissionLevel the test user's permission level within the application
  * @returns the newly created document for the test user
  */
-async function createTestUserDoc(email: string, permissionLevel: PermissionLevel): Promise<string> {
+async function createTestUserDoc(email: string, permissionLevel: PermissionLevel): Promise<id> {
     return (await firestore.collection("User").add({ email: email, permissionLevel: permissionLevel })).id;
 }
 
@@ -90,7 +90,7 @@ async function createTestUserDoc(email: string, permissionLevel: PermissionLevel
  * @param uid the uid for the test user matching the user's emulated Firestore document id
  * @returns the authentication context for the test user
  */
-async function createTestUserContext(uid: string): Promise<CallableContextOptions> {
+async function createTestUserContext(uid: id): Promise<CallableContextOptions> {
     const userToken = await auth.createCustomToken(uid);
 
     return {

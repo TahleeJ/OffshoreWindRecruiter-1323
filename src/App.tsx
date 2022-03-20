@@ -19,7 +19,7 @@ import { getSurveyResponses, getSurveys } from './firebase/Queries/SurveyQueries
 import { setLabels, setSurveys, setJobOpps, setSurveyResponses } from './redux/dataSlice.ts';
 import { getLabels } from './firebase/Queries/LabelQueries';
 import { getJobOpps } from './firebase/Queries/JobQueries';
-
+import { assertIsAdmin } from './firebase/Queries/AdminQueries';
 
 const getOverallPageFromType = (type: PageType) => {
     switch (type) {
@@ -40,26 +40,30 @@ const App: React.FC = () => {
     firebaseAuth.setPersistence(authInstance, firebaseAuth.browserLocalPersistence);
 
     useEffect(() => {
-        //we now set the redux state with the firebase values:
-        (async function f() {
-            const surveys = await getSurveys();
-            dispatch(setSurveys(surveys));
-        })();
-        (async function f() {
-            const labels = await getLabels();
-            dispatch(setLabels(labels));
-        })();
-        (async function f() {
-            const jobOpps = await getJobOpps();
-            dispatch(setJobOpps(jobOpps));
-        })();
-        (async function f() {
-            const surveyResponses = await getSurveyResponses();
-            dispatch(setSurveyResponses(surveyResponses));
-        })();
-
         authInstance.onAuthStateChanged(async (user) => {
             setLoggedIn(user !== null && user !== undefined);
+
+            // Set the redux state with Firestore's data
+            try {
+                if (await assertIsAdmin(user?.uid!)) {
+                    (async function f() {
+                        const surveys = await getSurveys();
+                        dispatch(setSurveys(surveys));
+                    })();
+                    (async function f() {
+                        const labels = await getLabels();
+                        dispatch(setLabels(labels));
+                    })();
+                    (async function f() {
+                        const jobOpps = await getJobOpps();
+                        dispatch(setJobOpps(jobOpps));
+                    })();
+                    (async function f() {
+                        const surveyResponses = await getSurveyResponses();
+                        dispatch(setSurveyResponses(surveyResponses));
+                    })();
+                }          
+            } catch(e) {}     
         });
     })
 

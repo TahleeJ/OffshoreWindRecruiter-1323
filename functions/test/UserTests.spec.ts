@@ -397,7 +397,18 @@ describe("Submit Survey Function Unit Tests", () => {
         assert.isBelow(results.get("3,4") as number, 0);
         assert.equal(results.get("1,3") as number, 0);
 
-        const surveyResponse = (await (await firestore.collection("SurveyResponse").listDocuments())[0].get()).data()!;
-        assert.exists(surveyResponse.recommendedJobs);
+        const promise = new Promise<void>((resolve) => {
+            const unsubscribe = firestore.collection("SurveyResponse").onSnapshot(docs => {
+                assert.equal(docs.docs.length, 1);
+    
+                const surveyResponse = docs.docs[0].data();
+                assert.exists(surveyResponse.recommendedJobs);
+    
+                unsubscribe();
+                resolve();
+            });
+        });
+
+        await promise;
     });
 });

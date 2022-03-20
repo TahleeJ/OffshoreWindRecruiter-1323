@@ -6,9 +6,6 @@ import ReactTooltip from 'react-tooltip';
 import * as firebaseAuth from "@firebase/auth";
 import { authInstance } from "../firebase/Firebase";
 
-import * as firestore from "@firebase/firestore";
-import db from '../firebase/Firestore';
-import { PermissionLevel } from '../firebase/Types';
 import { assertIsAdmin } from '../firebase/Queries/AdminQueries'
 
 

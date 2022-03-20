@@ -20,10 +20,10 @@ const LabelManager: React.FC<props> = (props) => {
     const operationType = useAppSelector(s => s.navigation.operationType);
     const labels = useAppSelector(s => s.data.labels);
     const appDispatch = useAppDispatch();
-    const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+    const [popupVisible, setPopupVisible] = useState<Boolean>(false);
     const [errorMessage, setErrorMessage] = useState("");
 
-    const togglePopup = () => setPopupvisible(!popupVisible);
+    const togglePopup = () => setPopupVisible(!popupVisible);
     const checkEmpty = async () => {
         if (newLabelName.trim()) {
             await newLabel({
@@ -39,6 +39,8 @@ const LabelManager: React.FC<props> = (props) => {
     }
 
     const removeLabel = async (id: string) => {
+        // Should add some confirmation here
+
         await deleteLabel(id);
         appDispatch(setLabels(await getLabels()));
     }

@@ -35,34 +35,31 @@ const getOverallPageFromType = (type: PageType) => {
 const App: React.FC = () => {
     const [isLoggedIn, setLoggedIn] = useState(false);
     const pageType = useAppSelector(s => s.navigation.currentPage);
-    const dispatch = useAppDispatch();
+    const appDispatch = useAppDispatch();
 
     firebaseAuth.setPersistence(authInstance, firebaseAuth.browserLocalPersistence);
 
     useEffect(() => {
         authInstance.onAuthStateChanged(async (user) => {
-            setLoggedIn(user !== null && user !== undefined);
+            setLoggedIn(user != null);
+            if (!isLoggedIn)
+                return;
 
             // Set the redux state with Firestore's data
             try {
                 if (await assertIsAdmin(user?.uid!)) {
-                    (async function f() {
-                        const surveys = await getSurveys();
-                        dispatch(setSurveys(surveys));
+                    (async () => {
+                        appDispatch(setLabels(await getLabels()));
+                        appDispatch(setJobOpps(await getJobOpps()));
+                        appDispatch(setSurveys(await getSurveys()));
+                        appDispatch(setSurveyResponses(await getSurveyResponses()));
                     })();
-                    (async function f() {
-                        const labels = await getLabels();
-                        dispatch(setLabels(labels));
+                } else {
+                    (async () => {
+                        appDispatch(setLabels(await getLabels()));
+                        appDispatch(setSurveys(await getSurveys()));
                     })();
-                    (async function f() {
-                        const jobOpps = await getJobOpps();
-                        dispatch(setJobOpps(jobOpps));
-                    })();
-                    (async function f() {
-                        const surveyResponses = await getSurveyResponses();
-                        dispatch(setSurveyResponses(surveyResponses));
-                    })();
-                }          
+                }
             } catch(e) {}     
         });
     })

@@ -6,9 +6,7 @@ import ReactTooltip from 'react-tooltip';
 import * as firebaseAuth from "@firebase/auth";
 import { authInstance } from "../firebase/Firebase";
 
-import * as firestore from "@firebase/firestore";
-import db from '../firebase/Firestore';
-import { PermissionLevel } from '../firebase/Types';
+import { assertIsAdmin } from '../firebase/Queries/AdminQueries'
 
 
 /** The props (arguments) to create a header element */
@@ -22,9 +20,8 @@ const Header: React.FC<headerProps> = (p: headerProps) => {
     const appDispatch = useAppDispatch();
 
     const updateIsAdmin = async () => {
-        const uid = authInstance.currentUser?.uid as string;
-        const results = await firestore.getDoc(firestore.doc(db.Users, uid));
-        const isA = results.data()?.permissionLevel !== PermissionLevel.None;
+        const isA = await assertIsAdmin(authInstance.currentUser?.uid!);
+        console.log("User is admin: " + isA);
 
         setIsAdmin(isA);
     }

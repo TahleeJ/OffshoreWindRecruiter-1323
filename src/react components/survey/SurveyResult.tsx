@@ -12,25 +12,36 @@ const SurveyReviewer: React.FC = _ => {
     const labels = useAppSelector(s => s.data.labels);
     const recomendedJobs = useAppSelector(s => s.navigation.operationData as RecomendedJobs);
     const dispatch = useAppDispatch();
+    const loaded = false;
+
+    function hideLoading() {
+        var loading = document.getElementById("loading");
+        if (loading != null && loading.style.display != "none") {
+            loading.style.display = "none";
+        }
+    }
 
     return (
         <div className='administerSurveyPage container'>
             <button className="red" onClick={() => dispatch(changePage({ type: PageType.Home }))}>Return to Home</button>
 
             <div className=''>
-                <div className='surveyTitle'>Recommended Jobs</div>
+                <div className='surveyTitle' >Recommended Jobs</div>
+                <div id="loading">Loading Recommended Jobs...</div>
                 <div className=''>
                     {status === Status.fulfilled && // Could also handle a rejected request
                         <>
+                            {hideLoading()}
                             <span>Here are some job recommendations that align with your survey answers:</span>
                             {recomendedJobs?.map((recommendation, index) => (
                                 <div key={index} className={"recommendation " + ((recommendation.score >= 0) ? "positive" : (recommendation.score >= -0.5) ? "neutral" : "negative")}>
                                     <div className='title'>{recommendation.jobOpp.jobName}</div>
                                     <div className=''>{recommendation.jobOpp.companyName}</div>
                                     <div className=''>{recommendation.jobOpp.jobDescription}</div>
+                                    <div className=''>{recommendation.jobOpp.jobLink}</div>
                                     <div className=''>
                                         {recommendation.jobOpp.labelIds.map((l, i) => (
-                                            <span key={i}>{labels.find(searchLabel => searchLabel.id === l)?.name}, </span>
+                                            <span key={i}>-{labels.find(searchLabel => searchLabel.id === l)?.name}- </span>
                                         ))
                                         }
                                     </div>
@@ -64,3 +75,4 @@ const SurveyReviewer: React.FC = _ => {
 
 
 export default SurveyReviewer;
+

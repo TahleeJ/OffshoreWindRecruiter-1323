@@ -49,6 +49,7 @@ const AdminHome: React.FC<props> = (props) => {
                 companyName: jR.company,
                 labelIds: [],
                 jobDescription: jR.Description,
+                jobLink: jR.link,
             }
             newJobOpp(jobOpp);
         });

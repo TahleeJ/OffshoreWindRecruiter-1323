@@ -60,6 +60,7 @@ export interface JobOpp {
     jobName: string
     companyName: string
     jobDescription: string
+    jobLink: string
 
     labelIds: id[]
 }

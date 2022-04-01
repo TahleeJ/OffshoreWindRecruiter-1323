@@ -1,4 +1,3 @@
-import { verify } from "crypto";
 import lodash from "lodash";
 import React, { useEffect, useState } from "react";
 import { editSurvey, getSurveys, newSurvey } from "../../firebase/Queries/SurveyQueries";
@@ -22,7 +21,7 @@ const initQuestions: SurveyQuestion[] = [
     }
 ]
 
-const SurverCreator: React.FC = (props: props) => {
+const SurveyCreator: React.FC = (props: props) => {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
     const [questions, setQuestions] = useState<SurveyQuestion[]>(initQuestions);
@@ -32,15 +31,15 @@ const SurverCreator: React.FC = (props: props) => {
     const reduxSurveyData = useAppSelector(s => s.navigation.operationData as SurveyTemplate & { id: string });
     const labels = useAppSelector(s => s.data.labels);
     const dispatch = useAppDispatch();
-    const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+    const [popupVisible, setPopupVisible] = useState<Boolean>(false);
     const [errorMessage, setErrorMessage] = useState("");
-    const [popupVisible2, setPopupvisible2] = useState<Boolean>(false);
+    const [popupVisible2, setPopupVisible2] = useState<Boolean>(false);
     // const [countLabel, setCountLabel] = useState(0);
     // const [countAns, setCountAns] = useState(0);
-    // let varifyLabel = 0;
+    // let verifyLabel = 0;
     // let countAns = 0;
-    const togglePopup = () => setPopupvisible(!popupVisible);
-    const togglePopup2 = () => setPopupvisible2(!popupVisible2);
+    const togglePopup = () => setPopupVisible(!popupVisible);
+    const togglePopup2 = () => setPopupVisible2(!popupVisible2);
     const addNewQuestion = () => {
         setQuestions(s => [...s, { prompt: "", answers: [], questionType: QuestionType.MultipleChoice }])
     }
@@ -107,11 +106,10 @@ const SurverCreator: React.FC = (props: props) => {
     }
 
     const getLabelConnections = (qIndex: number, aIndex: number) => {
-        
         return labels.map(l => {
             //console.log(questions[qIndex].answers[aIndex].labelIds);
             //setCountLabel(questions[qIndex].answers[aIndex].labelIds.length)
-            //varifyLabel = questions[qIndex].answers[aIndex].labelIds.length;
+            //verifyLabel = questions[qIndex].answers[aIndex].labelIds.length;
             //console.log(l);
             return {
                 ...l,
@@ -121,15 +119,8 @@ const SurverCreator: React.FC = (props: props) => {
         });
     }
     const conditionallySave = async () => {
-        let hasLabel = true;
-        console.log(questions);
-        questions.map(q =>{
-            q.answers.map(a => {
-                if (a.labelIds.length == 0) {
-                    hasLabel = false;
-                }
-            })
-        })
+        let hasLabel = questions.every(q => q.answers.every(a => a.labelIds.length > 0));
+
         if (!title.trim()) {
             togglePopup();
             setErrorMessage("*This field is required");
@@ -256,4 +247,4 @@ const SurverCreator: React.FC = (props: props) => {
     )
 }
 
-export default SurverCreator;
+export default SurveyCreator;

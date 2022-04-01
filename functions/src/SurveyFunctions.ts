@@ -3,6 +3,7 @@ import * as functions from 'firebase-functions';
 import { assertValidRequest, firestore } from './Utility';
 import { errors } from "./Errors";
 import { JobOpp, QuestionType, RecommendedJob, SurveyResponse, SurveyTemplate } from '../../src/firebase/Types';
+import { Timestamp } from 'firebase-admin/firestore';
 
 
 /**
@@ -106,7 +107,8 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
         surveyId: request.surveyId,
         taker: request.taker,
         answers: request.answers,
-        recommendedJobs: rankings.map(j => ({score: j.score, jobOppId: j.jobOppId}))
+        recommendedJobs: rankings.map(j => ({score: j.score, jobOppId: j.jobOppId})),
+        created: Timestamp.now()
     } as SurveyResponse);
 
     return rankings.map(j => ({score: j.score, jobOpp: j.jobOpp})).slice(0, 5);

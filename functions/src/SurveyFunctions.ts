@@ -109,7 +109,7 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
         answers: request.answers,
         recommendedJobs: rankings.map(j => ({score: j.score, jobOppId: j.jobOppId})),
         created: Timestamp.now()
-    } as SurveyResponse);
+    });
 
     return rankings.map(j => ({score: j.score, jobOpp: j.jobOpp})).slice(0, 5);
 });

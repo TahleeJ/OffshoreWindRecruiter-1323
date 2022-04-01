@@ -42,8 +42,8 @@ export async function deleteLabel(id: id) {
             editJobOpp(job.id, job);
         });
     
-        (await getSurveyReferencesToLabel(id)).forEach((references, survey) => {
-            references.forEach(answers => {
+        (await getSurveyReferencesToLabel(id)).forEach((question, survey) => {
+            question.forEach(answers => {
                 answers.forEach(answer => answer.labelIds = answer.labelIds.filter(l => l !== id));
             });
             

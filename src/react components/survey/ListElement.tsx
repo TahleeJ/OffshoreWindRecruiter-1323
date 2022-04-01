@@ -8,10 +8,11 @@ interface props {
 }
 
 const ListElement: React.FC<props> = (p) => {
-    const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+    const [popupVisible, setPopupVisible] = useState(false);
     const togglePopup = () => {
-        setPopupvisible(!popupVisible);
+        setPopupVisible(!popupVisible);
     }
+
     return (
         <div className="listElement">
             <div className="name">{p.name}</div>
@@ -26,7 +27,7 @@ const ListElement: React.FC<props> = (p) => {
                     handleAction={() => {
                         if (p.handleDelete)
                             p.handleDelete();
-                        togglePopup()
+                        togglePopup();
                     }}
                 />
             }

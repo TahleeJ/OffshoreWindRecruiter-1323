@@ -4,7 +4,7 @@ import { changePage, OperationType, PageType } from '../../redux/navigationSlice
 import ListViewer from '../ListViewer';
 import ListElement from '../survey/ListElement';
 import LabelCreator from './LabelCreator';
-import { deleteLabel, getLabels, newLabel } from '../../firebase/Queries/LabelQueries';
+import { deleteLabel, getJobReferencesToLabel, getLabels, getSurveyReferencesToLabel, newLabel } from '../../firebase/Queries/LabelQueries';
 import { setLabels } from '../../redux/dataSlice.ts';
 import Prompt from '../Prompt';
 
@@ -39,7 +39,14 @@ const LabelManager: React.FC<props> = (props) => {
     }
 
     const removeLabel = async (id: string) => {
-        // Should add some confirmation here
+        let totalRefs = (await getJobReferencesToLabel(id)).length;
+
+        (await getSurveyReferencesToLabel(id)).forEach(question => {
+            question.forEach(answers => totalRefs += answers.length);
+        })
+
+        // Show totalRefs on confirmation page
+        // Then wait for response
 
         await deleteLabel(id);
         appDispatch(setLabels(await getLabels()));

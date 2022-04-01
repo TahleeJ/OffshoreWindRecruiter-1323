@@ -10,9 +10,8 @@ type RecomendedJobs = { score: number, jobOpp: JobOpp }[];
 const SurveyReviewer: React.FC = _ => {
     const status = useAppSelector(s => s.navigation.status);
     const labels = useAppSelector(s => s.data.labels);
-    const recomendedJobs = useAppSelector(s => s.navigation.operationData as RecomendedJobs);
+    const recommendedJobs = useAppSelector(s => s.navigation.operationData as RecomendedJobs);
     const dispatch = useAppDispatch();
-    const loaded = false;
 
     function hideLoading() {
         var loading = document.getElementById("loading");
@@ -33,7 +32,7 @@ const SurveyReviewer: React.FC = _ => {
                         <>
                             {hideLoading()}
                             <span>Here are some job recommendations that align with your survey answers:</span>
-                            {recomendedJobs?.map((recommendation, index) => (
+                            {recommendedJobs?.map((recommendation, index) => (
                                 <div key={index} className={"recommendation " + ((recommendation.score >= 0) ? "positive" : (recommendation.score >= -0.5) ? "neutral" : "negative")}>
                                     <div className='title'>{recommendation.jobOpp.jobName}</div>
                                     <div className=''>{recommendation.jobOpp.companyName}</div>

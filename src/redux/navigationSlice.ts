@@ -71,6 +71,9 @@ const navigationSlice = createSlice({
             state.operationData = action.payload.data.sort((a, b) => b.score - a.score);
             state.status = Status.fulfilled;
         });
+        builder.addCase(submitSurveyResponse.pending, (state, action) => {
+            state.status = Status.pending;
+        });
         builder.addCase(submitSurveyResponse.rejected, (state, action) => {
             state.operationData = action.error;
             state.status = Status.rejected;

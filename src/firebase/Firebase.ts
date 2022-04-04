@@ -4,7 +4,7 @@ import * as firebaseAuth from "@firebase/auth";
 import * as firestore from "@firebase/firestore";
 import * as functions from "@firebase/functions";
 
-import { JobOpp, PermissionLevel, SurveyResponse } from './Types';
+import { PermissionLevel, RecommendedJobs, SurveyResponse } from './Types';
 
     
 const firebaseConfig = {
@@ -25,7 +25,7 @@ export const functionsInstance = functions.getFunctions(firebaseApp);
 
 export const updatePermissions = functions.httpsCallable<{ userEmail: string, newPermissionLevel: number }, undefined>(functionsInstance, 'updatePermissions');
 export const checkAdmin = functions.httpsCallable<undefined, { isAdmin: PermissionLevel }>(functionsInstance, 'checkAdmin');
-export const submitSurvey = functions.httpsCallable<SurveyResponse, { score: number, jobOpp: JobOpp }[]>(functionsInstance, 'submitSurvey');
+export const submitSurvey = functions.httpsCallable<SurveyResponse, RecommendedJobs>(functionsInstance, 'submitSurvey');
 
 // Local function testing
 // functions.connectFunctionsEmulator(functionsInstance, "localhost", 5001);

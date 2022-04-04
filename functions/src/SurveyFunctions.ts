@@ -77,7 +77,7 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
     for (const [key, value] of rawScores) {
         const [x, mean, n] = value;
         const stdDev = Math.sqrt(mean * (1 - mean / n));
-        const score = getPercentile((x - mean) / stdDev);
+        const score = stdDev !== 0 ? getPercentile((x - mean) / stdDev) : 1;
         
         scores.set(key, score);
     }

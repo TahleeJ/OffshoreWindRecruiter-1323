@@ -29,9 +29,7 @@ const SurveyReviewer: React.FC = _ => {
                                     <div className=''>{recommendation.jobOpp.companyName}</div>
                                     <div className=''>{recommendation.jobOpp.jobDescription}</div>
                                     <div className=''>
-                                        {recommendation.jobOpp.labelIds.map((l, i) => (
-                                            <span key={i}>{labels.find(searchLabel => searchLabel.id === l)?.name}, </span>
-                                        ))
+                                        {recommendation.jobOpp.labelIds.map((l, i) => labels.find(searchLabel => searchLabel.id === l)?.name).join(', ')
                                         }
                                     </div>
                                     {recommendation.score >= 0 ?
@@ -46,7 +44,7 @@ const SurveyReviewer: React.FC = _ => {
                     {status === Status.pending &&
                         <>
                             Loading Results:
-                            <i className="fa-solid fa-spinner fa-spin-pulse loadIcon"></i>
+                            <i className="fa fa-spinner fa-pulse loadIcon"></i>
                         </>
                     }
                     {status === Status.rejected &&

@@ -515,12 +515,48 @@ textarea {
         font-size: $largest-font-size;
     }
 
+    .toggle {
+        margin: 10px;
+    }
+
     #userEmail {
         font-size: 20px;
     }
-    #account {
-        color: $contrastColor;
+
+    .cards {
+        height: calc(100% - 130px);
+        display: flex;
+        flex-wrap: wrap;
     }
+
+    .card {
+        // background-color: $gray1;
+        flex: 1;
+        border-radius: 3px;
+        padding: 10px;
+        margin: 10px;
+        // border: 1px solid gray;
+        box-shadow: $subtle-shadow;
+        position: relative;
+        text-align: left;
+        min-width: calc(33% - 20px);
+        // max-width: calc(50% - 20px);
+        cursor: pointer;
+
+        .title {
+            font-weight: bold;
+        }
+
+        .questions {
+            font-weight: bold;
+            color: $mainColor;
+        }
+        .responses {
+            font-weight: bold;
+            color: $contrastColor;
+        }
+    }
+
 }
 
 #surveyHome {

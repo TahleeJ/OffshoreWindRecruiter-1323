@@ -541,11 +541,49 @@ textarea {
   font-size: 28px;
 }
 
+#home .toggle {
+  margin: 10px;
+}
+
 #home #userEmail {
   font-size: 20px;
 }
 
-#home #account {
+#home .cards {
+  height: calc(100% - 130px);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+#home .card {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  border-radius: 3px;
+  padding: 10px;
+  margin: 10px;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
+  position: relative;
+  text-align: left;
+  min-width: calc(33% - 20px);
+  cursor: pointer;
+}
+
+#home .card .title {
+  font-weight: bold;
+}
+
+#home .card .questions {
+  font-weight: bold;
+  color: #7ba1ff;
+}
+
+#home .card .responses {
+  font-weight: bold;
   color: #d16161;
 }
 
@@ -733,7 +771,7 @@ textarea {
 }
 
 #surveyHome .administerSurveyPage .recommendation.positive {
-  background-color: #7ba1ff;
+  background-color: #13be4c;
 }
 
 #surveyHome .administerSurveyPage .recommendation.negative {

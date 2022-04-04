@@ -1055,4 +1055,19 @@ textarea {
 .transparentBackground .dropdown .labelChoice:hover, .transparentBackground .dropdown .labelChoice.active {
   background-color: #dadada;
 }
+
+#InfoPage .container {
+  margin-top: 20px;
+  color: #7ba1ff;
+  font-size: 28px;
+}
+
+#InfoPage .text {
+  font-size: 20px;
+  color: black;
+}
+
+#InfoPage .inner {
+  margin-top: 40px;
+}
 /*# sourceMappingURL=App.css.map */

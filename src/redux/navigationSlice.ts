@@ -11,7 +11,7 @@ export enum PageType {
     LabelManage,
     JobManage,
     AdminManage,
-
+    InfoPage,
     DeletePopup
 }
 

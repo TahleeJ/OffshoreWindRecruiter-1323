@@ -20,6 +20,7 @@ import { setLabels, setSurveys, setJobOpps, setSurveyResponses } from './redux/d
 import { getLabels } from './firebase/Queries/LabelQueries';
 import { getJobOpps } from './firebase/Queries/JobQueries';
 import { assertIsAdmin } from './firebase/Queries/AdminQueries';
+import InfoPage from './react components/InfoPage';
 
 const getOverallPageFromType = (type: PageType) => {
     switch (type) {
@@ -29,6 +30,7 @@ const getOverallPageFromType = (type: PageType) => {
         case PageType.AdminManage: return <AdminManager />
         case PageType.LabelManage: return <LabelManager />
         case PageType.JobManage: return <JobManager />
+        case PageType.InfoPage: return <InfoPage />
     }
 }
 

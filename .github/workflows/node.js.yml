@@ -25,5 +25,7 @@ jobs:
         cache: 'npm'
     - run: npm ci
       working-directory: ./functions
+    - run: npm run build
+      working-directory: ./functions
     - run: npm test
       working-directory: ./functions

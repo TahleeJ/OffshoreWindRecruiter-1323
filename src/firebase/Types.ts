@@ -1,5 +1,4 @@
-import { Timestamp } from 'firebase/firestore';
-
+import * as firestore from "firebase-admin/firestore";
 
 export type id = string;
 export type hasId = { id: id };
@@ -36,7 +35,7 @@ export interface Label {
 export interface SurveyResponse {
     surveyId: id 
     taker: SurveyTaker
-    created?: Timestamp
+    created?: firestore.Timestamp
 
     /**
      * Scale: [0-4]

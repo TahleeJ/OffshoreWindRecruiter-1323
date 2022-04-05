@@ -31,12 +31,12 @@ const Header: React.FC<headerProps> = (p: headerProps) => {
         <header id="header" >
             <div className='title'>{"Offshore Recruiter".toUpperCase()}</div>
             <div className='buttonGroup'>
-                <i className='fas fa-home' onClick={() => { appDispatch(changePage({ type: PageType.Home })) }} data-tip="Home"></i>
+                <i className='fas fa-home home' onClick={() => { appDispatch(changePage({ type: PageType.Home })) }} data-tip="Home"></i>
                 {isAdmin ?
-                    <i className='fas fa-tools' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })) }} data-tip="Administrative"></i>
+                    <i className='fas fa-tools admin-manager' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })) }} data-tip="Administrative"></i>
                     : null
                 }
-                <i className="fas fa-sign-out-alt" onClick={() => firebaseAuth.signOut(authInstance)} data-tip="Sign Out"></i>
+                <i className="fas fa-sign-out-alt sign-out" onClick={() => firebaseAuth.signOut(authInstance)} data-tip="Sign Out"></i>
             </div>
             <ReactTooltip />
         </header>

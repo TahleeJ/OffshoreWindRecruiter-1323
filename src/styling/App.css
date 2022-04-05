@@ -1055,4 +1055,9 @@ textarea {
 .transparentBackground .dropdown .labelChoice:hover, .transparentBackground .dropdown .labelChoice.active {
   background-color: #dadada;
 }
+
+#chart {
+  width: 900px;
+  height: 500px;
+}
 /*# sourceMappingURL=App.css.map */

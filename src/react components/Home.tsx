@@ -26,6 +26,7 @@ const Home: React.FC<props> = (props) => {
     return (
         <div id="home">
             <p id="userEmail">{user?.email}</p>
+            <button onClick={() => {appDispatch(changePage({type: PageType.Analytics}))}}>View Analytics</button>
             <button className="toggle" onClick={() => setListView(!isListView)}>{!isListView ? "List View" : "Card View"}</button>
             {isListView ?
                 <ListViewer height="calc(100% - 130px)" title='Administer Survey'>
@@ -33,7 +34,7 @@ const Home: React.FC<props> = (props) => {
                         surveys.map((survey, ind) => {
                             return <div
                                 key={ind}
-                                className="pointer"
+                                className="pointer survey"
                                 onClick={() => {
                                     appDispatch(changePage({
                                         type: PageType.Survey,
@@ -53,7 +54,7 @@ const Home: React.FC<props> = (props) => {
                         surveys.map((survey, ind) => (
                             <div
                                 key={ind}
-                                className="card"
+                                className="card survey"
                                 onClick={() => {
                                     appDispatch(changePage({
                                         type: PageType.Survey,

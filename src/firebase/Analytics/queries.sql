@@ -1,3 +1,16 @@
+/*
+    *****WARNING*****
+
+    Editing this file will NOT change the available queries. This file
+    is purely for reference.
+
+    To edit the available queries for BigQuery, please visit this site:
+    https://console.cloud.google.com/bigquery?project=hallowed-digit-338620
+
+    It is highly recommended to edit queries at the link above as that will
+    provide the quickest method of testing.
+*/
+
 -- Total survey title per day
 CREATE OR REPLACE TABLE FUNCTION analytics_305371849.get_all_title_day() AS
 SELECT event_date, survey_title, COUNT(survey_title) AS frequency

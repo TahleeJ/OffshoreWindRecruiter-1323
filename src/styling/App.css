@@ -771,7 +771,7 @@ textarea {
 }
 
 #surveyHome .administerSurveyPage .recommendation.positive {
-  background-color: #7ba1ff;
+  background-color: #13be4c;
 }
 
 #surveyHome .administerSurveyPage .recommendation.negative {
@@ -1059,5 +1059,20 @@ textarea {
 #chart {
   width: 900px;
   height: 500px;
+}
+/*# sourceMappingURL=App.css.map */
+#InfoPage .container {
+  margin-top: 20px;
+  color: #7ba1ff;
+  font-size: 28px;
+}
+
+#InfoPage .text {
+  font-size: 20px;
+  color: black;
+}
+
+#InfoPage .inner {
+  margin-top: 40px;
 }
 /*# sourceMappingURL=App.css.map */

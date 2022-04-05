@@ -13,6 +13,7 @@ export enum PageType {
     AdminManage,
     Analytics,
 
+    InfoPage,
     DeletePopup
 }
 
@@ -71,6 +72,9 @@ const navigationSlice = createSlice({
         builder.addCase(submitSurveyResponse.fulfilled, (state, action) => {
             state.operationData = action.payload.data.sort((a, b) => b.score - a.score);
             state.status = Status.fulfilled;
+        });
+        builder.addCase(submitSurveyResponse.pending, (state, action) => {
+            state.status = Status.pending;
         });
         builder.addCase(submitSurveyResponse.rejected, (state, action) => {
             state.operationData = action.error;

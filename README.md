@@ -15,6 +15,21 @@ To edit the frontend:
 
 # Release Notes v1.0.0
 
+## v0.4
+### Features
+- Card view available for administrable surveys on home screen
+- Survey responses visible from admin home screen
+- Popups for required fields left blank when attempting to submit a survey
+- Recommended job view upon survey submission
+- Scrollability for list views on admin dashboard
+- Ability to view labels connected to jobs
+### Bug Fixes
+- Surveys include default survey-taker information
+- Ability to promote a user to owner-level
+- submitSurvey function adds submitted surveys to Firestore
+### Known Issues
+- Survey response view only shows answers for scale-type questions
+
 ## v0.3
 ### Features
 - Added ability to connect labels to survey questions as well as to job opportunities 
@@ -26,9 +41,7 @@ To edit the frontend:
 - Calculate recommended jobs based on a survey response
 ### Bug Fixes
 - Couldn't promote a user to owner level
-- submitSurvey function not adding the survey response to FireStore database
-### Known Issues
-- 
+- submitSurvey function not adding the survey response to Firestore database
 
 ## v0.2
 ### Features

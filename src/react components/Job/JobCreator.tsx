@@ -22,6 +22,7 @@ const JobCreator: React.FC<props> = (props) => {
     const [companyName, setCompanyName] = useState("");
     const [labelsAssc, setLabelsAssc] = useState<Array<string>>([]);
     const [description, setDescription] = useState("");
+    const [link, setLink] = useState("");
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     const appDispatch = useAppDispatch();
     const reduxJobOppData = useAppSelector(s => s.navigation.operationData as JobOpp & { id: string });
@@ -30,6 +31,7 @@ const JobCreator: React.FC<props> = (props) => {
     const [oppNameError, setOppNameError] = useState("");
     const [compNameError, setCompNameError] = useState("");
     const [labelError, setLabelError] = useState("");
+    const [linkError, setLinkError] = useState("");
 
     const togglePopup = () => setPopupvisible(!popupVisible);
     const changeLabels = (labelId: string) => {
@@ -71,6 +73,11 @@ const JobCreator: React.FC<props> = (props) => {
             } else {
                 setLabelError("");
             }
+            if (!link.trim()) {
+                setLinkError(errorMessage);
+            } else {
+                setLinkError("");
+            }
         }
         else {
             let jobOpp: JobOpp = {
@@ -78,6 +85,7 @@ const JobCreator: React.FC<props> = (props) => {
                 companyName: companyName,
                 labelIds: labelsAssc,
                 jobDescription: description,
+                jobLink: link,
 
             }
             if (currentOperation === OperationType.Creating)
@@ -95,6 +103,7 @@ const JobCreator: React.FC<props> = (props) => {
             setCompanyName(reduxJobOppData.companyName);
             setLabelsAssc(reduxJobOppData.labelIds);
             setDescription(reduxJobOppData.jobDescription);
+            setLink(reduxJobOppData.jobLink)
         }
     }, [reduxJobOppData, currentOperation]);
 
@@ -117,6 +126,11 @@ const JobCreator: React.FC<props> = (props) => {
                 <div className="jobInputContainer">
                     <div className="title">Job Description:</div>
                     <textarea rows={5} value={description} onChange={(e) => setDescription(e.target.value)} placeholder='Description...' />
+                </div>
+                <div className="jobInputContainer">
+                    <div className="title">Job Link:</div>
+                    <input type="text" value={link} onChange={(e) => setLink(e.target.value)} placeholder='Job Link'></input>
+                    <div className="error">{linkError}</div>
                 </div>
                 <div className="jobInputContainer">
                     <span className="title"></span>

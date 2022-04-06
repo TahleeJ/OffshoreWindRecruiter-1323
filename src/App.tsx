@@ -3,7 +3,6 @@ import './styling/App.css';
 
 import * as firebaseAuth from "@firebase/auth";
 import { authInstance } from './firebase/Firebase';
-import { DataQuery, getQueryData } from './firebase/Analytics/Analytics';
 
 import Home from './react components/Home'
 import { useAppDispatch, useAppSelector } from './redux/hooks';
@@ -66,8 +65,6 @@ const App: React.FC = () => {
                     })();
                 }
             } catch(e) {} 
-            
-            await getQueryData(DataQuery.AllTitles);
         });
     })
 

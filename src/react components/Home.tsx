@@ -14,8 +14,6 @@ interface props {
 
 }
 
-// var firebase = require('firebase');
-
 const Home: React.FC<props> = (props) => {
     const surveys = useAppSelector(s => s.data.surveys);
     const responses = useAppSelector(s => s.data.surveyResponses);

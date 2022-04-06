@@ -300,6 +300,15 @@ textarea {
           box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
+#analytics {
+  height: calc(100% - 50px);
+  font-family: "Roboto";
+  font-size: 15px;
+  overflow-y: auto;
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
 #adminHome .topGrid {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1056,10 +1065,10 @@ textarea {
   background-color: #dadada;
 }
 
-#chart {
+/* #chart {
   width: 900px;
   height: 500px;
-}
+} */
 /*# sourceMappingURL=App.css.map */
 #InfoPage .container {
   margin-top: 20px;

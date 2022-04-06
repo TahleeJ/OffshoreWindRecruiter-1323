@@ -13,15 +13,14 @@ interface props {
 const Analytics: React.FC = (props) => {
     const surveys = useAppSelector(s => s.data.surveys);
     const [queryType, setQueryType] = useState(DataQuery.AllTitlesPerDay);
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+    // const [startDate, setStartDate] = useState("");
+    // const [endDate, setEndDate] = useState("");
     const dispatch = useAppDispatch();
     const maxSelectedSurveys = 5;
     var selectedSurveyCount = 0;
     var selectedSurveys: string[] = [];
 
     google.charts.load("current", {packages:["corechart"]});
-    // google.charts.setOnLoadCallback(drawChart);
 
     const generateChart = async() => {
         var chartType: Chart;
@@ -37,8 +36,19 @@ const Analytics: React.FC = (props) => {
 
         console.log(chartType);
         console.log(queryType);
-        await drawChart(selectedSurveys, Chart.Combo, DataQuery.AllTitlesPerDay);
+        await drawChart(selectedSurveys, Chart.Line, DataQuery.AllPerDay);
+
+        // resetSelected();
     }
+
+    // function resetSelected() {
+    //     for (const surveyName of selectedSurveys) {
+    //         const checkbox = document.getElementById(`:${surveyName}`) as HTMLInputElement;
+    //         checkbox.checked = false;
+
+    //         selectedSurveys = [];
+    //     }
+    // }
 
     function handleClick(id: string) {
         const checkbox = document.getElementById(id) as HTMLInputElement;
@@ -67,63 +77,67 @@ const Analytics: React.FC = (props) => {
     }
 
     return (
-        <div id='analytics'>
-            <div>
-            <button className="red" onClick={() => dispatch(changePage({ type: PageType.Home }))}>Return to Home</button>
-            <div style={{ height: "10px"}}></div>
-            <div>
-                <label htmlFor='navigator-email'>Specific navigator:</label>
-                <input type='text' id='navigator-email'></input>
-                <br></br>
-                <div style={{ height: "10px"}}></div>
-                <label htmlFor='start-date'>Start date:</label>
-                <input type='date' id='start-date' onChange={(e) => setStartDate(e.target.value)}></input>
-                <label htmlFor='start-date'>End date:</label>
-                <input type='date' id='end-date' onChange={(e) => setEndDate(e.target.value)}></input>
+        <div id='analytics' className='adminContainer'>
+            <div className='topGrid'>  
+                <div className='config'>   
+                    <div className='listViewer' style={{ textAlign: "left" }}>
+                        <p>Distribution of...</p>
+                        <input type='radio' id='all-title-day' name='query-type' onSelect={() => setQueryType(DataQuery.AllTitlesPerDay)}></input>
+                        <label htmlFor="all-title-day">Each survey across all days in range for all navigators</label><br></br>
+                        <input type='radio' id='all-day' name='query-type' onSelect={() => setQueryType(DataQuery.AllPerDay)}></input>
+                        <label htmlFor='all-day'>Total surveys across all days in range for all navigators</label><br></br>
+                        <input type='radio' id='all-title' name='query-type' onSelect={() => setQueryType(DataQuery.AllTitles)}></input>
+                        <label htmlFor="all-title">Each survey title total for all navigators</label><br></br>
+                        <div style={{ height: "10px"}}></div>
+
+                        {/* <input type='radio' id='each-title-day' name='query-type' onSelect={() => setQueryType(DataQuery.EachTitlesPerDay)}></input>
+                        <label htmlFor='each-title-day'>Each survey across all days in range for each navigator</label><br></br>
+                        <input type='radio' id='each-day' name='query-type' onSelect={() => setQueryType(DataQuery.EachPerDay)}></input>
+                        <label htmlFor='each-day'>Total surveys across all days in range for each navigator</label><br></br>
+                        <input type='radio' id='each-title' name='query-type' onSelect={() => setQueryType(DataQuery.EachTitles)}></input>
+                        <label htmlFor='each-title'>Each survey title total for each navigator</label><br></br>
+                        <div style={{ height: "10px"}}></div>
+
+                        <input type='radio' id='one-title-day' name='query-type' onSelect={() => setQueryType(DataQuery.OneTitlesPerDay)}></input>
+                        <label htmlFor='one-title-day'>Each survey across all days in range for desired navigator</label><br></br>
+                        <input type='radio' id='one-day' name='query-type' onSelect={() => setQueryType(DataQuery.OnePerDay)}></input>
+                        <label htmlFor='one-day'>Total surveys across all days in range for desired navigator</label><br></br>
+                        <input type='radio' id='one-title' name='query-type' onSelect={() => setQueryType(DataQuery.OneTitles)}></input>
+                        <label htmlFor='one-title'>Each survey title total for desired navigator</label><br></br> */}
+                    </div>
+
+                    <div style={{ height: "10px"}}></div>
+
+                    <div className='listViewer' style={{ textAlign: "left" }}>
+                        {surveys.length > 0 ?
+                            surveys.map((survey, ind) => {
+                                return <div>
+                                        <input type='checkbox' id={":" + ind} value={survey.title} onClick={() => handleClick(":" + ind)}></input>
+                                        <label htmlFor={":" + ind}>{survey.title}</label>
+                                    </div>
+                            })
+                            : <div>There are no survey templates at the moment</div>
+                        }
+                    </div>
+
+                    <div style={{ height: "10px"}}></div>
+                    <div>
+                        <label htmlFor='navigator-email'>Specific navigator:</label>
+                        <input type='text' id='navigator-email'></input>
+                        <br></br>
+                        <div style={{ height: "10px"}}></div>
+                        {/* <label htmlFor='start-date'>Start date:</label>
+                        <input type='date' id='start-date' onChange={(e) => setStartDate(e.target.value)}></input>
+                        <label htmlFor='start-date'>End date:</label>
+                        <input type='date' id='end-date' onChange={(e) => setEndDate(e.target.value)}></input> */}
+                    </div>
+
+                     <button onClick={generateChart}>Generate</button>
+                </div>
+                <div className='chartContainer'>
+                    <div className='' id="chart" style={{height: "600px", width: "900px", overflow: "auto"}}></div>
+                </div>
             </div>
-            <div className='listViewer' style={{ height: "calc(100% - 130px)", textAlign: "left" }}>
-                <p>Distribution of...</p>
-                <input type='radio' id='all-title-day' name='query-type' onSelect={() => setQueryType(DataQuery.AllTitlesPerDay)}></input>
-                <label htmlFor="all-title-day">Each survey across all days in range for all navigators</label><br></br>
-                <input type='radio' id='all-day' name='query-type' onSelect={() => setQueryType(DataQuery.AllPerDay)}></input>
-                <label htmlFor='all-day'>Total surveys across all days in range for all navigators</label><br></br>
-                <input type='radio' id='all-title' name='query-type' onSelect={() => setQueryType(DataQuery.AllTitles)}></input>
-                <label htmlFor="all-title">Each survey title total for all navigators</label><br></br>
-                <div style={{ height: "10px"}}></div>
-
-                <input type='radio' id='each-title-day' name='query-type' onSelect={() => setQueryType(DataQuery.EachTitlesPerDay)}></input>
-                <label htmlFor='each-title-day'>Each survey across all days in range for each navigator</label><br></br>
-                <input type='radio' id='each-day' name='query-type' onSelect={() => setQueryType(DataQuery.EachPerDay)}></input>
-                <label htmlFor='each-day'>Total surveys across all days in range for each navigator</label><br></br>
-                <input type='radio' id='each-title' name='query-type' onSelect={() => setQueryType(DataQuery.EachTitles)}></input>
-                <label htmlFor='each-title'>Each survey title total for each navigator</label><br></br>
-                <div style={{ height: "10px"}}></div>
-
-                <input type='radio' id='one-title-day' name='query-type' onSelect={() => setQueryType(DataQuery.OneTitlesPerDay)}></input>
-                <label htmlFor='one-title-day'>Each survey across all days in range for desired navigator</label><br></br>
-                <input type='radio' id='one-day' name='query-type' onSelect={() => setQueryType(DataQuery.OnePerDay)}></input>
-                <label htmlFor='one-day'>Total surveys across all days in range for desired navigator</label><br></br>
-                <input type='radio' id='one-title' name='query-type' onSelect={() => setQueryType(DataQuery.OneTitles)}></input>
-                <label htmlFor='one-title'>Each survey title total for desired navigator</label><br></br>
-            </div>
-
-            <div style={{ height: "10px"}}></div>
-
-            <div className='listViewer' style={{ height: "calc(100% - 130px)", textAlign: "left" }}>
-                {surveys.length > 0 ?
-                    surveys.map((survey, ind) => {
-                        return <div>
-                                <input type='checkbox' id={":" + ind} value={survey.title} onClick={() => handleClick(":" + ind)}></input>
-                                <label htmlFor={":" + ind}>{survey.title}</label>
-                            </div>
-                    })
-                    : <div>There are no survey templates at the moment</div>
-                }
-            </div>
-
-            <button onClick={generateChart}>Generate</button>
-        </div>
-        <div className='' id="chart" style={{height: "600px", width: "900px", overflow: "auto"}}></div>
         </div>
     )
 }

@@ -14,9 +14,15 @@ export async function drawChart(selectedSurveys: string[], type: Chart, queryTyp
             preparePie(data);
 
             break;
-        default:
+        case Chart.Line:
+            prepareLine(data);
+            
+            break;
+        case Chart.Combo:
             prepareCombo(selectedSurveys, data);
 
+            break;
+        default:
             break;
     }
 }
@@ -41,19 +47,43 @@ function preparePie(data: SerializedEntry[]) {
     chart.draw(chartData!, options!);
 }
 
-function prepareCombo(selectedSurveys: string[], data: Map<string, SerializedEntry[]>) {
+function prepareLine(data: Map<string, SerializedEntry[]>) {
     var chartData = new google.visualization.DataTable();
-    chartData.addColumn("string", "Day");
-    // chartData.addColumn("number", "Total Administrations");
+    chartData.addColumn("string", "Date");
+    chartData.addColumn("number", "Frequency");
+
+    var addList = [];
 
     var dateCounter = 0;
-    var surveyCounter = 0;
-    var dateList: string[] = [];
-    var surveyList: string[] = [];
+
+    for (const [key, value] of data) {
+        if (dateCounter < 7 && dateCounter < data.size) {
+            addList.unshift([key, value[0].frequency]);
+        } else {
+            break;
+        }
+    }
+
+    chartData.addRows(addList);
+
+    var options = {
+        title: 'Total Surveys Administered Over the Past 7 Days',
+        reversibleCategories: true
+      };
+
+    var chart = new google.visualization.LineChart(document.getElementById('chart')!);
+    chart.draw(chartData!, options);
+}
+
+function prepareCombo(selectedSurveys: string[], data: Map<string, SerializedEntry[]>) {
+    var chartData = new google.visualization.DataTable();
+    chartData.addColumn("string", "Date");
+
+    var dateCounter = 0;
     var surveyFrequency: [any[]] = [[]];
     var eachSurveyList: Map<string, number>[] = [];
-    // const indices = [0, 1, 2, 3, 4, 5, 6];
-    const indices: number[] = [];
+    var indices: number[] = [];
+    var addList = [];
 
     selectedSurveys.forEach((surveyName) => {
         chartData.addColumn("number", surveyName);
@@ -71,20 +101,12 @@ function prepareCombo(selectedSurveys: string[], data: Map<string, SerializedEnt
             }
 
             eachSurveyList[dateCounter] = surveyMap;
-            // console.log(surveyMap);
-            // console.log(eachSurveyList[dateCounter]);
 
             dateCounter++;
         } else {
             break;
         }
     }
-
-    console.log(dateCounter);
-
-    // for (const data of eachSurveyList![0]) {
-    //     console.log(data.get());
-    // }
 
     // Temporary until enough 7-day data is gathered
     var temp = 0;
@@ -102,8 +124,6 @@ function prepareCombo(selectedSurveys: string[], data: Map<string, SerializedEnt
 
         for (const selectedSurvey of selectedSurveys) {
             const examineList = eachSurveyList[dateIndex];
-            console.log(examineList);
-
             var usedFrequency = 0;
 
             if (examineList.has(selectedSurvey)) {
@@ -116,24 +136,33 @@ function prepareCombo(selectedSurveys: string[], data: Map<string, SerializedEnt
             sumFrequency += usedFrequency;
         }
 
-        const average = sumFrequency / 5;
+        const average = sumFrequency / selectedSurveys.length;
         surveyFrequency[dateIndex].push(average);
 
-        chartData.addRow(surveyFrequency[dateIndex]);
-
-        console.log(surveyFrequency[dateIndex]);
+        addList.unshift(surveyFrequency[dateIndex]);
     }
 
-    // var columns = dateCounter + 1;
+    chartData.addRows(addList);
+
+    var seriesOptions = [];
+    var tempCounter = 0;
+
+    while (tempCounter < selectedSurveys.length) {
+        seriesOptions.push({});
+
+        tempCounter++;
+    }
+
+    seriesOptions.push({type: 'line'});
 
     var options = {
         title: 'Administered Survey Frequency Over The Past Week',
         vAxis: {title: 'Surveys Administered'},
         hAxis: {title: 'Month'},
         seriesType: 'bars',
-        series: {5: {type: 'line'}},
+        series: seriesOptions
     };
 
     var chart = new google.visualization.ComboChart(document.getElementById('chart')!);
-    chart.draw(chartData!, options!);
+    chart.draw(chartData!, options);
 }

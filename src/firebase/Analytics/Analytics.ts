@@ -99,7 +99,6 @@ export function serializeQueryData(data: string[], queryType: DataQuery) {
                 const newData = { frequency: elementJSON.frequency } as SerializedEntry;
 
                 if (queryType % 3 === 0) {
-                    console.log("hi");
                     newData.title = elementJSON.survey_title;
                 }
 
@@ -112,12 +111,6 @@ export function serializeQueryData(data: string[], queryType: DataQuery) {
                 } else {
                     serializedData.set(elementJSON.event_date, [newData]);
                 }
-            }
-
-            for (const [key, value] of serializedData) {
-                console.log(`date: ${key}`);
-
-                console.log(value);
             }
 
             return serializedData;
@@ -167,14 +160,6 @@ export function serializeQueryData(data: string[], queryType: DataQuery) {
                 }
             }
 
-            for (const [key, value] of serializedData) {
-                console.log(`administering navigator: ${key}`);
-
-                for (const [name_key, name_value] of value) {
-                    console.log(`\tdate: ${name_key}:\n${name_value}`);
-                }
-            }
-
             return serializedData;
         } else {
             const serializedData = new Map<string, SerializedEntry[]>();
@@ -188,10 +173,6 @@ export function serializeQueryData(data: string[], queryType: DataQuery) {
                 } else {
                     serializedData.set(elementJSON.administering_navigator, [newData])
                 }
-            }
-
-            for (const [key, value] of serializedData) {
-                console.log(`administering navigator: ${key}:\n${value}`);
             }
 
             return serializedData;

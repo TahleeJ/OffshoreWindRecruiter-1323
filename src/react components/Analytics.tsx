@@ -29,7 +29,6 @@ const validQueryCharts = {
 const Analytics: React.FC = (props) => {
     const surveys = useAppSelector(s => s.data.surveys);
 
-    var popupVisible = false;
     var popupTitle = "";
     var popupMessage = "";
     var queryType = DataQuery.AllTitles;
@@ -51,7 +50,6 @@ const Analytics: React.FC = (props) => {
         togglePopup();
     }
 
-    const dispatch = useAppDispatch();
     const maxSelectedSurveys = 5;
     var selectedSurveyCount = 0;
     var selectedSurveys: string[] = [];
@@ -64,13 +62,6 @@ const Analytics: React.FC = (props) => {
     const message = document.getElementById("popup-message");
 
     google.charts.load("current", {packages:["corechart"]});
-
-    /*
-        Pie-> AllTitles, OneTitles
-        Combo -> AllTitlesPerDay, OneTitlesPerDay
-        Line -> AllPerDay, OnePerDay, AllTitlesPerDay, OneTitlesPerDay
-        Bar -> AllTitles, OneTitles, AllPerDay, OnePerDay
-    */
 
     function getChartType(value: string) {
         switch(value) {
@@ -256,29 +247,6 @@ const Analytics: React.FC = (props) => {
                             <option value={dataFocusTypes.perday}>Administration total of all surveys over the past week</option>
                             <option value={dataFocusTypes.titles}>Total administration of all surveys</option>
                         </select>   
-                        {/* <p>Distribution of...</p>
-                        <input type='radio' id='all-title-day' name='query-type' onClick={() => setQueryType(DataQuery.AllTitlesPerDay)}></input>
-                        <label htmlFor="all-title-day">Each survey across all days in range for all navigators</label><br></br>
-                        <input type='radio' id='all-day' name='query-type' onClick={() => setQueryType(DataQuery.AllPerDay)}></input>
-                        <label htmlFor='all-day'>Total surveys across all days in range for all navigators</label><br></br>
-                        <input type='radio' id='all-title' name='query-type' onClick={() => setQueryType(DataQuery.AllTitles)}></input>
-                        <label htmlFor="all-title">Each survey title total for all navigators</label><br></br>
-                        <div style={{ height: "10px"}}></div>
-
-                        <input type='radio' id='each-title-day' name='query-type' onSelect={() => setQueryType(DataQuery.EachTitlesPerDay)}></input>
-                        <label htmlFor='each-title-day'>Each survey across all days in range for each navigator</label><br></br>
-                        <input type='radio' id='each-day' name='query-type' onSelect={() => setQueryType(DataQuery.EachPerDay)}></input>
-                        <label htmlFor='each-day'>Total surveys across all days in range for each navigator</label><br></br>
-                        <input type='radio' id='each-title' name='query-type' onSelect={() => setQueryType(DataQuery.EachTitles)}></input>
-                        <label htmlFor='each-title'>Each survey title total for each navigator</label><br></br>
-                        <div style={{ height: "10px"}}></div>
-
-                        <input type='radio' id='one-title-day' name='query-type' onSelect={() => setQueryType(DataQuery.OneTitlesPerDay)}></input>
-                        <label htmlFor='one-title-day'>Each survey across all days in range for desired navigator</label><br></br>
-                        <input type='radio' id='one-day' name='query-type' onSelect={() => setQueryType(DataQuery.OnePerDay)}></input>
-                        <label htmlFor='one-day'>Total surveys across all days in range for desired navigator</label><br></br>
-                        <input type='radio' id='one-title' name='query-type' onSelect={() => setQueryType(DataQuery.OneTitles)}></input>
-                        <label htmlFor='one-title'>Each survey title total for desired navigator</label><br></br> */}
                     </div>
 
                     <div style={{ height: "25px"}}></div>
@@ -303,12 +271,6 @@ const Analytics: React.FC = (props) => {
                         <input type='text' id='navigator-emails'></input>
                         <label htmlFor='navigator-emails'>* Separate by commas if more than one</label>
                         <p style={{ color: "red" }}>*Enter a maximum of 5 emails.</p>
-                        {/* <br></br> */}
-                        {/* <div style={{ height: "10px"}}></div> */}
-                        {/* <label htmlFor='start-date'>Start date:</label>
-                        <input type='date' id='start-date' onChange={(e) => setStartDate(e.target.value)}></input>
-                        <label htmlFor='start-date'>End date:</label>
-                        <input type='date' id='end-date' onChange={(e) => setEndDate(e.target.value)}></input> */}
                     </div>
                     <div style={{ height: "10px"}}></div>
                     <h3>Chart Type:</h3>

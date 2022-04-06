@@ -19,7 +19,8 @@ import { getSurveyResponses, getSurveys } from './firebase/Queries/SurveyQueries
 import { setLabels, setSurveys, setJobOpps, setSurveyResponses } from './redux/dataSlice.ts';
 import { getLabels } from './firebase/Queries/LabelQueries';
 import { getJobOpps } from './firebase/Queries/JobQueries';
-
+import { assertIsAdmin } from './firebase/Queries/AdminQueries';
+import InfoPage from './react components/InfoPage';
 
 const getOverallPageFromType = (type: PageType) => {
     switch (type) {
@@ -29,37 +30,39 @@ const getOverallPageFromType = (type: PageType) => {
         case PageType.AdminManage: return <AdminManager />
         case PageType.LabelManage: return <LabelManager />
         case PageType.JobManage: return <JobManager />
+        case PageType.InfoPage: return <InfoPage />
     }
 }
 
 const App: React.FC = () => {
     const [isLoggedIn, setLoggedIn] = useState(false);
     const pageType = useAppSelector(s => s.navigation.currentPage);
-    const dispatch = useAppDispatch();
+    const appDispatch = useAppDispatch();
 
     firebaseAuth.setPersistence(authInstance, firebaseAuth.browserLocalPersistence);
 
     useEffect(() => {
-        //we now set the redux state with the firebase values:
-        (async function f() {
-            const surveys = await getSurveys();
-            dispatch(setSurveys(surveys));
-        })();
-        (async function f() {
-            const labels = await getLabels();
-            dispatch(setLabels(labels));
-        })();
-        (async function f() {
-            const jobOpps = await getJobOpps();
-            dispatch(setJobOpps(jobOpps));
-        })();
-        (async function f() {
-            const surveyResponses = await getSurveyResponses();
-            dispatch(setSurveyResponses(surveyResponses));
-        })();
-
         authInstance.onAuthStateChanged(async (user) => {
-            setLoggedIn(user !== null && user !== undefined);
+            setLoggedIn(user != null);
+            if (!isLoggedIn)
+                return;
+
+            // Set the redux state with Firestore's data
+            try {
+                if (await assertIsAdmin(user?.uid!)) {
+                    (async () => {
+                        appDispatch(setLabels(await getLabels()));
+                        appDispatch(setJobOpps(await getJobOpps()));
+                        appDispatch(setSurveys(await getSurveys()));
+                        appDispatch(setSurveyResponses(await getSurveyResponses()));
+                    })();
+                } else {
+                    (async () => {
+                        appDispatch(setLabels(await getLabels()));
+                        appDispatch(setSurveys(await getSurveys()));
+                    })();
+                }
+            } catch(e) {}     
         });
     })
 

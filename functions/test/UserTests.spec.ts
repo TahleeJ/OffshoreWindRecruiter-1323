@@ -1,29 +1,25 @@
 import * as chai from 'chai';
 import { assert } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
+
 import * as functions from 'firebase-functions';
 import { WrappedFunction } from 'firebase-functions-test/lib/main';
 
 import { PermissionLevel } from '../../src/firebase/Types';
-import { initializeTestEnvironment, testEnv } from './Init';
 import { firestore } from '../src/Utility';
 
+import { testEnv, myFunctions } from './Init';
 import { ApplicationFlagType, getTestUserPermissionLevel, resetTestDocs, setApplicationFlag, testUserContext, testUserDocRef, updateTransactions } from './Utility';
 
 chai.use(chaiAsPromised);
 chai.should();
 
-let myFunctions: { updatePermissions: functions.CloudFunction<unknown>; createNewUser: functions.CloudFunction<unknown>; };
 let updatePermissionsWrapped: WrappedFunction;
 let createNewUserWrapped: WrappedFunction;
 
 describe("Update Permissions Function Unit Tests", () => {
     before(async () => {
-        try {
-            myFunctions = await initializeTestEnvironment();
-        } catch(e){}
-
-        updatePermissionsWrapped = testEnv.wrap(myFunctions.updatePermissions);
+        updatePermissionsWrapped = testEnv.wrap((await myFunctions).updatePermissions);
     });
 
     afterEach(async () => {
@@ -345,11 +341,7 @@ describe("Update Permissions Function Unit Tests", () => {
 
 describe("Create New User Function Unit Tests", () => {
     before(async () => {
-        try {
-            myFunctions = await initializeTestEnvironment();
-        } catch(e){}
-
-        createNewUserWrapped = testEnv.wrap(myFunctions.createNewUser);
+        createNewUserWrapped = testEnv.wrap((await myFunctions).createNewUser);
     });
     
     after(() => {

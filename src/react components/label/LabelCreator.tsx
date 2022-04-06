@@ -42,7 +42,7 @@ const LabelManager: React.FC<props> = (props) => {
             .then(data => setSurveyRefs(data));
 
         getJobReferencesToLabel(reduxLabel.id)
-            .then(data => setJobRefs(data.docs.map(d => d.data())))
+            .then(data => setJobRefs(data));
 
     }, [reduxLabel, currentOperation]);
 

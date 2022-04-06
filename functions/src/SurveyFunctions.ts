@@ -2,12 +2,12 @@ import * as functions from 'firebase-functions';
 
 import { assertValidRequest, firestore } from './Utility';
 import { errors } from "./Errors";
-import { JobOpp, QuestionType, RecomendedJob, SurveyResponse, SurveyTemplate } from '../../src/firebase/Types';
+import { JobOpp, QuestionType, RecommendedJob, SurveyResponse, SurveyTemplate } from '../../src/firebase/Types';
 
 
 /**
- * Stores submitted survey in Firestore then returns the recomended jobs.
- */
+ * Stores submitted survey in Firestore then returns the recommended jobs.
+ */ 
 export const submitSurvey = functions.https.onCall(async (request: SurveyResponse, context) => {
     assertValidRequest(context);
     
@@ -42,7 +42,7 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
          * FreeResponse: string
          */
         const chosenAnswer = request.answers[currentQuestionIndex] as number; 
-        let expectedScore: number;
+        let expectedScore: number = 0;
         
         // Increment labels that were answered
         switch (currentQuestion.questionType) {
@@ -82,9 +82,9 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
     }
 
 
-    // Calulate dot product of the score vector and each job vector then normalize to (-1, 1)
+    // Calculate dot product of the score vector and each job vector then normalize to (-1, 1)
 
-    const rankings: (RecomendedJob & { jobOpp: JobOpp})[] = [];
+    const rankings: (RecommendedJob & { jobOpp: JobOpp})[] = [];
 
     (await jobOpps).forEach(job => {
         const jobData = job.data();
@@ -100,13 +100,13 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
     rankings.sort((a, b) => a.score - b.score);
 
 
-    // Save SurveyResponse with job rankings and then return the top 5 recomended jobs
+    // Save SurveyResponse with job rankings and then return the top 5 recommended jobs
     
     firestore.collection("SurveyResponse").add({
         surveyId: request.surveyId,
         taker: request.taker,
         answers: request.answers,
-        recomendedJobs: rankings.map(j => ({score: j.score, jobOppId: j.jobOppId}))
+        recommendedJobs: rankings.map(j => ({score: j.score, jobOppId: j.jobOppId}))
     } as SurveyResponse);
 
     return rankings.map(j => ({score: j.score, jobOpp: j.jobOpp})).slice(0, 5);

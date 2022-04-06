@@ -43,11 +43,7 @@ const SurveyReviewer: React.FC = _ => {
                     }
                     {status === Status.pending &&
                         <>
-<<<<<<< HEAD
                             Loading Results:
-=======
-                            Loading Recommended Jobs: &nbsp;
->>>>>>> main
                             <i className="fa fa-spinner fa-pulse loadIcon"></i>
                         </>
                     }

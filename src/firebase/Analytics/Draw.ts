@@ -2,80 +2,79 @@ import { DataQuery, getQueryData, SerializedEntry } from "./Analytics";
 
 export enum Chart {
     Pie = 0,
-    Line = 1,
-    Combo = 2
+    Combo = 1,
+    Line = 2,
+    Bar = 3
 }
 
-export async function drawChart(selectedSurveys: string[], type: Chart, queryType: DataQuery, navigatorEmail?: string) {
+export async function drawChart(selectedSurveys: string[], selectedNaviagors: string[], chartType: Chart, queryType: DataQuery, navigatorEmail?: string) {
     const data = await getQueryData(queryType, navigatorEmail);
+    var chartData: google.visualization.DataTable;
 
-    switch(type) {
-        case Chart.Pie:
-            preparePie(data);
+    switch(queryType) {
+        case DataQuery.AllTitlesPerDay:
+            chartData = prepareAllTitlesPerDay(selectedSurveys, data);
+
+            var seriesOptions = [];
+            var tempCounter = 0;
+        
+            while (tempCounter < selectedSurveys.length) {
+                seriesOptions.push({});
+        
+                tempCounter++;
+            }
+        
+            seriesOptions.push({type: 'line'});
+
+            if (chartType == Chart.Combo) {
+                new google.visualization.ComboChart(document.getElementById('chart')!)
+                    .draw(chartData!, {
+                        title: 'Administered Survey Frequency Over The Past Week',
+                        vAxis: {title: 'Surveys Administered'},
+                        hAxis: {title: 'Month'},
+                        seriesType: 'bars',
+                        series: seriesOptions
+                    });
+            } else {
+                chartData.removeColumn(tempCounter);
+
+                new google.visualization.LineChart(document.getElementById('chart')!)
+                    .draw(chartData!, {
+                        title: 'Total for Selected Surveys Administered Over the Past 7 Days'
+                    });
+            }
 
             break;
-        case Chart.Line:
-            prepareLine(data);
-            
-            break;
-        case Chart.Combo:
-            prepareCombo(selectedSurveys, data);
+        case DataQuery.AllPerDay:
+            chartData = prepareAllPerDay(data);
+
+            if (chartType == Chart.Line) {
+                new google.visualization.LineChart(document.getElementById('chart')!)
+                    .draw(chartData!, {
+                        title: 'Total for All Surveys Administered Over the Past 7 Days',
+                      });
+            } else {
+                new google.visualization.BarChart(document.getElementById('chart')!)
+                    .draw(chartData!, {
+                        title: 'Total for All Surveys Administered Over the Past 7 Days',
+                    });
+            }
 
             break;
-        default:
+        case DataQuery.AllTitles:
+            chartData = prepareAllTitles(data);
+        
+            new google.visualization.PieChart(document.getElementById('chart')!)
+                .draw(chartData!, {
+                    title: 'Total Surveys Administered',
+                    pieSliceText: "percentage"
+                });
+
             break;
     }
 }
 
-function preparePie(data: SerializedEntry[]) {
-    var chartData = new google.visualization.DataTable();
-    chartData.addColumn("string", "Survey Title");
-    chartData.addColumn("number", "Total Administrations");
-
-    for (const element of data) {
-        chartData.addRow([element.title, element.frequency]);
-    }
-
-    console.log(chartData);
-
-    var options = {
-        title: 'Total Surveys Administered',
-        pieSliceText: "percentage"
-    };
-
-    var chart = new google.visualization.PieChart(document.getElementById('chart')!);
-    chart.draw(chartData!, options!);
-}
-
-function prepareLine(data: Map<string, SerializedEntry[]>) {
-    var chartData = new google.visualization.DataTable();
-    chartData.addColumn("string", "Date");
-    chartData.addColumn("number", "Frequency");
-
-    var addList = [];
-
-    var dateCounter = 0;
-
-    for (const [key, value] of data) {
-        if (dateCounter < 7 && dateCounter < data.size) {
-            addList.unshift([key, value[0].frequency]);
-        } else {
-            break;
-        }
-    }
-
-    chartData.addRows(addList);
-
-    var options = {
-        title: 'Total Surveys Administered Over the Past 7 Days',
-        reversibleCategories: true
-      };
-
-    var chart = new google.visualization.LineChart(document.getElementById('chart')!);
-    chart.draw(chartData!, options);
-}
-
-function prepareCombo(selectedSurveys: string[], data: Map<string, SerializedEntry[]>) {
+function prepareAllTitlesPerDay(selectedSurveys: string[], data: Map<string, SerializedEntry[]>): google.visualization.DataTable {
     var chartData = new google.visualization.DataTable();
     chartData.addColumn("string", "Date");
 
@@ -144,25 +143,39 @@ function prepareCombo(selectedSurveys: string[], data: Map<string, SerializedEnt
 
     chartData.addRows(addList);
 
-    var seriesOptions = [];
-    var tempCounter = 0;
+    return chartData;
+}
 
-    while (tempCounter < selectedSurveys.length) {
-        seriesOptions.push({});
+function prepareAllPerDay(data: Map<string, SerializedEntry[]>): google.visualization.DataTable {
+    var chartData = new google.visualization.DataTable();
+    chartData.addColumn("string", "Date");
+    chartData.addColumn("number", "Frequency");
 
-        tempCounter++;
+    var addList = [];
+
+    var dateCounter = 0;
+
+    for (const [key, value] of data) {
+        if (dateCounter < 7 && dateCounter < data.size) {
+            addList.unshift([key, value[0].frequency]);
+        } else {
+            break;
+        }
     }
 
-    seriesOptions.push({type: 'line'});
+    chartData.addRows(addList);
 
-    var options = {
-        title: 'Administered Survey Frequency Over The Past Week',
-        vAxis: {title: 'Surveys Administered'},
-        hAxis: {title: 'Month'},
-        seriesType: 'bars',
-        series: seriesOptions
-    };
+    return chartData;
+}
 
-    var chart = new google.visualization.ComboChart(document.getElementById('chart')!);
-    chart.draw(chartData!, options);
+function prepareAllTitles(data: SerializedEntry[]) {
+    var chartData = new google.visualization.DataTable();
+    chartData.addColumn("string", "Survey Title");
+    chartData.addColumn("number", "Total Administrations");
+
+    for (const element of data) {
+        chartData.addRow([element.title, element.frequency]);
+    }
+
+    return chartData;
 }

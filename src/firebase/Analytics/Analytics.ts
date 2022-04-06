@@ -23,7 +23,8 @@ export enum DataQuery {
     EachTitles = 5,
     OneTitlesPerDay = 6,
     OnePerDay = 7,
-    OneTitles = 8
+    OneTitles = 8,
+    None = 9
 }
 
 export interface SerializedEntry {
@@ -89,7 +90,7 @@ export async function getQueryData(queryType: DataQuery, navigatorEmail?: string
     // {title, frequency}
 
 export function serializeQueryData(data: string[], queryType: DataQuery) {
-    if (queryType in [DataQuery.AllTitlesPerDay, DataQuery.AllPerDay, DataQuery.AllTitles]) {
+    if ([DataQuery.AllTitlesPerDay, DataQuery.AllPerDay, DataQuery.AllTitles].includes(queryType)) {
         if (queryType !== DataQuery.AllTitles) {
             const serializedData = new Map<string, SerializedEntry[]>();
 
@@ -128,7 +129,7 @@ export function serializeQueryData(data: string[], queryType: DataQuery) {
             return serializedData;
         }
     } else {
-        if (queryType !== DataQuery.EachTitles && queryType !== DataQuery.OneTitles) {
+        if (!([DataQuery.EachTitles, DataQuery.OneTitles].includes(queryType))) {
             const serializedData = new Map<string, Map<string, SerializedEntry[]>>();
 
             for (const element of data) {

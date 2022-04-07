@@ -35,6 +35,7 @@ export interface Label {
 export interface SurveyResponse {
     surveyId: id 
     taker: SurveyTaker
+    created?: number
 
     /**
      * Scale: [0-4]

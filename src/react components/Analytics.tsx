@@ -17,8 +17,8 @@ const dataFocusTypes = {
 
 const validQueryCharts = {
     pie: {
-        list: [DataQuery.AllTitles, DataQuery.OneTitles], // EachTitles
-        text: "Total administration of all surveys"
+        list: [DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay], // EachTitles
+        text: "Total administration of all surveys<br />Administration total of each selected survey over the past week"
     }, 
     combo: {
         list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay],
@@ -26,11 +26,11 @@ const validQueryCharts = {
     },
     line: {
         list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllPerDay, DataQuery.OnePerDay],
-        text: "Administration total of each selected survey over the past week\nAdministration total of all surveys over the past week"
+        text: "Administration total of each selected survey over the past week<br />Administration total of all surveys over the past week"
     },
     bar: {
         list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllPerDay, DataQuery.OnePerDay], // EachTitles, EachPerDay
-        text: "Administration total of each selected survey over the past week\nAdministration total of all surveys over the past week\nTotal administration of all surveys"
+        text: 'Administration total of each selected survey over the past week<br />Administration total of all surveys over the past week<br />Total administration of all surveys'
     }
 }
 
@@ -213,7 +213,7 @@ const Analytics: React.FC = (props) => {
 
                 if (!validNavigatorEntry) {
                     popupTitle = "Invalid Navigator Email Entry";
-                    popupMessage = "For one navigator: Please enter at least one email\nFor a set of navigators: Please enter at least two emails and separate by commas.";
+                    popupMessage = "For one navigator: Please enter at least one email<br />For a set of navigators: Please enter at least two emails and separate by commas.";
                     togglePopup();
                 } else {
                     if (validChartType!) {
@@ -240,7 +240,7 @@ const Analytics: React.FC = (props) => {
                 }
             } else {
                 popupTitle = "Invalid Chart Type";
-                popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected data focus.\nThis view is not yet available for multiple navigators!`;
+                popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected data focus.<br />This view is not yet available for multiple navigators!`;
                 togglePopup();
             }
         } else {
@@ -250,7 +250,15 @@ const Analytics: React.FC = (props) => {
                     popupMessage = "Please select at least one survey you would like to see data for.";
                     togglePopup();
                 } else {
-                    await drawChart(selectedSurveys, selectedNavigators, chartType, queryType);
+                    try {
+                        await drawChart(selectedSurveys, selectedNavigators, chartType, queryType);
+                    } catch (error) {
+                        const { details } = JSON.parse(JSON.stringify(error));
+
+                        popupTitle = "Query Error";
+                        popupMessage = details;
+                        togglePopup();
+                    }
                 }
             } else {
                 popupTitle = "Invalid Chart Type";
@@ -340,7 +348,6 @@ const Analytics: React.FC = (props) => {
                             <option value='Combo'>Combo</option>
                             <option value='Line'>Line</option>
                             <option value='Bar'>Bar</option>
-                            <option value='Table'>Table</option>
                         </select>
                         <p style={{ color: "green", fontWeight: "bold" }}>Valid Data Focuses:</p>
                         <p id='valid-charts'>{validQueryCharts.pie.text}</p>

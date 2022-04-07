@@ -6,9 +6,9 @@ const queryFunctions = [
     "get_all_title_day",
     "get_all_day",
     "get_all_titles",
-    "get_navigator_title_day",
-    "get_navigator_day",
-    "get_navigator_titles",
+    "get_each_title_day",
+    "get_each_day",
+    "get_each_titles",
     "get_navigator_title_day",
     "get_navigator_day",
     "get_navigator_titles"
@@ -50,8 +50,6 @@ export function logSurveyAdministered(title: string, navigator: string) {
            administering_navigator: navigator,
            debug_mode: true
         });
-
-        console.log("administered!");
 }
 
 export async function getQueryData(queryType: DataQuery, selectedNavigator?: string) {
@@ -59,7 +57,7 @@ export async function getQueryData(queryType: DataQuery, selectedNavigator?: str
     var response;
 
     if (!([DataQuery.AllTitlesPerDay, DataQuery.AllPerDay, DataQuery.AllTitles].includes(queryType))) {
-        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(${selectedNavigator})`;
+        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${selectedNavigator}")`;
 
         response = await getAdministeredSurveyData({ queryString: queryString, navigatorEmail: selectedNavigator });
     } else {

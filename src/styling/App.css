@@ -1118,13 +1118,6 @@ select, .navigatorText {
   padding: 7px;
 }
 
-#analytics .middleColumn {
-  -webkit-box-flex: 1;
-      -ms-flex: 1 1 30%;
-          flex: 1 1 30%;
-  padding: 7px;
-}
-
 #analytics .rightColumn {
   -webkit-box-flex: 1;
       -ms-flex: 1 1 30%;
@@ -1138,6 +1131,7 @@ select, .navigatorText {
           flex-direction: column;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+      padding: 7px;
 }
 
 #analytics .center {

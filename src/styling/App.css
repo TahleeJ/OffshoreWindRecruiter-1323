@@ -300,38 +300,6 @@ textarea {
           box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-#analytics {
-  height: calc(100% - 50px);
-  font-family: "Roboto";
-  font-size: 15px;
-  overflow-y: auto;
-  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-#analytics .config {
-  vertical-align: top;
-  -webkit-box-flex: 1;
-      -ms-flex: 1 1 40%;
-          flex: 1 1 40%;
-  padding: 7px;
-}
-
-#analytics .chartContainer {
-  -webkit-box-flex: 1;
-      -ms-flex: 1 1 40%;
-          flex: 1 1 40%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-}
-
 #adminHome .topGrid {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1120,3 +1088,100 @@ textarea {
   margin-top: 40px;
 }
 /*# sourceMappingURL=App.css.map */
+
+select, .navigatorText {
+  font-size: 18px;
+}
+
+#analytics {
+  height: calc(100% - 50px);
+  font-family: "Roboto";
+  font-size: 20px;
+  overflow-y: auto;
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+#analytics .topGrid {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+#analytics .leftColumn {
+  vertical-align: top;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 30%;
+          flex: 1 1 30%;
+  padding: 7px;
+}
+
+#analytics .middleColumn {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 30%;
+          flex: 1 1 30%;
+  padding: 7px;
+}
+
+#analytics .rightColumn {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 30%;
+          flex: 1 1 30%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+#analytics .center {
+  text-align: center;
+}
+
+#analytics .surveyList {
+  height: calc(100% - 330px);
+  overflow: auto;
+  text-align: left;
+}
+
+#analytics .generateBox {
+  margin: auto;
+  width: 50%;
+}
+
+#analytics .generateButton {
+  font-weight: bold;
+  height: 50px;
+  width: 100px;
+  font-size: 18px;
+}
+
+#analytics .chartHere {
+  color: blue;
+}
+
+#analytics .chartWait {
+  font-style: italic;
+}
+
+#analytics .popup {
+  color: red;
+}
+
+#analytics .popupTitle {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#analytics .chartContainer {
+  height: 600px;
+  width: 900px;
+  overflow: auto;
+  margin: auto;
+}

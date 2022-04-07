@@ -18,7 +18,6 @@ const Home: React.FC<props> = (props) => {
     return (
         <div id="home">
             <p id="userEmail">{user?.email}</p>
-            <button onClick={() => {appDispatch(changePage({type: PageType.Analytics}))}}>View Analytics</button>
             <button className="toggle" onClick={() => setListView(!isListView)}>{!isListView ? "List View" : "Card View"}</button>
             {isListView ?
                 <ListViewer height="calc(100% - 130px)" title='Administer Survey'>

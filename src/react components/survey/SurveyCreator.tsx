@@ -1,5 +1,5 @@
 import lodash from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { logSurveyCreation } from "../../firebase/Analytics/Analytics";
 import { authInstance } from "../../firebase/Firebase";
 import { editSurvey, getSurveys, newSurvey } from "../../firebase/Queries/SurveyQueries";
@@ -32,6 +32,8 @@ const SurveyCreator: React.FC = (props: props) => {
     /** This contains the old survey data. */
     const reduxSurveyData = useAppSelector(s => s.navigation.operationData as SurveyTemplate & { id: string });
     const labels = useAppSelector(s => s.data.labels);
+    /**Used to get the scrollOffset for the label connectors */
+    const pageRef = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
 
 
@@ -138,6 +140,9 @@ const SurveyCreator: React.FC = (props: props) => {
             dispatch(setSurveys(await getSurveys()));
         }
     }
+    const conditionallyExit = async () => {
+        dispatch(changePage({ type: PageType.AdminHome }))
+    }
 
     useEffect(() => {
         //copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
@@ -149,8 +154,8 @@ const SurveyCreator: React.FC = (props: props) => {
     }, [reduxSurveyData, currentOperation]);
 
     return (
-        <div className="surveyCreator">
-            <button className="red" onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
+        <div className="surveyCreator" ref={pageRef}>
+            <button className="red" onClick={conditionallyExit}>Go Back</button>
             <div className="surveyHeader">
                 <input type='text' className="surveyTitle" placeholder="Survey Title*..." value={title} onChange={(e) => setTitle(e.target.value)} />
                 {/* <div className="error">{errorMessage}</div> */}
@@ -172,6 +177,7 @@ const SurveyCreator: React.FC = (props: props) => {
                                     </div>
                                     {q.questionType === QuestionType.Scale ?
                                         <LabelConnector
+                                            topOffset={pageRef.current ? pageRef.current.scrollTop : 0}
                                             toggleLabel={(labelId: string) => changeLabels(qIndex, 0, labelId)}
                                             labels={getLabelConnections(qIndex, 0)}
                                         />
@@ -187,6 +193,7 @@ const SurveyCreator: React.FC = (props: props) => {
                                                     <input type="radio" placeholder='N/A' />
                                                     <input type="text" placeholder="Answer..." onChange={(e) => changeAnswerText(qIndex, aIndex, e.target.value)} value={option.text} />
                                                     <LabelConnector
+                                                        topOffset={pageRef.current ? pageRef.current.scrollTop : 0}
                                                         toggleLabel={(labelId: string) => changeLabels(qIndex, aIndex, labelId)}
                                                         labels={getLabelConnections(qIndex, aIndex)}
                                                     />

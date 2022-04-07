@@ -297,9 +297,9 @@ const Analytics: React.FC = (props) => {
     return (
         <div id='analytics'>
             <div className='topGrid'>  
-                <div className='leftColumn'>
+                <div className='middleColumn left' style={{ padding: "7px" }}>
                     {/* <h2></h2>  */}
-                    <div className='listViewer'>
+                    <div className='listViewer' style={{ height: "25%"}}>
                         <div className='title'>Navigator Focus</div>
                         <input type="radio" id='all-navigators' name='navigator-grouping' defaultChecked onClick={() => { navigatorGrouping = NavigatorGrouping.All}}></input>
                         <label htmlFor='all-navigators'>All Navigators</label><br></br>
@@ -315,7 +315,7 @@ const Analytics: React.FC = (props) => {
                         </div> 
                     </div>
 
-                    <div className='listViewer'>
+                    <div className='listViewer' style={{ height: "75%"}}>
                         <div className='title'>Data Focus</div>
                         <select id="data-focus" name="Query Types" defaultValue={dataFocusTypes.titles}>
                             <option value={dataFocusTypes.titleday}>Administration total of each selected survey over the past week</option>
@@ -340,7 +340,7 @@ const Analytics: React.FC = (props) => {
                     </div>
                 </div>
 
-                <div className='rightColumn'>
+                <div className='middleColumn right'>
                     <div className='listViewer'>
                         <div className='title'>Chart Type</div>
                         <select id="chart-types" name="Chart Types" onChange={(e) => {getChartType(e.target.value)}}>
@@ -350,7 +350,7 @@ const Analytics: React.FC = (props) => {
                             <option value='Bar'>Bar</option>
                         </select>
                         <p style={{ color: "green", fontWeight: "bold" }}>Valid Data Focuses:</p>
-                        <p id='valid-charts'>{validQueryCharts.pie.text}</p>
+                        <p id='valid-charts'>Total administration of all surveys<br />Administration total of each selected survey over the past week</p>
                         <div className='generateBox center'>
                             <button className='generate-button' onClick={generateChart}>Generate</button>
                             <p id="popup-title" className='popup popupTitle center'></p>

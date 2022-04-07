@@ -1041,3 +1041,88 @@ textarea {
         margin-top: 40px;
     }
 }
+
+#analytics {
+    height: $contentHeight;
+    font-family: "Roboto";
+    font-size: $large-font-size;
+    overflow-y: auto;
+
+    .topGrid {
+        display: flex;
+        flex-wrap: wrap;
+        height: 100%;
+    }
+    .middleColumn {
+        height: 100%;
+        flex: 1 1 45%;
+        padding: 7px;
+
+        .listViewer {
+            min-height: 346.5px;
+            max-height: calc(50% - 3.5px);
+
+            &:first-child {
+                margin-bottom: 7px;
+            }
+        }
+    }
+
+    select {
+        font-size: 18px;
+    }
+    
+    .navigatorText {
+        font-size: 18px;
+    }
+
+    .center {
+        text-align: center;
+    }
+
+    .surveyList {
+        height: calc(50% - 130px);
+        overflow: auto;
+        text-align: left;
+      }
+
+    .generateBox {
+        margin: auto;
+        width: 50%;
+    }
+
+    .generateButton {
+        font-weight: bold;
+        height: 50px;
+        width: 100px;
+        font-size: 18px;
+    }
+
+    .chartWait {
+        font-style: italic;
+    }
+      
+    .popup {
+        color: red;
+    }
+      
+    .popupTitle {
+        font-size: 20px;
+        font-weight: bold;
+    }
+      
+     .chartContainer {
+        min-height: 600px;
+        min-width: 900px;
+        height: auto;
+        width: auto;
+        overflow: auto;
+        margin: auto;
+    }
+
+    @media screen and (max-width: 600px) {
+        .topGrid {
+            display: block;
+        }
+    }
+}

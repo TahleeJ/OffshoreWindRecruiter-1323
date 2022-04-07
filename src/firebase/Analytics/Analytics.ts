@@ -6,9 +6,9 @@ const queryFunctions = [
     "get_all_title_day",
     "get_all_day",
     "get_all_titles",
-    "get_each_title_day",
-    "get_each_day",
-    "get_each_titles",
+    "get_navigator_title_day",
+    "get_navigator_day",
+    "get_navigator_titles",
     "get_navigator_title_day",
     "get_navigator_day",
     "get_navigator_titles"
@@ -54,30 +54,21 @@ export function logSurveyAdministered(title: string, navigator: string) {
         console.log("administered!");
 }
 
-export async function getQueryData(queryType: DataQuery, navigatorEmail?: string) {
-    try {
-        const queryFunction = queryFunctions[queryType];
-        const navigatorFlag = queryFunction.includes("navigator");
-        const queryString = `SELECT * FROM analytics_305371849.${queryFunctions[queryType]}(${navigatorFlag ? navigatorEmail : ""})`;
+export async function getQueryData(queryType: DataQuery, selectedNavigator?: string) {
+    const queryFunction = queryFunctions[queryType];
+    var response;
 
-        const response = await getAdministeredSurveyData({ queryString: queryString, navigatorEmail: navigatorEmail });
+    if (!([DataQuery.AllTitlesPerDay, DataQuery.AllPerDay, DataQuery.AllTitles].includes(queryType))) {
+        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(\"${selectedNavigator}\")`;
 
-        var serializeFilter;
+        response = await getAdministeredSurveyData({ queryString: queryString, navigatorEmail: selectedNavigator });
+    } else {
+        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}()`;
 
-        if (queryFunction.includes("title_day")) {
-            serializeFilter = 0;
-        } else if (queryFunction.includes("day")) {
-            serializeFilter = 1;
-        } else {
-            serializeFilter = 2;
-        }
-        
-        return serializeQueryData(response.data as string[], queryType);
-    } catch (error) {
-        const { details } = JSON.parse(JSON.stringify(error));
-
-        return details;
+        response = await getAdministeredSurveyData({ queryString: queryString });
     }
+    
+    return serializeQueryData(response.data as string[], queryType);
 }
 
     // TitleDay
@@ -124,8 +115,6 @@ export function serializeQueryData(data: string[], queryType: DataQuery) {
                 serializedData.push({ title: elementJSON.survey_title, frequency: elementJSON.frequency } as SerializedEntry);
             }
 
-            console.log(serializedData);
-
             return serializedData;
         }
     } else {
@@ -140,24 +129,24 @@ export function serializeQueryData(data: string[], queryType: DataQuery) {
                     newData.title = elementJSON.survey_title;
                 }
 
-                if (serializedData.has(elementJSON.administering_navigator)) {
-                    const currentMap = serializedData.get(elementJSON.administering_navigator);
+                if (serializedData.has(elementJSON.navigator)) {
+                    const currentMap = serializedData.get(elementJSON.navigator);
 
                     if (currentMap!.has(elementJSON.event_date)) {
-                        const currentData = serializedData.get(elementJSON.administering_navigator)!.get(elementJSON.event_date)!;
+                        const currentData = serializedData.get(elementJSON.navigator)!.get(elementJSON.event_date)!;
 
                         currentData!.push(newData);
 
-                        serializedData.get(elementJSON.administering_navigator)!.set(elementJSON.event_date, currentData);
+                        serializedData.get(elementJSON.navigator)!.set(elementJSON.event_date, currentData);
                     } else {
-                        serializedData.get(elementJSON.administering_navigator)!.set(elementJSON.event_date, [newData])
+                        serializedData.get(elementJSON.navigator)!.set(elementJSON.event_date, [newData])
                     }
                 } else {
                     const newMap = new Map<string, SerializedEntry[]>();
 
                     newMap.set(elementJSON.event_date, [newData]);
 
-                    serializedData.set(elementJSON.administering_navigator, newMap);
+                    serializedData.set(elementJSON.navigator, newMap);
                 }
             }
 
@@ -169,10 +158,10 @@ export function serializeQueryData(data: string[], queryType: DataQuery) {
                 const elementJSON = JSON.parse(element);
                 const newData = { title: elementJSON.survey_title, frequency: elementJSON.frequency } as SerializedEntry;
 
-                if (serializedData.has(elementJSON.administering_navigator)) {
-                    serializedData.get(elementJSON.administering_navigator)!.push(newData);
+                if (serializedData.has(elementJSON.navigator)) {
+                    serializedData.get(elementJSON.navigator)!.push(newData);
                 } else {
-                    serializedData.set(elementJSON.administering_navigator, [newData])
+                    serializedData.set(elementJSON.navigator, [newData])
                 }
             }
 

@@ -10,7 +10,7 @@ interface props {
 enum NavigatorGrouping {
     All = 0,
     Set = 1,
-    None = 3
+    One = 2
 }
 
 const dataFocusTypes = {
@@ -19,11 +19,13 @@ const dataFocusTypes = {
     titles: "Titles"
 };
 
+
+
 const validQueryCharts = {
-    pie: [DataQuery.AllTitles, DataQuery.OneTitles],
+    pie: [DataQuery.AllTitles, DataQuery.OneTitles], // EachTitles
     combo: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay],
     line: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllPerDay, DataQuery.OnePerDay],
-    bar: [DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllPerDay, DataQuery.OnePerDay]
+    bar: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllPerDay, DataQuery.OnePerDay] // EachTitles, EachPerDay
 }
 
 const Analytics: React.FC = (props) => {
@@ -106,12 +108,28 @@ const Analytics: React.FC = (props) => {
     }
 
     function validateNavigatorEntry(): boolean {
+        selectedNavigators = [];
+
         const navigators: string[] = navigatorBox.value.split(",");
         
         if (navigators.length > 5) {
             return false;
         } else {
-            selectedNavigators = navigators;
+            if (navigatorGrouping == NavigatorGrouping.Set && navigators.length < 2) {
+                return false;
+            }
+
+            for (const entry of navigators) {
+                const adjustedEntry = entry.trim();
+
+                if (adjustedEntry.length < 5) {
+                    selectedNavigators = [];
+
+                    return false;
+                }
+
+                selectedNavigators.push(adjustedEntry);
+            }
 
             return true;
         }
@@ -139,6 +157,21 @@ const Analytics: React.FC = (props) => {
             case NavigatorGrouping.Set:
                 switch(dataFocus) {
                     case dataFocusTypes.titleday:
+                        queryType = DataQuery.None;
+                        break;
+                    case dataFocusTypes.perday:
+                        queryType = DataQuery.EachPerDay;
+                        break;
+                    case dataFocusTypes.titles:
+                        queryType = DataQuery.EachTitles;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case NavigatorGrouping.One:
+                switch(dataFocus) {
+                    case dataFocusTypes.titleday:
                         queryType = DataQuery.OneTitlesPerDay;
                         break;
                     case dataFocusTypes.perday:
@@ -157,32 +190,46 @@ const Analytics: React.FC = (props) => {
     }
 
     const generateChart = async() => {
+        resetPopup();
         determineQueryType();
 
         const validChartType = validateChartType();
 
-        if (navigatorGrouping === NavigatorGrouping.Set) {
-            const validNavigatorEntry = validateNavigatorEntry();
+        if (navigatorGrouping === NavigatorGrouping.Set || navigatorGrouping == NavigatorGrouping.One) {
+            if (queryType !== DataQuery.None) {
+                const validNavigatorEntry = validateNavigatorEntry();
 
-            if (!validNavigatorEntry) {
-                popupTitle = "Invalid Navigator Email Entry";
-                popupMessage = "Please enter at least one email and separate more by commas.";
-                togglePopup();
-            } else {
-                if (validChartType!) {
-                    if (dataFocus == dataFocusTypes.titleday && selectedSurveys.length == 0) {
-                        popupTitle = "Empty Survey Selection";
-                        popupMessage = "Please select at least one survey you would like to see data for.";
-                        togglePopup();
-                    } else {
-                        resetPopup();
-                        await drawChart(selectedSurveys, selectedNavigators, chartType, queryType);
-                    }
-                } else {
-                    popupTitle = "Invalid Chart Type";
-                    popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected query.`;
+                if (!validNavigatorEntry) {
+                    popupTitle = "Invalid Navigator Email Entry";
+                    popupMessage = "For one navigator: Please enter at least one email\nFor a set of navigators: Please enter at least two emails and separate by commas.";
                     togglePopup();
+                } else {
+                    if (validChartType!) {
+                        if (dataFocus == dataFocusTypes.titleday && selectedSurveys.length == 0) {
+                            popupTitle = "Empty Survey Selection";
+                            popupMessage = "Please select at least one survey you would like to see data for.";
+                            togglePopup();
+                        } else {
+                            try {
+                                await drawChart(selectedSurveys, selectedNavigators, chartType, queryType);
+                            } catch (error) {
+                                const { details } = JSON.parse(JSON.stringify(error));
+
+                                popupTitle = "Query Error";
+                                popupMessage = details;
+                                togglePopup();
+                            }
+                        }
+                    } else {
+                        popupTitle = "Invalid Chart Type";
+                        popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected query.`;
+                        togglePopup();
+                    }
                 }
+            } else {
+                popupTitle = "Invalid Chart Type";
+                popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected query.\nThis view is not yet available for multiple navigators!`;
+                togglePopup();
             }
         } else {
             if (validChartType!) {
@@ -191,7 +238,6 @@ const Analytics: React.FC = (props) => {
                     popupMessage = "Please select at least one survey you would like to see data for.";
                     togglePopup();
                 } else {
-                    resetPopup();
                     await drawChart(selectedSurveys, selectedNavigators, chartType, queryType);
                 }
             } else {
@@ -239,7 +285,9 @@ const Analytics: React.FC = (props) => {
                         <input type="radio" id='all-navigators' name='navigator-grouping' defaultChecked onClick={() => { navigatorGrouping = NavigatorGrouping.All}}></input>
                         <label htmlFor='all-navigators'>All Navigators</label><br></br>
                         <input type="radio" id='set-navigators' name='navigator-grouping' onClick={() => { navigatorGrouping = NavigatorGrouping.Set}}></input>
-                        <label htmlFor='set-navigators'>One Navigator/Set of Navigators</label>
+                        <label htmlFor='set-navigators'>Set of Navigators</label><br></br>
+                        <input type="radio" id='one-navigator' name='navigator-grouping' onClick={() => { navigatorGrouping = NavigatorGrouping.One}}></input>
+                        <label htmlFor='one-navigator'>One Navigator</label>
 
                         <p>Data Focus:</p>
                         <select id="data-focus" name="Query Types" defaultValue={dataFocusTypes.titles}>
@@ -279,6 +327,7 @@ const Analytics: React.FC = (props) => {
                         <option value='Combo'>Combo</option>
                         <option value='Line'>Line</option>
                         <option value='Bar'>Bar</option>
+                        <option value='Table'>Table</option>
                     </select>
                     <br></br>
 
@@ -294,6 +343,8 @@ const Analytics: React.FC = (props) => {
                         </div>
                     </div>
                 </div>
+                <h2>You Chart is Here!</h2>
+                <p>It may take a few seconds to actually show.</p>
                 <div className='chartContainer'>
                     <div className='' id="chart" style={{height: "600px", width: "900px", overflow: "auto"}}></div>
                 </div>

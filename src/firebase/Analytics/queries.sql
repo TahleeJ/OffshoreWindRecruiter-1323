@@ -64,7 +64,8 @@ FROM (
         (SELECT value.string_value FROM UNNEST(event_params) 
             WHERE key = "administered_survey_title") AS survey_title
     FROM `hallowed-digit-338620.analytics_305371849.events_intraday_*`
-    WHERE event_name = "survey_administered"))
+    WHERE event_name = "survey_administered")
+    LIMIT 365)
 GROUP BY survey_title;
 
 -- Total survey title per day for each
@@ -115,7 +116,7 @@ ORDER BY event_date DESC;
 CREATE OR REPLACE TABLE FUNCTION analytics_305371849.get_each_titles() AS
 SELECT survey_title, COUNT(survey_title) AS frequency, navigator
 FROM (
-        (SELECT event_date,  
+    (SELECT event_date,  
         (SELECT value.string_value FROM UNNEST(event_params)
           WHERE key = "administering_navigator") AS navigator,
         (SELECT value.string_value FROM UNNEST(event_params) 
@@ -129,7 +130,8 @@ FROM (
         (SELECT value.string_value FROM UNNEST(event_params) 
             WHERE key = "administered_survey_title") AS survey_title
     FROM `hallowed-digit-338620.analytics_305371849.events_intraday_*`
-    WHERE event_name = "survey_administered"))
+    WHERE event_name = "survey_administered")
+    LIMIT 365)
 GROUP BY survey_title, navigator;
 
 -- Total survey title per day for navigator
@@ -194,5 +196,6 @@ FROM (
         (SELECT value.string_value FROM UNNEST(event_params) 
             WHERE key = "administering_navigator") AS navigator
     FROM `hallowed-digit-338620.analytics_305371849.events_intraday_*`, UNNEST(event_params) AS P
-    WHERE event_name = "survey_administered" AND P.value.string_value = name))
+    WHERE event_name = "survey_administered" AND P.value.string_value = name)
+    LIMIT 365)
 GROUP BY survey_title, navigator;

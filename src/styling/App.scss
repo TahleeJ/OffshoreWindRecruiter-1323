@@ -1003,6 +1003,7 @@ textarea {
         padding: 5px;
         width: 200px;
         max-height: 400px;
+        overflow-y: auto;
 
         .title {
             text-align: center;

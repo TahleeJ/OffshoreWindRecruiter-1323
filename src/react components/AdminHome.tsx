@@ -11,6 +11,7 @@ import { JobOpp, PermissionLevel } from '../firebase/Types';
 
 import ListViewer from './ListViewer';
 import ListElement from './survey/ListElement';
+import Prompt from './Prompt';
 
 
 /** The props (arguments) to create this element */
@@ -25,6 +26,8 @@ const AdminHome: React.FC<props> = (props) => {
     const appDispatch = useAppDispatch();
     const user = authInstance.currentUser;
     const [level, setLevel] = useState(PermissionLevel.None);
+    const [popupVisible, setPopupVisible] = useState(false);
+    const togglePopup = () => setPopupVisible(!popupVisible);
 
     const getPermissionLevel = async () => {
         const uid = authInstance.currentUser?.uid!;
@@ -39,11 +42,11 @@ const AdminHome: React.FC<props> = (props) => {
         else return "User";
     }
 
-    const scrapeJobs = async () => {
+    const scrapeJobs = async (): Promise<JobOpp[]> => {
         const response = await fetch('http://api.ecodistricthamptonroads.org/Jobs');
         const jsonResponse = await response.json(); //extract JSON from the http response
 
-        jsonResponse.forEach((jR: any) => {
+        return jsonResponse.map((jR: any) => {
             const jobOpp: JobOpp = {
                 jobName: jR.title,
                 companyName: jR.company,
@@ -51,7 +54,7 @@ const AdminHome: React.FC<props> = (props) => {
                 jobDescription: jR.Description,
                 jobLink: jR.link,
             }
-            newJobOpp(jobOpp);
+            return jobOpp
         });
     }
 
@@ -118,9 +121,24 @@ const AdminHome: React.FC<props> = (props) => {
                     <div className='adminButtons'>
                         <button onClick={() => { appDispatch(changePage({ type: PageType.LabelManage })) }}>Manage Labels</button>
                         <button onClick={() => { appDispatch(changePage({ type: PageType.AdminManage })) }}>Manage Admins</button>
+                        <button onClick={() => togglePopup()}>Import Jobs</button>
                     </div>
                 </div>
             </div>
+            {popupVisible &&
+                <Prompt
+                    title="Import Job Opportunities"
+                    message="Are you sure that you would import these jobs?"
+                    handleCancel={togglePopup}
+                    actionText="Import"
+                    handleAction={async () => {
+                        const jobs = await scrapeJobs();
+                        jobs.forEach(j => newJobOpp(j));
+                        togglePopup();
+                        appDispatch(setJobOpps(await getJobOpps()))
+                    }}
+                />
+            }
         </div>
     );
 }

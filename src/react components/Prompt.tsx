@@ -6,6 +6,7 @@ interface props {
     message?: String;
     handleCancel?: () => void;
     handleAction?: () => void;
+    actionText?: string;
 }
 
 /** The header of the application. */
@@ -20,7 +21,7 @@ const Prompt: React.FC<props> = (props) => {
                 {props.handleCancel || props.handleAction ?
                     <div className='Buttons'>
                         {props.handleCancel && <button onClick={props.handleCancel}>Cancel</button>}
-                        {props.handleAction && <button className="red" onClick={props.handleAction}>Delete</button>}
+                        {props.handleAction && <button className="red" onClick={props.handleAction}>{props.actionText ? props.actionText : "Delete"}</button>}
                     </div>
                     : null
                 }

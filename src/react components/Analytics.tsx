@@ -200,7 +200,7 @@ const Analytics: React.FC = (props) => {
                     togglePopup();
                 } else {
                     if (validChartType!) {
-                        if (dataFocus === dataFocusTypes.titleday && selectedSurveys.length == 0) {
+                        if (dataFocus === dataFocusTypes.titleday && selectedSurveys.length === 0) {
                             popupTitle = "Empty Survey Selection";
                             popupMessage = "Please select at least one survey you would like to see data for.";
                             togglePopup();
@@ -228,7 +228,7 @@ const Analytics: React.FC = (props) => {
             }
         } else {
             if (validChartType!) {
-                if (dataFocus == dataFocusTypes.titleday && selectedSurveys.length == 0) {
+                if (dataFocus === dataFocusTypes.titleday && selectedSurveys.length === 0) {
                     popupTitle = "Empty Survey Selection";
                     popupMessage = "Please select at least one survey you would like to see data for.";
                     togglePopup();

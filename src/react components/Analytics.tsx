@@ -1,11 +1,6 @@
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { useAppSelector } from '../redux/hooks';
 import { DataQuery } from '../firebase/Analytics/Analytics';
 import { Chart, drawChart } from '../firebase/Analytics/Draw';
-
-/** The props (arguments) to create this element */
-interface props {
-
-}
 
 enum NavigatorGrouping {
     All = 0,
@@ -115,7 +110,7 @@ const Analytics: React.FC = (props) => {
         if (navigators.length > 5) {
             return false;
         } else {
-            if (navigatorGrouping == NavigatorGrouping.Set && navigators.length < 2) {
+            if (navigatorGrouping === NavigatorGrouping.Set && navigators.length < 2) {
                 return false;
             }
 
@@ -195,7 +190,7 @@ const Analytics: React.FC = (props) => {
 
         const validChartType = validateChartType();
 
-        if (navigatorGrouping === NavigatorGrouping.Set || navigatorGrouping == NavigatorGrouping.One) {
+        if (navigatorGrouping === NavigatorGrouping.Set || navigatorGrouping === NavigatorGrouping.One) {
             if (queryType !== DataQuery.None) {
                 const validNavigatorEntry = validateNavigatorEntry();
 
@@ -205,7 +200,7 @@ const Analytics: React.FC = (props) => {
                     togglePopup();
                 } else {
                     if (validChartType!) {
-                        if (dataFocus == dataFocusTypes.titleday && selectedSurveys.length == 0) {
+                        if (dataFocus === dataFocusTypes.titleday && selectedSurveys.length == 0) {
                             popupTitle = "Empty Survey Selection";
                             popupMessage = "Please select at least one survey you would like to see data for.";
                             togglePopup();

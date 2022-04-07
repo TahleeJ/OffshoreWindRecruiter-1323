@@ -39,7 +39,7 @@ export async function drawChart(selectedSurveys: string[], selectedNavigators: s
                         seriesType: 'bars',
                         series: seriesOptions
                     });
-            } else if (chartType == Chart.Line) {
+            } else if (chartType === Chart.Line) {
                 chartData = prepareTitlesPerDay(selectedSurveys, data, false);
 
                 new google.visualization.LineChart(document.getElementById('chart')!)
@@ -48,7 +48,7 @@ export async function drawChart(selectedSurveys: string[], selectedNavigators: s
                         vAxis: {title: 'Surveys Administered'},
                         hAxis: {title: 'Day'}
                     });
-            } else if (chartType == Chart.Bar) {
+            } else if (chartType === Chart.Bar) {
                 chartData = prepareTitlesPerDay(selectedSurveys, data, false);
 
                 new google.visualization.BarChart(document.getElementById('chart')!)
@@ -82,7 +82,7 @@ export async function drawChart(selectedSurveys: string[], selectedNavigators: s
             data = await getQueryData(queryType);
             chartData = prepareTitles(data);
 
-            if (chartType == Chart.Pie) {
+            if (chartType === Chart.Pie) {
                 new google.visualization.PieChart(document.getElementById('chart')!)
                     .draw(chartData!, {
                         title: 'Total Surveys Administered',
@@ -105,7 +105,7 @@ export async function drawChart(selectedSurveys: string[], selectedNavigators: s
         case DataQuery.OneTitlesPerDay:
             data = await getQueryData(queryType, selectedNavigators[0]);
 
-            if (chartType == Chart.Combo) {
+            if (chartType === Chart.Combo) {
                 chartData = prepareTitlesPerDay(selectedSurveys, data.get(selectedNavigators[0]), true);
 
                 var seriesOptions = [];
@@ -127,7 +127,7 @@ export async function drawChart(selectedSurveys: string[], selectedNavigators: s
                         seriesType: 'bars',
                         series: seriesOptions
                     });
-            } else if (chartType == Chart.Line) {
+            } else if (chartType === Chart.Line) {
                 chartData = prepareTitlesPerDay(selectedSurveys, data.get(selectedNavigators[0]), false);
 
                 new google.visualization.LineChart(document.getElementById('chart')!)
@@ -136,7 +136,7 @@ export async function drawChart(selectedSurveys: string[], selectedNavigators: s
                         vAxis: {title: 'Surveys Administered'},
                         hAxis: {title: 'Day'}
                     });
-            } else if (chartType == Chart.Bar) {
+            } else if (chartType === Chart.Bar) {
                 chartData = prepareTitlesPerDay(selectedSurveys, data.get(selectedNavigators[0]), false);
 
                 new google.visualization.BarChart(document.getElementById('chart')!)
@@ -153,7 +153,7 @@ export async function drawChart(selectedSurveys: string[], selectedNavigators: s
             data = await getQueryData(queryType, selectedNavigators[0]);
             chartData = preparePerDay(data.get(selectedNavigators[0]));
 
-            if (chartType == Chart.Line) {
+            if (chartType === Chart.Line) {
                 new google.visualization.LineChart(document.getElementById('chart')!)
                     .draw(chartData!, {
                         title: `Total for ${selectedNavigators[0]} for All Surveys Administered Over the Past 7 Days`,
@@ -169,7 +169,7 @@ export async function drawChart(selectedSurveys: string[], selectedNavigators: s
             data = await getQueryData(queryType, selectedNavigators[0]);
             chartData = prepareTitles(data.get(selectedNavigators[0]));
 
-            if (chartType == Chart.Pie) {
+            if (chartType === Chart.Pie) {
                 new google.visualization.PieChart(document.getElementById('chart')!)
                     .draw(chartData!, {
                         title: `Total Surveys Administered for ${selectedNavigators[0]}`,

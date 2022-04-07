@@ -59,7 +59,7 @@ export async function getQueryData(queryType: DataQuery, selectedNavigator?: str
     var response;
 
     if (!([DataQuery.AllTitlesPerDay, DataQuery.AllPerDay, DataQuery.AllTitles].includes(queryType))) {
-        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(\"${selectedNavigator}\")`;
+        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(${selectedNavigator})`;
 
         response = await getAdministeredSurveyData({ queryString: queryString, navigatorEmail: selectedNavigator });
     } else {

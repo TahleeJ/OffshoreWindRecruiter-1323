@@ -63,7 +63,7 @@ const Home: React.FC<props> = (props) => {
                                 <div className='title'>{survey.title}</div>
                                 <div className='description'>{survey.description ? survey.description : "No Description"}</div>
                                 <div className='questions'>{survey.questions.length} question(s)</div>
-                                <div className='responses'>{responses.filter(r => r.surveyId == survey.id).length} responses(s)</div>
+                                <div className='responses'>{responses.filter(r => r.surveyId === survey.id).length} responses(s)</div>
                             </div>
                         ))
                         : <div>There are no survey templates at the moment</div>

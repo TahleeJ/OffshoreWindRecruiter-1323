@@ -36,7 +36,7 @@ export async function deleteSurvey(id: id) {
 
 export async function getSurveyResponses() {
     const response = await firestore.getDocs(db.SurveyResponse);
-
+    // console.log(response.docs[0].data())
     return response.docs.map(s => ({ ...s.data(), id: s.id } as SurveyResponse & hasId));
 }
 

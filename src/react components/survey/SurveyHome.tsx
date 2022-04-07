@@ -3,7 +3,7 @@ import { useAppSelector } from '../../redux/hooks';
 import { OperationType } from '../../redux/navigationSlice';
 import SurveyAdminister from './SurveyAdminister';
 import SurveyCreator from './SurveyCreator';
-import SurveyResponse from './SurveyResponse';
+import ResponseView from './ResponseView';
 import SurveyReviewer from './SurveyResult';
 
 /** The props (arguments) to create this element */
@@ -27,7 +27,7 @@ const SurveyHome: React.FC<props> = (props) => {
             case OperationType.Reviewing:
                 return <SurveyReviewer />
             case OperationType.Responding:
-                return <SurveyResponse />;
+                return <ResponseView />;
             default:
                 return (
                     <div className='optionPage'> Not actually sure how you got here... </div>

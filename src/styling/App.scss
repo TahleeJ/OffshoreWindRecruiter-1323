@@ -715,32 +715,50 @@ textarea {
             }
         }
 
-        .recommendation {
-            width: calc(100% - 40px);
-            margin: 20px;
-            border-radius: 5px;
-            padding: 5px;
-            box-shadow: $subtle-shadow;
+        
+    }
 
+    .ResponseView {
+        
+        .title {
+            font-size: $largest-font-size;
+            color: $mainColor;
+            // font-weight: bold;
+            text-align: left;
+        }
+
+        .question {
+            font-weight: bold;
+            text-align: left;
+        }
+    }
+
+    .recommendation {
+        width: calc(100% - 40px);
+        margin: 20px;
+        border-radius: 5px;
+        padding: 5px;
+        box-shadow: $subtle-shadow;
+    
+        .title {
+            color: white;
+            text-align: center;
+        }
+    
+        &.neutral {
+            background-color: white;
+    
             .title {
-                color: white;
+                color: black;
             }
-
-            &.neutral {
-                background-color: white;
-
-                .title {
-                    color: black;
-                }
-            }
-
-            &.positive {
-                background-color: $mainColor;
-            }
-
-            &.negative {
-                background-color: $contrastColor;
-            }
+        }
+    
+        &.positive {
+            background-color: $mainColor;
+        }
+    
+        &.negative {
+            background-color: $contrastColor;
         }
     }
 

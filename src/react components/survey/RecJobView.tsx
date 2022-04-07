@@ -3,17 +3,16 @@ import { RecommendedJobs } from '../../firebase/Types';
 import { useAppSelector } from '../../redux/hooks';
 
 interface props {
-
+    jobs: RecommendedJobs;
 }
 
 const RecJobView: React.FC<props> = (p) => {
     const labels = useAppSelector(s => s.data.labels);
-    const recommendedJobs = useAppSelector(s => s.navigation.operationData as RecommendedJobs);
 
     return (
         <>
             <span>Here are some job recommendations that align with your survey answers:</span>
-            {recommendedJobs?.map((recommendation, index) => (
+            {p.jobs.map((recommendation, index) => (
                 <div key={index} className={"recommendation " + ((recommendation.score > 0) ? "positive" : (recommendation.score >= -0.5) ? "neutral" : "negative")}>
                     <div className='title'>{recommendation.jobOpp.jobName}</div>
                     <div className=''>{recommendation.jobOpp.companyName}</div>

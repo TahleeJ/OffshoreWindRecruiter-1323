@@ -8,7 +8,7 @@ import RecJobView from './RecJobView';
 
 const SurveyReviewer: React.FC = _ => {
     const status = useAppSelector(s => s.navigation.status);
-
+    const jobs = useAppSelector(s => s.navigation.operationData as RecommendedJobs);
     const dispatch = useAppDispatch();
 
     return (
@@ -17,7 +17,7 @@ const SurveyReviewer: React.FC = _ => {
             <div className=''>
                 <div className='surveyTitle' >Recommended Jobs</div>
                 <div className=''>
-                    {status === Status.fulfilled && <RecJobView />}
+                    {status === Status.fulfilled && <RecJobView jobs={jobs}/>}
                     {status === Status.pending &&
                         <>
                             Loading Results:

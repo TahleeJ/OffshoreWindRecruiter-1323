@@ -1085,4 +1085,94 @@ textarea {
 #InfoPage .inner {
   margin-top: 40px;
 }
+
+#analytics select, .navigatorText {
+  font-size: 18px;
+}
+
+#analytics {
+  height: calc(100% - 50px);
+  font-family: "Roboto";
+  font-size: 20px;
+  overflow-y: auto;
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+#analytics .topGrid {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+#analytics .middleColumn {
+  vertical-align: top;
+  height: 100%;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 45%;
+          flex: 1 1 45%;
+  padding: 7px;
+}
+
+#analytics .middleColumn .listViewer {
+  min-height: 100px;
+  max-height: calc(50% - 3.5px);
+}
+
+#analytics .middleColumn .listViewer:first-child {
+  margin-bottom: 7px;
+}
+
+@media screen and (max-width: 600px) {
+  #analytics .topGrid {
+    display: block;
+  }
+}
+
+#analytics .center {
+  text-align: center;
+}
+
+#analytics .surveyList {
+  height: calc(50% - 130px);
+  overflow: auto;
+  text-align: left;
+}
+
+#analytics .generateBox {
+  margin: auto;
+  width: 50%;
+}
+
+#analytics .generateButton {
+  font-weight: bold;
+  height: 50px;
+  width: 100px;
+  font-size: 18px;
+}
+
+#analytics .chartWait {
+  font-style: italic;
+}
+
+#analytics .popup {
+  color: red;
+}
+
+#analytics .popupTitle {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#analytics .chartContainer {
+  min-height: 600px;
+  min-width: 900px;
+  height: auto;
+  width: auto;
+  overflow: auto;
+  margin: auto;
+}
+
 /*# sourceMappingURL=App.css.map */

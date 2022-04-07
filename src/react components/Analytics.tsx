@@ -1,6 +1,7 @@
 import { useAppSelector } from '../redux/hooks';
 import { DataQuery } from '../firebase/Analytics/Analytics';
 import { Chart, drawChart } from '../firebase/Analytics/Draw';
+import { authInstance } from '../firebase/Firebase';
 
 enum NavigatorGrouping {
     All = 0,
@@ -14,17 +15,28 @@ const dataFocusTypes = {
     titles: "Titles"
 };
 
-
-
 const validQueryCharts = {
-    pie: [DataQuery.AllTitles, DataQuery.OneTitles], // EachTitles
-    combo: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay],
-    line: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllPerDay, DataQuery.OnePerDay],
-    bar: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllPerDay, DataQuery.OnePerDay] // EachTitles, EachPerDay
+    pie: {
+        list: [DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay], // EachTitles
+        text: "Total administration of all surveys<br />Administration total of each selected survey over the past week"
+    }, 
+    combo: {
+        list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay],
+        text: "Administration total of each selected survey over the past week"
+    },
+    line: {
+        list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllPerDay, DataQuery.OnePerDay],
+        text: "Administration total of each selected survey over the past week<br />Administration total of all surveys over the past week"
+    },
+    bar: {
+        list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllPerDay, DataQuery.OnePerDay], // EachTitles, EachPerDay
+        text: 'Administration total of each selected survey over the past week<br />Administration total of all surveys over the past week<br />Total administration of all surveys'
+    }
 }
 
 const Analytics: React.FC = (props) => {
     const surveys = useAppSelector(s => s.data.surveys);
+    const userEmail = authInstance.currentUser!.email!;
 
     var popupTitle = "";
     var popupMessage = "";
@@ -55,6 +67,7 @@ const Analytics: React.FC = (props) => {
     const dataFocusSelector = document.getElementById("data-focus") as HTMLInputElement;
     const chartTypeSelector = document.getElementById("chart-types") as HTMLInputElement;
     const navigatorBox = document.getElementById("navigator-emails") as HTMLInputElement;
+    const chartTypeInfo = document.getElementById("valid-charts") as HTMLInputElement;
     const title = document.getElementById("popup-title");
     const message = document.getElementById("popup-message");
 
@@ -64,15 +77,19 @@ const Analytics: React.FC = (props) => {
         switch(value) {
             case 'Pie':
                 chartType = Chart.Pie;
+                chartTypeInfo.innerHTML = validQueryCharts.pie.text;
                 break;
             case 'Combo':
                 chartType = Chart.Combo;
+                chartTypeInfo.innerHTML = validQueryCharts.combo.text;
                 break;
             case 'Line':
                 chartType = Chart.Line;
+                chartTypeInfo.innerHTML = validQueryCharts.line.text;
                 break;
             case 'Bar':
                 chartType = Chart.Bar;
+                chartTypeInfo.innerHTML = validQueryCharts.bar.text;
                 break;
             default:
                 break;
@@ -84,16 +101,16 @@ const Analytics: React.FC = (props) => {
 
         switch(chartType!) {
             case Chart.Pie:
-                validChartType = validQueryCharts.pie.includes(queryType);
+                validChartType = validQueryCharts.pie.list.includes(queryType);
                 break;
             case Chart.Combo:
-                validChartType = validQueryCharts.combo.includes(queryType);
+                validChartType = validQueryCharts.combo.list.includes(queryType);
                 break;
             case Chart.Line:
-                validChartType = validQueryCharts.line.includes(queryType);
+                validChartType = validQueryCharts.line.list.includes(queryType);
                 break;
             case Chart.Bar:
-                validChartType = validQueryCharts.bar.includes(queryType);
+                validChartType = validQueryCharts.bar.list.includes(queryType);
                 break;
             default:
                 break;
@@ -196,7 +213,7 @@ const Analytics: React.FC = (props) => {
 
                 if (!validNavigatorEntry) {
                     popupTitle = "Invalid Navigator Email Entry";
-                    popupMessage = "For one navigator: Please enter at least one email\nFor a set of navigators: Please enter at least two emails and separate by commas.";
+                    popupMessage = "For one navigator: Please enter at least one email<br />For a set of navigators: Please enter at least two emails and separate by commas.";
                     togglePopup();
                 } else {
                     if (validChartType!) {
@@ -217,13 +234,13 @@ const Analytics: React.FC = (props) => {
                         }
                     } else {
                         popupTitle = "Invalid Chart Type";
-                        popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected query.`;
+                        popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected data focus.`;
                         togglePopup();
                     }
                 }
             } else {
                 popupTitle = "Invalid Chart Type";
-                popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected query.\nThis view is not yet available for multiple navigators!`;
+                popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected data focus.<br />This view is not yet available for multiple navigators!`;
                 togglePopup();
             }
         } else {
@@ -233,12 +250,19 @@ const Analytics: React.FC = (props) => {
                     popupMessage = "Please select at least one survey you would like to see data for.";
                     togglePopup();
                 } else {
-                    await drawChart(selectedSurveys, selectedNavigators, chartType, queryType);
+                    try {
+                        await drawChart(selectedSurveys, selectedNavigators, chartType, queryType);
+                    } catch (error) {
+                        const { details } = JSON.parse(JSON.stringify(error));
+
+                        popupTitle = "Query Error";
+                        popupMessage = details;
+                        togglePopup();
+                    }
                 }
             } else {
-                console.log(queryType);
                 popupTitle = "Invalid Chart Type";
-                popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected query.`;
+                popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected data focus.`;
                 togglePopup();
             }
         }   
@@ -271,80 +295,77 @@ const Analytics: React.FC = (props) => {
     }
 
     return (
-        <div id='analytics' className='adminContainer'>
+        <div id='analytics'>
             <div className='topGrid'>  
-                <div className='config'>  
-                    <h3>Query Configuration:</h3> 
-                    <div className='listViewer' style={{ textAlign: "left" }}>
-                        <p>Navigator Group:</p>
+                <div className='middleColumn left' style={{ padding: "7px" }}>
+                    {/* <h2></h2>  */}
+                    <div className='listViewer' style={{ height: "25%"}}>
+                        <div className='title'>Navigator Focus</div>
                         <input type="radio" id='all-navigators' name='navigator-grouping' defaultChecked onClick={() => { navigatorGrouping = NavigatorGrouping.All}}></input>
                         <label htmlFor='all-navigators'>All Navigators</label><br></br>
-                        <input type="radio" id='set-navigators' name='navigator-grouping' onClick={() => { navigatorGrouping = NavigatorGrouping.Set}}></input>
-                        <label htmlFor='set-navigators'>Set of Navigators</label><br></br>
+                        {/* <input type="radio" id='set-navigators' name='navigator-grouping' onClick={() => { navigatorGrouping = NavigatorGrouping.Set}}></input>
+                        <label htmlFor='set-navigators'>Set of Navigators</label><br></br> */}
                         <input type="radio" id='one-navigator' name='navigator-grouping' onClick={() => { navigatorGrouping = NavigatorGrouping.One}}></input>
                         <label htmlFor='one-navigator'>One Navigator</label>
+                        <div style={{ height: "10px"}}></div>
+                        <div>
+                            <label htmlFor='navigator-emails' style={{ fontWeight: "bold" }}>Navigator(s):</label>
+                            <input className='navigatorText' type='text' id='navigator-emails' defaultValue={userEmail}></input>
+                            <p style={{ color: "red" }}>*Enter a maximum of 5 emails, separate by commas if more than one.</p>
+                        </div> 
+                    </div>
 
-                        <p>Data Focus:</p>
+                    <div className='listViewer' style={{ height: "75%"}}>
+                        <div className='title'>Data Focus</div>
                         <select id="data-focus" name="Query Types" defaultValue={dataFocusTypes.titles}>
                             <option value={dataFocusTypes.titleday}>Administration total of each selected survey over the past week</option>
                             <option value={dataFocusTypes.perday}>Administration total of all surveys over the past week</option>
                             <option value={dataFocusTypes.titles}>Total administration of all surveys</option>
-                        </select>   
-                    </div>
-
-                    <div style={{ height: "25px"}}></div>
-                    <h3>Available Surveys:</h3>
-                    <div className='listViewer' style={{ height: "200px", overflow: "auto", textAlign: "left" }}>
-                        {surveys.length > 0 ?
-                            surveys.map((survey, ind) => {
-                                return <div>
-                                        <input type='checkbox' id={":" + ind} value={survey.title} onClick={() => handleClick(":" + ind)}></input>
-                                        <label htmlFor={":" + ind}>{survey.title}</label>
-                                    </div>
-                            })
-                            : <div>There are no survey templates at the moment</div>
-                        }
-                    </div>
-                    <p style={{ color: "red" }}>*Select a maximum of 5 survey titles.</p>
-                    <div style={{ height: "10px"}}></div>
-                    <h3>Specific Navigators:</h3>
-                    
-                    <div>
-                        <label htmlFor='navigator-emails'>Specific navigator(s):</label>
-                        <input type='text' id='navigator-emails'></input>
-                        <label htmlFor='navigator-emails'>* Separate by commas if more than one</label>
-                        <p style={{ color: "red" }}>*Enter a maximum of 5 emails.</p>
-                    </div>
-                    <div style={{ height: "10px"}}></div>
-                    <h3>Chart Type:</h3>
-                    <select id="chart-types" name="Chart Types" onChange={(e) => {getChartType(e.target.value)}}>
-                        <option value='Pie' defaultChecked>Pie</option>
-                        <option value='Combo'>Combo</option>
-                        <option value='Line'>Line</option>
-                        <option value='Bar'>Bar</option>
-                        <option value='Table'>Table</option>
-                    </select>
-                    <br></br>
-
-                    <div style={{ height: "10px"}}></div>
-
-                     <button onClick={generateChart}>Generate</button>
-                </div>
-                <div id='Popup-analytics'>
-                    <div>
-                        <div>
-                            <p id="popup-title" style={{ color: "red", fontSize: "20px" }}></p>
-                            <p id="popup-message" style={{ color: "red" }}></p>
+                        </select>  
+                        <p style={{ fontWeight: "bold" }}>Available Surveys:</p>
+                        <div className='surveyList listViewer'>
+                            <div className='listElements'>
+                            {surveys.length > 0 ?
+                                surveys.map((survey, ind) => {
+                                    return <div key={ind}>
+                                            <input type='checkbox' id={":" + ind} value={survey.title} onClick={() => handleClick(":" + ind)}></input>
+                                            <label htmlFor={":" + ind}>{survey.title}</label>
+                                        </div>
+                                })
+                                : <div>There are no survey templates at the moment</div>
+                            }
+                            </div>
                         </div>
+                        <p style={{ color: "red" }}>*Select a maximum of 5 survey titles.</p>
                     </div>
                 </div>
-                <h2>You Chart is Here!</h2>
-                <p>It may take a few seconds to actually show.</p>
-                <div className='chartContainer'>
-                    <div className='' id="chart" style={{height: "600px", width: "900px", overflow: "auto"}}></div>
+
+                <div className='middleColumn right'>
+                    <div className='listViewer'>
+                        <div className='title'>Chart Type</div>
+                        <select id="chart-types" name="Chart Types" onChange={(e) => {getChartType(e.target.value)}}>
+                            <option value='Pie' defaultChecked>Pie</option>
+                            <option value='Combo'>Combo</option>
+                            <option value='Line'>Line</option>
+                            <option value='Bar'>Bar</option>
+                        </select>
+                        <p style={{ color: "green", fontWeight: "bold" }}>Valid Data Focuses:</p>
+                        <p id='valid-charts'>Total administration of all surveys<br />Administration total of each selected survey over the past week</p>
+                        <div className='generateBox center'>
+                            <button className='generate-button' onClick={generateChart}>Generate</button>
+                            <p id="popup-title" className='popup popupTitle center'></p>
+                            <p id="popup-message" className='popup center'></p>
+                        </div>
+                            
+
+                    </div>
+                    <div className='listViewer'>
+                        <div className='title'>Your Chart!</div>
+                        <div className='chartContainer' id="chart"></div>
+                    </div>
                 </div>
             </div>
-        </div>
+    </div>
     )
 }
 

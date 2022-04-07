@@ -33,6 +33,7 @@ const dataSlice = createSlice({
             state.jobOpps = payload;
         },
         setSurveyResponses(state, { payload }: PayloadAction<(SurveyResponse & hasId)[]>) {
+            // console.log(payload);
             state.surveyResponses = payload;
         },
         //add other methods here for when we know the types of jobOpps, etc

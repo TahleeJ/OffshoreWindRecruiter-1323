@@ -4,8 +4,7 @@ export enum Chart {
     Pie = 0,
     Combo = 1,
     Line = 2,
-    Bar = 3,
-    Table = 4
+    Bar = 3
 }
 
 export async function drawChart(selectedSurveys: string[], selectedNavigators: string[], chartType: Chart, queryType: DataQuery) {
@@ -17,7 +16,7 @@ export async function drawChart(selectedSurveys: string[], selectedNavigators: s
         case DataQuery.AllTitlesPerDay:
             data = await getQueryData(queryType);
 
-            if (chartType == Chart.Combo) {
+            if (chartType === Chart.Combo) {
                 chartData = prepareTitlesPerDay(selectedSurveys, data, true);
 
                 var seriesOptions = [];
@@ -65,7 +64,7 @@ export async function drawChart(selectedSurveys: string[], selectedNavigators: s
             data = await getQueryData(queryType);
             chartData = preparePerDay(data);
 
-            if (chartType == Chart.Line) {
+            if (chartType === Chart.Line) {
                 new google.visualization.LineChart(document.getElementById('chart')!)
                     .draw(chartData!, {
                         title: 'Total for All Surveys Administered Over the Past 7 Days',
@@ -108,8 +107,8 @@ export async function drawChart(selectedSurveys: string[], selectedNavigators: s
             if (chartType === Chart.Combo) {
                 chartData = prepareTitlesPerDay(selectedSurveys, data.get(selectedNavigators[0]), true);
 
-                var seriesOptions = [];
-                var tempCounter = 0;
+                seriesOptions = [];
+                tempCounter = 0;
             
                 while (tempCounter < selectedSurveys.length) {
                     seriesOptions.push({});

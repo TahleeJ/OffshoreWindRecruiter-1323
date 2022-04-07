@@ -126,7 +126,7 @@ const SurverCreator: React.FC = (props: props) => {
         console.log(questions);
         questions.map(q =>{
             q.answers.map(a => {
-                if (a.labelIds.length == 0) {
+                if (a.labelIds.length === 0) {
                     hasLabel = false;
                 }
             })

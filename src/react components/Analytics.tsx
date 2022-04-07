@@ -330,10 +330,10 @@ const Analytics: React.FC = (props) => {
 
                      <button onClick={generateChart}>Generate</button>
                 </div>
-                <div id='Popup-analytics' style={{ display: "hidden" }}>
+                <div id='Popup-analytics'>
                     <div>
                         <div>
-                            <h4 id="popup-title" style={{ color: "red" }}></h4>
+                            <p id="popup-title" style={{ color: "red", fontSize: "20px" }}></p>
                             <p id="popup-message" style={{ color: "red" }}></p>
                         </div>
                     </div>

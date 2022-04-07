@@ -32,6 +32,7 @@ const SurveyCreator: React.FC = (props: props) => {
     /** This contains the old survey data. */
     const reduxSurveyData = useAppSelector(s => s.navigation.operationData as SurveyTemplate & { id: string });
     const labels = useAppSelector(s => s.data.labels);
+    const surveyResponses = useAppSelector(s => s.data.surveyResponses);
     /**Used to get the scrollOffset for the label connectors */
     const pageRef = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
@@ -133,8 +134,13 @@ const SurveyCreator: React.FC = (props: props) => {
                 await newSurvey(survey);
 
                 logSurveyCreation(survey.title, authInstance.currentUser!.email!);
-            } else
-                await editSurvey(reduxSurveyData.id, survey);
+            } else {
+                if (surveyResponses.filter(sr => sr.surveyId == reduxSurveyData.id).length > 0) {
+                    if (window.confirm("There are survey responses of this survey. Editing this survey will also edit the questions seen on the response. It will not effect the job opportunities shown on the response.Press OK to continue"))
+                        await editSurvey(reduxSurveyData.id, survey);
+                    else return;
+                }
+            }
 
             dispatch(changePage({ type: PageType.AdminHome }));
             dispatch(setSurveys(await getSurveys()));

@@ -23,7 +23,8 @@ export enum OperationType {
     Deleting,
     Creating,
     Administering,
-    Reviewing
+    Reviewing,
+    Responding
 }
 
 export enum Status {

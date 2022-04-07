@@ -4,12 +4,6 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import ListViewer from './ListViewer';
 
-// import * as firestore from "@firebase/firestore";
-// import { useEffect } from 'react';
-// import { Survey } from '../firebase/Types';
-// import { getSurveys } from '../firebase/SurveyQueries';
-// import { useState } from 'react';
-
 interface props {
 
 }

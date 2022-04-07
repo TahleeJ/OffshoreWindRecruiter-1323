@@ -19,10 +19,10 @@ const SurveyAdminister: React.FC = (p: props) => {
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
-    const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+    const [popupVisible, setPopupVisible] = useState<Boolean>(false);
     const dispatch = useAppDispatch();
 
-    const togglePopup = () => setPopupvisible(!popupVisible);
+    const togglePopup = () => setPopupVisible(!popupVisible);
     const handleRadioChange = (qI: number, aI: number) => {
         let clone = lodash.cloneDeep(answers);
         clone[qI] = aI;

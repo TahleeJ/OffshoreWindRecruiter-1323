@@ -781,7 +781,18 @@ textarea {
   text-align: left;
 }
 
-#surveyHome .administerSurveyPage .recommendation {
+#surveyHome .ResponseView .title {
+  font-size: 28px;
+  color: #7ba1ff;
+  text-align: left;
+}
+
+#surveyHome .ResponseView .question {
+  font-weight: bold;
+  text-align: left;
+}
+
+#surveyHome .recommendation {
   width: calc(100% - 40px);
   margin: 20px;
   border-radius: 5px;
@@ -790,23 +801,24 @@ textarea {
           box-shadow: 0px 0px 3px 2px #dddddd;
 }
 
-#surveyHome .administerSurveyPage .recommendation .title {
+#surveyHome .recommendation .title {
   color: white;
+  text-align: center;
 }
 
-#surveyHome .administerSurveyPage .recommendation.neutral {
+#surveyHome .recommendation.neutral {
   background-color: white;
 }
 
-#surveyHome .administerSurveyPage .recommendation.neutral .title {
+#surveyHome .recommendation.neutral .title {
   color: black;
 }
 
-#surveyHome .administerSurveyPage .recommendation.positive {
-  background-color: #13be4c;
+#surveyHome .recommendation.positive {
+  background-color: #7ba1ff;
 }
 
-#surveyHome .administerSurveyPage .recommendation.negative {
+#surveyHome .recommendation.negative {
   background-color: #d16161;
 }
 

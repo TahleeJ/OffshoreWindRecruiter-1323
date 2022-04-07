@@ -34,7 +34,7 @@ const SurveyAdminister: React.FC = (p: props) => {
         setAnswers(clone)
     }
     const conditionallySave = async () => {
-        if (answers.filter(a => a === "").length > 0) {
+        if (answers.some(a => a === "")) {
             togglePopup();
         } else {
             let survey: SurveyResponse = {
@@ -53,7 +53,7 @@ const SurveyAdminister: React.FC = (p: props) => {
     }
 
     useEffect(() => {
-        setAnswers(reduxSurveyData.questions.map(q => ""))
+        setAnswers(reduxSurveyData.questions.map(q => ""));
     }, [reduxSurveyData]);
 
     return (

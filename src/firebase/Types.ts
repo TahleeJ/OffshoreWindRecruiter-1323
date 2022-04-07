@@ -1,6 +1,8 @@
 export type id = string;
 export type hasId = { id: id };
 
+export type RecommendedJobs = { score: number, jobOpp: JobOpp }[];
+
 
 export interface SurveyTemplate {
     title: string
@@ -61,6 +63,7 @@ export interface JobOpp {
     jobName: string
     companyName: string
     jobDescription: string
+    jobLink: string
 
     labelIds: id[]
 }

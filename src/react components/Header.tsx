@@ -32,6 +32,7 @@ const Header: React.FC<headerProps> = (p: headerProps) => {
             <div className='title'>{"Offshore Recruiter".toUpperCase()}</div>
             <div className='buttonGroup'>
                 <i className='fas fa-home' onClick={() => { appDispatch(changePage({ type: PageType.Home })) }} data-tip="Home"></i>
+                <i className='fas fa-info' onClick={() =>{appDispatch(changePage({type: PageType.InfoPage}))}} data-tip="Information"></i>
                 {isAdmin ?
                     <i className='fas fa-tools' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })) }} data-tip="Administrative"></i>
                     : null

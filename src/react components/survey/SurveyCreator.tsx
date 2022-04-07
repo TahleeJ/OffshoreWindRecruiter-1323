@@ -1,5 +1,7 @@
 import lodash from "lodash";
 import React, { useEffect, useState } from "react";
+import { logSurveyCreation } from "../../firebase/Analytics/Analytics";
+import { authInstance } from "../../firebase/Firebase";
 import { editSurvey, getSurveys, newSurvey } from "../../firebase/Queries/SurveyQueries";
 import { QuestionType, SurveyTemplate, SurveyAnswer, SurveyQuestion } from "../../firebase/Types";
 import { setSurveys } from "../../redux/dataSlice.ts";
@@ -134,9 +136,11 @@ const SurveyCreator: React.FC = (props: props) => {
                 description: desc,
                 questions: questions,
             }
-            if (currentOperation === OperationType.Creating)
+            if (currentOperation === OperationType.Creating) {
                 await newSurvey(survey);
-            else
+
+                logSurveyCreation(survey.title,  authInstance.currentUser!.email!);
+            } else
                 await editSurvey(reduxSurveyData.id, survey);
 
             dispatch(changePage({ type: PageType.AdminHome }));
@@ -228,7 +232,7 @@ const SurveyCreator: React.FC = (props: props) => {
                 })
             }
             <button onClick={addNewQuestion}>New Question</button>
-            <button onClick={conditionallySave}>{currentOperation === OperationType.Creating ? "Save Survey as New" : "Save Edits"}</button>
+            <button className='new-survey' id={title} onClick={conditionallySave}>{currentOperation === OperationType.Creating ? "Save Survey as New" : "Save Edits"}</button>
             {popupVisible &&
                 <Prompt
                     title="Empty Input"

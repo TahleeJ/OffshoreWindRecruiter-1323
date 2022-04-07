@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import * as firebaseAuth from "@firebase/auth";
 import * as firestore from "@firebase/firestore";
 import * as functions from "@firebase/functions";
+import * as analytics from "@firebase/analytics";
 
 import { PermissionLevel, RecommendedJobs, SurveyResponse } from './Types';
 
@@ -22,9 +23,11 @@ export const AuthContext = createContext({} as any);
 export const authInstance = firebaseAuth.getAuth(firebaseApp);
 export const firestoreInstance = firestore.getFirestore(firebaseApp);
 export const functionsInstance = functions.getFunctions(firebaseApp);
+export const analyticsInstance = analytics.getAnalytics(firebaseApp);
 
 export const updatePermissions = functions.httpsCallable<{ userEmail: string, newPermissionLevel: number }, undefined>(functionsInstance, 'updatePermissions');
 export const checkAdmin = functions.httpsCallable<undefined, { isAdmin: PermissionLevel }>(functionsInstance, 'checkAdmin');
+export const getAdministeredSurveyData = functions.httpsCallable<{queryString: string, navigatorEmail?: string}>(functionsInstance, 'getAdministeredSurveyData');
 export const submitSurvey = functions.httpsCallable<SurveyResponse, RecommendedJobs>(functionsInstance, 'submitSurvey');
 
 // Local function testing

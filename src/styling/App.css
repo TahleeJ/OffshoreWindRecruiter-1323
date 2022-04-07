@@ -300,6 +300,38 @@ textarea {
           box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
+#analytics {
+  height: calc(100% - 50px);
+  font-family: "Roboto";
+  font-size: 15px;
+  overflow-y: auto;
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+#analytics .config {
+  vertical-align: top;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 40%;
+          flex: 1 1 40%;
+  padding: 7px;
+}
+
+#analytics .chartContainer {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 40%;
+          flex: 1 1 40%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
 #adminHome .topGrid {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1068,6 +1100,11 @@ textarea {
   background-color: #dadada;
 }
 
+/* #chart {
+  width: 900px;
+  height: 500px;
+} */
+/*# sourceMappingURL=App.css.map */
 #InfoPage .container {
   margin-top: 20px;
   color: #7ba1ff;

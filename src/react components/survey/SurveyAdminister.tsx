@@ -4,6 +4,8 @@ import { hasId, QuestionType, SurveyResponse, SurveyTemplate } from '../../fireb
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changeOperation, changePage, OperationType, PageType, submitSurveyResponse } from '../../redux/navigationSlice';
 import Prompt from '../Prompt';
+import { authInstance } from '../../firebase/Firebase';
+import { logSurveyAdministered } from '../../firebase/Analytics/Analytics';
 
 interface props {
 
@@ -46,6 +48,9 @@ const SurveyAdminister: React.FC = (p: props) => {
                 },
                 answers: answers
             }
+
+
+            logSurveyAdministered(reduxSurveyData.title, authInstance.currentUser!.email!);
 
             dispatch(submitSurveyResponse(survey))
             dispatch(changeOperation({ operation: OperationType.Reviewing }));
@@ -117,7 +122,7 @@ const SurveyAdminister: React.FC = (p: props) => {
                     >
                         Cancel Survey
                     </button>
-                    <button onClick={conditionallySave}>Submit</button>
+                    <button className='submit-survey' id={reduxSurveyData.title} onClick={conditionallySave}>Submit</button>
                 </div>
             </div>
             {popupVisible &&

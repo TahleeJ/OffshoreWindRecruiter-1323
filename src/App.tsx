@@ -14,6 +14,7 @@ import AdminManager from './react components/AdminManager';
 import LabelManager from './react components/label/LabelManager';
 import JobManager from './react components/Job/JobManager';
 import AuthPage from './react components/AuthPage';
+import Analytics from './react components/Analytics';
 
 import { getSurveyResponses, getSurveys } from './firebase/Queries/SurveyQueries';
 import { setLabels, setSurveys, setJobOpps, setSurveyResponses } from './redux/dataSlice.ts';
@@ -30,6 +31,7 @@ const getOverallPageFromType = (type: PageType) => {
         case PageType.AdminManage: return <AdminManager />
         case PageType.LabelManage: return <LabelManager />
         case PageType.JobManage: return <JobManager />
+        case PageType.Analytics: return <Analytics />
         case PageType.InfoPage: return <InfoPage />
     }
 }
@@ -62,7 +64,7 @@ const App: React.FC = () => {
                         appDispatch(setSurveys(await getSurveys()));
                     })();
                 }
-            } catch(e) {}     
+            } catch(e) {} 
         });
     })
 

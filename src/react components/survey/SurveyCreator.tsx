@@ -124,8 +124,8 @@ const SurverCreator: React.FC = (props: props) => {
     const conditionallySave = async () => {
         let hasLabel = true;
         console.log(questions);
-        questions.map(q =>{
-            q.answers.map(a => {
+        questions.map(q =>{ // eslint-disable-next-line
+            q.answers.map(a => { // eslint-disable-next-line
                 if (a.labelIds.length === 0) {
                     hasLabel = false;
                 }

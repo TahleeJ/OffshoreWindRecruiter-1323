@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { editLabel, getJobReferencesToLabel, getLabels, getSurveyReferencesToLabel } from '../../firebase/Queries/LabelQueries';
-import { hasId, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion, JobOpp } from '../../firebase/Types';
+import { hasId, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion, JobOpp, QuestionType } from '../../firebase/Types';
 import { setLabels } from '../../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
@@ -61,7 +61,9 @@ const LabelManager: React.FC<props> = (props) => {
                                 {[...questionRefs].map(([question, answers], qI) => {
                                     return <div key={qI}>
                                         <div className='questionTitle'>Question: {question.prompt}</div>
-                                        {answers.map((answer, aI) => <div className='answerTitle' key={aI}>Answer: {answer.text}</div>)}
+                                        {answers.map((answer, aI) => (
+                                            <div className='answerTitle' key={aI}>{question.questionType === QuestionType.MultipleChoice ? answer.text : "------"}</div>
+                                        ))}
                                     </div>
                                 })
                                 }

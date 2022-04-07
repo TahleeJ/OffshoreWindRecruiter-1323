@@ -4,12 +4,13 @@ import LabelSelector from "./LabelSelector";
 
 interface props {
     labels: (Label & hasId & { isEnabled: boolean })[];
+    topOffset: number;
     toggleLabel: (id: string) => void;
 }
 
 const LabelConnector: React.FC<props> = (p) => {
     const [selectorOpen, setSelectorOpen] = useState(false);
-    const elementRef = useRef(null);
+    const elementRef = useRef<HTMLElement>(null);
     const [top, setTop] = useState(0);
     const [left, setLeft] = useState(0);
 
@@ -17,8 +18,9 @@ const LabelConnector: React.FC<props> = (p) => {
 
     useEffect(() => {
         if (elementRef.current) {
-            setTop((elementRef.current as HTMLElement).getBoundingClientRect().top as number)
-            setLeft((elementRef.current as HTMLElement).getBoundingClientRect().left as number)
+            console.log(p.topOffset)
+            // setTop( as number)
+            // setLeft( as number)
         }
     }, []);
 
@@ -37,8 +39,8 @@ const LabelConnector: React.FC<props> = (p) => {
                         toggleSelector();
                     }}
                     labels={p.labels}
-                    top={top}
-                    left={left}
+                    top={(elementRef.current as HTMLElement).getBoundingClientRect().top - p.topOffset}
+                    left={(elementRef.current as HTMLElement).getBoundingClientRect().left}
                 />
                 : null
             }

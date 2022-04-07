@@ -4,17 +4,9 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import ListViewer from './ListViewer';
 
-// import * as firestore from "@firebase/firestore";
-// import { useEffect } from 'react';
-// import { Survey } from '../firebase/Types';
-// import { getSurveys } from '../firebase/SurveyQueries';
-// import { useState } from 'react';
-
 interface props {
 
 }
-
-// var firebase = require('firebase');
 
 const Home: React.FC<props> = (props) => {
     const surveys = useAppSelector(s => s.data.surveys);
@@ -64,7 +56,7 @@ const Home: React.FC<props> = (props) => {
                                 <div className='title'>{survey.title}</div>
                                 <div className='description'>{survey.description ? survey.description : "No Description"}</div>
                                 <div className='questions'>{survey.questions.length} question(s)</div>
-                                <div className='responses'>{responses.filter(r => r.surveyId == survey.id).length} responses(s)</div>
+                                <div className='responses'>{responses.filter(r => r.surveyId === survey.id).length} responses(s)</div>
                             </div>
                         ))
                         : <div>There are no survey templates at the moment</div>

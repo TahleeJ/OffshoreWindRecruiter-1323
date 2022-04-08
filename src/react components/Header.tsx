@@ -21,7 +21,6 @@ const Header: React.FC<headerProps> = (p: headerProps) => {
 
     const updateIsAdmin = async () => {
         const isA = await assertIsAdmin(authInstance.currentUser?.uid!);
-        console.log("User is admin: " + isA);
 
         setIsAdmin(isA);
     }
@@ -33,8 +32,12 @@ const Header: React.FC<headerProps> = (p: headerProps) => {
             <div className='buttonGroup'>
                 <i className='fas fa-home' onClick={() => { appDispatch(changePage({ type: PageType.Home })) }} data-tip="Home"></i>
                 <i className='fas fa-info' onClick={() =>{appDispatch(changePage({type: PageType.InfoPage}))}} data-tip="Information"></i>
+                {isAdmin ? 
+                    <i className='fas fa-tools admin-manager' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })) }} data-tip="Administrative Dashboard"></i>
+                    : null
+                }
                 {isAdmin ?
-                    <i className='fas fa-tools admin-manager' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })) }} data-tip="Administrative"></i>
+                    <i className="far fa-chart-bar" onClick={() => { appDispatch(changePage({ type: PageType.Analytics }))}} data-tip="Analytics"></i>
                     : null
                 }
                 <i className="fas fa-sign-out-alt sign-out" onClick={() => firebaseAuth.signOut(authInstance)} data-tip="Sign Out"></i>

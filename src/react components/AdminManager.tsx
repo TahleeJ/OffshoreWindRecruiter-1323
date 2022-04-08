@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAppDispatch } from '../redux/hooks';
 import { changePage, PageType } from '../redux/navigationSlice';
 
-import { authInstance } from '../firebase/Firebase';
 import { PermissionLevel } from '../firebase/Types';
-import { getUser, setUserPermissionLevel } from '../firebase/Queries/AdminQueries';
+import { setUserPermissionLevel } from '../firebase/Queries/AdminQueries';
 
 import Prompt from './Prompt';
 
@@ -14,30 +13,27 @@ interface props {
 
 }
 
+function useForceUpdate(){
+    const [value, setValue] = useState(0); // integer state
+    return () => setValue(value => value + 1); // update the state to force render
+}
+
 /** The header of the application. */
 const AdminManager: React.FC<props> = (props) => {
-    const [emails, setEmails] = useState("");
-    const [permissionLevel, setPermission] = useState(PermissionLevel.None);
-    const [updateEmails, setUpdateEmails] = useState([""]);
+    const [emailsState, setEmailsState] = useState("");
+    const [updateEmailsState, setUpdateEmailsState] = useState([""]);
     const dispatch = useAppDispatch();
-    const [changeLevel, setChangeLevel] = useState("Admin");
-    const [errorMessage, setErrorMessage] = useState("");
-    const [errorText, setErrorText] = useState("")
-    const [updateLevel, setUpdateLevel] = useState(PermissionLevel.None);
-
-    const updateIsAdmin = async () => {
-        const uid = authInstance.currentUser?.uid!;
-        const userDoc = await getUser(uid);
-
-        if (userDoc !== undefined)
-            setPermission(userDoc.permissionLevel);
-    }
+    const [changeLevelState, setChangeLevelState] = useState("Admin");
+    const [errorTextState, setErrorTextState] = useState("")
+    const [updateLevelState, setUpdateLevelState] = useState(PermissionLevel.None);
 
     const [popupVisible, setPopupvisible] = useState<Boolean>(false);
 
     const togglePopup = () => setPopupvisible(!popupVisible);
 
-    var emailEntry: string;
+    var emails = emailsState;
+    var updateEmails = updateEmailsState;
+    var updateLevel = updateLevelState;
 
     function validateEmailEntry() {
         var updateEmailEntries = [];
@@ -47,7 +43,8 @@ const AdminManager: React.FC<props> = (props) => {
             for (const entry of newUpdateEmails) {
                 const adjustedEntry = entry.trim();
                 if (adjustedEntry.length < 5) {
-                    setUpdateEmails([]);
+                    updateEmails = [];
+                    setUpdateEmailsState([]);
     
                     return false;
                 }
@@ -55,7 +52,8 @@ const AdminManager: React.FC<props> = (props) => {
                 updateEmailEntries.push(adjustedEntry);
             }
 
-            setUpdateEmails(updateEmailEntries);
+            updateEmails = updateEmailEntries;
+            setUpdateEmailsState(updateEmails);
     
             return true;
         } else {
@@ -63,55 +61,51 @@ const AdminManager: React.FC<props> = (props) => {
         }
     }
 
-    const setNewUpdateLevel = (newLevel: string) => {
+    function setEmails(newEmails: string) {
+        emails = newEmails;
+        setEmailsState(emails);
+    }
+
+    function setNewUpdateLevel(newLevel: string) {
         switch(newLevel) {
             case "Owner":
-                setUpdateLevel(PermissionLevel.Owner);
+                updateLevel = PermissionLevel.None;
                 break;
             case "Admin":
-                setUpdateLevel(PermissionLevel.Admin);
+                updateLevel = PermissionLevel.Admin;
                 break;
             case "None":
-                setUpdateLevel(PermissionLevel.None);
+                updateLevel = PermissionLevel.Owner;
                 break;
         }
 
-        setChangeLevel(newLevel);  
-    }
-
-    const setEmailEntry = (emails: string) => {
-        emailEntry = emails;
-        setEmails(emails);
+        setUpdateLevelState(updateLevel);
+        setChangeLevelState(newLevel);  
     }
 
     const update = async () => {
         const validateResult = validateEmailEntry();
 
         if (validateResult) {
-            // var errorEmails = "";
-            var errorEmailsMessage = "";
             var invalidEmail = false;
+            var errorEmailsMessage = "";
     
             for (const email of updateEmails) {
                 const result = await setUserPermissionLevel(email, updateLevel);
     
                 if (result !== "Update success!") {
                     invalidEmail = true;
-                    // errorEmails = errorEmails + `${email}: ${result}\n`;
                     errorEmailsMessage = errorEmailsMessage + `${email}: ${result}\n`;
                 }
             }
 
-            setErrorText(errorEmailsMessage);
-            // setErrorMessage(errorEmails);
+            setErrorTextState(errorEmailsMessage);
             togglePopup();
         } else {
-            setErrorMessage("Please enter at least one email and separate the rest by commas.");
+            setErrorTextState("Please enter at least one email and separate the rest by commas.");
             togglePopup();
         }    
     }
-
-    useEffect(() => { updateIsAdmin(); }, []);
 
     return (
         <div id="promoteUser">
@@ -130,12 +124,12 @@ const AdminManager: React.FC<props> = (props) => {
             
             <div className="inputContainer">
                 <div className="userEmail">User Email(s):</div>
-                <input type="text" value={emails} onChange={(e) => setEmailEntry(e.target.value)} placeholder='example@gmail.com'></input>
-                <div className="error" style={{ whiteSpace: "pre-wrap", height: "75px", overflow: "auto" }}>{errorText}</div>
+                <input type="text" value={emailsState} onChange={(e) => setEmails(e.target.value)} placeholder='example@gmail.com'></input>
+                <div className="error" style={{ whiteSpace: "pre-wrap", height: "75px", overflow: "auto" }}>{errorTextState}</div>
             </div>
             <div className = "dropDown">
                 <label className='dropText' htmlFor='permission-select'>Update to: </label>
-                <select id='permission-select' value={changeLevel} onChange={(e) => setNewUpdateLevel(e.target.value)}>
+                <select id='permission-select' value={changeLevelState} onChange={(e) => setNewUpdateLevel(e.target.value)}>
                     <option value="Admin">Admin</option>
                     <option value="Owner">Owner</option>
                 </select>
@@ -149,7 +143,7 @@ const AdminManager: React.FC<props> = (props) => {
                 {popupVisible &&
                 <Prompt
                     title="Permission Update Error"
-                    message="Please make sure you have entered valid email addresses and that your selected users are members of this application."
+                    message="There was an error updating the permission level of some of your selected users. Please make sure you have entered valid email addresses and that your selected users are members of this application."
                     handleCancel={togglePopup}
                 />
             }

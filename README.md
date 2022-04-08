@@ -2,9 +2,14 @@
 A recruiting tool for the offshore wind industry related industry that automates the process of matching applications to job opportunities. Centered on customizable surveys to gauge skills and interests, our tool will match these survey responses to known job opportunities that an applicant could be a good fit to apply for.
 This project is a web application supported on both mobile and desktop platforms. Our backend and hosting services will use Firebase, and our frontend uses React with TypeScript. 
 
+# Development Prerequisites
+- Git clone this repository
+- Node.js installed
+- Contact project owner to receive the project's `.env` file and place inside `OffshoreWindJobNavigator-1323/`
+
 Licensed under MIT License
 
-# Frontend:
+# Frontend
 To edit the frontend:
 - open the project in an IDE
 - open a terminal (ctrl + shift + p in vscode then type new terminal)
@@ -13,6 +18,67 @@ To edit the frontend:
 - edit the files under "./src/" which will mostly include the components from "./react components"
 - only edit the .scss file and compile it to css using the 'live sass compiler" extension
 
+# Backend
+## Before You Begin
+**After [Development Prerequisites]()* 
+1. Contact Firebase project owner to be added as a member of the project
+2. Open a terminal session and navigate into `OffshoreWindJobNavigator-1323`
+3. Run `npm install` to create your `node_modules` folder with all currently necessary packages required to run the project as specified in `./package.json`
+4. Run `firebase login` and login with the account authorized as a member of the Firebase project from [Step 1]()
+5. Run `firebase init`
+    - Select `Emulators` and press enter
+    - Ensure the `Authentication, Functions, Firestore, and Hosting` emulators are selected and press enter
+    - Enter "y" and press enter as necessary to select all default options
+6. Navigate into `./functions` and run `npm install`
+
+## Project Architecture [Backend]
+### Firebase
+- **`./firebase.src` defines the Firebase project name
+- **`./firebase.json` defines the hosting deployment and local emulator port usage information that Firebase will use
+- `./src/firebase/Types.ts` defines all of the custom data types the application uses
+
+** Indicates you do **NOT** need to edit.
+
+### Firestore
+`./src/firebase/Queries.ts` holds all of the queries used to interact with Firestore
+<br><br>
+
+### Google Cloud Functions
+#### **Function Editing/Deployment:**
+
+To add or edit a new function, navigate into `./functions/src` and add your new function in a new `*.ts` file or edit one of the existing `*Functions.ts` files. After writing your function, follow the conventions done in `./src/functions/src/index.ts`.
+
+To deploy your function, run `firebase deploy --only functions:[function  1 name], [function 2 name]` to deploy specific functions or simply stop at `--only function` to deploy all.
+<br><br>
+
+#### **Function Testing:**
+
+Unit Testing Suite:
+
+Unit test in this application are written using Mocha in the `./functions/test` location. Before editing the test suite environment, please read through the included [Testing.md]() file. 
+
+To edit an existing test suite, navigate into one of the existing `*.spec.ts*` files and edit accordingly. To create a new testing suite, create a new `.spec.ts` file and follow the conventions in the other test suite files.
+
+To run the test suite environment, run `npm test` in `./functions`.
+<br><br>
+
+Application Integrated Testing:
+
+1. Include the following line in `./src/firebase/Firebase.ts`: `functions.connectFunctionsEmulator(functionsInstance, "localhost", 5001);`
+2. Navigate into `/OffshoreWindJobNavigator` and, if the application is not already running on localhost, run `npm start`
+3. If you would like to test your functions without affecting production, run `firebase emulators:start`, otherwise run `firebase emulators:start --only functions`
+
+<br>
+
+### Job Matching
+The job matching process is done via a [custom algorithm]() run in the cloud function `submitSurveyResponse` in `./functions/SurveyFunctions.ts`. More information can be found in [Matching.md]().
+
+<br>
+
+### Analytics
+The analytics collected for this application are done via logging functions in `./src/firebase/Analytics/Analytics.ts`, and the data is retrieved from BigQuery via the functions in `./functions/AnalyticsFunctions.ts`. More information can be found in [Analytics.md]().
+
+<br>
 # Release Notes v1.0.0
 
 ## v0.4

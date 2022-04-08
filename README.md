@@ -24,7 +24,7 @@ To edit the frontend:
 1. Contact Firebase project owner to be added as a member of the project
 2. Open a terminal session and navigate into `OffshoreWindJobNavigator-1323`
 3. Run `npm install` to create your `node_modules` folder with all currently necessary packages required to run the project as specified in `./package.json`
-4. Run `firebase login` and login with the account authorized as a member of the Firebase project from [Step 1]()
+4. Run `firebase login` and login with the account authorized as a member of the Firebase project from **Step 1**
 5. Run `firebase init`
     - Select `Emulators` and press enter
     - Ensure the `Authentication, Functions, Firestore, and Hosting` emulators are selected and press enter
@@ -55,7 +55,7 @@ To deploy your function, run `firebase deploy --only functions:[function  1 name
 
 Unit Testing Suite:
 
-Unit test in this application are written using Mocha in the `./functions/test` location. Before editing the test suite environment, please read through the included [Testing.md]() file. 
+Unit test in this application are written using Mocha in the `./functions/test` location. Before editing the test suite environment, please read through the included [Testing.md](https://github.com/TahleeJ/OffshoreWindJobNavigator-1323/blob/98e387223503347dd8e4f589722fb62eef3dfd19/functions/Testing.md) file. 
 
 To edit an existing test suite, navigate into one of the existing `*.spec.ts*` files and edit accordingly. To create a new testing suite, create a new `.spec.ts` file and follow the conventions in the other test suite files.
 
@@ -71,7 +71,7 @@ Application Integrated Testing:
 <br>
 
 ### Job Matching
-The job matching process is done via a [custom algorithm]() run in the cloud function `submitSurveyResponse` in `./functions/SurveyFunctions.ts`. More information can be found in [Matching.md]().
+The job matching process is done via a [custom algorithm]() run in the cloud function `submitSurveyResponse` in `./functions/SurveyFunctions.ts`.
 
 <br>
 

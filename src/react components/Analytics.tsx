@@ -1,38 +1,9 @@
 import { useAppSelector } from '../redux/hooks';
-import { DataQuery } from '../firebase/Analytics/Analytics';
-import { Chart, drawChart } from '../firebase/Analytics/Draw';
+import { DataQuery, NavigatorGrouping, dataFocusTypes, validQueryCharts } from '../firebase/Analytics/Utility';
+import { drawChart } from '../firebase/Analytics/Draw';
 import { authInstance } from '../firebase/Firebase';
+import { Chart, determineQueryType, validateChartType } from '../firebase/Analytics/Utility';
 
-enum NavigatorGrouping {
-    All = 0,
-    Set = 1,
-    One = 2
-}
-
-const dataFocusTypes = {
-    titleday: "TitleDay",
-    perday: "PerDay",
-    titles: "Titles"
-};
-
-const validQueryCharts = {
-    pie: {
-        list: [DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay], // EachTitles
-        text: "Total administration of all surveys<br />Administration total of each selected survey over the past week"
-    }, 
-    combo: {
-        list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay],
-        text: "Administration total of each selected survey over the past week"
-    },
-    line: {
-        list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllPerDay, DataQuery.OnePerDay],
-        text: "Administration total of each selected survey over the past week<br />Administration total of all surveys over the past week"
-    },
-    bar: {
-        list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllPerDay, DataQuery.OnePerDay], // EachTitles, EachPerDay
-        text: 'Administration total of each selected survey over the past week<br />Administration total of all surveys over the past week<br />Total administration of all surveys'
-    }
-}
 
 const Analytics: React.FC = (props) => {
     const surveys = useAppSelector(s => s.data.surveys);
@@ -96,29 +67,6 @@ const Analytics: React.FC = (props) => {
         }
     }
 
-    function validateChartType(): boolean {
-        var validChartType: boolean;
-
-        switch(chartType!) {
-            case Chart.Pie:
-                validChartType = validQueryCharts.pie.list.includes(queryType);
-                break;
-            case Chart.Combo:
-                validChartType = validQueryCharts.combo.list.includes(queryType);
-                break;
-            case Chart.Line:
-                validChartType = validQueryCharts.line.list.includes(queryType);
-                break;
-            case Chart.Bar:
-                validChartType = validQueryCharts.bar.list.includes(queryType);
-                break;
-            default:
-                break;
-        }
-
-        return validChartType!;
-    }
-
     function validateNavigatorEntry(): boolean {
         selectedNavigators = [];
 
@@ -147,65 +95,11 @@ const Analytics: React.FC = (props) => {
         }
     }
 
-    function determineQueryType() {
-        dataFocus = dataFocusSelector.value;
-
-        switch(navigatorGrouping) {
-            case NavigatorGrouping.All:
-                switch(dataFocus) {
-                    case dataFocusTypes.titleday:
-                        queryType = DataQuery.AllTitlesPerDay;
-                        break;
-                    case dataFocusTypes.perday:
-                        queryType = DataQuery.AllPerDay;
-                        break;
-                    case dataFocusTypes.titles:
-                        queryType = DataQuery.AllTitles;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case NavigatorGrouping.Set:
-                switch(dataFocus) {
-                    case dataFocusTypes.titleday:
-                        queryType = DataQuery.None;
-                        break;
-                    case dataFocusTypes.perday:
-                        queryType = DataQuery.EachPerDay;
-                        break;
-                    case dataFocusTypes.titles:
-                        queryType = DataQuery.EachTitles;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case NavigatorGrouping.One:
-                switch(dataFocus) {
-                    case dataFocusTypes.titleday:
-                        queryType = DataQuery.OneTitlesPerDay;
-                        break;
-                    case dataFocusTypes.perday:
-                        queryType = DataQuery.OnePerDay;
-                        break;
-                    case dataFocusTypes.titles:
-                        queryType = DataQuery.OneTitles;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
     const generateChart = async() => {
         resetPopup();
-        determineQueryType();
+        determineQueryType(dataFocusSelector.value, navigatorGrouping);
 
-        const validChartType = validateChartType();
+        const validChartType = validateChartType(chartType, queryType);
 
         if (navigatorGrouping === NavigatorGrouping.Set || navigatorGrouping === NavigatorGrouping.One) {
             if (queryType !== DataQuery.None) {

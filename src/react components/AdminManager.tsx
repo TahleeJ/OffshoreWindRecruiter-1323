@@ -25,9 +25,6 @@ const AdminManager: React.FC<props> = (props) => {
     const [errorText, setErrorText] = useState("")
     const [updateLevel, setUpdateLevel] = useState(PermissionLevel.None);
 
-    // var errorMessage = "";
-    
-
     const updateIsAdmin = async () => {
         const uid = authInstance.currentUser?.uid!;
         const userDoc = await getUser(uid);
@@ -40,20 +37,15 @@ const AdminManager: React.FC<props> = (props) => {
 
     const togglePopup = () => setPopupvisible(!popupVisible);
 
-    // var updateLevel: PermissionLevel;
     var emailEntry: string;
-    // var updateEmails: string[];
 
     function validateEmailEntry() {
         var updateEmailEntries = [];
-        // console.log(emails);
         if (emails.length > 0) {
             const newUpdateEmails: string[] = emails.split(",");
         
             for (const entry of newUpdateEmails) {
                 const adjustedEntry = entry.trim();
-                // console.log(adjustedEntry);
-    
                 if (adjustedEntry.length < 5) {
                     setUpdateEmails([]);
     
@@ -62,7 +54,6 @@ const AdminManager: React.FC<props> = (props) => {
     
                 updateEmailEntries.push(adjustedEntry);
             }
-            // console.log(updateEmailEntries);
 
             setUpdateEmails(updateEmailEntries);
     
@@ -97,7 +88,7 @@ const AdminManager: React.FC<props> = (props) => {
         const validateResult = validateEmailEntry();
 
         if (validateResult) {
-            var errorEmails = "";
+            // var errorEmails = "";
             var errorEmailsMessage = "";
             var invalidEmail = false;
     
@@ -106,13 +97,13 @@ const AdminManager: React.FC<props> = (props) => {
     
                 if (result !== "Update success!") {
                     invalidEmail = true;
-                    errorEmails = errorEmails + `${email}: ${result}\n`;
+                    // errorEmails = errorEmails + `${email}: ${result}\n`;
                     errorEmailsMessage = errorEmailsMessage + `${email}: ${result}\n`;
                 }
             }
 
             setErrorText(errorEmailsMessage);
-            setErrorMessage(errorEmails);
+            // setErrorMessage(errorEmails);
             togglePopup();
         } else {
             setErrorMessage("Please enter at least one email and separate the rest by commas.");
@@ -157,8 +148,8 @@ const AdminManager: React.FC<props> = (props) => {
                         
                 {popupVisible &&
                 <Prompt
-                    title="Invalid User Entry"
-                    message={errorMessage}
+                    title="Permission Update Error"
+                    message="Please make sure you have entered valid email addresses and that your selected users are members of this application."
                     handleCancel={togglePopup}
                 />
             }

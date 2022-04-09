@@ -285,7 +285,7 @@ textarea {
     }
     @media screen and (max-width: 500px) {
         .title {
-            font-size: $large-font-size;
+            font-size: 15px;
         }
     }
 }
@@ -735,32 +735,100 @@ textarea {
 
     .recommendation {
         width: calc(100% - 40px);
+        height: 130px;
         margin: 20px;
-        border-radius: 5px;
-        padding: 5px;
+        border-radius: 15px;
+        padding: 15px;
         box-shadow: $subtle-shadow;
+        text-align: left;
+        display:flex;
+        flex-wrap: wrap;
+
+        i {
+            font-size: 30px;
+        }
+
+        .jobRecContainer {
+            flex: 1 1 60%;
+            margin-right: 20px;
+        }
+
+        .divider {
+            //flex: 1 1 1%;
+            height: 90px;
+            margin-block: auto;
+            border-left:1px solid;
+        }
+        .recContainer {
+            width: 100px;
+            text-align: center;
+            font-size: 11px;
+            margin-block: auto;
+            float: right;
+        }
+
+
     
         .title {
-            color: white;
-            text-align: center;
+            margin-left: 0;
+            margin-bottom: 0;
+            font-size: 18px;
+            font-weight:600;
+            color:$mainDark !important;
+        }
+
+        .compName {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .jobDesc{
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: 11px;
+            font-weight: 400;
+            color: #656565;
         }
     
         &.neutral {
             background-color: white;
-    
-            .title {
-                color: black;
-            }
         }
     
         &.positive {
-            background-color: $mainColor;
+            background-color: #eaf3ff;
         }
     
         &.negative {
-            background-color: $contrastColor;
+            background-color: white;
+        }
+        @media screen and (max-width: 600px) {
+            height: fit-content;
+            .jobRecContainer {
+                width:50%;
+                flex-grow: 1;
+            }
+            .recContainer {
+                margin-top: 10px;
+                margin-inline: auto;
+            }
+            .title {
+                font-size: 16px;
+            }
+            .compName {
+                font-size: 13px;
+            }
+            .jobDesc {
+                font-size: 11px;
+            }
+            .divider {
+                display: none;
+            }
         }
     }
+    
 
     input[type="radio"] {
         -webkit-appearance: none;

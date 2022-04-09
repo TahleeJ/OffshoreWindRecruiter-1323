@@ -1,115 +1,16 @@
-import { DataQuery, getQueryData, SerializedEntry } from "./Analytics";
-
-export enum Chart {
-    Pie = 0,
-    Combo = 1,
-    Line = 2,
-    Bar = 3
-}
+import { getQueryData } from "./Query";
+import { DataQuery, Chart, SerializedEntry } from "./Utility";
 
 export async function drawChart(selectedSurveys: string[], selectedNavigators: string[], chartType: Chart, queryType: DataQuery) {
-    var data: any;
-    
-    var chartData: google.visualization.DataTable;
-
     switch(queryType) {
         case DataQuery.AllTitlesPerDay:
-            data = await getQueryData(queryType);
-
-            if (chartType === Chart.Combo) {
-                chartData = prepareTitlesPerDay(selectedSurveys, data, true, false);
-
-                var seriesOptions = [];
-                var tempCounter = 0;
-            
-                while (tempCounter < selectedSurveys.length) {
-                    seriesOptions.push({});
-            
-                    tempCounter++;
-                }
-            
-                seriesOptions.push({type: 'line'});
-
-                new google.visualization.ComboChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total for Selected Surveys Administered Over the Past 7 Days',
-                        vAxis: {title: 'Surveys Administered'},
-                        hAxis: {title: 'Day'},
-                        seriesType: 'bars',
-                        series: seriesOptions
-                    });
-            } else if (chartType === Chart.Line) {
-                chartData = prepareTitlesPerDay(selectedSurveys, data, false, false);
-
-                new google.visualization.LineChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total for Selected Surveys Administered Over the Past 7 Days',
-                        vAxis: {title: 'Surveys Administered'},
-                        hAxis: {title: 'Day'}
-                    });
-            } else if (chartType === Chart.Bar) {
-                chartData = prepareTitlesPerDay(selectedSurveys, data, false, false);
-
-                new google.visualization.BarChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total for Selected Surveys Administered Over the Past 7 Days',
-                        vAxis: {title: 'Day'},
-                        hAxis: {title: 'Surveys Administered'},
-                        isStacked: true
-                    });
-            } else if (chartType === Chart.Pie) {
-                chartData = prepareTitlesPerDay(selectedSurveys, data, false, true);
-
-                new google.visualization.PieChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total Administrations for Selected Surveys Over the Past 7 Days',
-                        pieSliceText: "percentage"
-                    });
-            }
-
+            drawTitlesPerDay(queryType, chartType, selectedSurveys);
             break;
         case DataQuery.AllPerDay:
-            data = await getQueryData(queryType);
-            chartData = preparePerDay(data);
-
-            if (chartType === Chart.Line) {
-                new google.visualization.LineChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total for All Surveys Administered Over the Past 7 Days',
-                        vAxis: {title: 'Surveys Administered'},
-                        hAxis: {title: 'Day'},
-                      });
-            } else if (chartType === Chart.Bar) {
-                new google.visualization.BarChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total for All Surveys Administered Over the Past 7 Days',
-                        vAxis: {title: 'Day'},
-                        hAxis: {title: 'Surveys Administered'},
-                        colors: ['grey']
-                    });
-            }
-
+            drawPerDay(queryType, chartType);
             break;
         case DataQuery.AllTitles:
-            data = await getQueryData(queryType);
-            chartData = prepareTitles(data);
-
-            if (chartType === Chart.Pie) {
-                new google.visualization.PieChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total Surveys Administered',
-                        pieSliceText: "percentage"
-                    });
-            } else if (chartType === Chart.Bar) {
-                new google.visualization.BarChart(document.getElementById('chart')!)
-                .draw(chartData!, {
-                    title: 'Total Surveys Administered',
-                    vAxis: {title: 'Survey Administered'},
-                    hAxis: {title: 'Total'},
-                    colors: ['grey']
-                });
-            }      
-
+            drawTitles(queryType, chartType);   
             break;
         case DataQuery.EachTitlesPerDay:
             break;
@@ -118,100 +19,13 @@ export async function drawChart(selectedSurveys: string[], selectedNavigators: s
         case DataQuery.EachTitles:
             break;
         case DataQuery.OneTitlesPerDay:
-            data = await getQueryData(queryType, selectedNavigators[0]);
-
-            if (chartType === Chart.Combo) {
-                chartData = prepareTitlesPerDay(selectedSurveys, data.get(selectedNavigators[0]), true, false);
-
-                seriesOptions = [];
-                tempCounter = 0;
-            
-                while (tempCounter < selectedSurveys.length) {
-                    seriesOptions.push({});
-            
-                    tempCounter++;
-                }
-            
-                seriesOptions.push({type: 'line'});
-
-                new google.visualization.ComboChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total for Selected Surveys Administered Over the Past 7 Days',
-                        vAxis: {title: 'Surveys Administered'},
-                        hAxis: {title: 'Day'},
-                        seriesType: 'bars',
-                        series: seriesOptions
-                    });
-            } else if (chartType === Chart.Line) {
-                chartData = prepareTitlesPerDay(selectedSurveys, data.get(selectedNavigators[0]), false, false);
-
-                new google.visualization.LineChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total for Selected Surveys Administered Over the Past 7 Days',
-                        vAxis: {title: 'Surveys Administered'},
-                        hAxis: {title: 'Day'}
-                    });
-            } else if (chartType === Chart.Bar) {
-                chartData = prepareTitlesPerDay(selectedSurveys, data.get(selectedNavigators[0]), false, false);
-
-                new google.visualization.BarChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total for Selected Surveys Administered Over the Past 7 Days',
-                        vAxis: {title: 'Day'},
-                        hAxis: {title: 'Surveys Administered'},
-                        isStacked: true
-                    });
-            } else if (chartType === Chart.Pie) {
-                chartData = prepareTitlesPerDay(selectedSurveys, data.get(selectedNavigators[0]), false, true);
-
-                new google.visualization.PieChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total Administrations for Selected Surveys Over the Past 7 Days',
-                        pieSliceText: "percentage"
-                    });
-            }
-
+            drawTitlesPerDay(queryType, chartType, selectedSurveys, selectedNavigators);
             break;
         case DataQuery.OnePerDay:
-            data = await getQueryData(queryType, selectedNavigators[0]);
-            chartData = preparePerDay(data.get(selectedNavigators[0]));
-
-            if (chartType === Chart.Line) {
-                new google.visualization.LineChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total for All Surveys Administered Over the Past 7 Days',
-                        vAxis: {title: 'Surveys Administered'},
-                        hAxis: {title: 'Day'},
-                      });
-            } else if (chartType === Chart.Bar) {
-                new google.visualization.BarChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total for All Surveys Administered Over the Past 7 Days',
-                        vAxis: {title: 'Day'},
-                        hAxis: {title: 'Surveys Administered'},
-                        colors: ['grey']
-                    });
-            }
+            drawPerDay(queryType, chartType, selectedNavigators);
             break;
         case DataQuery.OneTitles:
-            data = await getQueryData(queryType, selectedNavigators[0]);
-            chartData = prepareTitles(data.get(selectedNavigators[0]));
-
-            if (chartType === Chart.Pie) {
-                new google.visualization.PieChart(document.getElementById('chart')!)
-                    .draw(chartData!, {
-                        title: 'Total Surveys Administered',
-                        pieSliceText: "percentage"
-                    });
-            } else if (chartType === Chart.Bar) {
-                new google.visualization.BarChart(document.getElementById('chart')!)
-                .draw(chartData!, {
-                    title: 'Total Surveys Administered',
-                    vAxis: {title: 'Survey Administered'},
-                    hAxis: {title: 'Total'},
-                    colors: ['grey']
-                });
-            }        
+            drawTitles(queryType, chartType, selectedNavigators); 
 
             break;
     }
@@ -225,6 +39,72 @@ function stringifyDate(date: string): string {
     const newDate = `${month}-${day}-${year}`;
 
     return newDate;
+}
+
+async function drawTitlesPerDay(queryType: DataQuery, chartType: Chart, selectedSurveys: string[], selectedNavigators?: string[]) {
+    var data: any
+    var oneNavigator = false;
+    
+    if (selectedNavigators !== undefined) {
+        data = await getQueryData(queryType, selectedNavigators[0]);
+        oneNavigator = true;
+    } else {
+        data = await getQueryData(queryType);
+    }
+
+    var chartData: google.visualization.DataTable;
+
+    if (chartType === Chart.Combo) {
+        chartData = prepareTitlesPerDay(selectedSurveys, (oneNavigator ? data.get(selectedNavigators![0]) : data), true, false);
+
+        var seriesOptions = [];
+        var tempCounter = 0;
+    
+        while (tempCounter < selectedSurveys.length) {
+            seriesOptions.push({});
+    
+            tempCounter++;
+        }
+    
+        seriesOptions.push({type: 'line'});
+
+        new google.visualization.ComboChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: 'Total for Selected Surveys Administered Over the Past 7 Days',
+                vAxis: {title: 'Surveys Administered'},
+                hAxis: {title: 'Day'},
+                seriesType: 'bars',
+                series: seriesOptions
+            });
+    } else if (chartType === Chart.Line) {
+        chartData = prepareTitlesPerDay(selectedSurveys, (oneNavigator ? data.get(selectedNavigators![0]) : data), false, false);
+
+        new google.visualization.LineChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: 'Total for Selected Surveys Administered Over the Past 7 Days',
+                vAxis: {title: 'Surveys Administered'},
+                hAxis: {title: 'Day'}
+            });
+    } else if (chartType === Chart.Bar) {
+        chartData = prepareTitlesPerDay(selectedSurveys, (oneNavigator ? data.get(selectedNavigators![0]) : data), false, false);
+
+        new google.visualization.BarChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: 'Total for Selected Surveys Administered Over the Past 7 Days',
+                vAxis: {title: 'Day'},
+                hAxis: {title: 'Surveys Administered'},
+                isStacked: true
+            });
+    } else if (chartType === Chart.Pie) {
+        chartData = prepareTitlesPerDay(selectedSurveys, (oneNavigator ? data.get(selectedNavigators![0]) : data), false, true);
+
+        new google.visualization.PieChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: 'Total Administrations for Selected Surveys Over the Past 7 Days',
+                pieSliceText: "percentage"
+            });
+    }
+
 }
 
 function prepareTitlesPerDay(selectedSurveys: string[], data: Map<string, SerializedEntry[]>, includeAverage: boolean, total: boolean): google.visualization.DataTable {
@@ -337,6 +217,37 @@ function prepareTitlesPerDay(selectedSurveys: string[], data: Map<string, Serial
     return chartData;
 }
 
+async function drawPerDay(queryType: DataQuery, chartType: Chart, selectedNavigators?: string[]) {
+    var data: any
+    var oneNavigator = false;
+    
+    if (selectedNavigators !== undefined) {
+        data = await getQueryData(queryType, selectedNavigators[0]);
+        oneNavigator = true;
+    } else {
+        data = await getQueryData(queryType);
+    }
+
+    const chartData: google.visualization.DataTable = preparePerDay((oneNavigator ? data.get(selectedNavigators![0]) : data));
+
+    if (chartType === Chart.Line) {
+        new google.visualization.LineChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: 'Total for All Surveys Administered Over the Past 7 Days',
+                vAxis: {title: 'Surveys Administered'},
+                hAxis: {title: 'Day'},
+              });
+    } else if (chartType === Chart.Bar) {
+        new google.visualization.BarChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: 'Total for All Surveys Administered Over the Past 7 Days',
+                vAxis: {title: 'Day'},
+                hAxis: {title: 'Surveys Administered'},
+                colors: ['grey']
+            });
+    }
+}
+
 function preparePerDay(data: Map<string, SerializedEntry[]>): google.visualization.DataTable {
     var chartData = new google.visualization.DataTable();
     chartData.addColumn("string", "Date");
@@ -358,6 +269,36 @@ function preparePerDay(data: Map<string, SerializedEntry[]>): google.visualizati
     chartData.addRows(addList);
 
     return chartData;
+}
+
+async function drawTitles(queryType: DataQuery, chartType: Chart, selectedNavigators?: string[]) {
+    var data: any
+    var oneNavigator = false;
+    
+    if (selectedNavigators !== undefined) {
+        data = await getQueryData(queryType, selectedNavigators[0]);
+        oneNavigator = true;
+    } else {
+        data = await getQueryData(queryType);
+    }
+
+    const chartData = prepareTitles((oneNavigator ? data.get(selectedNavigators![0]) : data));
+
+    if (chartType === Chart.Pie) {
+        new google.visualization.PieChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: 'Total Surveys Administered',
+                pieSliceText: "percentage"
+            });
+    } else if (chartType === Chart.Bar) {
+        new google.visualization.BarChart(document.getElementById('chart')!)
+        .draw(chartData!, {
+            title: 'Total Surveys Administered',
+            vAxis: {title: 'Survey Administered'},
+            hAxis: {title: 'Total'},
+            colors: ['grey']
+        });
+    }   
 }
 
 function prepareTitles(data: SerializedEntry[]) {

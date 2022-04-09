@@ -1,6 +1,6 @@
 import lodash from "lodash";
 import React, { useEffect, useRef, useState } from "react";
-import { logSurveyCreation } from "../../firebase/Analytics/Analytics";
+import { logSurveyCreation } from "../../firebase/Analytics/Logging";
 import { authInstance } from "../../firebase/Firebase";
 import { editSurvey, getSurveys, newSurvey } from "../../firebase/Queries/SurveyQueries";
 import { QuestionType, SurveyTemplate, SurveyAnswer, SurveyQuestion } from "../../firebase/Types";

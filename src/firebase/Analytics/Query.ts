@@ -1,56 +1,5 @@
-import { analyticsInstance } from "../Firebase";
-import { logEvent } from "@firebase/analytics";
 import { getAdministeredSurveyData } from "../Firebase";
-
-const queryFunctions = [
-    "get_all_title_day",
-    "get_all_day",
-    "get_all_titles",
-    "get_each_title_day",
-    "get_each_day",
-    "get_each_titles",
-    "get_navigator_title_day",
-    "get_navigator_day",
-    "get_navigator_titles"
-];
-
-export enum DataQuery {
-    AllTitlesPerDay = 0,
-    AllPerDay = 1,
-    AllTitles = 2,
-    EachTitlesPerDay = 3,
-    EachPerDay = 4,
-    EachTitles = 5,
-    OneTitlesPerDay = 6,
-    OnePerDay = 7,
-    OneTitles = 8,
-    None = 9
-}
-
-export interface SerializedEntry {
-    title?: string
-    frequency: number
-}
-
-// Track surveys created
-export function logSurveyCreation(title: string, user: string) {
-    logEvent(analyticsInstance, "survey_created", 
-        {
-            created_survey_title: title,
-            survey_created_by: user,
-            debug_mode: true
-        });
-}
-
-// Track surveys administered
-export function logSurveyAdministered(title: string, navigator: string) {
-    logEvent(analyticsInstance, "survey_administered",
-        {
-           administered_survey_title: title,
-           administering_navigator: navigator,
-           debug_mode: true
-        });
-}
+import { queryFunctions, DataQuery, SerializedEntry } from "./Utility";
 
 export async function getQueryData(queryType: DataQuery, selectedNavigator?: string) {
     const queryFunction = queryFunctions[queryType];

@@ -764,32 +764,118 @@ textarea {
 
 #surveyHome .recommendation {
   width: calc(100% - 40px);
+  height: 130px;
   margin: 20px;
-  border-radius: 5px;
-  padding: 5px;
+  border-radius: 15px;
+  padding: 15px 0 15px 15px;
   -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
           box-shadow: 0px 0px 3px 2px #dddddd;
+  text-align: left;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+#surveyHome .recommendation i {
+  font-size: 30px;
+}
+
+#surveyHome .recommendation .jobRecContainer {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 60%;
+          flex: 1 1 60%;
+  margin-right: 20px;
+}
+
+#surveyHome .recommendation .divider {
+  height: 90px;
+  margin-block: auto;
+  border-left: 1px solid;
+}
+
+#surveyHome .recommendation .recContainer {
+  width: 120px;
+  text-align: center;
+  font-size: 11px;
+  margin-block: auto;
+  float: right;
 }
 
 #surveyHome .recommendation .title {
-  color: white;
-  text-align: center;
+  margin-left: 0;
+  margin-bottom: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #5f8dff !important;
+}
+
+#surveyHome .recommendation .compName {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+#surveyHome .recommendation .jobDesc {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 400;
+  color: #656565;
 }
 
 #surveyHome .recommendation.neutral {
   background-color: white;
 }
 
-#surveyHome .recommendation.neutral .title {
-  color: black;
-}
-
 #surveyHome .recommendation.positive {
-  background-color: #7ba1ff;
+  background-color: #eaf3ff;
 }
 
 #surveyHome .recommendation.negative {
-  background-color: #d16161;
+  background-color: white;
+}
+
+@media screen and (max-width: 600px) {
+  #surveyHome .recommendation {
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+  }
+  #surveyHome .recommendation .jobRecContainer {
+    width: 50%;
+    -webkit-box-flex: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
+  }
+  #surveyHome .recommendation .recContainer {
+    margin-top: 10px;
+    margin-inline: auto;
+  }
+  #surveyHome .recommendation .title {
+    font-size: 16px;
+  }
+  #surveyHome .recommendation .compName {
+    font-size: 13px;
+  }
+  #surveyHome .recommendation .jobDesc {
+    font-size: 11px;
+  }
+}
+
+@media screen and (max-width: 421px) {
+  #surveyHome .recommendation {
+    display: inline-block;
+  }
+  #surveyHome .recommendation .divider {
+    display: none;
+  }
+  #surveyHome .recommendation .recContainer {
+    float: none;
+  }
 }
 
 #surveyHome input[type="radio"] {
@@ -903,7 +989,7 @@ textarea {
 }
 
 #promoteUser .buttonContainer {
-  margin-top: 10px;
+  margin-top: 40px;
 }
 
 #promoteUser .buttonContainer button {
@@ -1086,17 +1172,11 @@ textarea {
   margin-top: 40px;
 }
 
-#analytics select, .navigatorText {
-  font-size: 18px;
-}
-
 #analytics {
   height: calc(100% - 50px);
   font-family: "Roboto";
   font-size: 20px;
   overflow-y: auto;
-  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 #analytics .topGrid {
@@ -1105,10 +1185,10 @@ textarea {
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+  height: 100%;
 }
 
 #analytics .middleColumn {
-  vertical-align: top;
   height: 100%;
   -webkit-box-flex: 1;
       -ms-flex: 1 1 45%;
@@ -1117,7 +1197,7 @@ textarea {
 }
 
 #analytics .middleColumn .listViewer {
-  min-height: 100px;
+  min-height: 346.5px;
   max-height: calc(50% - 3.5px);
 }
 
@@ -1125,10 +1205,12 @@ textarea {
   margin-bottom: 7px;
 }
 
-@media screen and (max-width: 600px) {
-  #analytics .topGrid {
-    display: block;
-  }
+#analytics select {
+  font-size: 18px;
+}
+
+#analytics .navigatorText {
+  font-size: 18px;
 }
 
 #analytics .center {
@@ -1175,4 +1257,9 @@ textarea {
   margin: auto;
 }
 
+@media screen and (max-width: 600px) {
+  #analytics .topGrid {
+    display: block;
+  }
+}
 /*# sourceMappingURL=App.css.map */

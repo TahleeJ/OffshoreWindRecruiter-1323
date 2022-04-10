@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import Prompt from "../Prompt";
+import Prompt from "./Prompt";
 
 interface props {
     name: string;
+    handleView?: () => void;
     handleEdit?: () => void;
     handleDelete?: () => void;
 }
@@ -13,7 +14,7 @@ const ListElement: React.FC<props> = (p) => {
         setPopupvisible(!popupVisible);
     }
     return (
-        <div className="listElement">
+        <div className={"listElement" + (p.handleView ? " viewable" : "")} onClick={p.handleView}>
             <div className="name">{p.name}</div>
             {p.handleEdit && <i className="fas fa-edit edit" onClick={p.handleEdit} />}
             {p.handleDelete && <i className="fas fa-trash-alt delete" onClick={togglePopup} />}

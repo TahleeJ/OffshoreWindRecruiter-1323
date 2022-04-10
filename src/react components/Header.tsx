@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch } from '../redux/hooks';
-import { changePage, PageType } from '../redux/navigationSlice';
+import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import ReactTooltip from 'react-tooltip';
 
 import * as firebaseAuth from "@firebase/auth";
@@ -30,8 +30,12 @@ const Header: React.FC<headerProps> = (p: headerProps) => {
         <header id="header" >
             <div className='title'>{"Offshore Recruiter".toUpperCase()}</div>
             <div className='buttonGroup'>
-                <i className='fas fa-home' onClick={() => { appDispatch(changePage({ type: PageType.Home })) }} data-tip="Home"></i>
-                <i className='fas fa-info' onClick={() =>{appDispatch(changePage({type: PageType.InfoPage}))}} data-tip="Information"></i>
+                {//someone make this so this page will show if they are a "none" user
+                    // <i className='fas fa-info' onClick={() => { appDispatch(changePage({ type: PageType.InfoPage })) }} data-tip="Information"></i>
+                }
+                
+                <i className='far fa-file-alt' onClick={() => { appDispatch(changePage({ type: PageType.Home })) }} data-tip="Survey Administer"></i>
+                <i className='fas fa-briefcase' onClick={() => { appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Administering })) }} data-tip="Job Explore"></i>
                 {isAdmin ? 
                     <i className='fas fa-tools admin-manager' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })) }} data-tip="Administrative Dashboard"></i>
                     : null

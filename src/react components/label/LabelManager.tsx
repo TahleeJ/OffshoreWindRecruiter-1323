@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
-import ListViewer from '../ListViewer';
-import ListElement from '../survey/ListElement';
+import ListViewer from '../generic/ListViewer';
+import ListElement from '../generic/ListElement';
 import LabelCreator from './LabelCreator';
 import { deleteLabel, getLabels, newLabel } from '../../firebase/Queries/LabelQueries';
 import { setLabels } from '../../redux/dataSlice.ts';
-import Prompt from '../Prompt';
+import Prompt from '../generic/Prompt';
 
 /** The props (arguments) to create this element */
 interface props {

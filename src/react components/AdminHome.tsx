@@ -9,9 +9,9 @@ import { deleteJobOpp, getJobOpps, newJobOpp } from '../firebase/Queries/JobQuer
 import { deleteSurvey, deleteSurveyResponse, getSurveyResponses, getSurveys } from '../firebase/Queries/SurveyQueries';
 import { JobOpp, PermissionLevel } from '../firebase/Types';
 
-import ListViewer from './ListViewer';
-import ListElement from './survey/ListElement';
-import Prompt from './Prompt';
+import ListViewer from './generic/ListViewer';
+import ListElement from './generic/ListElement';
+import Prompt from './generic/Prompt';
 
 
 /** The props (arguments) to create this element */

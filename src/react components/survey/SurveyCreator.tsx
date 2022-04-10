@@ -8,7 +8,7 @@ import { setSurveys } from "../../redux/dataSlice.ts";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
 import LabelConnector from "../label/LabelConnector";
-import Prompt from "../Prompt";
+import Prompt from "../generic/Prompt";
 
 
 interface props {

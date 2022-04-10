@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { hasId, QuestionType, SurveyResponse, SurveyTemplate } from '../../firebase/Types';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changeOperation, changePage, OperationType, PageType, submitSurveyResponse } from '../../redux/navigationSlice';
-import Prompt from '../Prompt';
+import Prompt from '../generic/Prompt';
 import { authInstance } from '../../firebase/Firebase';
 import { logSurveyAdministered } from '../../firebase/Analytics/Logging';
 

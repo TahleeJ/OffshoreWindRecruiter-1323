@@ -5,7 +5,7 @@ import { changePage, PageType } from '../redux/navigationSlice';
 import { PermissionLevel } from '../firebase/Types';
 import { setUserPermissionLevel } from '../firebase/Queries/AdminQueries';
 
-import Prompt from './Prompt';
+import Prompt from './generic/Prompt';
 
 
 /** The props (arguments) to create this element */

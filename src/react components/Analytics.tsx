@@ -1,76 +1,112 @@
+import React, { useState } from 'react';
 import { useAppSelector } from '../redux/hooks';
-import { DataQuery, NavigatorGrouping, dataFocusTypes, validQueryCharts } from '../firebase/Analytics/Utility';
+import { DataQuery, NavigatorGrouping, DateGrouping, dataFocusTypes, validQueryCharts } from '../firebase/Analytics/Utility';
 import { drawChart } from '../firebase/Analytics/Draw';
 import { authInstance } from '../firebase/Firebase';
-import { Chart, determineQueryType, validateChartType } from '../firebase/Analytics/Utility';
+import { Chart, determineQueryType, validateChartType, stringifyDate } from '../firebase/Analytics/Utility';
 
+/** The props (arguments) to create this element */
+interface props {
 
-const Analytics: React.FC = (props) => {
+}
+
+const Analytics: React.FC<props> = (props) => {
+    const today = () => {
+        const todayDate = new Date();
+        const day = String(todayDate.getDate()).padStart(2, '0');
+        const month = String(todayDate.getMonth() + 1).padStart(2, '0'); //January is 0!
+        const year = todayDate.getFullYear();
+    
+        const todayString = `${year}-${month}-${day}`;
+    
+        console.log(todayString);
+        return todayString;
+    }
+
     const surveys = useAppSelector(s => s.data.surveys);
     const userEmail = authInstance.currentUser!.email!;
+  
+    const [popupTitleState, setPopupTitleState] = useState("");
+    const [popupMessageState, setPopupMessageState] = useState("");
+    const [queryTypeState, setQueryTypeState] = useState<DataQuery>(DataQuery.AllTitles);
+    const [navigatorGroupingState, setNavigatorGroupingstate] = useState<NavigatorGrouping>(NavigatorGrouping.All);
+    const [dataFocusState, setDataFocusState] = useState(dataFocusTypes.titles);
+    const [validDataFocusesState, setValidDataFocusesState] = useState(validQueryCharts.pie.text);
+    const [chartTypeState, setChartTypeState] = useState<Chart>(Chart.Pie);
+    const [chartTypeNameState, setChartTypeNameState] = useState("Pie");
+    const [navigatorEntryState, setNavigatorEntryState] = useState("");
+    const [selectedSurveysState, setSelectedSurveysState] = useState<string[]>([]);
+    const [selectedSurveysCheckState, setSelectedSurveysCheckState] = useState<Set<string>>(new Set<string>());
+    const [dateGroupingState, setDateGroupingState] = useState<DateGrouping>(DateGrouping.Week);
+    const [dateState, setDateState] = useState(today);
 
-    var popupTitle = "";
-    var popupMessage = "";
-    var queryType = DataQuery.AllTitles;
-    var navigatorGrouping = NavigatorGrouping.All;
-    var dataFocus = dataFocusTypes.titles;
-    var chartType = Chart.Pie;
-
+    var popupTitle = popupTitleState;
+    var popupMessage = popupMessageState;
+    var queryType = queryTypeState;
+    var navigatorGrouping = navigatorGroupingState;
+    var dataFocus = dataFocusState;
+    var validDataFocuses = validDataFocusesState;
+    var chartType = chartTypeState;
+    var chartTypeName = chartTypeNameState;
+    var navigatorEntry = navigatorEntryState;
+    var selectedSurveysCheck = selectedSurveysCheckState;
+    var dateGrouping = dateGroupingState;
+    var date = dateState.replaceAll("-", "");
 
     const togglePopup = () => {
-        title!.innerHTML = popupTitle;
-        message!.innerHTML = popupMessage;
+        popupTitleBox!.innerHTML = popupTitle;
+        popupMessageBox!.innerHTML = popupMessage;
 
+        setPopupTitleState(popupTitle);
+        setPopupMessageState(popupMessage);
     };
-
-    const resetPopup = () => {
-        popupTitle = "";
-        popupMessage = "";
-
-        togglePopup();
-    }
 
     const maxSelectedSurveys = 5;
     var selectedSurveyCount = 0;
-    var selectedSurveys: string[] = [];
+    var selectedSurveys = selectedSurveysState;
     var selectedNavigators: string[] = [];
 
-    const dataFocusSelector = document.getElementById("data-focus") as HTMLInputElement;
-    const chartTypeSelector = document.getElementById("chart-types") as HTMLInputElement;
-    const navigatorBox = document.getElementById("navigator-emails") as HTMLInputElement;
-    const chartTypeInfo = document.getElementById("valid-charts") as HTMLInputElement;
-    const title = document.getElementById("popup-title");
-    const message = document.getElementById("popup-message");
+    const validDataFocusesBox = document.getElementById("valid-focuses") as HTMLInputElement;
+    const popupTitleBox = document.getElementById("popup-title");
+    const popupMessageBox = document.getElementById("popup-message");
 
     google.charts.load("current", {packages:["corechart"]});
 
-    function getChartType(value: string) {
+    function updateChartType(value: string) {
+        chartTypeName = value;
+
         switch(value) {
             case 'Pie':
                 chartType = Chart.Pie;
-                chartTypeInfo.innerHTML = validQueryCharts.pie.text;
+                validDataFocuses = validQueryCharts.pie.text;
                 break;
             case 'Combo':
                 chartType = Chart.Combo;
-                chartTypeInfo.innerHTML = validQueryCharts.combo.text;
+                validDataFocuses = validQueryCharts.combo.text;
                 break;
             case 'Line':
                 chartType = Chart.Line;
-                chartTypeInfo.innerHTML = validQueryCharts.line.text;
+                validDataFocuses = validQueryCharts.line.text;
                 break;
             case 'Bar':
                 chartType = Chart.Bar;
-                chartTypeInfo.innerHTML = validQueryCharts.bar.text;
+                validDataFocuses = validQueryCharts.bar.text;
                 break;
             default:
                 break;
         }
+
+        validDataFocusesBox.innerHTML = validDataFocuses;
+
+        setChartTypeNameState(chartTypeName);
+        setChartTypeState(chartType);
+        setValidDataFocusesState(validDataFocuses);
     }
 
     function validateNavigatorEntry(): boolean {
         selectedNavigators = [];
 
-        const navigators: string[] = navigatorBox.value.split(",");
+        const navigators: string[] = navigatorEntry.split(",");
         
         if (navigators.length > 5) {
             return false;
@@ -96,8 +132,14 @@ const Analytics: React.FC = (props) => {
     }
 
     const generateChart = async() => {
-        resetPopup();
-        determineQueryType(dataFocusSelector.value, navigatorGrouping);
+        popupTitle = "";
+        popupMessage = "";
+        togglePopup();
+        
+        queryType = determineQueryType(dataFocus, navigatorGrouping);
+
+        setDataFocusState(dataFocus);
+        setQueryTypeState(queryType);
 
         const validChartType = validateChartType(chartType, queryType);
 
@@ -117,7 +159,7 @@ const Analytics: React.FC = (props) => {
                             togglePopup();
                         } else {
                             try {
-                                await drawChart(selectedSurveys, selectedNavigators, chartType, queryType);
+                                await drawChart(selectedSurveys, chartType, queryType, false, (dateGrouping === DateGrouping.Day), date, selectedNavigators);
                             } catch (error) {
                                 const { details } = JSON.parse(JSON.stringify(error));
 
@@ -128,13 +170,13 @@ const Analytics: React.FC = (props) => {
                         }
                     } else {
                         popupTitle = "Invalid Chart Type";
-                        popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected data focus.`;
+                        popupMessage = `Chart type *${chartTypeName}* is incompatible with your selected data focus.`;
                         togglePopup();
                     }
                 }
             } else {
                 popupTitle = "Invalid Chart Type";
-                popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected data focus.<br />This view is not yet available for multiple navigators!`;
+                popupMessage = `Chart type *${chartTypeName}* is incompatible with your selected data focus.<br />This view is not yet available for multiple navigators!`;
                 togglePopup();
             }
         } else {
@@ -145,7 +187,7 @@ const Analytics: React.FC = (props) => {
                     togglePopup();
                 } else {
                     try {
-                        await drawChart(selectedSurveys, selectedNavigators, chartType, queryType);
+                        await drawChart(selectedSurveys, chartType, queryType, true, (dateGrouping === DateGrouping.Day), date, selectedNavigators);
                     } catch (error) {
                         const { details } = JSON.parse(JSON.stringify(error));
 
@@ -156,74 +198,110 @@ const Analytics: React.FC = (props) => {
                 }
             } else {
                 popupTitle = "Invalid Chart Type";
-                popupMessage = `Chart type *${chartTypeSelector!.value}* is incompatible with your selected data focus.`;
+                popupMessage = `Chart type *${chartTypeName}* is incompatible with your selected data focus.`;
                 togglePopup();
             }
         }   
     }
 
-    function handleClick(id: string) {
-        const checkbox = document.getElementById(id) as HTMLInputElement;
-        const surveyName = checkbox.value;
-        var check = false;
+    function handleClick(surveyName: string, checked: boolean) {
+        const checkbox = document.getElementById(surveyName) as HTMLInputElement;
 
-            if (checkbox.checked) {
-                if (selectedSurveyCount < maxSelectedSurveys) {
-                    check = true;
-                    checkbox.checked = true;
-    
-                    selectedSurveys.push(surveyName);
-                    selectedSurveyCount++;
-                } else {
-                    check = false;
-                    checkbox.checked = false;
-                }
-            } else {
-                selectedSurveyCount--;
+        if (checked) {
+            if (selectedSurveyCount < maxSelectedSurveys) {
+                selectedSurveys.push(surveyName);
+                selectedSurveysCheck.add(surveyName);
 
-                const removeIndex = selectedSurveys.indexOf(surveyName);
-                selectedSurveys.splice(removeIndex, 1);
+                selectedSurveysCheckState.add(surveyName);
+                setSelectedSurveysCheckState(selectedSurveysCheckState);
+
+                selectedSurveyCount++;
             }
-        
-        return check;
+        } else {            
+            const removeIndex = selectedSurveys.indexOf(surveyName);
+            selectedSurveys.splice(removeIndex, 1);
+            selectedSurveysCheck.delete(surveyName);
+
+            selectedSurveysCheckState.delete(surveyName);
+            setSelectedSurveysCheckState(selectedSurveysCheckState);
+
+            selectedSurveyCount--;
+        }
+
+        setSelectedSurveysState(selectedSurveys);
+
+        checkbox.checked = selectedSurveysCheck.has(surveyName);
+    }
+
+    function updateNavigatorGrouping(value: NavigatorGrouping) {
+        navigatorGrouping = value;
+        setNavigatorGroupingstate(value);
+    }
+
+    function updateNavigatorEntry(value: string) {
+        navigatorEntry = value;
+        setNavigatorEntryState(value);
+    }
+
+    function updateDataFocus(value: string) {
+        dataFocus = value;
+        setDataFocusState(value);
+    }
+
+    function updateDateGrouping(value: DateGrouping) {
+        dateGrouping = value;
+        setDateGroupingState(value);
+    }
+
+    function updateDate(value: string) {
+        date = value.replaceAll("-", "");
+        setDateState(value);
     }
 
     return (
         <div id='analytics'>
             <div className='topGrid'>  
                 <div className='middleColumn left' style={{ padding: "7px" }}>
-                    {/* <h2></h2>  */}
                     <div className='listViewer' style={{ height: "25%"}}>
                         <div className='title'>Navigator Focus</div>
-                        <input type="radio" id='all-navigators' name='navigator-grouping' defaultChecked onClick={() => { navigatorGrouping = NavigatorGrouping.All}}></input>
+
+                        <input type="radio" id='all-navigators' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.All} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.All) }}></input>
                         <label htmlFor='all-navigators'>All Navigators</label><br></br>
                         {/* <input type="radio" id='set-navigators' name='navigator-grouping' onClick={() => { navigatorGrouping = NavigatorGrouping.Set}}></input>
                         <label htmlFor='set-navigators'>Set of Navigators</label><br></br> */}
-                        <input type="radio" id='one-navigator' name='navigator-grouping' onClick={() => { navigatorGrouping = NavigatorGrouping.One}}></input>
+                        <input type="radio" id='one-navigator' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.One} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.One) }}></input>
                         <label htmlFor='one-navigator'>One Navigator</label>
                         <div style={{ height: "10px"}}></div>
                         <div>
                             <label htmlFor='navigator-emails' style={{ fontWeight: "bold" }}>Navigator(s):</label>
-                            <input className='navigatorText' type='text' id='navigator-emails' defaultValue={userEmail}></input>
+                            <input className='navigatorText' type='text' id='navigator-emails' placeholder={userEmail} onChange={(e) => { updateNavigatorEntry(e.target.value) }}></input>
                             <p style={{ color: "red" }}>*Enter a maximum of 5 emails, separate by commas if more than one.</p>
                         </div> 
                     </div>
 
                     <div className='listViewer' style={{ height: "75%"}}>
                         <div className='title'>Data Focus</div>
-                        <select id="data-focus" name="Query Types" defaultValue={dataFocusTypes.titles}>
+
+                        <input type="radio" id='week' name='date' defaultChecked={dateGroupingState === DateGrouping.Week} onClick={() => { updateDateGrouping(DateGrouping.Week) }}></input>
+                        <label htmlFor='week'>Past 7 days</label><br></br>
+                        <input type="radio" id='day' name='date' defaultChecked={dateGroupingState === DateGrouping.Day} onClick={() => { updateDateGrouping(DateGrouping.Day) }}></input>
+                        <label htmlFor='day'>One day: </label>
+                        <input type="date" id="data-date" defaultValue={dateState} onChange={(e) => { updateDate(e.target.value) }}></input>
+                        <div style={{ height: "10px"}}></div>
+
+                        <select id="data-focus" name="Query Types" defaultValue={dataFocusState} onChange={(e) => { updateDataFocus(e.target.value) }}>
                             <option value={dataFocusTypes.titleday}>Administration total of each selected survey over the past week</option>
                             <option value={dataFocusTypes.perday}>Administration total of all surveys over the past week</option>
                             <option value={dataFocusTypes.titles}>Total administration of all surveys</option>
-                        </select>  
+                        </select>
                         <p style={{ fontWeight: "bold" }}>Available Surveys:</p>
                         <div className='surveyList listViewer'>
                             <div className='listElements'>
                             {surveys.length > 0 ?
                                 surveys.map((survey, ind) => {
                                     return <div key={ind}>
-                                            <input type='checkbox' id={":" + ind} value={survey.title} onClick={() => handleClick(":" + ind)}></input>
-                                            <label htmlFor={":" + ind}>{survey.title}</label>
+                                            <input type='checkbox' id={survey.title} value={survey.title} defaultChecked={selectedSurveysCheckState.has(survey.title)} onChange={(e) => { handleClick(survey.title, e.target.checked) }}></input>
+                                            <label htmlFor={survey.title}>{survey.title}</label>
                                         </div>
                                 })
                                 : <div>There are no survey templates at the moment</div>
@@ -237,21 +315,19 @@ const Analytics: React.FC = (props) => {
                 <div className='middleColumn right'>
                     <div className='listViewer'>
                         <div className='title'>Chart Type</div>
-                        <select id="chart-types" name="Chart Types" onChange={(e) => {getChartType(e.target.value)}}>
+                        <select id="chart-types" defaultValue={chartTypeNameState} name="Chart Types" onChange={(e) => {updateChartType(e.target.value)}}>
                             <option value='Pie' defaultChecked>Pie</option>
                             <option value='Combo'>Combo</option>
                             <option value='Line'>Line</option>
                             <option value='Bar'>Bar</option>
                         </select>
                         <p style={{ color: "green", fontWeight: "bold" }}>Valid Data Focuses:</p>
-                        <p id='valid-charts'>Total administration of all surveys<br />Administration total of each selected survey over the past week</p>
+                        <p id='valid-focuses' style={{ whiteSpace: "pre-wrap"}}>{validDataFocusesState}</p>
                         <div className='generateBox center'>
                             <button className='generate-button' onClick={generateChart}>Generate</button>
-                            <p id="popup-title" className='popup popupTitle center'></p>
-                            <p id="popup-message" className='popup center'></p>
+                            <p id="popup-title" className='popup popupTitle center'>{popupTitleState}</p>
+                            <p id="popup-message" className='popup center'>{popupMessageState}</p>
                         </div>
-                            
-
                     </div>
                     <div className='listViewer'>
                         <div className='title'>Your Chart!</div>

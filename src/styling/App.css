@@ -1167,10 +1167,8 @@ textarea {
 }
 
 #analytics .chartContainer {
-  min-height: 600px;
-  min-width: 900px;
-  height: auto;
-  width: auto;
+  height: 600px;
+  width: 900px;
   overflow: auto;
   margin: auto;
 }

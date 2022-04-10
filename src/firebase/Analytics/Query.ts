@@ -1,16 +1,16 @@
 import { getAdministeredSurveyData } from "../Firebase";
 import { queryFunctions, DataQuery, SerializedEntry } from "./Utility";
 
-export async function getQueryData(queryType: DataQuery, selectedNavigator?: string) {
+export async function getQueryData(queryType: DataQuery, forDay: boolean, selectedDate: string, selectedNavigator?: string) {
     const queryFunction = queryFunctions[queryType];
     var response;
 
     if (!([DataQuery.AllTitlesPerDay, DataQuery.AllPerDay, DataQuery.AllTitles].includes(queryType))) {
-        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${selectedNavigator}")`;
+        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${selectedNavigator}", ${forDay}, "${selectedDate}")`;
 
         response = await getAdministeredSurveyData({ queryString: queryString, navigatorEmail: selectedNavigator });
     } else {
-        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}()`;
+        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(${forDay}, "${selectedDate}")`;
 
         response = await getAdministeredSurveyData({ queryString: queryString });
     }

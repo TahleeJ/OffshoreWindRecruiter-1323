@@ -29,6 +29,11 @@ export enum NavigatorGrouping {
     One = 2
 }
 
+export enum DateGrouping {
+    Week = 0,
+    Day = 1
+}
+
 export enum Chart {
     Pie = 0,
     Combo = 1,
@@ -50,7 +55,7 @@ export const dataFocusTypes = {
 export const validQueryCharts = {
     pie: {
         list: [DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay], // EachTitles
-        text: "Total administration of all surveys<br />Administration total of each selected survey over the past week"
+        text: "Total administration of all surveys\nAdministration total of each selected survey over the past week"
     }, 
     combo: {
         list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay],
@@ -58,12 +63,22 @@ export const validQueryCharts = {
     },
     line: {
         list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllPerDay, DataQuery.OnePerDay],
-        text: "Administration total of each selected survey over the past week<br />Administration total of all surveys over the past week"
+        text: "Administration total of each selected survey over the past week\nAdministration total of all surveys over the past week"
     },
     bar: {
         list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllPerDay, DataQuery.OnePerDay], // EachTitles, EachPerDay
-        text: 'Administration total of each selected survey over the past week<br />Administration total of all surveys over the past week<br />Total administration of all surveys'
+        text: 'Administration total of each selected survey over the past week\nAdministration total of all surveys over the past week\nTotal administration of all surveys'
     }
+}
+
+export function stringifyDate(date: string): string {
+    const month = date.substring(4, 6);
+    const day = date.substring(6);
+    const year = date.substring(0, 4);
+
+    const newDate = `${month}/${day}/${year}`;
+
+    return newDate;
 }
 
 export function determineQueryType(dataFocusEntry: string, navigatorGroupingEntry: NavigatorGrouping): DataQuery {

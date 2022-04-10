@@ -1081,7 +1081,7 @@ textarea {
     }
 
     .surveyList {
-        height: calc(50% - 130px);
+        height: calc(50% - 170px);
         overflow: auto;
         text-align: left;
       }
@@ -1112,10 +1112,8 @@ textarea {
     }
       
      .chartContainer {
-        min-height: 600px;
-        min-width: 900px;
-        height: auto;
-        width: auto;
+        height: 600px;
+        width: 900px;
         overflow: auto;
         margin: auto;
     }

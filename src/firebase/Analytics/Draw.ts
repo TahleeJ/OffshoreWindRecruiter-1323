@@ -1,16 +1,18 @@
 import { getQueryData } from "./Query";
-import { DataQuery, Chart, SerializedEntry } from "./Utility";
+import { DataQuery, Chart, SerializedEntry, stringifyDate } from "./Utility";
 
-export async function drawChart(selectedSurveys: string[], selectedNavigators: string[], chartType: Chart, queryType: DataQuery) {
+export async function drawChart(selectedSurveys: string[], chartType: Chart, queryType: DataQuery, allNavigators: boolean, forDay: boolean, selectedDate: string, selectedNavigators?: string[]) {
+    console.log(selectedDate);
+    
     switch(queryType) {
         case DataQuery.AllTitlesPerDay:
-            drawTitlesPerDay(queryType, chartType, selectedSurveys);
+            drawTitlesPerDay(queryType, chartType, selectedSurveys, allNavigators, forDay, selectedDate);
             break;
         case DataQuery.AllPerDay:
-            drawPerDay(queryType, chartType);
+            drawPerDay(queryType, chartType, allNavigators, forDay, selectedDate);
             break;
         case DataQuery.AllTitles:
-            drawTitles(queryType, chartType);   
+            drawTitles(queryType, chartType, allNavigators, forDay, selectedDate);   
             break;
         case DataQuery.EachTitlesPerDay:
             break;
@@ -19,43 +21,33 @@ export async function drawChart(selectedSurveys: string[], selectedNavigators: s
         case DataQuery.EachTitles:
             break;
         case DataQuery.OneTitlesPerDay:
-            drawTitlesPerDay(queryType, chartType, selectedSurveys, selectedNavigators);
+            drawTitlesPerDay(queryType, chartType, selectedSurveys, allNavigators, forDay, selectedDate, selectedNavigators);
             break;
         case DataQuery.OnePerDay:
-            drawPerDay(queryType, chartType, selectedNavigators);
+            drawPerDay(queryType, chartType, allNavigators, forDay, selectedDate, selectedNavigators);
             break;
         case DataQuery.OneTitles:
-            drawTitles(queryType, chartType, selectedNavigators); 
+            drawTitles(queryType, chartType, allNavigators, forDay, selectedDate, selectedNavigators); 
 
             break;
     }
 }
 
-function stringifyDate(date: string): string {
-    const year = date.substring(0, 4);
-    const month = date.substring(4, 7);
-    const day = date.substring(7);
-
-    const newDate = `${month}-${day}-${year}`;
-
-    return newDate;
-}
-
-async function drawTitlesPerDay(queryType: DataQuery, chartType: Chart, selectedSurveys: string[], selectedNavigators?: string[]) {
+async function drawTitlesPerDay(queryType: DataQuery, chartType: Chart, selectedSurveys: string[], allNavigators: boolean, forDay: boolean, selectedDate: string, selectedNavigators?: string[]) {
     var data: any
-    var oneNavigator = false;
     
-    if (selectedNavigators !== undefined) {
-        data = await getQueryData(queryType, selectedNavigators[0]);
-        oneNavigator = true;
+    if (!allNavigators) {
+        data = await getQueryData(queryType, forDay, selectedDate, selectedNavigators![0]);
     } else {
-        data = await getQueryData(queryType);
+        data = await getQueryData(queryType, forDay, selectedDate);
     }
+
+    const title = `Total for Selected Surveys Administered ${forDay ? `On ${stringifyDate(selectedDate)}` : "Over the Past 7 Days"}`;
 
     var chartData: google.visualization.DataTable;
 
     if (chartType === Chart.Combo) {
-        chartData = prepareTitlesPerDay(selectedSurveys, (oneNavigator ? data.get(selectedNavigators![0]) : data), true, false);
+        chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), true, false);
 
         var seriesOptions = [];
         var tempCounter = 0;
@@ -70,37 +62,37 @@ async function drawTitlesPerDay(queryType: DataQuery, chartType: Chart, selected
 
         new google.visualization.ComboChart(document.getElementById('chart')!)
             .draw(chartData!, {
-                title: 'Total for Selected Surveys Administered Over the Past 7 Days',
+                title: title,
                 vAxis: {title: 'Surveys Administered'},
                 hAxis: {title: 'Day'},
                 seriesType: 'bars',
                 series: seriesOptions
             });
     } else if (chartType === Chart.Line) {
-        chartData = prepareTitlesPerDay(selectedSurveys, (oneNavigator ? data.get(selectedNavigators![0]) : data), false, false);
+        chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), false, false);
 
         new google.visualization.LineChart(document.getElementById('chart')!)
             .draw(chartData!, {
-                title: 'Total for Selected Surveys Administered Over the Past 7 Days',
+                title: title,
                 vAxis: {title: 'Surveys Administered'},
                 hAxis: {title: 'Day'}
             });
     } else if (chartType === Chart.Bar) {
-        chartData = prepareTitlesPerDay(selectedSurveys, (oneNavigator ? data.get(selectedNavigators![0]) : data), false, false);
+        chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), false, false);
 
         new google.visualization.BarChart(document.getElementById('chart')!)
             .draw(chartData!, {
-                title: 'Total for Selected Surveys Administered Over the Past 7 Days',
+                title: title,
                 vAxis: {title: 'Day'},
                 hAxis: {title: 'Surveys Administered'},
                 isStacked: true
             });
     } else if (chartType === Chart.Pie) {
-        chartData = prepareTitlesPerDay(selectedSurveys, (oneNavigator ? data.get(selectedNavigators![0]) : data), false, true);
+        chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), false, true);
 
         new google.visualization.PieChart(document.getElementById('chart')!)
             .draw(chartData!, {
-                title: 'Total Administrations for Selected Surveys Over the Past 7 Days',
+                title: title,
                 pieSliceText: "percentage"
             });
     }
@@ -118,11 +110,11 @@ function prepareTitlesPerDay(selectedSurveys: string[], data: Map<string, Serial
         var indices: number[] = [];
         var addList = [];
 
+        chartData.addColumn("string", "Date");
+
         selectedSurveys.forEach((surveyName) => {
             chartData.addColumn("number", surveyName);
         });
-
-        chartData.addColumn("string", "Date");
 
         for (const [key, value] of data) {
             if (dateCounter < 7 && dateCounter < data.size) {
@@ -142,6 +134,15 @@ function prepareTitlesPerDay(selectedSurveys: string[], data: Map<string, Serial
             } else {
                 break;
             }
+        }
+
+        // Temporary until enough 7-day data is gathered
+        var temp = 0;
+
+        while (temp < dateCounter) {
+            indices.push(temp);
+
+            temp++;
         }
 
         if (includeAverage) {
@@ -171,15 +172,6 @@ function prepareTitlesPerDay(selectedSurveys: string[], data: Map<string, Serial
             }
     
             addList.unshift(surveyFrequency[dateIndex]);
-        }
-
-        // Temporary until enough 7-day data is gathered
-        var temp = 0;
-
-        while (temp < dateCounter) {
-            indices.push(temp);
-
-            temp++;
         }
 
         chartData.addRows(addList);
@@ -217,30 +209,30 @@ function prepareTitlesPerDay(selectedSurveys: string[], data: Map<string, Serial
     return chartData;
 }
 
-async function drawPerDay(queryType: DataQuery, chartType: Chart, selectedNavigators?: string[]) {
+async function drawPerDay(queryType: DataQuery, chartType: Chart, allNavigators: boolean, forDay: boolean, selectedDate: string, selectedNavigators?: string[]) {
     var data: any
-    var oneNavigator = false;
-    
-    if (selectedNavigators !== undefined) {
-        data = await getQueryData(queryType, selectedNavigators[0]);
-        oneNavigator = true;
+
+    if (!allNavigators) {
+        data = await getQueryData(queryType, forDay, selectedDate, selectedNavigators![0]);
     } else {
-        data = await getQueryData(queryType);
+        data = await getQueryData(queryType, forDay, selectedDate,);
     }
 
-    const chartData: google.visualization.DataTable = preparePerDay((oneNavigator ? data.get(selectedNavigators![0]) : data));
+    const title = `Total for All Surveys Administered ${forDay ? `On ${stringifyDate(selectedDate)}` : "Over the Past 7 Days"}`;
+
+    const chartData: google.visualization.DataTable = preparePerDay((!allNavigators ? data.get(selectedNavigators![0]) : data));
 
     if (chartType === Chart.Line) {
         new google.visualization.LineChart(document.getElementById('chart')!)
             .draw(chartData!, {
-                title: 'Total for All Surveys Administered Over the Past 7 Days',
+                title: title,
                 vAxis: {title: 'Surveys Administered'},
                 hAxis: {title: 'Day'},
               });
     } else if (chartType === Chart.Bar) {
         new google.visualization.BarChart(document.getElementById('chart')!)
             .draw(chartData!, {
-                title: 'Total for All Surveys Administered Over the Past 7 Days',
+                title: title,
                 vAxis: {title: 'Day'},
                 hAxis: {title: 'Surveys Administered'},
                 colors: ['grey']
@@ -271,29 +263,29 @@ function preparePerDay(data: Map<string, SerializedEntry[]>): google.visualizati
     return chartData;
 }
 
-async function drawTitles(queryType: DataQuery, chartType: Chart, selectedNavigators?: string[]) {
+async function drawTitles(queryType: DataQuery, chartType: Chart, allNavigators: boolean, forDay: boolean, selectedDate: string, selectedNavigators?: string[]) {
     var data: any
-    var oneNavigator = false;
     
-    if (selectedNavigators !== undefined) {
-        data = await getQueryData(queryType, selectedNavigators[0]);
-        oneNavigator = true;
+    if (!allNavigators) {
+        data = await getQueryData(queryType, forDay, selectedDate, selectedNavigators![0]);
     } else {
-        data = await getQueryData(queryType);
+        data = await getQueryData(queryType, forDay, selectedDate,);
     }
 
-    const chartData = prepareTitles((oneNavigator ? data.get(selectedNavigators![0]) : data));
+    const title = `Total Surveys Administered ${forDay ? `On ${stringifyDate(selectedDate)}` : "Over the Past 7 Days"}`;
+
+    const chartData = prepareTitles((!allNavigators ? data.get(selectedNavigators![0]) : data));
 
     if (chartType === Chart.Pie) {
         new google.visualization.PieChart(document.getElementById('chart')!)
             .draw(chartData!, {
-                title: 'Total Surveys Administered',
+                title: title,
                 pieSliceText: "percentage"
             });
     } else if (chartType === Chart.Bar) {
         new google.visualization.BarChart(document.getElementById('chart')!)
         .draw(chartData!, {
-            title: 'Total Surveys Administered',
+            title: title,
             vAxis: {title: 'Survey Administered'},
             hAxis: {title: 'Total'},
             colors: ['grey']

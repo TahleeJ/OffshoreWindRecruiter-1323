@@ -261,8 +261,8 @@ const Analytics: React.FC<props> = (props) => {
     return (
         <div id='analytics'>
             <div className='topGrid'>  
-                <div className='middleColumn left' style={{ padding: "7px" }}>
-                    <div className='listViewer' style={{ height: "25%"}}>
+                <div className='middleColumn left'>
+                    <div className='listViewer top'>
                         <div className='title'>Navigator Focus</div>
 
                         <input type="radio" id='all-navigators' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.All} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.All) }}></input>
@@ -279,7 +279,7 @@ const Analytics: React.FC<props> = (props) => {
                         </div> 
                     </div>
 
-                    <div className='listViewer' style={{ height: "75%"}}>
+                    <div className='listViewer bottom'>
                         <div className='title'>Data Focus</div>
 
                         <input type="radio" id='week' name='date' defaultChecked={dateGroupingState === DateGrouping.Week} onClick={() => { updateDateGrouping(DateGrouping.Week) }}></input>
@@ -313,7 +313,7 @@ const Analytics: React.FC<props> = (props) => {
                 </div>
 
                 <div className='middleColumn right'>
-                    <div className='listViewer'>
+                    <div className='listViewer top'>
                         <div className='title'>Chart Type</div>
                         <select id="chart-types" defaultValue={chartTypeNameState} name="Chart Types" onChange={(e) => {updateChartType(e.target.value)}}>
                             <option value='Pie' defaultChecked>Pie</option>
@@ -329,7 +329,7 @@ const Analytics: React.FC<props> = (props) => {
                             <p id="popup-message" className='popup center'>{popupMessageState}</p>
                         </div>
                     </div>
-                    <div className='listViewer'>
+                    <div className='listViewer bottom'>
                         <div className='title'>Your Chart!</div>
                         <div className='chartContainer' id="chart"></div>
                     </div>

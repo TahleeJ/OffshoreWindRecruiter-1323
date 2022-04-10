@@ -1129,16 +1129,42 @@ textarea {
     }
     .middleColumn {
         height: 100%;
-        flex: 1 1 45%;
         padding: 7px;
 
         .listViewer {
-            min-height: 346.5px;
-            max-height: calc(50% - 3.5px);
+            overflow: auto;
 
             &:first-child {
                 margin-bottom: 7px;
             }
+        }
+    }
+
+    .middleColumn.left {
+        flex: 1 1 40%;
+
+        .listViewer.top {
+            max-height: 25%;
+        }
+    }
+
+    .middleColumn.left {
+        .listViewer.bottom {
+            max-height: 75%;
+        }
+    }
+
+    .middleColumn.right {
+        flex: 1 1 60%;
+
+        .listViewer.top {
+            max-height: 35%;
+        }
+    }
+
+    .middleColumn.right {
+        .listViewer.bottom {
+            max-height: 65%;
         }
     }
 
@@ -1155,7 +1181,7 @@ textarea {
     }
 
     .surveyList {
-        height: calc(50% - 170px);
+        height: 50%;
         overflow: auto;
         text-align: left;
       }
@@ -1186,9 +1212,6 @@ textarea {
     }
       
      .chartContainer {
-        height: 600px;
-        width: 900px;
-        overflow: auto;
         margin: auto;
     }
 

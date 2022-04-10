@@ -1,6 +1,15 @@
 import { getAdministeredSurveyData } from "../Firebase";
 import { queryFunctions, DataQuery, SerializedEntry } from "./Utility";
 
+/**
+ * Function to actually send a desired query to BigQuery
+ * 
+ * @param queryType the type of query that will be sent
+ * @param forDay whether the data should be focused on a single, specified day
+ * @param selectedDate the specific date that the data should focus on
+ * @param selectedNavigator the specific navigator email that they data should focus on
+ * @returns the retrieved BigQuery data is a more easy to operate on format
+ */
 export async function getQueryData(queryType: DataQuery, forDay: boolean, selectedDate: string, selectedNavigator?: string) {
     const queryFunction = queryFunctions[queryType];
     var response;
@@ -27,6 +36,13 @@ export async function getQueryData(queryType: DataQuery, forDay: boolean, select
     // Titles
     // {title, frequency}
 
+/**
+ * Turns the data received from BigQuery into a more chart-operational format
+ * 
+ * @param data the data sent back from BigQuery
+ * @param queryType the type of query used to get data from BigQuery
+ * @returns the transformed set of data
+ */
 export function serializeQueryData(data: string[], queryType: DataQuery) {
     if ([DataQuery.AllTitlesPerDay, DataQuery.AllPerDay, DataQuery.AllTitles].includes(queryType)) {
         if (queryType !== DataQuery.AllTitles) {

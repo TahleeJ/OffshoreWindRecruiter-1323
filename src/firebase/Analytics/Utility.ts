@@ -1,3 +1,4 @@
+// List of query functions recognized by BigQuery
 export const queryFunctions = [
     "get_all_title_day",
     "get_all_day",
@@ -10,6 +11,7 @@ export const queryFunctions = [
     "get_navigator_titles"
 ];
 
+// List of query functions in a more operational format
 export enum DataQuery {
     AllTitlesPerDay = 0,
     AllPerDay = 1,
@@ -52,6 +54,7 @@ export const dataFocusTypes = {
     titles: "Titles"
 };
 
+// List of data focuses (sets) able to be represented by each chart type
 export const validQueryCharts = {
     pie: {
         list: [DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay], // EachTitles
@@ -71,6 +74,12 @@ export const validQueryCharts = {
     }
 }
 
+/**
+ * Turns the BigQuery provided dates into a more readable format
+ * 
+ * @param date the event date sent back from BigQuery
+ * @returns the human-friendly date format
+ */
 export function stringifyDate(date: string): string {
     const month = date.substring(4, 6);
     const day = date.substring(6);
@@ -81,6 +90,13 @@ export function stringifyDate(date: string): string {
     return newDate;
 }
 
+/**
+ * Determines the type of query that will be sent to BigQuery
+ * 
+ * @param dataFocusEntry the desired data focus (set)
+ * @param navigatorGroupingEntry the desired navigator(s) to see data for
+ * @returns the type of data query to be sent out
+ */
 export function determineQueryType(dataFocusEntry: string, navigatorGroupingEntry: NavigatorGrouping): DataQuery {
     var chartQueryType: DataQuery;
 
@@ -137,6 +153,14 @@ export function determineQueryType(dataFocusEntry: string, navigatorGroupingEntr
     return chartQueryType!;
 }
 
+/**
+ * Validates that the selected chart type is able to represent the selected
+ * data focus (set)
+ * 
+ * @param chartType the desired chart type
+ * @param queryType the desired data focus
+ * @returns whether the desired chart is able to represent the desired data focus
+ */
 export function validateChartType(chartType: Chart, queryType: DataQuery): boolean {
     var validChartType: boolean;
 

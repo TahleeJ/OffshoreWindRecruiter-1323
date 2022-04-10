@@ -1,9 +1,18 @@
 import { getQueryData } from "./Query";
 import { DataQuery, Chart, SerializedEntry, stringifyDate } from "./Utility";
 
+/**
+ * Function to begin the actual chart drawing process based on the desired representation parameters
+ * 
+ * @param selectedSurveys the desired surveys to see data for
+ * @param chartType the desired (chart) representation of the data
+ * @param queryType the type of query to focus the data
+ * @param allNavigators whether the data should focus on all navigators
+ * @param forDay whether the data should focus on a single, specified day
+ * @param selectedDate the desired day to see data for
+ * @param selectedNavigators the specific navigator(s) to see data for
+ */
 export async function drawChart(selectedSurveys: string[], chartType: Chart, queryType: DataQuery, allNavigators: boolean, forDay: boolean, selectedDate: string, selectedNavigators?: string[]) {
-    console.log(selectedDate);
-    
     switch(queryType) {
         case DataQuery.AllTitlesPerDay:
             drawTitlesPerDay(queryType, chartType, selectedSurveys, allNavigators, forDay, selectedDate);
@@ -33,9 +42,22 @@ export async function drawChart(selectedSurveys: string[], chartType: Chart, que
     }
 }
 
+/**
+ * Chart drawing function to handle viewing data for a desired set of surveys over the 
+ * time span of a week/day.
+ * 
+ * @param queryType the type of query to focus the data on
+ * @param chartType the desired representation of the data
+ * @param selectedSurveys the desired set of surveys to see data for
+ * @param allNavigators whether the data should focus on all navigators
+ * @param forDay whether the data should focus on a single, specified day
+ * @param selectedDate the desired day to see data for
+ * @param selectedNavigators the desired set of navigator(s) to see data for
+ */
 async function drawTitlesPerDay(queryType: DataQuery, chartType: Chart, selectedSurveys: string[], allNavigators: boolean, forDay: boolean, selectedDate: string, selectedNavigators?: string[]) {
     var data: any
     
+    // Retrieve data from BigQuery
     if (!allNavigators) {
         data = await getQueryData(queryType, forDay, selectedDate, selectedNavigators![0]);
     } else {
@@ -44,6 +66,7 @@ async function drawTitlesPerDay(queryType: DataQuery, chartType: Chart, selected
 
     const title = `Total for Selected Surveys Administered ${forDay ? `On ${stringifyDate(selectedDate)}` : "Over the Past 7 Days"}`;
 
+    // Chart drawing using transformed BigQuery data
     var chartData: google.visualization.DataTable;
 
     if (chartType === Chart.Combo) {
@@ -99,6 +122,17 @@ async function drawTitlesPerDay(queryType: DataQuery, chartType: Chart, selected
 
 }
 
+/**
+ * Converts the data received from BigQuery into a format recognized by Google Charts
+ * 
+ * *Converts data particularly for a set of surveys over the time span of a week/day
+ * 
+ * @param selectedSurveys the desired surveys to see data for
+ * @param data the transformed data received from BigQuery
+ * @param includeAverage whether to calculate (and include) an average line in the data set
+ * @param total whether to calculate the total appearance of the desired surveys per week instead of per day
+ * @returns the Google Chart-recognizable set of data
+ */
 function prepareTitlesPerDay(selectedSurveys: string[], data: Map<string, SerializedEntry[]>, includeAverage: boolean, total: boolean): google.visualization.DataTable {
     var chartData = new google.visualization.DataTable();
 
@@ -209,6 +243,16 @@ function prepareTitlesPerDay(selectedSurveys: string[], data: Map<string, Serial
     return chartData;
 }
 
+/**
+ * Chart drawing function to handle viewing data for all surveys over the time span of a week/day.
+ * 
+ * @param queryType the type of query to focus the data on
+ * @param chartType the desired representation of the data
+ * @param allNavigators whether the data should focus on all navigators
+ * @param forDay whether the data should focus on a single, specified day
+ * @param selectedDate the desired day to see data for
+ * @param selectedNavigators the desired set of navigator(s) to see data for
+ */
 async function drawPerDay(queryType: DataQuery, chartType: Chart, allNavigators: boolean, forDay: boolean, selectedDate: string, selectedNavigators?: string[]) {
     var data: any
 
@@ -240,6 +284,14 @@ async function drawPerDay(queryType: DataQuery, chartType: Chart, allNavigators:
     }
 }
 
+/**
+ * Converts the data received from BigQuery into a format recognized by Google Charts
+ * 
+ * *Converts data particularly for all surveys over the time span of a week/day
+ * 
+ * @param data the transformed data received from BigQuery
+ * @returns the Google Chart-recognizable set of data
+ */
 function preparePerDay(data: Map<string, SerializedEntry[]>): google.visualization.DataTable {
     var chartData = new google.visualization.DataTable();
     chartData.addColumn("string", "Date");
@@ -263,6 +315,16 @@ function preparePerDay(data: Map<string, SerializedEntry[]>): google.visualizati
     return chartData;
 }
 
+/**
+ * Chart drawing function to handle viewing data for each survey over the time span of a year/day.
+ * 
+ * @param queryType the type of query to focus the data on
+ * @param chartType the desired representation of the data
+ * @param allNavigators whether the data should focus on all navigators
+ * @param forDay whether the data should focus on a single, specified day
+ * @param selectedDate the desired day to see data for
+ * @param selectedNavigators the desired set of navigator(s) to see data for
+ */
 async function drawTitles(queryType: DataQuery, chartType: Chart, allNavigators: boolean, forDay: boolean, selectedDate: string, selectedNavigators?: string[]) {
     var data: any
     
@@ -293,6 +355,14 @@ async function drawTitles(queryType: DataQuery, chartType: Chart, allNavigators:
     }   
 }
 
+/**
+ * Converts the data received from BigQuery into a format recognized by Google Charts
+ * 
+ * *Converts data particularly for each survey over the time span of a year/day
+ * 
+ * @param data the transformed data received from BigQuery
+ * @returns the Google Chart-recognizable set of data
+ */
 function prepareTitles(data: SerializedEntry[]) {
     var chartData = new google.visualization.DataTable();
     chartData.addColumn("string", "Survey Title");

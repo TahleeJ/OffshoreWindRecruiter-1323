@@ -14,7 +14,7 @@ const Analytics: React.FC<props> = (props) => {
     const today = () => {
         const todayDate = new Date();
         const day = String(todayDate.getDate()).padStart(2, '0');
-        const month = String(todayDate.getMonth() + 1).padStart(2, '0'); //January is 0!
+        const month = String(todayDate.getMonth() + 1).padStart(2, '0');
         const year = todayDate.getFullYear();
     
         const todayString = `${year}-${month}-${day}`;
@@ -72,6 +72,37 @@ const Analytics: React.FC<props> = (props) => {
 
     google.charts.load("current", {packages:["corechart"]});
 
+    function updateNavigatorGrouping(value: NavigatorGrouping) {
+        navigatorGrouping = value;
+        setNavigatorGroupingstate(value);
+    }
+
+    function updateNavigatorEntry(value: string) {
+        navigatorEntry = value;
+        setNavigatorEntryState(value);
+    }
+
+    function updateDataFocus(value: string) {
+        dataFocus = value;
+        setDataFocusState(value);
+    }
+
+    function updateDateGrouping(value: DateGrouping) {
+        dateGrouping = value;
+        setDateGroupingState(value);
+    }
+
+    function updateDate(value: string) {
+        date = value.replaceAll("-", "");
+        setDateState(value);
+    }
+
+    /**
+     * Updates the chosen chart selection and converts it into a format
+     * recognizable by the chart drawing pipeline
+     * 
+     * @param value the string representation of the selected chart
+     */
     function updateChartType(value: string) {
         chartTypeName = value;
 
@@ -103,6 +134,12 @@ const Analytics: React.FC<props> = (props) => {
         setValidDataFocusesState(validDataFocuses);
     }
 
+    /**
+     * Checks that the entered in navigator emails are in a valid format
+     * (i.e., separated by commas and there are enough characters in each email).
+     * 
+     * @returns whether typed in navigator emails are in a valid format
+     */
     function validateNavigatorEntry(): boolean {
         selectedNavigators = [];
 
@@ -131,16 +168,65 @@ const Analytics: React.FC<props> = (props) => {
         }
     }
 
+    /**
+     * Updates the list of survey names that will be used to pull data for,
+     * ensuring that only a maximum of 5 surveys are selected at any given
+     * time.
+     * 
+     * @param surveyName the name of the survey to add/remove from the chart's
+     *                   survey data
+     * @param checked whether or not the checkbox for a given survey has just been
+     *                selected or deselected
+     */
+    function handleClick(surveyName: string, checked: boolean) {
+        const checkbox = document.getElementById(surveyName) as HTMLInputElement;
+
+        if (checked) {
+            if (selectedSurveyCount < maxSelectedSurveys) {
+                selectedSurveys.push(surveyName);
+                selectedSurveysCheck.add(surveyName);
+
+                selectedSurveysCheckState.add(surveyName);
+                setSelectedSurveysCheckState(selectedSurveysCheckState);
+
+                selectedSurveyCount++;
+            }
+        } else {            
+            const removeIndex = selectedSurveys.indexOf(surveyName);
+            selectedSurveys.splice(removeIndex, 1);
+            selectedSurveysCheck.delete(surveyName);
+
+            selectedSurveysCheckState.delete(surveyName);
+            setSelectedSurveysCheckState(selectedSurveysCheckState);
+
+            selectedSurveyCount--;
+        }
+
+        setSelectedSurveysState(selectedSurveys);
+
+        checkbox.checked = selectedSurveysCheck.has(surveyName);
+    }
+
+    /**
+     * Begins the chart generation process. Charts will only start to be generated when the
+     * following conditions are met:
+     *      - A (valid) email has been entered if data for a specific navigator was desired
+     *      - The desired chart type is able to represent the desired data set
+     *      - At least one survey has been selected if data for a specific set of surveys was
+     *        desired
+     */
     const generateChart = async() => {
         popupTitle = "";
         popupMessage = "";
         togglePopup();
         
+        // Determine which type of query will be sent to pull the desired data
         queryType = determineQueryType(dataFocus, navigatorGrouping);
 
         setDataFocusState(dataFocus);
         setQueryTypeState(queryType);
 
+        // Validate that the selected chart type is able to represent the desired data set
         const validChartType = validateChartType(chartType, queryType);
 
         if (navigatorGrouping === NavigatorGrouping.Set || navigatorGrouping === NavigatorGrouping.One) {
@@ -202,60 +288,6 @@ const Analytics: React.FC<props> = (props) => {
                 togglePopup();
             }
         }   
-    }
-
-    function handleClick(surveyName: string, checked: boolean) {
-        const checkbox = document.getElementById(surveyName) as HTMLInputElement;
-
-        if (checked) {
-            if (selectedSurveyCount < maxSelectedSurveys) {
-                selectedSurveys.push(surveyName);
-                selectedSurveysCheck.add(surveyName);
-
-                selectedSurveysCheckState.add(surveyName);
-                setSelectedSurveysCheckState(selectedSurveysCheckState);
-
-                selectedSurveyCount++;
-            }
-        } else {            
-            const removeIndex = selectedSurveys.indexOf(surveyName);
-            selectedSurveys.splice(removeIndex, 1);
-            selectedSurveysCheck.delete(surveyName);
-
-            selectedSurveysCheckState.delete(surveyName);
-            setSelectedSurveysCheckState(selectedSurveysCheckState);
-
-            selectedSurveyCount--;
-        }
-
-        setSelectedSurveysState(selectedSurveys);
-
-        checkbox.checked = selectedSurveysCheck.has(surveyName);
-    }
-
-    function updateNavigatorGrouping(value: NavigatorGrouping) {
-        navigatorGrouping = value;
-        setNavigatorGroupingstate(value);
-    }
-
-    function updateNavigatorEntry(value: string) {
-        navigatorEntry = value;
-        setNavigatorEntryState(value);
-    }
-
-    function updateDataFocus(value: string) {
-        dataFocus = value;
-        setDataFocusState(value);
-    }
-
-    function updateDateGrouping(value: DateGrouping) {
-        dateGrouping = value;
-        setDateGroupingState(value);
-    }
-
-    function updateDate(value: string) {
-        date = value.replaceAll("-", "");
-        setDateState(value);
     }
 
     return (

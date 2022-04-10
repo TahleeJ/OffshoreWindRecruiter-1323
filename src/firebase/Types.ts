@@ -76,6 +76,7 @@ export interface User {
 
 export enum PermissionLevel {
     None,
+    Navigator,
     Admin,
     Owner
 }

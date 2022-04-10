@@ -20,7 +20,7 @@ const AdminManager: React.FC<props> = (props) => {
     const dispatch = useAppDispatch();
     const [changeLevelState, setChangeLevelState] = useState("Admin");
     const [errorTextState, setErrorTextState] = useState("")
-    const [updateLevelState, setUpdateLevelState] = useState(PermissionLevel.None);
+    const [updateLevelState, setUpdateLevelState] = useState(PermissionLevel.Navigator);
 
     const [popupVisible, setPopupvisible] = useState<Boolean>(false);
 
@@ -64,13 +64,16 @@ const AdminManager: React.FC<props> = (props) => {
     function setNewUpdateLevel(newLevel: string) {
         switch(newLevel) {
             case "Owner":
-                updateLevel = PermissionLevel.None;
+                updateLevel = PermissionLevel.Owner;
                 break;
             case "Admin":
                 updateLevel = PermissionLevel.Admin;
                 break;
+            case "Navigator":
+                updateLevel = PermissionLevel.Navigator;
+                break;
             case "None":
-                updateLevel = PermissionLevel.Owner;
+                updateLevel = PermissionLevel.None;
                 break;
         }
 
@@ -125,6 +128,7 @@ const AdminManager: React.FC<props> = (props) => {
             <div className = "dropDown">
                 <label className='dropText' htmlFor='permission-select'>Update to: </label>
                 <select id='permission-select' value={changeLevelState} onChange={(e) => setNewUpdateLevel(e.target.value)}>
+                    <option value="Navigator">Navigator</option>
                     <option value="Admin">Admin</option>
                     <option value="Owner">Owner</option>
                 </select>

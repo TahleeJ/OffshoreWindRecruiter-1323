@@ -6,8 +6,8 @@ import { useEffect } from "react";
 import { JobOpp } from "../../firebase/Types";
 import { getJobOpps, newJobOpp, editJobOpp } from '../../firebase/Queries/JobQueries';
 import { setJobOpps } from "../../redux/dataSlice.ts";
-import Prompt from '../Prompt';
-import ListViewer from '../ListViewer';
+import Prompt from '../generic/Prompt';
+import ListViewer from '../generic/ListViewer';
 
 
 

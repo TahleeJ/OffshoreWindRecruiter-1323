@@ -4,8 +4,8 @@ import { hasId, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion, JobOpp, Que
 import { setLabels } from '../../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
-import ListViewer from '../ListViewer';
-import ListElement from '../survey/ListElement';
+import ListViewer from '../generic/ListViewer';
+import ListElement from '../generic/ListElement';
 
 
 /** The props (arguments) to create this element */

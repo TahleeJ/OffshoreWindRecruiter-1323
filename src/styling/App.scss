@@ -156,7 +156,7 @@ textarea {
     .listElements {
         overflow-y: auto;
         overflow-x: hidden;
-        height: calc(100% - 38px);
+        height: 100%;
 
         & > * {
             padding: 7px 5px;
@@ -173,11 +173,59 @@ textarea {
                 text-align: left;
                 flex: 1;
                 padding: 4px;
+                &.viewable {
+                    cursor: pointer;
+                }
             }
 
             .edit {
                 margin-right: 5px;
             }
+        }
+    }
+
+    .listElements + .title {
+        height: calc(100% - 38px);
+    }
+}
+.section {
+    width: calc(100%);
+    background-color: $gray1;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: $subtle-shadow;
+    position: relative;
+
+    > .title {
+        font-weight: bold;
+        background-color: white;
+        color: $mainColor;
+        text-align: left;
+        font-size: $largest-font-size;
+        padding: 3px 8px;
+        border-bottom: 1px solid $mainColor;
+    }
+
+    &.closed .content {
+        height: 0px;
+    }
+
+    .listViewer {
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .toggleButton {
+        position: absolute;
+        right: 3px;
+        top: 3px;
+        padding: 0px 5px;
+        border-radius: 3px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $mainColor;
+            color: white;
         }
     }
 }
@@ -557,7 +605,6 @@ textarea {
             color: $contrastColor;
         }
     }
-
 }
 
 #surveyHome {
@@ -715,12 +762,9 @@ textarea {
                 text-align: left;
             }
         }
-
-        
     }
 
     .ResponseView {
-        
         .title {
             font-size: $largest-font-size;
             color: $mainColor;
@@ -742,9 +786,9 @@ textarea {
         padding: 15px 0 15px 15px;
         box-shadow: $subtle-shadow;
         text-align: left;
-        display:flex;
+        display: flex;
         flex-wrap: wrap;
-    
+
         i {
             font-size: 30px;
         }
@@ -758,7 +802,7 @@ textarea {
             //flex: 1 1 1%;
             height: 90px;
             margin-block: auto;
-            border-left:1px solid;
+            border-left: 1px solid;
         }
         .recContainer {
             width: 120px;
@@ -768,14 +812,12 @@ textarea {
             float: right;
         }
 
-
-    
         .title {
             margin-left: 0;
             margin-bottom: 0;
             font-size: 18px;
-            font-weight:600;
-            color:$mainDark !important;
+            font-weight: 600;
+            color: $mainDark !important;
         }
 
         .compName {
@@ -784,7 +826,7 @@ textarea {
             margin-bottom: 2px;
         }
 
-        .jobDesc{
+        .jobDesc {
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
@@ -793,22 +835,22 @@ textarea {
             font-weight: 400;
             color: #656565;
         }
-    
+
         &.neutral {
             background-color: white;
         }
-    
+
         &.positive {
             background-color: #eaf3ff;
         }
-    
+
         &.negative {
             background-color: white;
         }
         @media screen and (max-width: 600px) {
             height: fit-content;
             .jobRecContainer {
-                width:50%;
+                width: 50%;
                 flex-grow: 1;
             }
             .recContainer {
@@ -947,25 +989,6 @@ textarea {
         }
     }
 }
-#jobList {
-    .jobName {
-        display: inline;
-    }
-    .buttons {
-        display: inline;
-        position: relative;
-        left: 80%;
-        button {
-            margin-right: 10px;
-        }
-        .red {
-            background-color: $contrastColor;
-        }
-        .red:hover {
-            background-color: $contrastDark;
-        }
-    }
-}
 #jobCreator {
     background-color: $gray1;
     height: $contentHeight;
@@ -1023,6 +1046,40 @@ textarea {
     }
     button {
         margin: 5px;
+    }
+}
+.jobExplore {
+    height: $contentHeight;
+    overflow-y: auto;
+
+    .section {
+        margin-bottom: 10px;
+
+        .content {
+            display: flex;
+        }
+    }
+
+    .left {
+        flex: 1 1 40%;
+    }
+
+    .right {
+        flex: 1 1 60%;
+    }
+
+    .jobOpp {
+        cursor: pointer;
+        transition: 0.1s;
+
+        &.active {
+            background-color: $mainColor;
+            color: white;
+        }
+        &:hover {
+            background-color: $mainDark;
+            color: white;
+        }
     }
 }
 #Popup {
@@ -1102,14 +1159,14 @@ textarea {
     }
 }
 #InfoPage {
-    .container{
+    .container {
         margin-top: 20px;
         color: $mainColor;
         font-size: $largest-font-size;
     }
     .text {
         font-size: $large-font-size;
-        color:black;
+        color: black;
     }
     .inner {
         margin-top: 40px;
@@ -1171,7 +1228,7 @@ textarea {
     select {
         font-size: 18px;
     }
-    
+
     .navigatorText {
         font-size: 18px;
     }
@@ -1184,7 +1241,7 @@ textarea {
         height: 50%;
         overflow: auto;
         text-align: left;
-      }
+    }
 
     .generateBox {
         margin: auto;
@@ -1201,17 +1258,22 @@ textarea {
     .chartWait {
         font-style: italic;
     }
-      
+
     .popup {
         color: red;
     }
-      
+
     .popupTitle {
         font-size: 20px;
         font-weight: bold;
     }
-      
-     .chartContainer {
+
+    .chartContainer {
+        min-height: 600px;
+        min-width: 900px;
+        height: auto;
+        width: auto;
+        overflow: auto;
         margin: auto;
     }
 

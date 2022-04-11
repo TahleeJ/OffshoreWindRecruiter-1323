@@ -145,7 +145,7 @@ textarea {
 .listViewer .listElements {
   overflow-y: auto;
   overflow-x: hidden;
-  height: calc(100% - 38px);
+  height: 100%;
 }
 
 .listViewer .listElements > * {
@@ -170,8 +170,60 @@ textarea {
   padding: 4px;
 }
 
+.listViewer .listElements .listElement .name.viewable {
+  cursor: pointer;
+}
+
 .listViewer .listElements .listElement .edit {
   margin-right: 5px;
+}
+
+.listViewer .listElements + .title {
+  height: calc(100% - 38px);
+}
+
+.section {
+  width: calc(100%);
+  background-color: #efefef;
+  border-radius: 3px;
+  overflow: hidden;
+  -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
+          box-shadow: 0px 0px 3px 2px #dddddd;
+  position: relative;
+}
+
+.section > .title {
+  font-weight: bold;
+  background-color: white;
+  color: #7ba1ff;
+  text-align: left;
+  font-size: 28px;
+  padding: 3px 8px;
+  border-bottom: 1px solid #7ba1ff;
+}
+
+.section.closed .content {
+  height: 0px;
+}
+
+.section .listViewer {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border-radius: 0;
+}
+
+.section .toggleButton {
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  padding: 0px 5px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.section .toggleButton:hover {
+  background-color: #7ba1ff;
+  color: white;
 }
 
 .error {
@@ -1001,28 +1053,6 @@ textarea {
   margin-right: 50px;
 }
 
-#jobList .jobName {
-  display: inline;
-}
-
-#jobList .buttons {
-  display: inline;
-  position: relative;
-  left: 80%;
-}
-
-#jobList .buttons button {
-  margin-right: 10px;
-}
-
-#jobList .buttons .red {
-  background-color: #d16161;
-}
-
-#jobList .buttons .red:hover {
-  background-color: #cc5050;
-}
-
 #jobCreator {
   background-color: #efefef;
   height: calc(100% - 50px);
@@ -1083,6 +1113,49 @@ textarea {
 
 #jobCreator button {
   margin: 5px;
+}
+
+.jobExplore {
+  height: calc(100% - 50px);
+  overflow-y: auto;
+}
+
+.jobExplore .section {
+  margin-bottom: 10px;
+}
+
+.jobExplore .section .content {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.jobExplore .left {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 40%;
+          flex: 1 1 40%;
+}
+
+.jobExplore .right {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 60%;
+          flex: 1 1 60%;
+}
+
+.jobExplore .jobOpp {
+  cursor: pointer;
+  -webkit-transition: 0.1s;
+  transition: 0.1s;
+}
+
+.jobExplore .jobOpp.active {
+  background-color: #7ba1ff;
+  color: white;
+}
+
+.jobExplore .jobOpp:hover {
+  background-color: #5f8dff;
+  color: white;
 }
 
 #Popup {
@@ -1193,6 +1266,14 @@ textarea {
   padding: 7px;
 }
 
+#analytics .middleColumn .listViewer {
+  overflow: auto;
+}
+
+#analytics .middleColumn .listViewer:first-child {
+  margin-bottom: 7px;
+}
+
 #analytics .middleColumn.left {
   -webkit-box-flex: 1;
       -ms-flex: 1 1 40%;
@@ -1219,14 +1300,6 @@ textarea {
 
 #analytics .middleColumn.right .listViewer.bottom {
   max-height: 65%;
-}
-
-#analytics .middleColumn .listViewer:first-child {
-  margin-bottom: 7px;
-}
-
-#analytics .middleColumn .listViewer {
-  overflow: auto;
 }
 
 #analytics select {
@@ -1273,6 +1346,11 @@ textarea {
 }
 
 #analytics .chartContainer {
+  min-height: 600px;
+  min-width: 900px;
+  height: auto;
+  width: auto;
+  overflow: auto;
   margin: auto;
 }
 

@@ -1,14 +1,11 @@
 import React from 'react';
-import { RecommendedJobs } from '../../firebase/Types';
-import { useAppSelector } from '../../redux/hooks';
+import { RecommendedJobWithData } from '../../firebase/Types';
 
 interface props {
-    jobs: RecommendedJobs;
+    jobs: RecommendedJobWithData[];
 }
 
 const RecJobView: React.FC<props> = (p) => {
-    const labels = useAppSelector(s => s.data.labels);
-
     return (
         <>
             {/* <span>Here are some job recommendations that align with your survey answers:</span> */}

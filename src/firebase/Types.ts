@@ -1,8 +1,6 @@
 export type id = string;
 export type hasId = { id: id };
 
-export type RecommendedJobs = { score: number, jobOpp: JobOpp }[];
-
 
 export interface SurveyTemplate {
     title: string
@@ -56,6 +54,18 @@ export interface SurveyTaker {
 export interface RecommendedJob {
     score: number
     jobOppId: id
+}
+
+export interface RecommendedJobWithData {
+    score: number
+    jobOpp: JobOpp
+}
+
+export interface SubmitSurveyResponse {
+    recommendedJobs: RecommendedJob[]
+
+    // Maps label to [ LabelScore / ExpectedScore, PercentileScore ]
+    labelScores: Map<string, [number, number]>
 }
 
 

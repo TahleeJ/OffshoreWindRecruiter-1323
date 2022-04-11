@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 
 import { assertValidRequest, firestore } from './Utility';
 import { errors } from "./Errors";
-import { JobOpp, QuestionType, RecommendedJob, SurveyResponse, SurveyTemplate } from '../../src/firebase/Types';
+import { SubmitSurveyResponse, JobOpp, QuestionType, RecommendedJob, SurveyResponse, SurveyTemplate } from '../../src/firebase/Types';
 import { Timestamp } from 'firebase-admin/firestore';
 
 
@@ -74,18 +74,20 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
     const getPercentile = (x: number) => Math.tanh(x / 1.1757849338635604);  // Approximating CDF of normal distribution normalized to (-1, 1) https://www.desmos.com/calculator/cfq0o771eq
 
     const scores = new Map<string, number>();
+    const labelScores = new Map<string, [number, number]>();
     for (const [key, value] of rawScores) {
         const [x, mean, n] = value;
         const stdDev = Math.sqrt(mean * (1 - mean / n));
         const score = stdDev !== 0 ? getPercentile((x - mean) / stdDev) : 1;
         
         scores.set(key, score);
+        labelScores.set(key, [x / mean, score]);
     }
 
 
     // Calculate dot product of the score vector and each job vector then normalize to (-1, 1)
 
-    const rankings: (RecommendedJob & { jobOpp: JobOpp})[] = [];
+    const rankings: RecommendedJob[] = [];
 
     (await jobOpps).forEach(job => {
         const jobData = job.data();
@@ -95,21 +97,27 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
         let jobScore = jobData.labelIds.reduce((sum, l) => sum + scores.getOrDefault(l, 0), 0);
         jobScore /= jobData.labelIds.length;  // Normalize score to (-1, 1)
 
-        rankings.push({ score: jobScore, jobOppId: job.id, jobOpp: jobData });
+        rankings.push({ score: jobScore, jobOppId: job.id });
     });
     
     rankings.sort((a, b) => a.score - b.score);
 
 
-    // Save SurveyResponse with job rankings and then return the top 5 recommended jobs
+    // Save SurveyResponse with job rankings and then return the top 10 recommended jobs
     
     firestore.collection("SurveyResponse").add({
         surveyId: request.surveyId,
         taker: request.taker,
         answers: request.answers,
-        recommendedJobs: rankings.map(j => ({score: j.score, jobOppId: j.jobOppId})),
+        recommendedJobs: rankings,
         created: Timestamp.now().toMillis()
     } as SurveyResponse);
 
-    return rankings.map(j => ({score: j.score, jobOpp: j.jobOpp})).slice(0, 5);
+
+    const response: SubmitSurveyResponse = {
+        recommendedJobs: rankings.slice(0, 10),
+        labelScores: labelScores
+    };
+
+    return response;
 });

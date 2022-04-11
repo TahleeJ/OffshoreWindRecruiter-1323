@@ -1190,19 +1190,43 @@ textarea {
 
 #analytics .middleColumn {
   height: 100%;
-  -webkit-box-flex: 1;
-      -ms-flex: 1 1 45%;
-          flex: 1 1 45%;
   padding: 7px;
 }
 
-#analytics .middleColumn .listViewer {
-  min-height: 346.5px;
-  max-height: calc(50% - 3.5px);
+#analytics .middleColumn.left {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 40%;
+          flex: 1 1 40%;
+}
+
+#analytics .middleColumn.left .listViewer.top {
+  max-height: 25%;
+}
+
+#analytics .middleColumn.left .listViewer.bottom {
+  max-height: 75%;
+}
+
+#analytics .middleColumn.right {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 60%;
+          flex: 1 1 60%;
+}
+
+#analytics .middleColumn.right .listViewer.top {
+  max-height: 35%;
+}
+
+#analytics .middleColumn.right .listViewer.bottom {
+  max-height: 65%;
 }
 
 #analytics .middleColumn .listViewer:first-child {
   margin-bottom: 7px;
+}
+
+#analytics .middleColumn .listViewer {
+  overflow: auto;
 }
 
 #analytics select {
@@ -1218,7 +1242,7 @@ textarea {
 }
 
 #analytics .surveyList {
-  height: calc(50% - 130px);
+  height: 50%;
   overflow: auto;
   text-align: left;
 }
@@ -1249,11 +1273,6 @@ textarea {
 }
 
 #analytics .chartContainer {
-  min-height: 600px;
-  min-width: 900px;
-  height: auto;
-  width: auto;
-  overflow: auto;
   margin: auto;
 }
 

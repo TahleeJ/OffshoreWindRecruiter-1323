@@ -69,7 +69,7 @@ const AdminHome: React.FC<props> = (props) => {
                                 return <ListElement
                                     key={ind}
                                     name={res.taker.name}
-                                    handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Responding, data: res })) }
+                                    handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Responding, data: res }))}
                                     handleDelete={async () => {
                                         await deleteSurveyResponse(res.id);
                                         appDispatch(setSurveyResponses(await getSurveyResponses()));
@@ -87,6 +87,7 @@ const AdminHome: React.FC<props> = (props) => {
                                 return <ListElement
                                     key={ind}
                                     name={jobOpp.jobName}
+                                    handleView={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Reviewing, data: jobOpp }))}
                                     handleEdit={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Editing, data: jobOpp }))} // does not actually handle edits yet
                                     handleDelete={async () => {
                                         await deleteJobOpp(jobOpp.id);

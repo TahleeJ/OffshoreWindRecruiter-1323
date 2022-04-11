@@ -1,10 +1,9 @@
 import React from 'react';
-import JobList from './JobList';
-import ListViewer from '../generic/ListViewer';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { changeOperation, OperationType } from '../../redux/navigationSlice';
+import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
 import JobCreator from './JobCreator';
 import JobView from './JobView';
+import JobExplore from './JobExplore';
 
 
 /** The props (arguments) to create this element */
@@ -23,9 +22,14 @@ const JobManager: React.FC<props> = (props) => {
             case OperationType.Creating:
                 return <JobCreator />;
             case OperationType.Administering:
-                return <JobView />;
+                return <JobExplore />;
             case OperationType.Reviewing:
-                return <JobView />;
+                return (
+                    <div className='container'>
+                        <button className='red' onClick={() => appDispatch(changePage({type: PageType.AdminHome, operation: OperationType.Idle}))}>Go Back</button>
+                        <JobView />
+                    </div>
+                );
             default:
                 return (
                     <div id='jobManager' className="jobManage">

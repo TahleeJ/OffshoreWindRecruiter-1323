@@ -14,10 +14,18 @@ const ListElement: React.FC<props> = (p) => {
         setPopupvisible(!popupVisible);
     }
     return (
-        <div className={"listElement" + (p.handleView ? " viewable" : "")} onClick={p.handleView}>
-            <div className="name">{p.name}</div>
-            {p.handleEdit && <i className="fas fa-edit edit" onClick={p.handleEdit} />}
-            {p.handleDelete && <i className="fas fa-trash-alt delete" onClick={togglePopup} />}
+        <div className={"listElement"}>
+            <div className={"name" + (p.handleView ? " viewable" : "")} onClick={p.handleView}>{p.name}</div>
+            {p.handleEdit && <i className="fas fa-edit edit" onClick={(e) => {
+                e.stopPropagation(); //used to not active the "handleView" function
+                e.nativeEvent.stopImmediatePropagation(); //used to not active the "handleView" function
+                p.handleEdit && p.handleEdit();
+            }} />}
+            {p.handleDelete && <i className="fas fa-trash-alt delete" onClick={(e) => {
+                e.stopPropagation(); //used to not active the "handleView" function
+                e.nativeEvent.stopImmediatePropagation(); //used to not active the "handleView" function
+                togglePopup();
+            }} />}
 
             {(popupVisible) &&
                 <Prompt

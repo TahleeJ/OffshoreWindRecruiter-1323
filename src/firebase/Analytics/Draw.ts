@@ -12,16 +12,16 @@ import { DataQuery, Chart, SerializedEntry, stringifyDate } from "./Utility";
  * @param selectedDate the desired day to see data for
  * @param selectedNavigators the specific navigator(s) to see data for
  */
-export async function drawChart(selectedSurveys: string[], chartType: Chart, queryType: DataQuery, allNavigators: boolean, forDay: boolean, selectedDate: string, selectedNavigators?: string[]) {
+export async function drawChart(selectedSurveys: string[], chartType: Chart, queryType: DataQuery, allNavigators: boolean, forDay: boolean, startDate: string, selectedNavigators?: string[]) {
     switch(queryType) {
         case DataQuery.AllTitlesPerDay:
-            drawTitlesPerDay(queryType, chartType, selectedSurveys, allNavigators, forDay, selectedDate);
+            drawTitlesPerDay(queryType, chartType, selectedSurveys, allNavigators, forDay, startDate);
             break;
         case DataQuery.AllPerDay:
-            drawPerDay(queryType, chartType, allNavigators, forDay, selectedDate);
+            drawPerDay(queryType, chartType, allNavigators, forDay, startDate);
             break;
         case DataQuery.AllTitles:
-            drawTitles(queryType, chartType, allNavigators, forDay, selectedDate);   
+            drawTitles(queryType, chartType, allNavigators, forDay, startDate);   
             break;
         case DataQuery.EachTitlesPerDay:
             break;
@@ -30,13 +30,13 @@ export async function drawChart(selectedSurveys: string[], chartType: Chart, que
         case DataQuery.EachTitles:
             break;
         case DataQuery.OneTitlesPerDay:
-            drawTitlesPerDay(queryType, chartType, selectedSurveys, allNavigators, forDay, selectedDate, selectedNavigators);
+            drawTitlesPerDay(queryType, chartType, selectedSurveys, allNavigators, forDay, startDate, selectedNavigators);
             break;
         case DataQuery.OnePerDay:
-            drawPerDay(queryType, chartType, allNavigators, forDay, selectedDate, selectedNavigators);
+            drawPerDay(queryType, chartType, allNavigators, forDay, startDate, selectedNavigators);
             break;
         case DataQuery.OneTitles:
-            drawTitles(queryType, chartType, allNavigators, forDay, selectedDate, selectedNavigators); 
+            drawTitles(queryType, chartType, allNavigators, forDay, startDate, selectedNavigators); 
 
             break;
     }
@@ -54,17 +54,17 @@ export async function drawChart(selectedSurveys: string[], chartType: Chart, que
  * @param selectedDate the desired day to see data for
  * @param selectedNavigators the desired set of navigator(s) to see data for
  */
-async function drawTitlesPerDay(queryType: DataQuery, chartType: Chart, selectedSurveys: string[], allNavigators: boolean, forDay: boolean, selectedDate: string, selectedNavigators?: string[]) {
+async function drawTitlesPerDay(queryType: DataQuery, chartType: Chart, selectedSurveys: string[], allNavigators: boolean, forDay: boolean, startDate: string, selectedNavigators?: string[]) {
     var data: any
     
     // Retrieve data from BigQuery
     if (!allNavigators) {
-        data = await getQueryData(queryType, forDay, selectedDate, selectedNavigators![0]);
+        data = await getQueryData(queryType, forDay, startDate, selectedNavigators![0]);
     } else {
-        data = await getQueryData(queryType, forDay, selectedDate);
+        data = await getQueryData(queryType, forDay, startDate);
     }
 
-    const title = `Total for Selected Surveys Administered ${forDay ? `On ${stringifyDate(selectedDate)}` : "Over the Past 7 Days"}`;
+    const title = `Total for Selected Surveys Administered ${forDay ? `On ${stringifyDate(startDate)}` : `Since ${startDate}`}`;
 
     // Chart drawing using transformed BigQuery data
     var chartData: google.visualization.DataTable;
@@ -253,16 +253,16 @@ function prepareTitlesPerDay(selectedSurveys: string[], data: Map<string, Serial
  * @param selectedDate the desired day to see data for
  * @param selectedNavigators the desired set of navigator(s) to see data for
  */
-async function drawPerDay(queryType: DataQuery, chartType: Chart, allNavigators: boolean, forDay: boolean, selectedDate: string, selectedNavigators?: string[]) {
+async function drawPerDay(queryType: DataQuery, chartType: Chart, allNavigators: boolean, forDay: boolean, startDate: string, selectedNavigators?: string[]) {
     var data: any
 
     if (!allNavigators) {
-        data = await getQueryData(queryType, forDay, selectedDate, selectedNavigators![0]);
+        data = await getQueryData(queryType, forDay, startDate, selectedNavigators![0]);
     } else {
-        data = await getQueryData(queryType, forDay, selectedDate,);
+        data = await getQueryData(queryType, forDay, startDate);
     }
 
-    const title = `Total for All Surveys Administered ${forDay ? `On ${stringifyDate(selectedDate)}` : "Over the Past 7 Days"}`;
+    const title = `Total for All Surveys Administered ${forDay ? `On ${stringifyDate(startDate)}` : `Since ${startDate}`}`;
 
     const chartData: google.visualization.DataTable = preparePerDay((!allNavigators ? data.get(selectedNavigators![0]) : data));
 
@@ -325,16 +325,16 @@ function preparePerDay(data: Map<string, SerializedEntry[]>): google.visualizati
  * @param selectedDate the desired day to see data for
  * @param selectedNavigators the desired set of navigator(s) to see data for
  */
-async function drawTitles(queryType: DataQuery, chartType: Chart, allNavigators: boolean, forDay: boolean, selectedDate: string, selectedNavigators?: string[]) {
+async function drawTitles(queryType: DataQuery, chartType: Chart, allNavigators: boolean, forDay: boolean, startDate:string, selectedNavigators?: string[]) {
     var data: any
     
     if (!allNavigators) {
-        data = await getQueryData(queryType, forDay, selectedDate, selectedNavigators![0]);
+        data = await getQueryData(queryType, forDay, startDate, selectedNavigators![0]);
     } else {
-        data = await getQueryData(queryType, forDay, selectedDate,);
+        data = await getQueryData(queryType, forDay, startDate);
     }
 
-    const title = `Total Surveys Administered ${forDay ? `On ${stringifyDate(selectedDate)}` : "Over the Past 7 Days"}`;
+    const title = `Total Surveys Administered ${forDay ? `On ${stringifyDate(startDate)}` : `Since ${startDate}`}`;
 
     const chartData = prepareTitles((!allNavigators ? data.get(selectedNavigators![0]) : data));
 

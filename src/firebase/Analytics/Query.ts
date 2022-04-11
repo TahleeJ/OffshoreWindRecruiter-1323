@@ -10,16 +10,16 @@ import { queryFunctions, DataQuery, SerializedEntry } from "./Utility";
  * @param selectedNavigator the specific navigator email that they data should focus on
  * @returns the retrieved BigQuery data is a more easy to operate on format
  */
-export async function getQueryData(queryType: DataQuery, forDay: boolean, selectedDate: string, selectedNavigator?: string) {
+export async function getQueryData(queryType: DataQuery, forDay: boolean, startDate: string, selectedNavigator?: string) {
     const queryFunction = queryFunctions[queryType];
     var response;
 
     if (!([DataQuery.AllTitlesPerDay, DataQuery.AllPerDay, DataQuery.AllTitles].includes(queryType))) {
-        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${selectedNavigator}", ${forDay}, "${selectedDate}")`;
+        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${selectedNavigator}", ${forDay}, "${startDate}")`;
 
         response = await getAdministeredSurveyData({ queryString: queryString, navigatorEmail: selectedNavigator });
     } else {
-        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(${forDay}, "${selectedDate}")`;
+        const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(${forDay}, "${startDate}")`;
 
         response = await getAdministeredSurveyData({ queryString: queryString });
     }

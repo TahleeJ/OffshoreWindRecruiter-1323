@@ -3,7 +3,7 @@ import { useAppSelector } from '../redux/hooks';
 import { DataQuery, NavigatorGrouping, DateGrouping, dataFocusTypes, validQueryCharts } from '../firebase/Analytics/Utility';
 import { drawChart } from '../firebase/Analytics/Draw';
 import { authInstance } from '../firebase/Firebase';
-import { Chart, determineQueryType, validateChartType, stringifyDate } from '../firebase/Analytics/Utility';
+import { Chart, determineQueryType, validateChartType, today, determineStartDate, stringifyDate } from '../firebase/Analytics/Utility';
 
 /** The props (arguments) to create this element */
 interface props {
@@ -11,18 +11,6 @@ interface props {
 }
 
 const Analytics: React.FC<props> = (props) => {
-    const today = () => {
-        const todayDate = new Date();
-        const day = String(todayDate.getDate()).padStart(2, '0');
-        const month = String(todayDate.getMonth() + 1).padStart(2, '0');
-        const year = todayDate.getFullYear();
-    
-        const todayString = `${year}-${month}-${day}`;
-    
-        console.log(todayString);
-        return todayString;
-    }
-
     const surveys = useAppSelector(s => s.data.surveys);
     const userEmail = authInstance.currentUser!.email!;
   
@@ -38,7 +26,9 @@ const Analytics: React.FC<props> = (props) => {
     const [selectedSurveysState, setSelectedSurveysState] = useState<string[]>([]);
     const [selectedSurveysCheckState, setSelectedSurveysCheckState] = useState<Set<string>>(new Set<string>());
     const [dateGroupingState, setDateGroupingState] = useState<DateGrouping>(DateGrouping.Week);
-    const [dateState, setDateState] = useState(today);
+    const [dayDateState, setDayDateState] = useState(today);
+    const [sinceDateState, setSinceDateState] = useState(today);
+    const [startDateState, setStartDateState] = useState(today().replaceAll("-", ""));
 
     var popupTitle = popupTitleState;
     var popupMessage = popupMessageState;
@@ -51,7 +41,9 @@ const Analytics: React.FC<props> = (props) => {
     var navigatorEntry = navigatorEntryState;
     var selectedSurveysCheck = selectedSurveysCheckState;
     var dateGrouping = dateGroupingState;
-    var date = dateState.replaceAll("-", "");
+    var dayDate = dayDateState.replaceAll("-", "");
+    var sinceDate = sinceDateState.replaceAll("-", "");
+    var startDate = startDateState;
 
     const togglePopup = () => {
         popupTitleBox!.innerHTML = popupTitle;
@@ -92,9 +84,14 @@ const Analytics: React.FC<props> = (props) => {
         setDateGroupingState(value);
     }
 
-    function updateDate(value: string) {
-        date = value.replaceAll("-", "");
-        setDateState(value);
+    function updateDate(value: string, rangeType: DateGrouping) {
+        if (rangeType === DateGrouping.Day) {
+            dayDate = value.replaceAll("-", "");
+            setDayDateState(value);
+        } else {
+            sinceDate = value.replaceAll("-", "");
+            setSinceDateState(value);
+        }  
     }
 
     /**
@@ -223,8 +220,11 @@ const Analytics: React.FC<props> = (props) => {
         // Determine which type of query will be sent to pull the desired data
         queryType = determineQueryType(dataFocus, navigatorGrouping);
 
+        startDate = determineStartDate(dateGrouping, dayDate, sinceDate);
+
         setDataFocusState(dataFocus);
         setQueryTypeState(queryType);
+        setStartDateState(startDate);
 
         // Validate that the selected chart type is able to represent the desired data set
         const validChartType = validateChartType(chartType, queryType);
@@ -245,7 +245,7 @@ const Analytics: React.FC<props> = (props) => {
                             togglePopup();
                         } else {
                             try {
-                                await drawChart(selectedSurveys, chartType, queryType, false, (dateGrouping === DateGrouping.Day), date, selectedNavigators);
+                                await drawChart(selectedSurveys, chartType, queryType, false, (dateGrouping === DateGrouping.Day), startDate, selectedNavigators);
                             } catch (error) {
                                 const { details } = JSON.parse(JSON.stringify(error));
 
@@ -273,7 +273,7 @@ const Analytics: React.FC<props> = (props) => {
                     togglePopup();
                 } else {
                     try {
-                        await drawChart(selectedSurveys, chartType, queryType, true, (dateGrouping === DateGrouping.Day), date, selectedNavigators);
+                        await drawChart(selectedSurveys, chartType, queryType, true, (dateGrouping === DateGrouping.Day), startDate, selectedNavigators);
                     } catch (error) {
                         const { details } = JSON.parse(JSON.stringify(error));
 
@@ -298,7 +298,7 @@ const Analytics: React.FC<props> = (props) => {
                         <div className='title'>Navigator Focus</div>
 
                         <input type="radio" id='all-navigators' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.All} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.All) }}></input>
-                        <label htmlFor='all-navigators'>All Navigators</label><br></br>
+                        <label htmlFor='all-navigators'>All Navigators </label>
                         {/* <input type="radio" id='set-navigators' name='navigator-grouping' onClick={() => { navigatorGrouping = NavigatorGrouping.Set}}></input>
                         <label htmlFor='set-navigators'>Set of Navigators</label><br></br> */}
                         <input type="radio" id='one-navigator' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.One} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.One) }}></input>
@@ -313,18 +313,24 @@ const Analytics: React.FC<props> = (props) => {
 
                     <div className='listViewer bottom'>
                         <div className='title'>Data Focus</div>
-
+                        <p>Date Range:</p>
+                        <input type="radio" id='since' name='date' defaultChecked={dateGroupingState === DateGrouping.Since} onClick={() => { updateDateGrouping(DateGrouping.Since) }}></input>
+                        <label htmlFor='since'>Since </label>
+                        <input type="date" id="data-date-since" defaultValue={sinceDateState} onChange={(e) => { updateDate(e.target.value, DateGrouping.Since) }}></input>
+                        <input type="radio" id='month' name='date' defaultChecked={dateGroupingState === DateGrouping.Month} onClick={() => { updateDateGrouping(DateGrouping.Month) }}></input>
+                        <label htmlFor='week'>Past 31 days </label>
                         <input type="radio" id='week' name='date' defaultChecked={dateGroupingState === DateGrouping.Week} onClick={() => { updateDateGrouping(DateGrouping.Week) }}></input>
-                        <label htmlFor='week'>Past 7 days</label><br></br>
+                        <label htmlFor='week'>Past 7 days </label>
                         <input type="radio" id='day' name='date' defaultChecked={dateGroupingState === DateGrouping.Day} onClick={() => { updateDateGrouping(DateGrouping.Day) }}></input>
                         <label htmlFor='day'>One day: </label>
-                        <input type="date" id="data-date" defaultValue={dateState} onChange={(e) => { updateDate(e.target.value) }}></input>
+                        <input type="date" id="data-date-day" defaultValue={dayDateState} onChange={(e) => { updateDate(e.target.value, DateGrouping.Day) }}></input>
                         <div style={{ height: "10px"}}></div>
 
+                        <p>Focus: </p>
                         <select id="data-focus" name="Query Types" defaultValue={dataFocusState} onChange={(e) => { updateDataFocus(e.target.value) }}>
-                            <option value={dataFocusTypes.titleday}>Administration total of each selected survey over the past week</option>
-                            <option value={dataFocusTypes.perday}>Administration total of all surveys over the past week</option>
-                            <option value={dataFocusTypes.titles}>Total administration of all surveys</option>
+                            <option value={dataFocusTypes.titleday}>Administration total of each selected survey per day over the date range</option>
+                            <option value={dataFocusTypes.perday}>Administration total of all surveys per day over the date range</option>
+                            <option value={dataFocusTypes.titles}>Total administration of all surveys over the date range</option>
                         </select>
                         <p style={{ fontWeight: "bold" }}>Available Surveys:</p>
                         <div className='surveyList listViewer'>

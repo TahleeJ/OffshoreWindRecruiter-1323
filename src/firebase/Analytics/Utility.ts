@@ -33,7 +33,9 @@ export enum NavigatorGrouping {
 
 export enum DateGrouping {
     Week = 0,
-    Day = 1
+    Day = 1,
+    Month = 2,
+    Since = 3
 }
 
 export enum Chart {
@@ -58,19 +60,19 @@ export const dataFocusTypes = {
 export const validQueryCharts = {
     pie: {
         list: [DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay], // EachTitles
-        text: "Total administration of all surveys\nAdministration total of each selected survey over the past week"
+        text: "Total administration of all surveys over the date range\nAdministration total of each selected survey per day over the date range"
     }, 
     combo: {
         list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay],
-        text: "Administration total of each selected survey over the past week"
+        text: "Administration total of each selected survey per day over the date range"
     },
     line: {
         list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllPerDay, DataQuery.OnePerDay],
-        text: "Administration total of each selected survey over the past week\nAdministration total of all surveys over the past week"
+        text: "Administration total of each selected survey per day over the date range\nAdministration total of all surveys per day over the date range"
     },
     bar: {
         list: [DataQuery.AllTitlesPerDay, DataQuery.OneTitlesPerDay, DataQuery.AllTitles, DataQuery.OneTitles, DataQuery.AllPerDay, DataQuery.OnePerDay], // EachTitles, EachPerDay
-        text: 'Administration total of each selected survey over the past week\nAdministration total of all surveys over the past week\nTotal administration of all surveys'
+        text: 'Administration total of each selected survey per day over the date range\nAdministration total of all surveys per day over the date range\nTotal administration of all surveys over the date range'
     }
 }
 
@@ -88,6 +90,88 @@ export function stringifyDate(date: string): string {
     const newDate = `${month}/${day}/${year}`;
 
     return newDate;
+}
+
+export const today = () => {
+    const todayDate = new Date();
+    const day = String(todayDate.getDate()).padStart(2, '0');
+    const month = String(todayDate.getMonth() + 1).padStart(2, '0');
+    const year = todayDate.getFullYear();
+
+    const todayString = `${year}-${month}-${day}`;
+
+    console.log(todayString);
+    return todayString;
+}
+
+/*
+1 - 4/11
+2 - 4/10
+3 - 4/9
+4 - 4/8
+5 - 4/7
+6 - 4/6
+7 - 4/5
+
+1 - 1/4
+2 - 1/3
+3 - 1/2
+4 - 1/1
+5 - 12/31
+6 - 12/30
+7 - 12/29
+*/
+
+function getPastStart(dayDifference: number) {
+    const tempToday = today().replaceAll("-", "");
+    const tempYear = parseInt(tempToday.substring(0, 4));
+    const tempMonth = parseInt(tempToday.substring(4, 6));
+    const tempDay = parseInt(tempToday.substring(6));
+
+    var pastYear = tempYear;
+    var pastMonth = tempMonth;
+    var pastDay = tempDay;
+
+    var difference = pastDay - dayDifference;
+    console.log(difference);
+
+    if (difference <= 0) {
+        pastDay = 31 + difference;
+        pastMonth--;
+
+        if (pastMonth == 0) {
+            pastMonth = 12;
+            pastYear--;
+        }
+    } else {
+        pastDay = difference;
+    }
+
+    const startDate = `${pastYear}${((pastMonth < 10) ? "0" : "") + pastMonth}${((pastDay < 10) ? "0" : "") + pastDay}`;
+    console.log(startDate);
+
+    return startDate;
+}
+
+export function determineStartDate(dateGrouping: DateGrouping, dayDate: string, sinceDate: string) {
+    var startDate;
+
+    switch (dateGrouping) {
+        case DateGrouping.Day:
+            startDate = dayDate;
+            break;
+        case DateGrouping.Week:
+            startDate = getPastStart(6);
+            break;
+        case DateGrouping.Month:
+            startDate = getPastStart(30);
+            break;
+        case DateGrouping.Since:
+            startDate = sinceDate;
+            break;
+    }
+
+    return startDate;
 }
 
 /**

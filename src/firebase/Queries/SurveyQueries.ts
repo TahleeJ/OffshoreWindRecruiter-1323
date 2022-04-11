@@ -1,5 +1,6 @@
 import * as firestore from "@firebase/firestore";
 import { submitSurvey } from "../Firebase";
+import { logJobsMatched } from "../Analytics/Logging";
 
 import db from "../Firestore";
 import { id, SurveyTemplate, hasId, SurveyResponse } from "../Types";
@@ -42,7 +43,12 @@ export async function getSurveyResponses() {
 }
 
 export async function newSurveyResponse(survey: SurveyResponse) {
-    return await submitSurvey(survey);
+    const result =  await submitSurvey(survey);
+
+    console.log(result);
+    logJobsMatched(survey.surveyId, result.data);
+
+    return result;
 }
 
 export async function deleteSurveyResponse(id: id) {

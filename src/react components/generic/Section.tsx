@@ -9,12 +9,12 @@ const Section: React.FC<props> = p => {
     const [isOpen, setIsOpen] = useState(true);
 
     return (
-        <div className={"section " + (isOpen ? "open" : "closed") }>
+        <div className={"section"}>
             <div className="title">
                 {p.title}
                 <i className={"toggleButton " + (isOpen ? "fas fa-caret-up" : "fas fa-caret-down")} onClick={() => setIsOpen(!isOpen)}></i>
             </div>
-            <div className={"content"}>
+            <div className={"content " + (isOpen ? "open" : "closed") }>
                 {p.children}
             </div>
 

@@ -137,6 +137,10 @@ textarea {
         font-size: $largest-font-size;
         padding: 3px 8px;
         border-bottom: 1px solid $mainColor;
+
+        ~ .listElements {
+            height: calc(100% - 38px);
+        }
     }
     .addNew {
         position: absolute;
@@ -147,6 +151,7 @@ textarea {
         width: 30px;
         height: 30px;
         border-radius: 2px;
+        cursor: pointer;
 
         &:hover {
             background-color: $mainColor;
@@ -183,10 +188,6 @@ textarea {
             }
         }
     }
-
-    .listElements + .title {
-        height: calc(100% - 38px);
-    }
 }
 .section {
     width: calc(100%);
@@ -206,8 +207,13 @@ textarea {
         border-bottom: 1px solid $mainColor;
     }
 
-    &.closed .content {
-        height: 0px;
+    .content {
+        height: calc(100% - 39px);
+        // height: 100px;
+        // overflow-y: auto;
+        &.closed {
+            height: 0px;
+        }
     }
 
     .listViewer {
@@ -940,8 +946,6 @@ textarea {
     }
 }
 #promoteUser {
-    text-align: center;
-    padding: 10px;
     font-size: $large-font-size;
 
     .title {
@@ -1051,24 +1055,47 @@ textarea {
 .jobExplore {
     height: $contentHeight;
     overflow-y: auto;
+    text-align: left;
 
     .section {
         margin-bottom: 10px;
 
         .content {
             display: flex;
+            flex-direction: row;
+        }
+
+        .label {
+            padding: 3px 5px;
+            height: 24px;
+        }
+
+        &:nth-child(1) .content.open {
+            height: 200px;
+        }
+        &:nth-child(2) .content.open {
+            height: 600px;
+        }
+
+        .listViewer {
+            overflow-y: auto;
         }
     }
 
     .left {
         flex: 1 1 40%;
+        height: 100%;
+        border-right: 1px solid $dark-gray;
     }
 
     .right {
         flex: 1 1 60%;
+        height: 100%;
+        padding: 10px;
     }
 
-    .jobOpp {
+    .jobOpp,
+    .label {
         cursor: pointer;
         transition: 0.1s;
 
@@ -1080,6 +1107,39 @@ textarea {
             background-color: $mainDark;
             color: white;
         }
+    }
+    .tag {
+        padding: 4px;
+        border-radius: 3px;
+        background-color: $contrastColor;
+        margin: 2px;
+        color: white;
+        display: inline-block;
+    }
+    .labelCount {
+        padding: 1px 5px;
+        border-radius: 50%;
+        background-color: $contrastColor;
+        color: white;
+        position: absolute;
+        right: 5px;
+    }
+
+    .jobHolder {
+    }
+
+    .underline {
+        text-decoration: underline;
+        cursor: pointer;
+
+        &:hover {
+            color: $contrastColor;
+        }
+    }
+}
+.jobView {
+    .title {
+        color: $mainColor;
     }
 }
 #Popup {

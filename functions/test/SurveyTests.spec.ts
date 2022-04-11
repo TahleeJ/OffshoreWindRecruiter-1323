@@ -24,16 +24,18 @@ describe("Submit Survey Function Unit Tests", () => {
         const results = new Map<string, number>(response.recommendedJobs.map(r => [r.jobOppId, r.score]));
 
 
-        let jobOppId = (await firestore.collection('JobOpps').where('jobName', '==', '1,2').get()).docs[0].id
+        // Test for correctly calculated scores
+        let jobOppId = (await firestore.collection('JobOpps').where('jobName', '==', '1,2').get()).docs[0].id;
         assert.isAbove(results.get(jobOppId) as number, 0);
 
-        jobOppId = (await firestore.collection('JobOpps').where('jobName', '==', '3,4').get()).docs[0].id
+        jobOppId = (await firestore.collection('JobOpps').where('jobName', '==', '3,4').get()).docs[0].id;
         assert.isBelow(results.get(jobOppId) as number, 0);
 
-        jobOppId = (await firestore.collection('JobOpps').where('jobName', '==', '1,3').get()).docs[0].id
+        jobOppId = (await firestore.collection('JobOpps').where('jobName', '==', '1,3').get()).docs[0].id;
         assert.equal(results.get(jobOppId) as number, 0);
 
         
+        // Wait for the survey function to add the response to Firestore
         const promise = new Promise<void>((resolve) => {
             const unsubscribe = firestore.collection('SurveyResponse').onSnapshot(docs => {
                 assert.equal(docs.docs.length, 1);

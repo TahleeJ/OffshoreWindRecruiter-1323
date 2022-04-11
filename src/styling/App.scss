@@ -1119,7 +1119,7 @@ textarea {
     .labelCount {
         padding: 1px 5px;
         border-radius: 50%;
-        background-color: $contrastColor;
+        background-color: $mainColor;
         color: white;
         position: absolute;
         right: 5px;
@@ -1137,9 +1137,18 @@ textarea {
         }
     }
 }
+.jobViewHolder {
+    background-color: $gray1;
+}
 .jobView {
     .title {
         color: $mainColor;
+        font-size: $largest-font-size;
+        margin-bottom: 2px;
+    }
+
+    .labels {
+        margin-bottom: 10px;
     }
 }
 #Popup {

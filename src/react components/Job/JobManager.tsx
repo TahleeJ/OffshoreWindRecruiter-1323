@@ -25,7 +25,7 @@ const JobManager: React.FC<props> = (props) => {
                 return <JobExplore />;
             case OperationType.Reviewing:
                 return (
-                    <div className='container'>
+                    <div className='jobViewHolder container'>
                         <button className='red' onClick={() => appDispatch(changePage({type: PageType.AdminHome, operation: OperationType.Idle}))}>Go Back</button>
                         <JobView />
                     </div>

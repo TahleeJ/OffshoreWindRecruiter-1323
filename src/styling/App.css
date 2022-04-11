@@ -1202,7 +1202,7 @@ textarea {
 .jobExplore .labelCount {
   padding: 1px 5px;
   border-radius: 50%;
-  background-color: #d16161;
+  background-color: #7ba1ff;
   color: white;
   position: absolute;
   right: 5px;
@@ -1217,8 +1217,18 @@ textarea {
   color: #d16161;
 }
 
+.jobViewHolder {
+  background-color: #efefef;
+}
+
 .jobView .title {
   color: #7ba1ff;
+  font-size: 28px;
+  margin-bottom: 2px;
+}
+
+.jobView .labels {
+  margin-bottom: 10px;
 }
 
 #Popup {

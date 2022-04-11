@@ -104,7 +104,7 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
                 throw errors.unauthorized;
             }
 
-            if (userPermissionLevel > PermissionLevel.Admin) {
+            if (userPermissionLevel === PermissionLevel.Owner) {
                 if (flags.demoteOwner) {
                     newLevel = PermissionLevel.Admin;
                 } else {
@@ -113,6 +113,20 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
             } else {
                 newLevel = PermissionLevel.Admin;
             }
+
+            break;
+        case PermissionLevel.Navigator:
+            if (userPermissionLevel === PermissionLevel.Owner) {
+                if (!flags.demoteOwner) {
+                    throw errors.applicationDisabled;
+                }
+            }
+
+            if (callerPermissionLevel !== PermissionLevel.Owner) {
+                throw errors.unauthorized;
+            }
+
+            newLevel = PermissionLevel.Navigator;
 
             break;
         case PermissionLevel.None:

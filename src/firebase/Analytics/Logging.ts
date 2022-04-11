@@ -1,7 +1,12 @@
 import { analyticsInstance } from "../Firebase";
 import { logEvent } from "@firebase/analytics";
 
-// Track surveys created
+/**
+ * Custom logging function to track the surveys created
+ * 
+ * @param title 
+ * @param user 
+ */
 export function logSurveyCreation(title: string, user: string) {
     logEvent(analyticsInstance, "survey_created", 
         {
@@ -11,7 +16,12 @@ export function logSurveyCreation(title: string, user: string) {
         });
 }
 
-// Track surveys administered
+/**
+ * Custom logging function to track the surveys administered
+ * 
+ * @param title 
+ * @param navigator 
+ */
 export function logSurveyAdministered(title: string, navigator: string) {
     logEvent(analyticsInstance, "survey_administered",
         {

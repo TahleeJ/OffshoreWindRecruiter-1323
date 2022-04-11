@@ -62,6 +62,7 @@ const AdminManager: React.FC<props> = (props) => {
     }
 
     function setNewUpdateLevel(newLevel: string) {
+        console.log("hi");
         switch(newLevel) {
             case "Owner":
                 updateLevel = PermissionLevel.Owner;
@@ -83,6 +84,7 @@ const AdminManager: React.FC<props> = (props) => {
 
     const update = async () => {
         const validateResult = validateEmailEntry();
+        console.log(updateLevel);
 
         if (validateResult) {
             var invalidEmail = false;
@@ -94,11 +96,14 @@ const AdminManager: React.FC<props> = (props) => {
                 if (result !== "Update success!") {
                     invalidEmail = true;
                     errorEmailsMessage = errorEmailsMessage + `${email}: ${result}\n`;
+
+                    togglePopup();
+                } else {
+                    errorEmailsMessage = errorEmailsMessage + `${email}: success!\n`;
                 }
             }
 
             setErrorTextState(errorEmailsMessage);
-            togglePopup();
         } else {
             setErrorTextState("Please enter at least one email and separate the rest by commas.");
             togglePopup();
@@ -122,7 +127,7 @@ const AdminManager: React.FC<props> = (props) => {
             
             <div className="inputContainer">
                 <div className="userEmail">User Email(s):</div>
-                <input type="text" value={emailsState} onChange={(e) => setEmails(e.target.value)} placeholder='example@gmail.com'></input>
+                <input type="text" defaultValue={emailsState} onChange={(e) => setEmails(e.target.value)} placeholder='example@gmail.com'></input>
                 <div className="error" style={{ whiteSpace: "pre-wrap", height: "75px", overflow: "auto" }}>{errorTextState}</div>
             </div>
             <div className = "dropDown">

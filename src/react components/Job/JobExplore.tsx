@@ -20,13 +20,13 @@ const JobExplore: React.FC<props> = p => {
         if (filterLabelIds.length === 0) return jobs;
         if (filterByALL) {
             return jobs.filter(job => {
-                return filterLabelIds.every(fli => job.labelIds.indexOf(fli) !== -1)
+                return filterLabelIds.every(fli => job.labelIds.includes(fli));
             })
         }
         return jobs.filter(job => {
-            return filterLabelIds.findIndex(fli => job.labelIds.indexOf(fli) !== -1) !== -1
+            return filterLabelIds.some(fli => job.labelIds.includes(fli));
         })
-    })()
+    })();
     const toggleLabel = (id: string) => {
         if (filterLabelIds.indexOf(id) === -1)
             setFilterLabelIds([...filterLabelIds, id])

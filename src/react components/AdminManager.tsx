@@ -111,7 +111,7 @@ const AdminManager: React.FC<props> = (props) => {
     }
 
     return (
-        <div id="promoteUser">
+        <div id="promoteUser" className='container'>
             <div className="title">Administrator Authorization</div>
             <div className='textBlock'>
                 <div className='textBlock' style={{ fontWeight: "bold" }}>Type the email address(es) of the user(s) that you would like to change permissions for.</div>

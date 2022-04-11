@@ -135,7 +135,7 @@ const SurveyCreator: React.FC = (props: props) => {
 
                 logSurveyCreation(survey.title, authInstance.currentUser!.email!);
             } else {
-                if (surveyResponses.filter(sr => sr.surveyId == reduxSurveyData.id).length > 0) {
+                if (surveyResponses.filter(sr => sr.surveyId === reduxSurveyData.id).length > 0) {
                     if (window.confirm("There are survey responses of this survey. Editing this survey will also edit the questions seen on the response. It will not effect the job opportunities shown on the response.Press OK to continue"))
                         await editSurvey(reduxSurveyData.id, survey);
                     else return;

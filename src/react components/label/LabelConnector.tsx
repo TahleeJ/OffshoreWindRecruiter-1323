@@ -11,18 +11,7 @@ interface props {
 const LabelConnector: React.FC<props> = (p) => {
     const [selectorOpen, setSelectorOpen] = useState(false);
     const elementRef = useRef<HTMLElement>(null);
-    const [top, setTop] = useState(0);
-    const [left, setLeft] = useState(0);
-
     const toggleSelector = () => setSelectorOpen(!selectorOpen);
-
-    useEffect(() => {
-        if (elementRef.current) {
-            console.log(p.topOffset)
-            // setTop( as number)
-            // setLeft( as number)
-        }
-    }, []);
 
     const labelCount = p.labels.filter(l => l.isEnabled).length;
 

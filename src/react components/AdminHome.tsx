@@ -69,7 +69,7 @@ const AdminHome: React.FC<props> = (props) => {
                                 return <ListElement
                                     key={ind}
                                     name={res.taker.name}
-                                    handleEdit={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Responding, data: res }))}
+                                    handleView={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Responding, data: res }))}
                                     handleDelete={async () => {
                                         await deleteSurveyResponse(res.id);
                                         appDispatch(setSurveyResponses(await getSurveyResponses()));

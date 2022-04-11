@@ -20,7 +20,7 @@ To edit the frontend:
 
 # Backend
 ## Before You Begin
-**After [Development Prerequisites]()* 
+**After [Development Prerequisites](https://github.com/TahleeJ/OffshoreWindJobNavigator-1323#development-prerequisites)* 
 1. Contact Firebase project owner to be added as a member of the project
 2. Open a terminal session and navigate into `OffshoreWindJobNavigator-1323`
 3. Run `npm install` to create your `node_modules` folder with all currently necessary packages required to run the project as specified in `./package.json`
@@ -33,7 +33,7 @@ To edit the frontend:
 
 ## Project Architecture [Backend]
 ### Firebase
-- **`./firebase.src` defines the Firebase project name
+- **`./.firebaserc` defines the Firebase project name
 - **`./firebase.json` defines the hosting deployment and local emulator port usage information that Firebase will use
 - `./src/firebase/Types.ts` defines all of the custom data types the application uses
 
@@ -46,9 +46,10 @@ To edit the frontend:
 ### Google Cloud Functions
 #### **Function Editing/Deployment:**
 
-To add or edit a new function, navigate into `./functions/src` and add your new function in a new `*.ts` file or edit one of the existing `*Functions.ts` files. After writing your function, follow the conventions done in `./src/functions/src/index.ts`.
+To add or edit a new function, navigate into `./functions/src` and add your new function in a new `*.ts` file or edit one of the existing `*Functions.ts` files. After writing your function, follow the conventions done in `./src/functions/src/index.ts`. To make a function accessible throughout the application, follow the cloud function conventions done in `./src/firebase/Firebase.ts`.
 
 To deploy your function, run `firebase deploy --only functions:[function  1 name], [function 2 name]` to deploy specific functions or simply stop at `--only function` to deploy all.
+
 <br><br>
 
 #### **Function Testing:**
@@ -76,7 +77,7 @@ The job matching process is done via a [custom algorithm]() run in the cloud fun
 <br>
 
 ### Analytics
-The analytics collected for this application are done via logging functions in `./src/firebase/Analytics/Analytics.ts`, and the data is retrieved from BigQuery via the functions in `./functions/AnalyticsFunctions.ts`. More information can be found in [Analytics.md]().
+The analytics collected for this application are done via logging functions in `./src/firebase/Analytics/Analytics.ts`, and the data is retrieved from BigQuery via the functions in `./functions/AnalyticsFunctions.ts`. More information can be found in [Analytics.md](https://github.com/TahleeJ/OffshoreWindJobNavigator-1323/blob/ceb920c68fdbcef766e29e1bd2936f1960bd87be/src/firebase/Analytics/Analytics.md).
 
 <br>
 # Release Notes v1.0.0

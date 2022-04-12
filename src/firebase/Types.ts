@@ -30,7 +30,7 @@ export interface Label {
 }
 
 
-export interface SurveyResponse {
+export interface AdministeredSurveyResponse {
     surveyId: id 
     taker: SurveyTaker
     created?: number
@@ -61,7 +61,7 @@ export interface RecommendedJobWithData {
     jobOpp: JobOpp
 }
 
-export interface SubmitSurveyResponse {
+export interface ReturnedSurveyResponse {
     recommendedJobs: RecommendedJob[]
 
     // Maps label to [ LabelScore / ExpectedScore, PercentileScore ]

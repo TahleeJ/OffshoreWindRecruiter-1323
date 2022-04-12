@@ -1,4 +1,4 @@
-import { SurveyResponse } from "../../src/firebase/Types";
+import { AdministeredSurveyResponse } from "../../src/firebase/Types";
 
 
 /**
@@ -40,7 +40,7 @@ export const surveyTestData = {
         surveyId: "surveyTemplate1",
         answers: [ 4, 4, 0, 0, 4, 0],
         taker: {}
-    } as SurveyResponse,
+    } as AdministeredSurveyResponse,
 
     surveyTemplate: {
         "surveyTemplate1" : {

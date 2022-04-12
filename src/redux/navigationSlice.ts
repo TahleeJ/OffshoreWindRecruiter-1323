@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { submitSurvey } from '../firebase/Firebase';
-import { newSurveyResponse } from '../firebase/Queries/SurveyQueries';
 import { AdministeredSurveyResponse } from '../firebase/Types';
-
+import { logJobsMatched } from '../firebase/Analytics/Logging';
 
 /** This enum is used to distinguish between different types of pages */
 export enum PageType {
@@ -87,13 +86,15 @@ const navigationSlice = createSlice({
     },
 })
 
-
 export const submitSurveyResponse = createAsyncThunk('navigation/submitSurveyResponse',
     async (survey: AdministeredSurveyResponse) => {
-        return await submitSurvey(survey)
+        const result = await submitSurvey(survey);
+
+        logJobsMatched(survey.surveyId, result.data.recommendedJobs);
+
+        return result;
     }
 );
-
 
 export const { changePage, changeOperation, changeOperationData } = navigationSlice.actions
 export default navigationSlice.reducer

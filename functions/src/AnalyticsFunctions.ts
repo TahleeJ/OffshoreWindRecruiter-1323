@@ -6,7 +6,7 @@ import { errors } from "./Errors";
 const {BigQuery} = require("@google-cloud/bigquery");
 const bigquery = new BigQuery();
 
-export const getAdministeredSurveyData = functions.https.onCall(async (request: { queryString: string, navigatorEmail?: string }, context) => {
+export const getBigQueryData = functions.https.onCall(async (request: { queryString: string, navigatorEmail?: string }, context) => {
     if (request.queryString.includes("navigator")) {
         if (request.navigatorEmail == null || request.navigatorEmail == undefined) {
             throw errors.illegalArgument.navigatorEmail;

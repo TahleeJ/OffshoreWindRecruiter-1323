@@ -6,5 +6,5 @@ export { checkAdmin, createNewUser, updatePermissions }
 import { submitSurvey } from './SurveyFunctions';
 export { submitSurvey };
 
-import { getAdministeredSurveyData } from './AnalyticsFunctions';
-export { getAdministeredSurveyData }
+import { getBigQueryData } from './AnalyticsFunctions';
+export { getBigQueryData }

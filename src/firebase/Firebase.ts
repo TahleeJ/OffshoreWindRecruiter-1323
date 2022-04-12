@@ -27,7 +27,7 @@ export const analyticsInstance = analytics.getAnalytics(firebaseApp);
 
 export const updatePermissions = functions.httpsCallable<{ userEmail: string, newPermissionLevel: number }, undefined>(functionsInstance, 'updatePermissions');
 export const checkAdmin = functions.httpsCallable<undefined, { isAdmin: PermissionLevel }>(functionsInstance, 'checkAdmin');
-export const getAdministeredSurveyData = functions.httpsCallable<{queryString: string, navigatorEmail?: string}>(functionsInstance, 'getAdministeredSurveyData');
+export const getBigQueryData = functions.httpsCallable<{queryString: string, navigatorEmail?: string}>(functionsInstance, 'getBigQueryData');
 export const submitSurvey = functions.httpsCallable<AdministeredSurveyResponse, ReturnedSurveyResponse>(functionsInstance, 'submitSurvey');
 
 // Local function testing

@@ -2,7 +2,7 @@ import * as firestore from "@firebase/firestore";
 import { submitSurvey } from "../Firebase";
 
 import db from "../Firestore";
-import { id, SurveyTemplate, hasId, SurveyResponse } from "../Types";
+import { id, SurveyTemplate, hasId, AdministeredSurveyResponse } from "../Types";
 
 
 export async function getSurveys() {
@@ -38,11 +38,7 @@ export async function getSurveyResponses() {
     const response = await firestore.getDocs(
         firestore.query(db.SurveyResponse, firestore.orderBy('created', 'desc'), firestore.limit(100)));
 
-    return response.docs.map(s => ({ ...s.data(), id: s.id } as SurveyResponse & hasId));
-}
-
-export async function newSurveyResponse(survey: SurveyResponse) {
-    return await submitSurvey(survey);
+    return response.docs.map(s => ({ ...s.data(), id: s.id } as AdministeredSurveyResponse & hasId));
 }
 
 export async function deleteSurveyResponse(id: id) {

@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { hasId, JobOpp, Label, SurveyTemplate, SurveyResponse } from '../firebase/Types';
+import { hasId, JobOpp, Label, SurveyTemplate, AdministeredSurveyResponse } from '../firebase/Types';
 
 
 interface dataState {
     surveys: (SurveyTemplate & hasId)[];
-    surveyResponses: (SurveyResponse & hasId)[];
+    surveyResponses: (AdministeredSurveyResponse & hasId)[];
     jobOpps: (JobOpp & hasId)[];
     labels: (Label & hasId)[];
     //add more here when we know what types they are
@@ -32,7 +32,7 @@ const dataSlice = createSlice({
         setJobOpps(state, { payload }: PayloadAction<(JobOpp & hasId)[]>) {
             state.jobOpps = payload;
         },
-        setSurveyResponses(state, { payload }: PayloadAction<(SurveyResponse & hasId)[]>) {
+        setSurveyResponses(state, { payload }: PayloadAction<(AdministeredSurveyResponse & hasId)[]>) {
             // console.log(payload);
             state.surveyResponses = payload;
         },

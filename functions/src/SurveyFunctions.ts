@@ -2,14 +2,14 @@ import * as functions from 'firebase-functions';
 
 import { assertValidRequest, firestore } from './Utility';
 import { errors } from "./Errors";
-import { SubmitSurveyResponse, JobOpp, QuestionType, RecommendedJob, SurveyResponse, SurveyTemplate } from '../../src/firebase/Types';
+import { ReturnedSurveyResponse, JobOpp, QuestionType, RecommendedJob, AdministeredSurveyResponse, SurveyTemplate } from '../../src/firebase/Types';
 import { Timestamp } from 'firebase-admin/firestore';
 
 
 /**
  * Stores submitted survey in Firestore then returns the recommended jobs.
  */ 
-export const submitSurvey = functions.https.onCall(async (request: SurveyResponse, context) => {
+export const submitSurvey = functions.https.onCall(async (request: AdministeredSurveyResponse, context) => {
     assertValidRequest(context);
     
     
@@ -111,10 +111,10 @@ export const submitSurvey = functions.https.onCall(async (request: SurveyRespons
         answers: request.answers,
         recommendedJobs: rankings,
         created: Timestamp.now().toMillis()
-    } as SurveyResponse);
+    } as AdministeredSurveyResponse);
 
 
-    const response: SubmitSurveyResponse = {
+    const response: ReturnedSurveyResponse = {
         recommendedJobs: rankings.slice(0, 10),
         labelScores: labelScores
     };

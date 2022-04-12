@@ -71,7 +71,9 @@ const navigationSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(submitSurveyResponse.fulfilled, (state, action) => {
-            state.operationData = action.payload.data.sort((a, b) => b.score - a.score);
+            action.payload.data.recommendedJobs.sort((a, b) => b.score - a.score);
+            
+            state.operationData = action.payload.data;
             state.status = Status.fulfilled;
         });
         builder.addCase(submitSurveyResponse.pending, (state, action) => {

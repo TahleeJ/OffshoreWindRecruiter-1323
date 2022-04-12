@@ -36,6 +36,11 @@ describe("Update Permissions Function Unit Tests", () => {
                 .should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
+        it("should fail to set a none-level user to navigator-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onNone.toNavigator, testUserContext.none)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
         it("should fail to set a none-level user to admin-level", async () => {
             await updatePermissionsWrapped(updateTransactions.onNone.toAdmin, testUserContext.none)
                 .should.eventually.be.rejectedWith(functions.https.HttpsError);
@@ -55,6 +60,11 @@ describe("Update Permissions Function Unit Tests", () => {
 
         it("should fail to set an admin-level user to none-level", async () => {
             await updatePermissionsWrapped(updateTransactions.onAdmin.toNone, testUserContext.none)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an admin-level user to navigator-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onAdmin.toNavigator, testUserContext.none)
                 .should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
@@ -87,7 +97,26 @@ describe("Update Permissions Function Unit Tests", () => {
                 .should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
-        it("should fail to set an owner-level user to admin-level", async () => {
+        it("should fail to set an owner-level user to navigator-level for enabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, true);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toNavigator, testUserContext.none)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an owner-level user to navigator-level for disabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, false);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toNavigator, testUserContext.none)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an owner-level user to admin-level for enabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, true);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toAdmin, testUserContext.none)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an owner-level user to admin-level for disabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, false);
             await updatePermissionsWrapped(updateTransactions.onOwner.toAdmin, testUserContext.none)
                 .should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
@@ -105,9 +134,118 @@ describe("Update Permissions Function Unit Tests", () => {
         });
     });
 
+    describe("Navigator-level caller", () => {
+        it("should fail to set a none-level user to none-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onNone.toNone, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set a none-level user to navigator-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onNone.toNavigator, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set a none-level user to admin-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onNone.toAdmin, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set a none-level user to owner-level for enabled owner promotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, true);
+            await updatePermissionsWrapped(updateTransactions.onNone.toOwner, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set a none-level user to owner-level for disabled owner promotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false);
+            await updatePermissionsWrapped(updateTransactions.onNone.toOwner, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an admin-level user to none-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onAdmin.toNone, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an admin-level user to navigator-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onAdmin.toNavigator, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an admin-level user to admin-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onAdmin.toAdmin, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an admin-level user to owner-level for enabled owner promotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, true);
+            await updatePermissionsWrapped(updateTransactions.onAdmin.toOwner, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an admin-level user to owner-level for disabled owner promotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false);
+            await updatePermissionsWrapped(updateTransactions.onAdmin.toOwner, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an owner-level user to none-level for enabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, true);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toNone, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an owner-level user to none-level for disabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, false);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toNone, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an owner-level user to navigator-level for enabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, true);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toNavigator, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an owner-level user to navigator-level for disabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, false);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toNavigator, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an owner-level user to admin-level for enabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, true);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toAdmin, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an owner-level user to admin-level for disabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, false);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toAdmin, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an owner-level user to owner-level for enabled owner promotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, true);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toOwner, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an owner-level user to owner-level for disabled owner promotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toOwner, testUserContext.navigator)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+    });
+
     describe("Admin-level caller", () => {
         it("should set a none-level user to none-level", async () => {
             await updatePermissionsWrapped(updateTransactions.onNone.toNone, testUserContext.admin)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should set a none-level user to navigator-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onNone.toNavigator, testUserContext.admin)
                 .should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
@@ -132,6 +270,11 @@ describe("Update Permissions Function Unit Tests", () => {
 
         it("should fail to set an admin-level user to none-level", async () => {
             await updatePermissionsWrapped(updateTransactions.onAdmin.toNone, testUserContext.admin)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an admin-level user to navigator-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onAdmin.toNavigator, testUserContext.admin)
                 .should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
@@ -163,6 +306,18 @@ describe("Update Permissions Function Unit Tests", () => {
         it("should fail to set an owner-level user to none-level for disabled owner demotion", async () => {
             await setApplicationFlag(ApplicationFlagType.demoteOwner, false);
             await updatePermissionsWrapped(updateTransactions.onOwner.toNone, testUserContext.admin)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an owner-level user to navigator-level for enabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, true);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toNavigator, testUserContext.admin)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should fail to set an owner-level user to navigator-level for disabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, false);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toNavigator, testUserContext.admin)
                 .should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
@@ -199,6 +354,13 @@ describe("Update Permissions Function Unit Tests", () => {
             assert.equal(permissionLevel, PermissionLevel.None);
         });
 
+        it("should set a none-level user to navigator-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onNone.toNavigator, testUserContext.owner);
+            const permissionLevel = await getTestUserPermissionLevel(testUserDocRef.navigator);
+
+            assert.equal(permissionLevel, PermissionLevel.Navigator);
+        });
+
         it("should set a none-level user to admin-level", async () => {
             await updatePermissionsWrapped(updateTransactions.onNone.toAdmin, testUserContext.owner);
             const permissionLevel = await getTestUserPermissionLevel(testUserDocRef.none);
@@ -218,6 +380,42 @@ describe("Update Permissions Function Unit Tests", () => {
         it("should fail to set a none-level user to owner-level for disabled owner promotion", async () => {
             await setApplicationFlag(ApplicationFlagType.promoteToOwner, false);
             await updatePermissionsWrapped(updateTransactions.onNone.toOwner, testUserContext.owner)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should set a navigator-level user to none-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onNavigator.toNone, testUserContext.owner);
+            const permissionLevel = await getTestUserPermissionLevel(testUserDocRef.none);
+
+            assert.equal(permissionLevel, PermissionLevel.None);
+        });
+
+        it("should set a navigator-level user to navigator-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onNavigator.toNavigator, testUserContext.owner);
+            const permissionLevel = await getTestUserPermissionLevel(testUserDocRef.navigator);
+
+            assert.equal(permissionLevel, PermissionLevel.Navigator);
+        });
+
+        it("should set a navigator-level user to admin-level", async () => {
+            await updatePermissionsWrapped(updateTransactions.onNavigator.toAdmin, testUserContext.owner);
+            const permissionLevel = await getTestUserPermissionLevel(testUserDocRef.navigator);
+
+            assert.equal(permissionLevel, PermissionLevel.Admin);
+        });
+
+        it("should set a navigator-level user to owner-level for enabled owner promotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, true);
+
+            await updatePermissionsWrapped(updateTransactions.onNavigator.toOwner, testUserContext.owner);
+            const permissionLevel = await getTestUserPermissionLevel(testUserDocRef.navigator);
+
+            assert.equal(permissionLevel, PermissionLevel.Owner);
+        });
+
+        it("should fail to set a navigator-level user to owner-level for disabled owner promotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.promoteToOwner, false);
+            await updatePermissionsWrapped(updateTransactions.onNavigator.toOwner, testUserContext.owner)
                 .should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 
@@ -262,6 +460,21 @@ describe("Update Permissions Function Unit Tests", () => {
         it("should fail to set an owner-level user to none-level for disabled owner demotion", async () => {
             await setApplicationFlag(ApplicationFlagType.demoteOwner, false);
             await updatePermissionsWrapped(updateTransactions.onOwner.toNone, testUserContext.owner)
+                .should.eventually.be.rejectedWith(functions.https.HttpsError);
+        });
+
+        it("should set an owner-level user to navigator-level for enabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, true);
+
+            await updatePermissionsWrapped(updateTransactions.onOwner.toNavigator, testUserContext.owner);
+            const permissionLevel = await getTestUserPermissionLevel(testUserDocRef.owner);
+
+            assert.equal(permissionLevel, PermissionLevel.Navigator);
+        });
+
+        it("should fail to set an owner-level user to navigator-level for disabled owner demotion", async () => {
+            await setApplicationFlag(ApplicationFlagType.demoteOwner, false);
+            await updatePermissionsWrapped(updateTransactions.onOwner.toNavigator, testUserContext.owner)
                 .should.eventually.be.rejectedWith(functions.https.HttpsError);
         });
 

@@ -5,7 +5,7 @@ import { changePage, PageType } from '../redux/navigationSlice';
 import { PermissionLevel } from '../firebase/Types';
 import { setUserPermissionLevel } from '../firebase/Queries/AdminQueries';
 
-import Prompt from './Prompt';
+import Prompt from './generic/Prompt';
 
 
 /** The props (arguments) to create this element */
@@ -20,7 +20,7 @@ const AdminManager: React.FC<props> = (props) => {
     const dispatch = useAppDispatch();
     const [changeLevelState, setChangeLevelState] = useState("Admin");
     const [errorTextState, setErrorTextState] = useState("")
-    const [updateLevelState, setUpdateLevelState] = useState(PermissionLevel.None);
+    const [updateLevelState, setUpdateLevelState] = useState(PermissionLevel.Navigator);
 
     const [popupVisible, setPopupvisible] = useState<Boolean>(false);
 
@@ -70,8 +70,10 @@ const AdminManager: React.FC<props> = (props) => {
             case "Admin":
                 updateLevel = PermissionLevel.Admin;
                 break;
+            case "Navigator":
+                updateLevel = PermissionLevel.Navigator;
+                break;
             case "None":
-                console.log("hello");
                 updateLevel = PermissionLevel.None;
                 break;
         }
@@ -109,7 +111,7 @@ const AdminManager: React.FC<props> = (props) => {
     }
 
     return (
-        <div id="promoteUser">
+        <div id="promoteUser" className='container'>
             <div className="title">Administrator Authorization</div>
             <div className='textBlock'>
                 <div className='textBlock' style={{ fontWeight: "bold" }}>Type the email address(es) of the user(s) that you would like to change permissions for.</div>
@@ -130,7 +132,8 @@ const AdminManager: React.FC<props> = (props) => {
             </div>
             <div className = "dropDown">
                 <label className='dropText' htmlFor='permission-select'>Update to: </label>
-                <select id='permission-select' defaultValue={changeLevelState} onChange={(e) => setNewUpdateLevel(e.target.value)}>
+                <select id='permission-select' value={changeLevelState} onChange={(e) => setNewUpdateLevel(e.target.value)}>
+                    <option value="Navigator">Navigator</option>
                     <option value="Admin">Admin</option>
                     <option value="Owner">Owner</option>
                 </select>

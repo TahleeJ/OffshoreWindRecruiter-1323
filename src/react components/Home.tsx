@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { authInstance } from "../firebase/Firebase";
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
-import ListViewer from './ListViewer';
+import ListViewer from './generic/ListViewer';
 
 interface props {
 

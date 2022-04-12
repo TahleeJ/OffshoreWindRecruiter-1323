@@ -1,5 +1,5 @@
 import React from 'react';
-import { JobOpp, QuestionType, RecommendedJobs, SurveyResponse } from '../../firebase/Types';
+import { JobOpp, QuestionType, RecommendedJobWithData, SurveyResponse } from '../../firebase/Types';
 import { useAppSelector } from '../../redux/hooks';
 import RecJobView from './RecJobView';
 
@@ -11,7 +11,7 @@ const ResponseView: React.FC<props> = p => {
     const response = useAppSelector(s => s.navigation.operationData as SurveyResponse);
     const jobOpps = useAppSelector(s => s.data.jobOpps);
     const qs = useAppSelector(s => s.data.surveys);
-    const jobs = (): RecommendedJobs => {
+    const jobs = (): RecommendedJobWithData[] => {
         if (!response.recommendedJobs) return [];
 
         return response.recommendedJobs.map(rj => {
@@ -19,7 +19,7 @@ const ResponseView: React.FC<props> = p => {
                 score: rj.score,
                 jobOpp: jobOpps.find(j => j.id === rj.jobOppId) as JobOpp
             }
-        }).sort((a, b) => b.score - a.score)
+        }).sort((a, b) => b.score - a.score);
     };
     const survey = qs.find(s => s.id === response.surveyId);
 

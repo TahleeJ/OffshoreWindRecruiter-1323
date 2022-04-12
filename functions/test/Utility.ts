@@ -13,6 +13,7 @@ export enum ApplicationFlagType {
 
 export const testUserEmails = {
     none: "none@oswjn.com",
+    navigator: "navigator@oswjn.com",
     admin: "admin@oswjn.com",
     owner: "owner@oswjn.com",
     member: "test@oswjn.com",
@@ -21,6 +22,7 @@ export const testUserEmails = {
 
 const testUsers = {
     none: null as unknown as UserRecord,
+    navigator: null as unknown as UserRecord,
     admin: null as unknown as UserRecord,
     owner: null as unknown as UserRecord,
     invalidArg: null as unknown as UserRecord
@@ -28,6 +30,7 @@ const testUsers = {
 
 export const testUserContext = {
     none: null as unknown as CallableContextOptions,
+    navigator: null as unknown as CallableContextOptions,
     admin: null as unknown as CallableContextOptions,
     owner: null as unknown as CallableContextOptions,
     invalidArg: null as unknown as CallableContextOptions
@@ -35,6 +38,7 @@ export const testUserContext = {
 
 export const testUserDocRef = {
     none: null as unknown as DocumentReference,
+    navigator: null as unknown as DocumentReference,
     admin: null as unknown as DocumentReference,
     owner: null as unknown as DocumentReference
 }
@@ -52,6 +56,12 @@ export async function initTestDocs() {
     testUsers.none = await auth.createUser({ email: testUserEmails.none, uid: docId } as CreateRequest);
     testUserContext.none = await createTestUserContext(docId);
     testUserDocRef.none = firestore.collection("User").doc(docId);
+
+    // Navigator-level test user initialization
+    docId = await createTestUserDoc(testUserEmails.navigator, PermissionLevel.Navigator);
+    testUsers.navigator = await auth.createUser({ email: testUserEmails.navigator, uid: docId } as CreateRequest);
+    testUserContext.navigator = await createTestUserContext(docId);
+    testUserDocRef.navigator = firestore.collection("User").doc(docId);
 
     // Admin-level test user initialization
     docId = await createTestUserDoc(testUserEmails.admin, PermissionLevel.Admin);
@@ -119,6 +129,7 @@ async function createTestUserContext(uid: id): Promise<CallableContextOptions> {
  */
 export async function resetTestDocs() {
     await firestore.collection("User").doc(testUsers.none.uid!).update({ permissionLevel: PermissionLevel.None });
+    await firestore.collection("User").doc(testUsers.navigator.uid!).update({ permissionLevel: PermissionLevel.Navigator });
     await firestore.collection("User").doc(testUsers.admin.uid!).update({ permissionLevel: PermissionLevel.Admin });
     await firestore.collection("User").doc(testUsers.owner.uid!).update({ permissionLevel: PermissionLevel.Owner });
 
@@ -163,6 +174,10 @@ export const updateTransactions = {
             userEmail: testUserEmails.none,
             newPermissionLevel: PermissionLevel.None
         },
+        toNavigator: {
+            userEmail: testUserEmails.none,
+            newPermissionLevel: PermissionLevel.Navigator
+        },
         toAdmin: {
             userEmail: testUserEmails.none,
             newPermissionLevel: PermissionLevel.Admin
@@ -172,10 +187,32 @@ export const updateTransactions = {
             newPermissionLevel: PermissionLevel.Owner
         }
     },
+    onNavigator: {
+        toNone: {
+            userEmail: testUserEmails.navigator,
+            newPermissionLevel: PermissionLevel.None
+        },
+        toNavigator: {
+            userEmail: testUserEmails.navigator,
+            newPermissionLevel: PermissionLevel.Navigator
+        },
+        toAdmin: {
+            userEmail: testUserEmails.navigator,
+            newPermissionLevel: PermissionLevel.Admin
+        },
+        toOwner: {
+            userEmail: testUserEmails.navigator,
+            newPermissionLevel: PermissionLevel.Owner
+        }
+    },
     onAdmin: {
         toNone: {
             userEmail: testUserEmails.admin,
             newPermissionLevel: PermissionLevel.None
+        },
+        toNavigator: {
+            userEmail: testUserEmails.admin,
+            newPermissionLevel: PermissionLevel.Navigator
         },
         toAdmin: {
             userEmail: testUserEmails.admin,
@@ -190,6 +227,10 @@ export const updateTransactions = {
         toNone: {
             userEmail: testUserEmails.owner,
             newPermissionLevel: PermissionLevel.None
+        },
+        toNavigator: {
+            userEmail: testUserEmails.owner,
+            newPermissionLevel: PermissionLevel.Navigator
         },
         toAdmin: {
             userEmail: testUserEmails.owner,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { JobOpp, QuestionType, RecommendedJobWithData, SurveyResponse } from '../../firebase/Types';
+import { JobOpp, QuestionType, RecommendedJobWithData, AdministeredSurveyResponse } from '../../firebase/Types';
 import { useAppSelector } from '../../redux/hooks';
 import RecJobView from './RecJobView';
 
@@ -8,7 +8,7 @@ interface props {
 }
 
 const ResponseView: React.FC<props> = p => {
-    const response = useAppSelector(s => s.navigation.operationData as SurveyResponse);
+    const response = useAppSelector(s => s.navigation.operationData as AdministeredSurveyResponse);
     const jobOpps = useAppSelector(s => s.data.jobOpps);
     const qs = useAppSelector(s => s.data.surveys);
     const jobs = (): RecommendedJobWithData[] => {

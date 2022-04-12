@@ -3,7 +3,7 @@ import { submitSurvey } from "../Firebase";
 import { logJobsMatched } from "../Analytics/Logging";
 
 import db from "../Firestore";
-import { id, SurveyTemplate, hasId, SurveyResponse } from "../Types";
+import { id, SurveyTemplate, hasId, AdministeredSurveyResponse } from "../Types";
 
 
 export async function getSurveys() {
@@ -39,16 +39,7 @@ export async function getSurveyResponses() {
     const response = await firestore.getDocs(
         firestore.query(db.SurveyResponse, firestore.orderBy('created', 'desc'), firestore.limit(100)));
 
-    return response.docs.map(s => ({ ...s.data(), id: s.id } as SurveyResponse & hasId));
-}
-
-export async function newSurveyResponse(survey: SurveyResponse) {
-    const result =  await submitSurvey(survey);
-
-    console.log(result);
-    logJobsMatched(survey.surveyId, result.data);
-
-    return result;
+    return response.docs.map(s => ({ ...s.data(), id: s.id } as AdministeredSurveyResponse & hasId));
 }
 
 export async function deleteSurveyResponse(id: id) {

@@ -5,7 +5,7 @@ import { testEnv, myFunctions } from './Init';
 import { firestore } from '../src/Utility';
 
 import { testUserContext } from './Utility';
-import { SubmitSurveyResponse } from '../../src/firebase/Types';
+import { ReturnedSurveyResponse } from '../../src/firebase/Types';
 import { surveyTestData } from './SurveyTestData';
 
 let submitSurveyWrapped: WrappedFunction;
@@ -20,7 +20,7 @@ describe("Submit Survey Function Unit Tests", () => {
     });
 
     it("should get correct scores and add to firestore", async () => {
-        const response = await submitSurveyWrapped(surveyTestData.response, testUserContext.owner) as SubmitSurveyResponse;
+        const response = await submitSurveyWrapped(surveyTestData.response, testUserContext.owner) as ReturnedSurveyResponse;
         const results = new Map<string, number>(response.recommendedJobs.map(r => [r.jobOppId, r.score]));
 
 

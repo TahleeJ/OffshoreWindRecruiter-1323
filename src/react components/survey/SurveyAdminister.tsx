@@ -1,6 +1,6 @@
 import lodash from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { hasId, QuestionType, SurveyResponse, SurveyTemplate } from '../../firebase/Types';
+import { hasId, QuestionType, AdministeredSurveyResponse, SurveyTemplate } from '../../firebase/Types';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changeOperation, changePage, OperationType, PageType, submitSurveyResponse } from '../../redux/navigationSlice';
 import Prompt from '../generic/Prompt';
@@ -39,7 +39,7 @@ const SurveyAdminister: React.FC = (p: props) => {
         if (answers.some(a => a === "")) {
             togglePopup();
         } else {
-            let survey: SurveyResponse = {
+            let survey: AdministeredSurveyResponse = {
                 surveyId: reduxSurveyData.id,
                 taker: {
                     name: name,

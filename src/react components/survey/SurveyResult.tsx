@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { JobOpp, RecommendedJobWithData, SubmitSurveyResponse } from '../../firebase/Types';
+import { JobOpp, RecommendedJobWithData, ReturnedSurveyResponse } from '../../firebase/Types';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, PageType, Status } from '../../redux/navigationSlice';
 import RecJobView from './RecJobView';
@@ -9,7 +9,7 @@ import RecJobView from './RecJobView';
 const SurveyReviewer: React.FC = _ => {
     const status = useAppSelector(s => s.navigation.status);
     const jobOpps = useAppSelector(s => s.data.jobOpps);
-    const response = useAppSelector(s => s.navigation.operationData as SubmitSurveyResponse);
+    const response = useAppSelector(s => s.navigation.operationData as ReturnedSurveyResponse);
     const dispatch = useAppDispatch();
 
     const jobs = (): RecommendedJobWithData[] => {

@@ -1,4 +1,4 @@
-import { getAdministeredSurveyData } from "../Firebase";
+import { getBigQueryData } from "../Firebase";
 import { queryFunctions, DataQuery, Subject, SerializedEntry } from "./Utility";
 
 /**
@@ -21,11 +21,11 @@ export async function getQueryData(subject: Subject, queryType: DataQuery, forDa
             if (!([DataQuery.AllTitlesPerDay, DataQuery.AllPerDay, DataQuery.AllTitles].includes(queryType))) {
                 const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${selectedNavigator}", ${forDay}, "${startDate}")`;
         
-                response = await getAdministeredSurveyData({ queryString: queryString, navigatorEmail: selectedNavigator });
+                response = await getBigQueryData({ queryString: queryString, navigatorEmail: selectedNavigator });
             } else {
                 const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(${forDay}, "${startDate}")`;
         
-                response = await getAdministeredSurveyData({ queryString: queryString });
+                response = await getBigQueryData({ queryString: queryString });
             }
 
             return serializeSurveyData(response.data as string[], queryType);
@@ -36,7 +36,7 @@ export async function getQueryData(subject: Subject, queryType: DataQuery, forDa
                 for (const jobName of jobNames!) {
                     const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${jobName}", ${forDay}, "${startDate}")`;
 
-                    response = await getAdministeredSurveyData({ queryString: queryString });
+                    response = await getBigQueryData({ queryString: queryString });
 
                     const serializedData: any = serializeJobData(response.data as string[], queryType);
 
@@ -57,7 +57,7 @@ export async function getQueryData(subject: Subject, queryType: DataQuery, forDa
             } else {
                 const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(${forDay}, "${startDate}")`
 
-                response = await getAdministeredSurveyData({ queryString: queryString }); 
+                response = await getBigQueryData({ queryString: queryString }); 
                 
                 const serializedData = serializeJobData(response.data as string[], queryType);
 

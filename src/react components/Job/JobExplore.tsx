@@ -36,8 +36,8 @@ const JobExplore: React.FC<props> = p => {
     }
 
     useEffect(() => {
-        setCurrentJob(filteredJobs.length > 0 ? filteredJobs[0] : undefined)
-    }, [filteredJobs])
+        setCurrentJob((filteredJobs.length > 0) ? filteredJobs[0] : undefined)
+    }, [filterLabelIds])
 
     return (
         <div className="jobExplore container">

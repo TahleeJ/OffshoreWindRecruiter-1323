@@ -140,7 +140,6 @@ async function drawTitlesPerDay(subject: Subject, queryType: DataQuery, chartTyp
                 height: 300
             });
     }
-
 }
 
 /**

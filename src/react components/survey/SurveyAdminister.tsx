@@ -7,10 +7,10 @@ import Prompt from '../generic/Prompt';
 import { authInstance } from '../../firebase/Firebase';
 import { logSurveyAdministered } from '../../firebase/Analytics/Logging';
 
+
 interface props {
 
 }
-
 
 
 const SurveyAdminister: React.FC = (p: props) => {

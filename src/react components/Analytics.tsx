@@ -3,7 +3,7 @@ import { useAppSelector } from '../redux/hooks';
 import { DataQuery, Subject, NavigatorGrouping, DateGrouping, dataFocusTypes, validQueryCharts } from '../firebase/Analytics/Utility';
 import { drawChart } from '../firebase/Analytics/Draw';
 import { authInstance } from '../firebase/Firebase';
-import { Chart, determineQueryType, validateChartType, today, determineStartDate, stringifyDate } from '../firebase/Analytics/Utility';
+import { Chart, SelectionArrays, DateSelection, validateChartType, today, determineStartDate } from '../firebase/Analytics/Utility';
 
 /** The props (arguments) to create this element */
 interface props {
@@ -18,10 +18,9 @@ const Analytics: React.FC<props> = (props) => {
     const [popupTitleState, setPopupTitleState] = useState("");
     const [popupMessageState, setPopupMessageState] = useState("");
     const [queryTypeState, setQueryTypeState] = useState<DataQuery>(DataQuery.AllTitles);
+    const [surveyQueryTypeState, setSurveyQueryTypeState] = useState<DataQuery>(DataQuery.AllTitles);
+    const [jobQueryTypeState, setJobQueryTypeState] = useState<DataQuery>(DataQuery.TotalJobMatches);
     const [navigatorGroupingState, setNavigatorGroupingstate] = useState<NavigatorGrouping>(NavigatorGrouping.All);
-    const [dataFocusState, setDataFocusState] = useState("");
-    const [surveyDataFocusState, setSurveyDataFocusState] = useState(dataFocusTypes.surveys.titles.name);
-    const [jobDataFocusState, setJobDataFocusState] = useState(dataFocusTypes.jobs.totalPerJob.name);
     const [validDataFocusesState, setValidDataFocusesState] = useState(validQueryCharts.surveys.pie.text);
     const [chartTypeState, setChartTypeState] = useState<Chart>(Chart.Pie);
     const [chartTypeNameState, setChartTypeNameState] = useState("Pie");
@@ -40,8 +39,9 @@ const Analytics: React.FC<props> = (props) => {
     var popupTitle = popupTitleState;
     var popupMessage = popupMessageState;
     var queryType = queryTypeState;
+    var surveyQueryType = surveyQueryTypeState;
+    var jobQueryType = jobQueryTypeState;
     var navigatorGrouping = navigatorGroupingState;
-    var dataFocus = (subjectState === Subject.Surveys) ? surveyDataFocusState : jobDataFocusState;
     var validDataFocuses = validDataFocusesState;
     var chartType = chartTypeState;
     var chartTypeName = chartTypeNameState;
@@ -87,20 +87,35 @@ const Analytics: React.FC<props> = (props) => {
         setNavigatorEntryState(value);
     }
 
-    function updateDataFocus(value: string) {
-        dataFocus = value;
-        console.log(value);
+    // function updateDataFocus(value: string) {
+    //     dataFocus = value;
+    //     console.log(value);
+
+    //     switch (subject) {
+    //         case Subject.Surveys:
+    //             setSurveyDataFocusState(value);
+    //             break;
+    //         case Subject.Jobs:
+    //             setJobDataFocusState(value);
+    //             break;
+    //     }
+
+    //     setDataFocusState(value);
+    // }
+
+    function updateQueryType(value: DataQuery) {
+        queryType = value;
 
         switch (subject) {
             case Subject.Surveys:
-                setSurveyDataFocusState(value);
+                setSurveyQueryTypeState(value);
                 break;
             case Subject.Jobs:
-                setJobDataFocusState(value);
+                setJobQueryTypeState(value);
                 break;
         }
 
-        setDataFocusState(value);
+        setQueryTypeState(value);
     }
 
     function updateDateGrouping(value: DateGrouping) {
@@ -123,10 +138,10 @@ const Analytics: React.FC<props> = (props) => {
 
         switch (value) {
             case Subject.Surveys:
-                updateDataFocus(surveyDataFocusState);
+                updateQueryType(surveyQueryTypeState);
                 break;
             case Subject.Jobs:
-                updateDataFocus(jobDataFocusState);
+                updateQueryType(jobQueryTypeState);
                 break;
         }
 
@@ -326,97 +341,97 @@ const Analytics: React.FC<props> = (props) => {
         popupMessage = "";
         togglePopup();
         
-        // Determine which type of query will be sent to pull the desired data
-        queryType = determineQueryType(subject, dataFocus, navigatorGrouping);
+        // // Determine which type of query will be sent to pull the desired data
+        // queryType = determineQueryType(subject, dataFocus, navigatorGrouping);
 
         startDate = determineStartDate(dateGrouping, dayDate, sinceDate);
 
-        setDataFocusState(dataFocus);
         setQueryTypeState(queryType);
         setStartDateState(startDate);
+        
+        const queryRequiresSurveyName = [
+            DataQuery.AllTitlesPerDay, 
+            DataQuery.AverageSurveyMatches,
+            DataQuery.SurveyPositiveJobMatches, 
+            DataQuery.SurveyNegativeJobMatches
+        ].includes(queryType);
 
-        // Validate that the selected chart type is able to represent the desired data set
-        const validChartType = validateChartType(subject, chartType, queryType);
+        const jobQueryDoesNotRequireJobName = [
+            DataQuery.HighestAverageJobMatches, 
+            DataQuery.LowestAverageJobMatches
+        ].includes(queryType);
 
-        if (navigatorGrouping === NavigatorGrouping.Set || navigatorGrouping === NavigatorGrouping.One) {
-            if (queryType !== DataQuery.None) {
-                const validNavigatorEntry = validateNavigatorEntry();
+        const queryRequiresNavigatorName = [
+            NavigatorGrouping.Set, 
+            NavigatorGrouping.One
+        ].includes(navigatorGrouping);
 
-                if (!validNavigatorEntry) {
-                    popupTitle = "Invalid Navigator Email Entry";
-                    popupMessage = "For one navigator: Please enter at least one email<br />For a set of navigators: Please enter at least two emails and separate by commas.";
-                    togglePopup();
-                } else {
-                    if (validChartType!) {
-                        if ((dataFocus === dataFocusTypes.surveys.titleDay.name || dataFocus.includes("Survey")) && selectedSurveys.length === 0) {
-                            popupTitle = "Empty Survey Selection";
-                            popupMessage = "Please select at least one survey you would like to see data for.";
-                            togglePopup();
-                        } else if (subject === Subject.Jobs && !(dataFocus.includes("Highest") || dataFocus.includes("Lowest")) && selectedJobs.length === 0) {
-                            popupTitle = "Empty Job Selection";
-                            popupMessage = "Please select at least one job you would like to see data for.";
-                            togglePopup();
-                        } else {
-                            try {
-                                if ((queryType === DataQuery.HighestAverageJobMatches || queryType == DataQuery.LowestAverageJobMatches) && chartType == Chart.TreeMap) {
-                                    setTreeState(queryType);
-                                } else {
-                                    setTreeState(DataQuery.None);
-                                }
+        if (queryType === DataQuery.None) {
+            return;
+        }
 
-                                await drawChart(subject, selectedSurveys, selectedJobs, chartType, queryType, false, (dateGrouping === DateGrouping.Day), startDate, selectedNavigators);
-                            } catch (error) {
-                                const { details } = JSON.parse(JSON.stringify(error));
+        if (queryRequiresNavigatorName) {
+            const validNavigatorEntry = validateNavigatorEntry();
 
-                                popupTitle = "Query Error";
-                                popupMessage = details;
-                                togglePopup();
-                            }
-                        }
-                    } else {
-                        popupTitle = "Invalid Chart Type";
-                        popupMessage = `Chart type *${chartTypeName}* is incompatible with your selected data focus.`;
-                        togglePopup();
-                    }
-                }
-            } else {
-                popupTitle = "Invalid Chart Type";
-                popupMessage = `Chart type *${chartTypeName}* is incompatible with your selected data focus.<br />This view is not yet available for multiple navigators!`;
+            if (!validNavigatorEntry) {
+                popupTitle = "Invalid Navigator Email Entry";
+                popupMessage = "For one navigator: Please enter at least one email<br />For a set of navigators: Please enter at least two emails and separate by commas.";
                 togglePopup();
+
+                return;
             }
-        } else {
-            if (validChartType!) {
-                if ((dataFocus === dataFocusTypes.surveys.titleDay.name || dataFocus.includes("Survey")) && selectedSurveys.length === 0) {
-                    popupTitle = "Empty Survey Selection";
-                    popupMessage = "Please select at least one survey you would like to see data for.";
-                    togglePopup();
-                } else if (subject === Subject.Jobs && !(dataFocus.includes("Highest") || dataFocus.includes("Lowest")) && selectedJobs.length === 0) {
-                    popupTitle = "Empty Job Selection";
-                    popupMessage = "Please select at least one job you would like to see data for.";
-                    togglePopup();
-                } else {
-                    try {
-                        if ((queryType === DataQuery.HighestAverageJobMatches || queryType == DataQuery.LowestAverageJobMatches) && chartType == Chart.TreeMap) {
-                            setTreeState(queryType);
-                        } else {
-                            setTreeState(DataQuery.None);
-                        }
+        }
 
-                        await drawChart(subject, selectedSurveys, selectedJobs, chartType, queryType, true, (dateGrouping === DateGrouping.Day), startDate, selectedNavigators);
-                    } catch (error) {
-                        const { details } = JSON.parse(JSON.stringify(error));
+        if (queryRequiresSurveyName && selectedSurveys.length === 0) {
+            popupTitle = "Empty Survey Selection";
+            popupMessage = "Please select at least one survey you would like to see data for.";  
+            togglePopup();
+            
+            return;
+        } 
+        
+        if (!jobQueryDoesNotRequireJobName && selectedJobs.length === 0) {
+            popupTitle = "Empty Job Selection";
+            popupMessage = "Please select at least one job you would like to see data for.";
+            togglePopup();
 
-                        popupTitle = "Query Error";
-                        popupMessage = details;
-                        togglePopup();
-                    }
-                }
+            return;
+        }
+
+        if (!validateChartType(subject, chartType, queryType)) {
+            popupTitle = "Invalid Chart Type";
+            popupMessage = `Chart type *${chartTypeName}* is incompatible with your selected data focus.`;
+            togglePopup();  
+
+            return;
+        }
+
+        try {
+            if (jobQueryDoesNotRequireJobName && chartType == Chart.TreeMap) {
+                setTreeState(queryType);
             } else {
-                popupTitle = "Invalid Chart Type";
-                popupMessage = `Chart type *${chartTypeName}* is incompatible with your selected data focus.`;
-                togglePopup();
+                setTreeState(DataQuery.None);
             }
-        }   
+
+            const selectionArrays: SelectionArrays = {
+                navigators: selectedNavigators,
+                surveys: selectedSurveys,
+                jobs: selectedJobs
+            };
+
+            const dateSelection: DateSelection = {
+                forDay: (dateGrouping === DateGrouping.Day),
+                startDate: startDate
+            };
+
+            await drawChart(subject, chartType, queryType, queryRequiresNavigatorName, dateSelection, selectionArrays);
+        } catch (error) {
+            const { details } = JSON.parse(JSON.stringify(error));
+
+            popupTitle = "Query Error";
+            popupMessage = details;
+            togglePopup();
+        }
     }
 
     return (
@@ -447,10 +462,10 @@ const Analytics: React.FC<props> = (props) => {
                             subject == Subject.Surveys &&
                             <div>
                                 <p>Focus: Administration Total of...Over the Date Range</p>
-                                <select id="data-focus" name="Query Types" defaultValue={surveyDataFocusState} onChange={(e) => { updateDataFocus(e.target.value) }}>
-                                    <option value={dataFocusTypes.surveys.titleDay.name}>{dataFocusTypes.surveys.titleDay.text}</option>
-                                    <option value={dataFocusTypes.surveys.perDay.name}>{dataFocusTypes.surveys.perDay.text}</option>
-                                    <option value={dataFocusTypes.surveys.titles.name}>{dataFocusTypes.surveys.titles.text}</option>
+                                <select id="data-focus" name="Query Types" defaultValue={surveyQueryTypeState} onChange={(e) => { updateQueryType(parseInt(e.target.value)) }}>
+                                    <option value={(navigatorGrouping == NavigatorGrouping.All ? DataQuery.AllTitlesPerDay : DataQuery.OneTitlesPerDay)}>{dataFocusTypes.surveys.titleDay}</option>
+                                    <option value={(navigatorGrouping == NavigatorGrouping.All ? DataQuery.AllPerDay : DataQuery.OnePerDay)}>{dataFocusTypes.surveys.perDay}</option>
+                                    <option value={(navigatorGrouping == NavigatorGrouping.All ? DataQuery.AllTitles : DataQuery.OneTitles)}>{dataFocusTypes.surveys.titles}</option>
                                 </select>
                             </div>
                         }
@@ -458,16 +473,16 @@ const Analytics: React.FC<props> = (props) => {
                             subject == Subject.Jobs &&
                             <div>
                                 <p>Focus: </p>
-                                <select id="data-focus" name="Query Types" defaultValue={jobDataFocusState} onChange={(e) => { updateDataFocus(e.target.value) }}>
-                                    <option value={dataFocusTypes.jobs.totalPerJob.name}>{dataFocusTypes.jobs.totalPerJob.text}</option>
-                                    <option value={dataFocusTypes.jobs.totalPositivePerJob.name}>{dataFocusTypes.jobs.totalPositivePerJob.text}</option>
-                                    <option value={dataFocusTypes.jobs.totalNegativePerJob.name}>{dataFocusTypes.jobs.totalNegativePerJob.text}</option>
-                                    <option value={dataFocusTypes.jobs.averagePerJob.name}>{dataFocusTypes.jobs.averagePerJob.text}</option>
-                                    <option value={dataFocusTypes.jobs.highestAverage.name}>{dataFocusTypes.jobs.highestAverage.text}</option>
-                                    <option value={dataFocusTypes.jobs.lowestAverage.name}>{dataFocusTypes.jobs.lowestAverage.text}</option>
-                                    <option value={dataFocusTypes.jobs.averagePerSurvey.name}>{dataFocusTypes.jobs.averagePerSurvey.text}</option>
-                                    <option value={dataFocusTypes.jobs.totalPositivePerSurvey.name}>{dataFocusTypes.jobs.totalPositivePerSurvey.text}</option>
-                                    <option value={dataFocusTypes.jobs.totalNegativePerSurvey.name}>{dataFocusTypes.jobs.totalNegativePerSurvey.text}</option>
+                                <select id="data-focus" name="Query Types" defaultValue={jobQueryTypeState} onChange={(e) => { updateQueryType(parseInt(e.target.value)) }}>
+                                    <option value={DataQuery.TotalJobMatches}>{dataFocusTypes.jobs.totalPerJob}</option>
+                                    <option value={DataQuery.PositiveJobMatches}>{dataFocusTypes.jobs.totalPositivePerJob}</option>
+                                    <option value={DataQuery.NegativeJobMatches}>{dataFocusTypes.jobs.totalNegativePerJob}</option>
+                                    <option value={DataQuery.AverageJobMatches}>{dataFocusTypes.jobs.averagePerJob}</option>
+                                    <option value={DataQuery.HighestAverageJobMatches}>{dataFocusTypes.jobs.highestAverage}</option>
+                                    <option value={DataQuery.LowestAverageJobMatches}>{dataFocusTypes.jobs.lowestAverage}</option>
+                                    <option value={DataQuery.AverageSurveyMatches}>{dataFocusTypes.jobs.averagePerSurvey}</option>
+                                    <option value={DataQuery.SurveyPositiveJobMatches}>{dataFocusTypes.jobs.totalPositivePerSurvey}</option>
+                                    <option value={DataQuery.SurveyNegativeJobMatches}>{dataFocusTypes.jobs.totalNegativePerSurvey}</option>
                                 </select>
                             </div>
                         }

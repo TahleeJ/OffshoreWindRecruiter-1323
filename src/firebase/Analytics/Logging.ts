@@ -48,3 +48,11 @@ export async function logJobsMatched(surveyId: string, recommendedJobs: Recommen
         });
     }
 }
+
+export async function logLabelsMatched(labelScores: Map<string, [number, number]>) {
+    console.log(labelScores);
+
+    // for (const [key, value] of labelScores) {
+    //     console.log(`${key}: ${value}`);
+    // }
+}

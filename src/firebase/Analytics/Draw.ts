@@ -298,7 +298,7 @@ async function drawPerDay(subject: Subject, queryType: DataQuery, chartType: Cha
                 title: title,
                 vAxis: {title: 'Day'},
                 hAxis: {title: 'Surveys Administered'},
-                colors: ['grey']
+                colors: ['#6ed3ff']
             });
     } else if (chartType === Chart.Table) {
         new google.visualization.Table(document.getElementById('chart')!)
@@ -430,7 +430,7 @@ async function drawTotalMatches(subject: Subject, queryType: DataQuery, chartTyp
                     title: title,
                     vAxis: {title: 'Day'},
                     hAxis: {title: 'Jobs Matched'},
-                    colors: ['grey']
+                    colors: ['#6ed3ff']
                 });
             break;
         case Chart.Table:
@@ -623,7 +623,7 @@ async function drawSingleAverageScores(subject: Subject, queryType: DataQuery, c
                     title: title,
                     vAxis: {title: 'Day'},
                     hAxis: {title: 'Average Score'},
-                    colors: ['grey']
+                    colors: ['#6ed3ff']
                 });
             break;
         case Chart.Table:
@@ -753,7 +753,7 @@ async function drawTieredAverages(subject: Subject, queryType: DataQuery, chartT
                     title: title,
                     vAxis: {title: 'Day'},
                     hAxis: {title: 'Average Score'},
-                    colors: ['grey']
+                    colors: ['#6ed3ff']
                 });
             break;
         case Chart.Table:
@@ -768,18 +768,15 @@ async function drawTieredAverages(subject: Subject, queryType: DataQuery, chartT
             var minColor;
             var midColor;
             var maxColor;
-            var fontColor;
 
             if (queryType == DataQuery.HighestAverageJobMatches) {
-                minColor = '#00ff22';
-                midColor = '#00f7ff';
-                maxColor = '#1e00ff';
-                fontColor = '#ffffff';
+                minColor = '#38ff53';
+                midColor = '#36f9ff';
+                maxColor = '#3d4dff';
             } else {
-                minColor = '#ff0000';
-                midColor = '#ff8400';
-                maxColor = '#fff700';
-                fontColor = '#000000';
+                minColor = '#ff2e2e';
+                midColor = '#ff9b30';
+                maxColor = '#fff933';
             }
 
             new google.visualization.TreeMap(document.getElementById('chart')!)
@@ -814,8 +811,6 @@ function prepareTieredAverages(data: SerializedEntry[], tree: boolean, highest: 
             chartData.addRow([value.jobName!, "All Jobs", score, colorScale]);
             index++;
         }
-
-        chartData.addRow(["My job", "All Jobs", (.99), 10 * .99 * 10]);
     } else {
         chartData.addColumn("string", "Job Name");
         chartData.addColumn("number", "Average Score");

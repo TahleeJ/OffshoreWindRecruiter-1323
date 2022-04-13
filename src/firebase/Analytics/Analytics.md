@@ -35,7 +35,7 @@ The [Google] charts for the analytics dashboard are achieved by way of a pipelin
 6. Chart generation
 
 ### Custom Chart Selection
-When entering into the analytics dashboard of the application in `./src/react components/Analytics.tsx`, the user will have the ability to choose what type of data they would like to see alongside the visualization (chart) they would like to view it in. After this selection is done, the application will then determine which type of data query needs to be sent to BigQuery, starting through the `drawChart` function in `./src/firebase/Analytics/Draw.ts`.
+When entering into the analytics dashboard of the application in `./src/react components/Analytics.tsx`, the user will have the ability to choose what type of data they would like to see alongside the visualization (chart) they would like to view it in. After this selection is done (by clicking `generateChart`), the application will then determine which type of data query needs to be sent to BigQuery, starting through the `drawChart` function in `./src/firebase/Analytics/Draw.ts`.
 
 ### Data Query Type Assertion
 To determine the type of data query that needs to be sent out, the application will know exactly which data queries for each chart type from the `validQueryCharts` variable in `./src/firebase/Analytics/Utility.ts`. If the user has selected a data query that is valid for the type of chart they selected, a preliminary query will be made through `getQueryData` in `./src/firebase/Analytics/Query.ts`.

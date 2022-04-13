@@ -469,8 +469,29 @@ const Analytics: React.FC<props> = (props) => {
                                     <option value={dataFocusTypes.jobs.totalNegativePerSurvey.name}>{dataFocusTypes.jobs.totalNegativePerSurvey.text}</option>
                                 </select>
                             </div>
-                        }
+                        }   
 
+                        {
+                            subjectState == Subject.Jobs &&
+                            <div style={{ height: "60%" }}>
+                                <p style={{ fontWeight: "bold" }}>Available Jobs:</p>
+                                <p style={{ color: "red" }}>*Select a maximum of 5 job opportunities.</p>
+                                <div className='surveyList listViewer' style={{ height: "75%" }}>
+                                    <div className='listElements'>
+                                    {jobOpps.length > 0 ?
+                                        jobOpps.map((jobOpp, ind) => {
+                                            return <div key={ind}>
+                                                    <input type='checkbox' id={jobOpp.jobName} value={jobOpp.jobName} defaultChecked={selectedJobsCheckState.has(jobOpp.jobName)} onChange={(e) => { handleClick(Subject.Jobs, jobOpp.jobName, e.target.checked) }}></input>
+                                                    <label htmlFor={jobOpp.jobName}>{jobOpp.jobName}</label>
+                                                </div>
+                                        })
+                                        : <div>There are no job opportunities at the moment</div>
+                                    }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
                         <p style={{ fontWeight: "bold" }}>Available Surveys:</p>
                         <p style={{ color: "red" }}>*Select a maximum of 5 survey titles.</p>
                         <div className='surveyList listViewer'>
@@ -486,28 +507,6 @@ const Analytics: React.FC<props> = (props) => {
                             }
                             </div>
                         </div>
-                            
-
-                        {
-                            subjectState == Subject.Jobs &&
-                            <div>
-                                <p style={{ fontWeight: "bold" }}>Available Jobs:</p>
-                                <p style={{ color: "red" }}>*Select a maximum of 5 job opportunities.</p>
-                                <div className='surveyList listViewer'>
-                                    <div className='listElements'>
-                                    {jobOpps.length > 0 ?
-                                        jobOpps.map((jobOpp, ind) => {
-                                            return <div key={ind}>
-                                                    <input type='checkbox' id={jobOpp.jobName} value={jobOpp.jobName} defaultChecked={selectedJobsCheckState.has(jobOpp.jobName)} onChange={(e) => { handleClick(Subject.Jobs, jobOpp.jobName, e.target.checked) }}></input>
-                                                    <label htmlFor={jobOpp.jobName}>{jobOpp.jobName}</label>
-                                                </div>
-                                        })
-                                        : <div>There are no job opportunities at the moment</div>
-                                    }
-                                    </div>
-                                </div>
-                            </div>
-                        }
                         
                     </div>
 

@@ -136,7 +136,9 @@ async function drawTitlesPerDay(subject: Subject, queryType: DataQuery, chartTyp
         chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), true, false);
 
         new google.visualization.Table(document.getElementById('chart')!)
-            .draw(chartData!)
+            .draw(chartData!, {
+                height: 300
+            });
     }
 
 }
@@ -302,7 +304,9 @@ async function drawPerDay(subject: Subject, queryType: DataQuery, chartType: Cha
             });
     } else if (chartType === Chart.Table) {
         new google.visualization.Table(document.getElementById('chart')!)
-            .draw(chartData!);
+            .draw(chartData!, {
+                height: 300
+            });
     }
 }
 
@@ -368,7 +372,9 @@ async function drawTitles(subject: Subject, queryType: DataQuery, chartType: Cha
             });
     } else if (chartType === Chart.Table) {
         new google.visualization.Table(document.getElementById('chart')!)
-            .draw(chartData!);
+            .draw(chartData!, {
+                height: 300
+            });
     }
 }
 
@@ -437,7 +443,9 @@ async function drawTotalMatches(subject: Subject, queryType: DataQuery, chartTyp
             chartData = prepareTotalMatches(data, forJobs, false, selectedJobs, selectedSurveys);
 
             new google.visualization.Table(document.getElementById('chart')!)
-                .draw(chartData!);
+                .draw(chartData!, {
+                    height: 300
+                });
             break;
     }    
 }
@@ -630,7 +638,9 @@ async function drawSingleAverageScores(subject: Subject, queryType: DataQuery, c
             chartData = prepareSingleAverageScores(data, forJobs, selectedJobs, selectedSurveys);
 
             new google.visualization.Table(document.getElementById('chart')!)
-                .draw(chartData!);
+                .draw(chartData!, {
+                    height: 300
+                });
             break;
     }    
 }
@@ -760,7 +770,9 @@ async function drawTieredAverages(subject: Subject, queryType: DataQuery, chartT
             chartData = prepareTieredAverages(data, false, highest);
 
             new google.visualization.Table(document.getElementById('chart')!)
-                .draw(chartData!);
+                .draw(chartData!, {
+                    height: 300
+                });
             break;
         case Chart.TreeMap:
             chartData = prepareTieredAverages(data, true, highest);

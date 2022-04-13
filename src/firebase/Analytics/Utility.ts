@@ -97,6 +97,11 @@ export interface SerializedEntry {
     score?: number
 }
 
+export interface ValidChart {
+    list: DataQuery[],
+    text: string
+}
+
 export const dataFocusTypes = {
     surveys: {
         titleDay: "Each selected survey per day",
@@ -120,112 +125,139 @@ export const dataFocusTypes = {
     }
 };
 
-// List of data focuses (sets) able to be represented by each chart type
-export const validQueryCharts = {
-    surveys: {
-        pie: {
-            list: [
-                DataQuery.AllTitles, 
-                DataQuery.OneTitles, 
-                DataQuery.AllTitlesPerDay, 
-                DataQuery.OneTitlesPerDay],
-            text: `${dataFocusTypes.surveys.titleDay}\n` +
-                `${dataFocusTypes.surveys.titles}`
-        }, 
-        combo: {
-            list: [
-                DataQuery.AllTitlesPerDay, 
-                DataQuery.OneTitlesPerDay],
-            text: `${dataFocusTypes.surveys.titleDay}`
-        },
-        line: {
-            list: [
-                DataQuery.AllTitlesPerDay, 
-                DataQuery.OneTitlesPerDay, 
-                DataQuery.AllPerDay, 
-                DataQuery.OnePerDay],
-            text: `${dataFocusTypes.surveys.titleDay}\n` +
-                `${dataFocusTypes.surveys.perDay}`
-        },
-        bar: {
-            list: [
-                DataQuery.AllTitlesPerDay,
-                DataQuery.OneTitlesPerDay, 
-                DataQuery.AllPerDay, 
-                DataQuery.OnePerDay],
-            text: `${dataFocusTypes.surveys.titleDay}\n` +
-                `${dataFocusTypes.surveys.perDay}`
-        },
-        table: {
-            text: 'All focuses are valid for this chart type.'
-        }
-    },
-    jobs: {
-        pie: {
-            list: [
-                DataQuery.TotalJobMatches, 
-                DataQuery.PositiveJobMatches, 
-                DataQuery.NegativeJobMatches, 
-                DataQuery.SurveyPositiveJobMatches, 
-                DataQuery.SurveyNegativeJobMatches],
-            text: `${dataFocusTypes.jobs.totalPerJob}\n` +
-                `${dataFocusTypes.jobs.totalPositivePerJob}\n` +
-                `${dataFocusTypes.jobs.totalNegativePerJob}\n` +
-                `${dataFocusTypes.jobs.totalPositivePerSurvey}\n` +
-                `${dataFocusTypes.jobs.totalNegativePerSurvey}`
-        },
-        line: {
-            list: [
-                DataQuery.TotalJobMatches, 
-                DataQuery.PositiveJobMatches, 
-                DataQuery.NegativeJobMatches, 
-                DataQuery.AverageJobMatches, 
-                DataQuery.AverageSurveyMatches, 
-                DataQuery.SurveyPositiveJobMatches, 
-                DataQuery.SurveyNegativeJobMatches],
-            text: `${dataFocusTypes.jobs.totalPerJob}\n` +
-                `${dataFocusTypes.jobs.totalPositivePerJob}\n` +
-                `${dataFocusTypes.jobs.totalNegativePerJob}\n` +
-                `${dataFocusTypes.jobs.averagePerJob}\n` +
-                `${dataFocusTypes.jobs.averagePerSurvey}\n` +
-                `${dataFocusTypes.jobs.totalPositivePerSurvey}\n` +
-                `${dataFocusTypes.jobs.totalNegativePerSurvey}`
-        },
-        bar: {
-            text: 'All focuses are valid for this chart type.'
-        },
-        table: {
-            text: 'All focuses are valid for this chart type.'
-        },
-        treemap: {
-            list: [
-                DataQuery.HighestAverageJobMatches, 
-                DataQuery.LowestAverageJobMatches],
-            text: `${dataFocusTypes.jobs.highestAverage}\n` +
-                `${dataFocusTypes.jobs.lowestAverage}`
-        },
-    },
-    labels: {
-        line: {
-            list: [
-                DataQuery.LabelAverage],
-            text: `${dataFocusTypes.labels.average}`
-        },
-        bar: {
-            list: [
-                DataQuery.LabelAverage],
-            text: `${dataFocusTypes.labels.average}`
-        },
-        table: {
-            text: 'All focuses are valid for this chart type.'
-        },
-        scatter: {
-            list: [
-                DataQuery.LabelPoints],
-            text: `${dataFocusTypes.labels.allPoints}`
-        }
-    }
-}
+const allDataQueries: DataQuery[] = Object.keys(DataQuery)
+    .filter((value) => !isNaN(Number(value)))
+    .map((value) => parseInt(value));
+
+export const validChartInfo = new Map<Subject, Map<Chart, ValidChart>>();
+
+// Valid charts for survey subject
+const surveyValidChartMap = new Map<Chart, ValidChart>();
+
+surveyValidChartMap.set(Chart.Pie, {
+    list: [
+        DataQuery.AllTitles, 
+        DataQuery.OneTitles, 
+        DataQuery.AllTitlesPerDay, 
+        DataQuery.OneTitlesPerDay],
+    text: `${dataFocusTypes.surveys.titleDay}\n` +
+        `${dataFocusTypes.surveys.titles}`
+});
+
+surveyValidChartMap.set(Chart.Combo, {
+    list: [
+        DataQuery.AllTitlesPerDay, 
+        DataQuery.OneTitlesPerDay],
+    text: `${dataFocusTypes.surveys.titleDay}`
+});
+
+surveyValidChartMap.set(Chart.Line, {
+    list: [
+        DataQuery.AllTitlesPerDay, 
+        DataQuery.OneTitlesPerDay, 
+        DataQuery.AllPerDay, 
+        DataQuery.OnePerDay],
+    text: `${dataFocusTypes.surveys.titleDay}\n` +
+        `${dataFocusTypes.surveys.perDay}`
+});
+
+surveyValidChartMap.set(Chart.Bar, {
+    list: [
+        DataQuery.AllTitlesPerDay,
+        DataQuery.OneTitlesPerDay, 
+        DataQuery.AllPerDay, 
+        DataQuery.OnePerDay],
+    text: `${dataFocusTypes.surveys.titleDay}\n` +
+        `${dataFocusTypes.surveys.perDay}`
+});
+
+surveyValidChartMap.set(Chart.Table, {
+    list: allDataQueries,
+    text: 'All focuses are valid for this chart type.'
+});
+
+// Valid charts for job subject
+const jobValidChartMap = new Map<Chart, ValidChart>();
+
+jobValidChartMap.set(Chart.Pie, {
+    list: [
+        DataQuery.TotalJobMatches, 
+        DataQuery.PositiveJobMatches, 
+        DataQuery.NegativeJobMatches, 
+        DataQuery.SurveyPositiveJobMatches, 
+        DataQuery.SurveyNegativeJobMatches],
+    text: `${dataFocusTypes.jobs.totalPerJob}\n` +
+        `${dataFocusTypes.jobs.totalPositivePerJob}\n` +
+        `${dataFocusTypes.jobs.totalNegativePerJob}\n` +
+        `${dataFocusTypes.jobs.totalPositivePerSurvey}\n` +
+        `${dataFocusTypes.jobs.totalNegativePerSurvey}`
+});
+
+jobValidChartMap.set(Chart.Line, {
+    list: [
+        DataQuery.TotalJobMatches, 
+        DataQuery.PositiveJobMatches, 
+        DataQuery.NegativeJobMatches, 
+        DataQuery.AverageJobMatches, 
+        DataQuery.AverageSurveyMatches, 
+        DataQuery.SurveyPositiveJobMatches, 
+        DataQuery.SurveyNegativeJobMatches],
+    text: `${dataFocusTypes.jobs.totalPerJob}\n` +
+        `${dataFocusTypes.jobs.totalPositivePerJob}\n` +
+        `${dataFocusTypes.jobs.totalNegativePerJob}\n` +
+        `${dataFocusTypes.jobs.averagePerJob}\n` +
+        `${dataFocusTypes.jobs.averagePerSurvey}\n` +
+        `${dataFocusTypes.jobs.totalPositivePerSurvey}\n` +
+        `${dataFocusTypes.jobs.totalNegativePerSurvey}`
+});
+
+jobValidChartMap.set(Chart.Bar, {
+    list: allDataQueries,
+    text: 'All focuses are valid for this chart type.'
+});
+
+jobValidChartMap.set(Chart.Table, {
+    list: allDataQueries,
+    text: 'All focuses are valid for this chart type.'
+});
+
+jobValidChartMap.set(Chart.TreeMap, {
+    list: [
+        DataQuery.HighestAverageJobMatches, 
+        DataQuery.LowestAverageJobMatches],
+    text: `${dataFocusTypes.jobs.highestAverage}\n` +
+        `${dataFocusTypes.jobs.lowestAverage}`
+});
+
+// Valid charts for label subject
+const labelValidChartMap = new Map<Chart, ValidChart>();
+
+labelValidChartMap.set(Chart.Line, {
+    list: [
+        DataQuery.LabelAverage],
+    text: `${dataFocusTypes.labels.average}`
+});
+
+labelValidChartMap.set(Chart.Bar, {
+    list: [
+        DataQuery.LabelAverage],
+    text: `${dataFocusTypes.labels.average}`
+});
+
+labelValidChartMap.set(Chart.Table, {
+    list: allDataQueries,
+    text: 'All focuses are valid for this chart type.'
+});
+
+labelValidChartMap.set(Chart.Scatter, {
+    list: [
+        DataQuery.LabelPoints],
+    text: `${dataFocusTypes.labels.allPoints}`
+});
+
+validChartInfo.set(Subject.Surveys, surveyValidChartMap);
+validChartInfo.set(Subject.Jobs, jobValidChartMap);
+validChartInfo.set(Subject.Labels, labelValidChartMap);
 
 /**
  * Turns the BigQuery provided dates into a more readable format
@@ -270,7 +302,7 @@ function getPastStart(dayDifference: number) {
         pastDay = 31 + difference;
         pastMonth--;
 
-        if (pastMonth == 0) {
+        if (pastMonth === 0) {
             pastMonth = 12;
             pastYear--;
         }
@@ -302,63 +334,4 @@ export function determineStartDate(dateGrouping: DateGrouping, dayDate: string, 
     }
 
     return startDate;
-}
-
-/**
- * Validates that the selected chart type is able to represent the selected
- * data focus (set)
- * 
- * @param chartType the desired chart type
- * @param queryType the desired data focus
- * @returns whether the desired chart is able to represent the desired data focus
- */
-export function validateChartType(subject: Subject, chartType: Chart, queryType: DataQuery): boolean {
-    var validChartType: boolean;
-
-    switch (subject) {
-        case Subject.Surveys:
-            switch(chartType!) {
-                case Chart.Pie:
-                    validChartType = validQueryCharts.surveys.pie.list.includes(queryType);
-                    break;
-                case Chart.Combo:
-                    validChartType = validQueryCharts.surveys.combo.list.includes(queryType);
-                    break;
-                case Chart.Line:
-                    validChartType = validQueryCharts.surveys.line.list.includes(queryType);
-                    break;
-                case Chart.Bar:
-                    validChartType = validQueryCharts.surveys.bar.list.includes(queryType);
-                    break;
-                case Chart.Table:
-                    validChartType = true;
-                    break;
-                default:
-                    break;
-            }
-            break;
-        case Subject.Jobs:
-            switch(chartType!) {
-                case Chart.Pie:
-                    validChartType = validQueryCharts.jobs.pie.list.includes(queryType);
-                    break;
-                case Chart.Line:
-                    validChartType = validQueryCharts.jobs.line.list.includes(queryType);
-                    break;
-                case Chart.Bar:
-                    validChartType = true;
-                    break;
-                case Chart.Table:
-                    validChartType = true;
-                    break;
-                case Chart.TreeMap:
-                    validChartType = validQueryCharts.jobs.treemap.list.includes(queryType);
-                    break;
-                default:
-                    break;
-            }
-            break;
-    }
-
-    return validChartType!;
 }

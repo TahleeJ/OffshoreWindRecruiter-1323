@@ -535,6 +535,11 @@ function prepareTotalJobMatches(
    
     var chartData = new google.visualization.DataTable();
 
+    var dateCounter = 0;
+    var matchTotal = 0;
+    var matchFrequency: [any[]] = [[]];
+    var addList = [];
+
     if (forJobs) {
         if (total) {
             var eachJobTotal: Map<string, number> = new Map<string, number>();
@@ -548,7 +553,7 @@ function prepareTotalJobMatches(
 
             for (const [key, value] of data) {
                 for (const job of value) {
-                    var matchTotal = eachJobTotal.get(job.jobName!)!;
+                    matchTotal = eachJobTotal.get(job.jobName!)!;
 
                     matchTotal += job.matchFrequency!;
 
@@ -561,16 +566,12 @@ function prepareTotalJobMatches(
             }
         } else {
             var eachJobList: Map<string, number>[] = [];
-            var matchFrequency: [any[]] = [[]];
-            var addList = [];
 
             chartData.addColumn("string", "Date");
 
             selectedJobs!.forEach((jobName) => {
                 chartData.addColumn("number", jobName);
             });
-    
-            var dateCounter = 0;
 
             for (const [key, value] of data) {
                 if (dateCounter < data.size) {
@@ -620,7 +621,7 @@ function prepareTotalJobMatches(
 
             for (const [key, value] of data) {
                 for (const survey of value) {
-                    var matchTotal = eachSurveyTotal.get(survey.surveyTitle!)!;
+                    matchTotal = eachSurveyTotal.get(survey.surveyTitle!)!;
 
                     matchTotal += survey.matchFrequency!;
 
@@ -633,16 +634,12 @@ function prepareTotalJobMatches(
             }
         } else {
             var eachSurveyList: Map<string, number>[] = [];
-            var matchFrequency: [any[]] = [[]];
-            var addList = [];
 
             chartData.addColumn("string", "Date");
 
             selectedSurveys!.forEach((surveyName) => {
                 chartData.addColumn("number", surveyName);
             });
-    
-            var dateCounter = 0;
 
             for (const [key, value] of data) {
                 if (dateCounter < data.size) {
@@ -695,7 +692,7 @@ async function drawAverageJobScores(
     const startDate = dateSelection.startDate;
     const selectedJobs = selectionArrays.jobs;
     
-    const forJobs = queryType == DataQuery.AverageJobMatches;
+    const forJobs = queryType === DataQuery.AverageJobMatches;
 
     const title = `Average Job Matches ` +
         `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
@@ -748,16 +745,16 @@ function prepareAverageJobScores(
 
     chartData.addColumn("string", "Date");
 
+    var dateCounter = 0;
+    var matchFrequency: [any[]] = [[]];
+    var addList = [];
+
     if (forJobs) {
         var eachJobList: Map<string, number>[] = [];
-        var matchFrequency: [any[]] = [[]];
-        var addList = [];
 
         selectedJobs!.forEach((jobName) => {
             chartData.addColumn("number", jobName);
         });
-
-        var dateCounter = 0;
 
         for (const [key, value] of data) {
             if (dateCounter < data.size) {
@@ -795,14 +792,10 @@ function prepareAverageJobScores(
         chartData.addRows(addList);
     } else {
         var eachSurveyList: Map<string, number>[] = [];
-        var matchFrequency: [any[]] = [[]];
-        var addList = [];
 
         selectedSurveys!.forEach((surveyName) => {
             chartData.addColumn("number", surveyName);
         });
-
-        var dateCounter = 0;
 
         for (const [key, value] of data) {
             if (dateCounter < data.size) {
@@ -852,7 +845,7 @@ async function drawTieredAverageJobScores(
     const forDay = dateSelection.forDay;
     const startDate = dateSelection.startDate;
 
-    const highest = queryType == DataQuery.HighestAverageJobMatches;
+    const highest = queryType === DataQuery.HighestAverageJobMatches;
     const title = `${(highest ? "Highest Scoring Jobs " : "Lowest Scoring Jobs ")} ` +
         `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
 
@@ -885,18 +878,15 @@ async function drawTieredAverageJobScores(
             var minColor;
             var midColor;
             var maxColor;
-            var fontColor;
 
             if (highest) {
                 minColor = '#00ff22';
                 midColor = '#00f7ff';
                 maxColor = '#1e00ff';
-                fontColor = '#ffffff';
             } else {
                 minColor = '#ff0000';
                 midColor = '#ff8400';
                 maxColor = '#fff700';
-                fontColor = '#000000';
             }
 
             new google.visualization.TreeMap(document.getElementById('chart')!)

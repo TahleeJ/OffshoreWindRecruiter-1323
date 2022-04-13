@@ -1,7 +1,6 @@
 import { analyticsInstance } from "../Firebase";
 import { logEvent } from "@firebase/analytics";
 import { getSurvey } from "../Queries/SurveyQueries";
-import { getLabel } from "../Queries/LabelQueries";
 import { RecommendedJob } from "../Types";
 import { getJobOpp } from "../Queries/JobQueries";
 

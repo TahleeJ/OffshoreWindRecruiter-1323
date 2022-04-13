@@ -83,62 +83,68 @@ async function drawTitlesPerDay(subject: Subject, queryType: DataQuery, chartTyp
     // Chart drawing using transformed BigQuery data
     var chartData: google.visualization.DataTable;
 
-    if (chartType === Chart.Combo) {
-        chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), true, false);
+    switch (chartType) {
+        case Chart.Combo:
+            chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), true, false);
 
-        var seriesOptions = [];
-        var tempCounter = 0;
+            var seriesOptions = [];
+            var tempCounter = 0;
+        
+            while (tempCounter < selectedSurveys.length) {
+                seriesOptions.push({});
+        
+                tempCounter++;
+            }
+        
+            seriesOptions.push({type: 'line'});
     
-        while (tempCounter < selectedSurveys.length) {
-            seriesOptions.push({});
-    
-            tempCounter++;
-        }
-    
-        seriesOptions.push({type: 'line'});
+            new google.visualization.ComboChart(document.getElementById('chart')!)
+                .draw(chartData!, {
+                    title: title,
+                    vAxis: {title: 'Surveys Administered'},
+                    hAxis: {title: 'Day'},
+                    seriesType: 'bars',
+                    series: seriesOptions
+                });
+            break;
+        case Chart.Line:
+            chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), false, false);
 
-        new google.visualization.ComboChart(document.getElementById('chart')!)
-            .draw(chartData!, {
-                title: title,
-                vAxis: {title: 'Surveys Administered'},
-                hAxis: {title: 'Day'},
-                seriesType: 'bars',
-                series: seriesOptions
-            });
-    } else if (chartType === Chart.Line) {
-        chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), false, false);
+            new google.visualization.LineChart(document.getElementById('chart')!)
+                .draw(chartData!, {
+                    title: title,
+                    vAxis: {title: 'Surveys Administered'},
+                    hAxis: {title: 'Day'}
+                });
+            break;
+        case Chart.Bar:
+            chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), false, false);
 
-        new google.visualization.LineChart(document.getElementById('chart')!)
-            .draw(chartData!, {
-                title: title,
-                vAxis: {title: 'Surveys Administered'},
-                hAxis: {title: 'Day'}
-            });
-    } else if (chartType === Chart.Bar) {
-        chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), false, false);
+            new google.visualization.BarChart(document.getElementById('chart')!)
+                .draw(chartData!, {
+                    title: title,
+                    vAxis: {title: 'Day'},
+                    hAxis: {title: 'Surveys Administered'},
+                    isStacked: true
+                });
+            break;
+        case Chart.Pie:
+            chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), false, true);
 
-        new google.visualization.BarChart(document.getElementById('chart')!)
-            .draw(chartData!, {
-                title: title,
-                vAxis: {title: 'Day'},
-                hAxis: {title: 'Surveys Administered'},
-                isStacked: true
-            });
-    } else if (chartType === Chart.Pie) {
-        chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), false, true);
+            new google.visualization.PieChart(document.getElementById('chart')!)
+                .draw(chartData!, {
+                    title: title,
+                    pieSliceText: "percentage"
+                });
+            break;
+        case Chart.Table:
+            chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), true, false);
 
-        new google.visualization.PieChart(document.getElementById('chart')!)
-            .draw(chartData!, {
-                title: title,
-                pieSliceText: "percentage"
-            });
-    } else if (chartType === Chart.Table) {
-        chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), true, false);
-
-        new google.visualization.Table(document.getElementById('chart')!)
-            .draw(chartData!, {
-                height: 300
-            });
+            new google.visualization.Table(document.getElementById('chart')!)
+                .draw(chartData!, {
+                    height: 300
+                });
+            break;
     }
 }
 
@@ -286,26 +292,30 @@ async function drawPerDay(subject: Subject, queryType: DataQuery, chartType: Cha
 
     const chartData: google.visualization.DataTable = preparePerDay((!allNavigators ? data.get(selectedNavigators![0]) : data));
 
-    if (chartType === Chart.Line) {
-        new google.visualization.LineChart(document.getElementById('chart')!)
+    switch (chartType) {
+        case Chart.Line:
+            new google.visualization.LineChart(document.getElementById('chart')!)
             .draw(chartData!, {
                 title: title,
                 vAxis: {title: 'Surveys Administered'},
                 hAxis: {title: 'Day'},
               });
-    } else if (chartType === Chart.Bar) {
-        new google.visualization.BarChart(document.getElementById('chart')!)
+            break;
+        case Chart.Bar:
+            new google.visualization.BarChart(document.getElementById('chart')!)
             .draw(chartData!, {
                 title: title,
                 vAxis: {title: 'Day'},
                 hAxis: {title: 'Surveys Administered'},
                 colors: ['#6ed3ff']
             });
-    } else if (chartType === Chart.Table) {
-        new google.visualization.Table(document.getElementById('chart')!)
+            break;
+        case Chart.Table:
+            new google.visualization.Table(document.getElementById('chart')!)
             .draw(chartData!, {
                 height: 300
             });
+            break;
     }
 }
 
@@ -363,17 +373,20 @@ async function drawTitles(subject: Subject, queryType: DataQuery, chartType: Cha
 
     const chartData = prepareTitles((!allNavigators ? data.get(selectedNavigators![0]) : data));
 
-    if (chartType === Chart.Pie) {
-        new google.visualization.PieChart(document.getElementById('chart')!)
+    switch (chartType) {
+        case Chart.Pie:
+            new google.visualization.PieChart(document.getElementById('chart')!)
             .draw(chartData!, {
                 title: title,
                 pieSliceText: "percentage"
             });
-    } else if (chartType === Chart.Table) {
-        new google.visualization.Table(document.getElementById('chart')!)
+            break;
+        case Chart.Table:
+            new google.visualization.Table(document.getElementById('chart')!)
             .draw(chartData!, {
                 height: 300
             });
+            break;
     }
 }
 

@@ -24,6 +24,12 @@ export async function setUserPermissionLevel(email: string, newLevel: Permission
     }
 }
 
+/**
+ * Retrieves a User object given an UID and returns its data
+ * 
+ * @param id the UID of the desired user
+ * @returns a User object, which provides access to the user's email and permissionLevel
+ */
 export async function getUser(id: id) {
     const response = await firestore.getDoc(firestore.doc(db.Users, id));
 

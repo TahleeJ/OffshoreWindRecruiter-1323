@@ -5,7 +5,11 @@ import { hasId, id, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion, JobOpp 
 import { editJobOpp } from "./JobQueries";
 import { editSurvey, getSurveys } from "./SurveyQueries";
 
-
+/**
+ * Retrieves every label from Firestore and lists them in order based on label name
+ * 
+ * @returns an array of every label in Firestore that's sorted on label name
+ */
 export async function getLabels() {
     const response = await firestore.getDocs(db.Labels);
 
@@ -13,6 +17,12 @@ export async function getLabels() {
         .sort((a, b) => a.name.localeCompare(b.name));
 }
 
+/**
+ * Retrieves a specific label from Firestore given a label id
+ * 
+ * @param id the id of the desired label
+ * @returns a label object, which contains: name
+ */
 export async function getLabel(id: id) {
     const response = await firestore.getDoc(firestore.doc(db.Labels, id));
     const data = response.data();
@@ -23,10 +33,21 @@ export async function getLabel(id: id) {
     return { ...data, id: response.id } as Label & hasId;
 }
 
+/**
+ * Adds a new label document to the Labels collection 
+ * 
+ * @param label the desired label object to be added in Firestore
+ */
 export async function newLabel(label: Label) {
     await firestore.addDoc(db.Labels, label);
 }
 
+/**
+ * Updates a specified label in Firestore
+ * 
+ * @param id the id of the desired label to be updated
+ * @param label the updated label object to replace the current label
+ */
 export async function editLabel(id: id, label: Label) {
     await firestore.updateDoc(firestore.doc(db.Labels, id), label);
 }

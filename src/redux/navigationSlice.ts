@@ -90,9 +90,11 @@ export const submitSurveyResponse = createAsyncThunk('navigation/submitSurveyRes
     async (survey: AdministeredSurveyResponse) => {
         const result = await submitSurvey(survey);
 
-        logJobsMatched(survey.surveyId, result.data.recommendedJobs);
-        logLabelsMatched(result.data.labelScores);
+        // [LabelId, [linear score, percentile score]]
+        // const labelScores: [string, [number, number]][] = Object.entries(result.data.labelScores)
 
+        logJobsMatched(survey.surveyId, result.data.recommendedJobs);
+        
         return result;
     }
 );

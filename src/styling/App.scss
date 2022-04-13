@@ -1307,9 +1307,11 @@ textarea {
     }
 
     .surveyList {
-        height: 50%;
-        overflow: auto;
-        text-align: left;
+        .listViewer {
+            height: 50%;
+            overflow: auto;
+            text-align: left;
+        }
     }
 
     .generateBox {

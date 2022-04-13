@@ -70,13 +70,13 @@ const Analytics: React.FC<props> = (props) => {
     var selectedSurveys = selectedSurveysState;
     var selectedNavigators: string[] = [];
 
-    const maxSelectedJobs = 10;
+    const maxSelectedJobs = 5;
     var selectedJobCount = 0;
     var selectedJobs = selectedJobsState;
 
     const validDataFocusesBox = document.getElementById("valid-focuses") as HTMLInputElement;
-    const popupTitleBox = document.getElementById("popup-title");
-    const popupMessageBox = document.getElementById("popup-message");
+    const popupTitleBox = document.getElementById("popup-title") as HTMLInputElement;
+    const popupMessageBox = document.getElementById("popup-message") as HTMLInputElement;
 
     google.charts.load("current", {packages:["corechart", "table", "treemap"]});
 
@@ -262,8 +262,7 @@ const Analytics: React.FC<props> = (props) => {
                 jobCheckbox.checked = selectedJobsCheck.has(name);
 
                 break;
-        }
-        
+        }     
     }
 
     /**
@@ -421,8 +420,29 @@ const Analytics: React.FC<props> = (props) => {
                                     <option value={DataQuery.SurveyNegativeJobMatches}>{dataFocusTypes.jobs.totalNegativePerSurvey}</option>
                                 </select>
                             </div>
-                        }
+                        }   
 
+                        {
+                            subjectState === Subject.Jobs &&
+                            <div>
+                                <p style={{ fontWeight: "bold" }}>Available Jobs:</p>
+                                <p style={{ color: "red" }}>*Select a maximum of 5 job opportunities.</p>
+                                <div className='surveyList listViewer' style={{ height: "75%" }}>
+                                    <div className='listElements'>
+                                    {jobOpps.length > 0 ?
+                                        jobOpps.map((jobOpp, ind) => {
+                                            return <div key={ind}>
+                                                    <input type='checkbox' id={jobOpp.jobName} value={jobOpp.jobName} defaultChecked={selectedJobsCheckState.has(jobOpp.jobName)} onChange={(e) => { handleClick(Subject.Jobs, jobOpp.jobName, e.target.checked) }}></input>
+                                                    <label htmlFor={jobOpp.jobName}>{jobOpp.jobName}</label>
+                                                </div>
+                                        })
+                                        : <div>There are no job opportunities at the moment</div>
+                                    }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
                         <p style={{ fontWeight: "bold" }}>Available Surveys:</p>
                         <p style={{ color: "red" }}>*Select a maximum of 5 survey titles.</p>
                         <div className='surveyList listViewer'>
@@ -438,28 +458,6 @@ const Analytics: React.FC<props> = (props) => {
                             }
                             </div>
                         </div>
-                            
-
-                        {
-                            subjectState === Subject.Jobs &&
-                            <div>
-                                <p style={{ fontWeight: "bold" }}>Available Jobs:</p>
-                                <p style={{ color: "red" }}>*Select a maximum of 10 job opportunities.</p>
-                                <div className='surveyList listViewer'>
-                                    <div className='listElements'>
-                                    {jobOpps.length > 0 ?
-                                        jobOpps.map((jobOpp, ind) => {
-                                            return <div key={ind}>
-                                                    <input type='checkbox' id={jobOpp.jobName} value={jobOpp.jobName} defaultChecked={selectedJobsCheckState.has(jobOpp.jobName)} onChange={(e) => { handleClick(Subject.Jobs, jobOpp.jobName, e.target.checked) }}></input>
-                                                    <label htmlFor={jobOpp.jobName}>{jobOpp.jobName}</label>
-                                                </div>
-                                        })
-                                        : <div>There are no job opportunities at the moment</div>
-                                    }
-                                    </div>
-                                </div>
-                            </div>
-                        }
                         
                     </div>
 

@@ -402,13 +402,11 @@ const Analytics: React.FC<props> = (props) => {
                                 <label htmlFor='set-navigators'>Set of Navigators</label><br></br> */}
                                 <input type="radio" id='one-navigator' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.One} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.One) }}></input>
                                 <label htmlFor='one-navigator'>One Navigator</label><br></br>
-                                <div style={{ height: "10px"}}></div>
                                 {
                                     navigatorGrouping === NavigatorGrouping.One &&
                                     <>
-                                    <label htmlFor='navigator-emails' style={{ fontWeight: "bold" }}>Navigator(s):</label>
-                                    <input className='navigatorText' type='text' id='navigator-emails' placeholder={userEmail} onChange={(e) => { updateNavigatorEntry(e.target.value) }}></input>
-                                    <p style={{ color: "red" }}>*Enter a maximum of 5 emails, separate by commas if more than one.</p>
+                                        <br></br><input className='navigatorText' type='text' id='navigator-emails' placeholder={userEmail} onChange={(e) => { updateNavigatorEntry(e.target.value) }}></input>
+                                        <p className='availableWarning'>*Enter a maximum of 5 emails, separate by commas if more than one.</p>
                                     </>
                                 }
                                 

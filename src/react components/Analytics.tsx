@@ -295,16 +295,15 @@ const Analytics: React.FC<props> = (props) => {
             DataQuery.LowestAverageJobMatches
         ].includes(queryType);
 
-        const queryRequiresNavigatorName = [
-            NavigatorGrouping.Set, 
-            NavigatorGrouping.One
+        const queryDoesNotRequireNavigatorName = [
+            NavigatorGrouping.All
         ].includes(navigatorGrouping);
 
         if (queryType === DataQuery.None) {
             return;
         }
 
-        if (queryRequiresNavigatorName) {
+        if (!queryDoesNotRequireNavigatorName) {
             const validNavigatorEntry = validateNavigatorEntry();
 
             if (!validNavigatorEntry) {
@@ -325,7 +324,7 @@ const Analytics: React.FC<props> = (props) => {
             return;
         } 
         
-        if (!jobQueryDoesNotRequireJobName && selectedJobs.length === 0) {
+        if (subject === Subject.Jobs && !jobQueryDoesNotRequireJobName && selectedJobs.length === 0) {
             popupTitle = "Empty Job Selection";
             popupMessage = "Please select at least one job you would like to see data for.";
             togglePopup();
@@ -359,7 +358,7 @@ const Analytics: React.FC<props> = (props) => {
                 startDate: startDate
             };
 
-            await drawChart(subject, chartType, queryType, queryRequiresNavigatorName, dateSelection, selectionArrays);
+            await drawChart(subject, chartType, queryType, queryDoesNotRequireNavigatorName, dateSelection, selectionArrays);
         } catch (error) {
             const { details } = JSON.parse(JSON.stringify(error));
 
@@ -373,8 +372,8 @@ const Analytics: React.FC<props> = (props) => {
         <div id='analytics'>
             <div className='topGrid'>  
                 <div className='middleColumn left'>
-                    <div className='listViewer bottom'>
-                        <div className='title'>Data Focus</div>
+                    <div className='listViewer'>
+                        <div className='title'>Data Configuration</div>
                         <p>Subject:</p>
                         <input type="radio" id='surveys-administered' name='subject' defaultChecked={subjectState === Subject.Surveys} onClick={() => { updateSubject(Subject.Surveys) }}></input>
                         <label htmlFor='surveys-administered'>Administered Surveys </label>
@@ -395,19 +394,38 @@ const Analytics: React.FC<props> = (props) => {
 
                         {
                             subject === Subject.Surveys &&
-                            <div>
-                                <p>Focus: Administration Total of...Over the Date Range</p>
+                            <>
+                                <p>Navigator Focus:</p>
+                                <input type="radio" id='all-navigators' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.All} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.All) }}></input>
+                                <label htmlFor='all-navigators'>All Navigators </label>
+                                {/* <input type="radio" id='set-navigators' name='navigator-grouping' onClick={() => { navigatorGrouping = NavigatorGrouping.Set}}></input>
+                                <label htmlFor='set-navigators'>Set of Navigators</label><br></br> */}
+                                <input type="radio" id='one-navigator' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.One} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.One) }}></input>
+                                <label htmlFor='one-navigator'>One Navigator</label><br></br>
+                                <div style={{ height: "10px"}}></div>
+                                {
+                                    navigatorGrouping === NavigatorGrouping.One &&
+                                    <>
+                                    <label htmlFor='navigator-emails' style={{ fontWeight: "bold" }}>Navigator(s):</label>
+                                    <input className='navigatorText' type='text' id='navigator-emails' placeholder={userEmail} onChange={(e) => { updateNavigatorEntry(e.target.value) }}></input>
+                                    <p style={{ color: "red" }}>*Enter a maximum of 5 emails, separate by commas if more than one.</p>
+                                    </>
+                                }
+                                
+                                <p>Data Focus:</p>
+                                <label htmlFor='data-focus'>Administration of </label>
                                 <select id="data-focus" name="Query Types" defaultValue={surveyQueryTypeState} onChange={(e) => { updateQueryType(parseInt(e.target.value)) }}>
                                     <option value={(navigatorGrouping === NavigatorGrouping.All ? DataQuery.AllTitlesPerDay : DataQuery.OneTitlesPerDay)}>{dataFocusTypes.surveys.titleDay}</option>
                                     <option value={(navigatorGrouping === NavigatorGrouping.All ? DataQuery.AllPerDay : DataQuery.OnePerDay)}>{dataFocusTypes.surveys.perDay}</option>
                                     <option value={(navigatorGrouping === NavigatorGrouping.All ? DataQuery.AllTitles : DataQuery.OneTitles)}>{dataFocusTypes.surveys.titles}</option>
                                 </select>
-                            </div>
+                                <label htmlFor='data-focus'>Over the Date Range</label>
+                            </>
                         }
                         {
                             subject === Subject.Jobs &&
-                            <div>
-                                <p>Focus: </p>
+                            <>
+                                <p>Data Focus: </p>
                                 <select id="data-focus" name="Query Types" defaultValue={jobQueryTypeState} onChange={(e) => { updateQueryType(parseInt(e.target.value)) }}>
                                     <option value={DataQuery.TotalJobMatches}>{dataFocusTypes.jobs.totalPerJob}</option>
                                     <option value={DataQuery.PositiveJobMatches}>{dataFocusTypes.jobs.totalPositivePerJob}</option>
@@ -419,15 +437,16 @@ const Analytics: React.FC<props> = (props) => {
                                     <option value={DataQuery.SurveyPositiveJobMatches}>{dataFocusTypes.jobs.totalPositivePerSurvey}</option>
                                     <option value={DataQuery.SurveyNegativeJobMatches}>{dataFocusTypes.jobs.totalNegativePerSurvey}</option>
                                 </select>
-                            </div>
+                                <label htmlFor='data-focus'>Over the Date Range</label>
+                            </>
                         }   
 
                         {
                             subjectState === Subject.Jobs &&
-                            <div>
-                                <p style={{ fontWeight: "bold" }}>Available Jobs:</p>
-                                <p style={{ color: "red" }}>*Select a maximum of 5 job opportunities.</p>
-                                <div className='surveyList listViewer' style={{ height: "75%" }}>
+                            <>
+                                <p>Available Jobs:</p>
+                                <p className='availableWarning'>*Select a maximum of 5 job opportunities.</p>
+                                <div className='surveyList listViewer'>
                                     <div className='listElements'>
                                     {jobOpps.length > 0 ?
                                         jobOpps.map((jobOpp, ind) => {
@@ -440,11 +459,11 @@ const Analytics: React.FC<props> = (props) => {
                                     }
                                     </div>
                                 </div>
-                            </div>
+                            </>
                         }
                         
-                        <p style={{ fontWeight: "bold" }}>Available Surveys:</p>
-                        <p style={{ color: "red" }}>*Select a maximum of 5 survey titles.</p>
+                        <p>Available Surveys:</p>
+                        <p className='availableWarning'>*Select a maximum of 5 survey titles.</p>
                         <div className='surveyList listViewer'>
                             <div className='listElements'>
                             {surveys.length > 0 ?
@@ -460,82 +479,71 @@ const Analytics: React.FC<props> = (props) => {
                         </div>
                         
                     </div>
-
-                    {
-                        subjectState === Subject.Surveys &&
-                        <div className='listViewer top'>
-                            <div className='title'>Navigator Focus</div>
-                            <input type="radio" id='all-navigators' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.All} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.All) }}></input>
-                            <label htmlFor='all-navigators'>All Navigators </label>
-                            {/* <input type="radio" id='set-navigators' name='navigator-grouping' onClick={() => { navigatorGrouping = NavigatorGrouping.Set}}></input>
-                            <label htmlFor='set-navigators'>Set of Navigators</label><br></br> */}
-                            <input type="radio" id='one-navigator' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.One} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.One) }}></input>
-                            <label htmlFor='one-navigator'>One Navigator</label>
-                            <div style={{ height: "10px"}}></div>
-                            <div>
-                                <label htmlFor='navigator-emails' style={{ fontWeight: "bold" }}>Navigator(s):</label>
-                                <input className='navigatorText' type='text' id='navigator-emails' placeholder={userEmail} onChange={(e) => { updateNavigatorEntry(e.target.value) }}></input>
-                                <p style={{ color: "red" }}>*Enter a maximum of 5 emails, separate by commas if more than one.</p>
-                            </div> 
-                        </div>
-                    }
-                    
                 </div>
 
                 <div className='middleColumn right'>
                     <div className='listViewer top'>
-                        <div className='title'>Chart Type</div>
-                        {
-                            subjectState === Subject.Surveys &&
-                            <div>
-                                <select id="chart-types" defaultValue={surveyChartTypeState} name="Chart Types" onChange={(e) => {updateChartType(parseInt(e.target.value))}}>
-                                    <option value={Chart.Pie} defaultChecked>Pie</option>
-                                    <option value={Chart.Combo}>Combo</option>
-                                    <option value={Chart.Line}>Line</option>
-                                    <option value={Chart.Bar}>Bar</option>
-                                    <option value={Chart.Table}>Table</option>
-                                </select>
+                        <div className='title'>Chart Generation</div>
+                        <div className='chartGenerationContainer'>
+                        <div className='chartTypeContainer center'>
+                            <div className='chartInfoHeader center'>Chart Type</div><br></br>
+                            <div className='generateBox center'>
+                            {
+                                subjectState === Subject.Surveys &&
+                                <>
+                                    <select id="chart-types" defaultValue={surveyChartTypeState} name="Chart Types" onChange={(e) => {updateChartType(parseInt(e.target.value))}}>
+                                        <option value={Chart.Pie}>Pie</option>
+                                        <option value={Chart.Combo}>Combo</option>
+                                        <option value={Chart.Line}>Line</option>
+                                        <option value={Chart.Bar}>Bar</option>
+                                        <option value={Chart.Table}>Table</option>
+                                    </select>
+                                </>
+                            }
+                            {
+                                subjectState === Subject.Jobs &&
+                                <>
+                                    <select id="chart-types" defaultValue={jobChartTypeState} name="Chart Types" onChange={(e) => {updateChartType(parseInt(e.target.value))}}>
+                                        <option value={Chart.Pie}>Pie</option>
+                                        <option value={Chart.Line}>Line</option>
+                                        <option value={Chart.Bar}>Bar</option>
+                                        <option value={Chart.Table}>Table</option>
+                                        <option value={Chart.TreeMap}>Tree Map</option>
+                                    </select>
+                                </>
+                            }
+                                <br></br><br></br>
+                                <button className='generate-button' onClick={generateChart}>Generate</button>
                             </div>
-                        }
-                        {
-                            subjectState === Subject.Jobs &&
-                            <div>
-                                <select id="chart-types" defaultValue={jobChartTypeState} name="Chart Types" onChange={(e) => {updateChartType(parseInt(e.target.value))}}>
-                                    <option value={Chart.Pie} defaultChecked>Pie</option>
-                                    <option value={Chart.Line}>Line</option>
-                                    <option value={Chart.Bar}>Bar</option>
-                                    <option value={Chart.Table}>Table</option>
-                                    <option value={Chart.TreeMap}>Tree Map</option>
-                                </select>
-                            </div>
-                        }
+                        </div>
 
-                        <div className='generateBox center'>
-                            <button className='generate-button' onClick={generateChart}>Generate</button>
+                        <div className='chartValidityContainer'>
+                            <div className='chartInfoHeader center'>Chart Validity</div>
+                            <p className='validFocusesHeader center'>Valid Data Focuses:</p>
+                            <p id='valid-focuses' className='validFocuses center'>{validDataFocusesState}</p>
                             <p id="popup-title" className='popup popupTitle center'>{popupTitleState}</p>
                             <p id="popup-message" className='popup center'>{popupMessageState}</p>
                         </div>
-
-                        <p style={{ color: "green", fontWeight: "bold" }}>Valid Data Focuses:</p>
-                        <p id='valid-focuses' style={{ whiteSpace: "pre-wrap"}}>{validDataFocusesState}</p>
+                            </div>
+                        
                     </div>
                     <div className='listViewer bottom'>
                         <div className='title'>Your Chart!</div>
                         {
                             treeState === DataQuery.LowestAverageJobMatches &&
-                            <div>
+                            <>
                                <p>The size of the box is how large the absolute value of the average is.</p>
                                <p>Red (relative lowest average) {"->"} Yellow (relative highest average)</p>
-                            </div>
+                            </>
                         }
                         {
                             treeState === DataQuery.HighestAverageJobMatches &&
-                            <div>
+                            <>
                                <p>The size of the box is how large the absolute value of the average is.</p>
                                <p>Green (relative lowest average) {"->"} Blue (relative highest average)</p>
-                            </div>
+                            </>
                         }
-                        <div className='chartContainer' id="chart" style={{ height: "600px", width: "900px" }}></div>
+                        <div className='chartContainer' id="chart"></div>
                     </div>
                 </div>
             </div>

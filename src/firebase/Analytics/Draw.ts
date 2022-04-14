@@ -1,7 +1,5 @@
-import { query } from "firebase/firestore";
-import { add, max } from "lodash";
 import { getQueryData } from "./Query";
-import { DataQuery, Subject, Chart, SerializedEntry, stringifyDate } from "./Utility";
+import { SelectionArrays, DateSelection, DataQuery, Subject, Chart, SerializedEntry, stringifyDate } from "./Utility";
 
 /**
  * Function to begin the actual chart drawing process based on the desired representation parameters
@@ -14,44 +12,55 @@ import { DataQuery, Subject, Chart, SerializedEntry, stringifyDate } from "./Uti
  * @param startDate the desired day to start to see data for
  * @param selectedNavigators the specific navigator(s) to see data for
  */
-export async function drawChart(subject: Subject, selectedSurveys: string[], selectedJobs: string[], chartType: Chart, queryType: DataQuery, allNavigators: boolean, forDay: boolean, startDate: string, selectedNavigators?: string[]) {
+export async function drawChart(
+    subject: Subject, 
+    chartType: Chart, 
+    queryType: DataQuery, 
+    allNavigators: boolean, 
+    dateSelection: DateSelection, 
+    selectionArrays: SelectionArrays) {
+
     switch (subject) {
         case Subject.Surveys:
-            switch (queryType) {
-                case DataQuery.AllTitlesPerDay:
-                    drawTitlesPerDay(subject, queryType, chartType, selectedSurveys, allNavigators, forDay, startDate);
-                    break;
-                case DataQuery.AllPerDay:
-                    drawPerDay(subject, queryType, chartType, allNavigators, forDay, startDate);
-                    break;
-                case DataQuery.AllTitles:
-                    drawTitles(subject, queryType, chartType, allNavigators, forDay, startDate);   
-                    break;
-                case DataQuery.EachTitlesPerDay:
-                    break;
-                case DataQuery.EachPerDay:
-                    break;
-                case DataQuery.EachTitles:
-                    break;
-                case DataQuery.OneTitlesPerDay:
-                    drawTitlesPerDay(subject, queryType, chartType, selectedSurveys, allNavigators, forDay, startDate, selectedNavigators);
-                    break;
-                case DataQuery.OnePerDay:
-                    drawPerDay(subject, queryType, chartType, allNavigators, forDay, startDate, selectedNavigators);
-                    break;
-                case DataQuery.OneTitles:
-                    drawTitles(subject, queryType, chartType, allNavigators, forDay, startDate, selectedNavigators); 
-                    break;
+            if ([
+                DataQuery.AllTitlesPerDay, 
+                DataQuery.OneTitlesPerDay
+                ].includes(queryType)) {
+                drawSurveyTitlesPerDay(subject, queryType, chartType, allNavigators, dateSelection, selectionArrays);
+            } else if ([
+                DataQuery.AllPerDay, 
+                DataQuery.OnePerDay
+                ].includes(queryType)) {
+                drawSurveysPerDay(subject, queryType, chartType, allNavigators, dateSelection, selectionArrays);
+            } else if ([
+                DataQuery.AllTitles,
+                DataQuery.OneTitles
+                ].includes(queryType)) {
+                drawSurveyTitles(subject, queryType, chartType, allNavigators, dateSelection, selectionArrays); 
             }
+
             break;
         case Subject.Jobs:
-            if ([DataQuery.TotalJobMatches, DataQuery.PositiveJobMatches, DataQuery.NegativeJobMatches, DataQuery.SurveyPositiveJobMatches, DataQuery.SurveyNegativeJobMatches].includes(queryType)) {
-                drawTotalMatches(subject, queryType, chartType, forDay, startDate, selectedJobs, selectedSurveys);
-            } else if ([DataQuery.AverageJobMatches, DataQuery.AverageSurveyMatches].includes(queryType)) {
-                drawSingleAverageScores(subject, queryType, chartType, forDay, startDate, selectedJobs, selectedSurveys);
-            } else if ([DataQuery.HighestAverageJobMatches, DataQuery.LowestAverageJobMatches].includes(queryType)) {
-                drawTieredAverages(subject, queryType, chartType, forDay, startDate);
+            if ([
+                DataQuery.TotalJobMatches, 
+                DataQuery.PositiveJobMatches, 
+                DataQuery.NegativeJobMatches, 
+                DataQuery.SurveyPositiveJobMatches, 
+                DataQuery.SurveyNegativeJobMatches
+                ].includes(queryType)) {
+                drawTotalJobMatches(subject, queryType, chartType, dateSelection, selectionArrays);
+            } else if ([
+                DataQuery.AverageJobMatches, 
+                DataQuery.AverageSurveyMatches
+                ].includes(queryType)) {
+                drawAverageJobScores(subject, queryType, chartType, dateSelection, selectionArrays);
+            } else if ([
+                DataQuery.HighestAverageJobMatches, 
+                DataQuery.LowestAverageJobMatches
+                ].includes(queryType)) {
+                drawTieredAverageJobScores(subject, queryType, chartType, dateSelection);
             }
+
             break;
     }
 }
@@ -68,7 +77,19 @@ export async function drawChart(subject: Subject, selectedSurveys: string[], sel
  * @param startDate the desired day to start to see data for
  * @param selectedNavigators the desired set of navigator(s) to see data for
  */
-async function drawTitlesPerDay(subject: Subject, queryType: DataQuery, chartType: Chart, selectedSurveys: string[], allNavigators: boolean, forDay: boolean, startDate: string, selectedNavigators?: string[]) {
+async function drawSurveyTitlesPerDay(
+    subject: Subject, 
+    queryType: DataQuery, 
+    chartType: Chart, 
+    allNavigators: boolean, 
+    dateSelection: DateSelection, 
+    selectionArrays: SelectionArrays) {
+
+    const forDay = dateSelection.forDay;
+    const startDate = dateSelection.startDate;
+    const selectedNavigators = selectionArrays.navigators;
+    const selectedSurveys = selectionArrays.surveys;
+    
     var data: any
     
     // Retrieve data from BigQuery
@@ -78,73 +99,88 @@ async function drawTitlesPerDay(subject: Subject, queryType: DataQuery, chartTyp
         data = await getQueryData(subject, queryType, forDay, startDate);
     }
 
-    const title = `Total for Selected Surveys Administered ${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
+    const title = `Total for Selected Surveys Administered ` + 
+        `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
 
     // Chart drawing using transformed BigQuery data
     var chartData: google.visualization.DataTable;
 
-    switch (chartType) {
-        case Chart.Combo:
-            chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), true, false);
+    if (chartType === Chart.Combo) {
+        chartData = prepareSurveyTitlesPerDay(
+            selectedSurveys!, 
+            (!allNavigators ? data.get(selectedNavigators![0]) : data), 
+            true, 
+            false);
 
-            var seriesOptions = [];
-            var tempCounter = 0;
-        
-            while (tempCounter < selectedSurveys.length) {
-                seriesOptions.push({});
-        
-                tempCounter++;
-            }
-        
-            seriesOptions.push({type: 'line'});
+        var seriesOptions = [];
+        var tempCounter = 0;
     
-            new google.visualization.ComboChart(document.getElementById('chart')!)
-                .draw(chartData!, {
-                    title: title,
-                    vAxis: {title: 'Surveys Administered'},
-                    hAxis: {title: 'Day'},
-                    seriesType: 'bars',
-                    series: seriesOptions
-                });
-            break;
-        case Chart.Line:
-            chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), false, false);
+        while (tempCounter < selectedSurveys!.length) {
+            seriesOptions.push({});
+    
+            tempCounter++;
+        }
+    
+        seriesOptions.push({type: 'line'});
 
-            new google.visualization.LineChart(document.getElementById('chart')!)
-                .draw(chartData!, {
-                    title: title,
-                    vAxis: {title: 'Surveys Administered'},
-                    hAxis: {title: 'Day'}
-                });
-            break;
-        case Chart.Bar:
-            chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), false, false);
+        new google.visualization.ComboChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: title,
+                vAxis: {title: 'Surveys Administered'},
+                hAxis: {title: 'Day'},
+                seriesType: 'bars',
+                series: seriesOptions
+            });
+    } else if (chartType === Chart.Line) {
+        chartData = prepareSurveyTitlesPerDay(
+            selectedSurveys!, 
+            (!allNavigators ? data.get(selectedNavigators![0]) : data), 
+            false, 
+            false);
 
-            new google.visualization.BarChart(document.getElementById('chart')!)
-                .draw(chartData!, {
-                    title: title,
-                    vAxis: {title: 'Day'},
-                    hAxis: {title: 'Surveys Administered'},
-                    isStacked: true
-                });
-            break;
-        case Chart.Pie:
-            chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), false, true);
+        new google.visualization.LineChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: title,
+                vAxis: {title: 'Surveys Administered'},
+                hAxis: {title: 'Day'}
+            });
+    } else if (chartType === Chart.Bar) {
+        chartData = prepareSurveyTitlesPerDay(
+            selectedSurveys!, 
+            (!allNavigators ? data.get(selectedNavigators![0]) : data), 
+            false, 
+            false);
 
-            new google.visualization.PieChart(document.getElementById('chart')!)
-                .draw(chartData!, {
-                    title: title,
-                    pieSliceText: "percentage"
-                });
-            break;
-        case Chart.Table:
-            chartData = prepareTitlesPerDay(selectedSurveys, (!allNavigators ? data.get(selectedNavigators![0]) : data), true, false);
+        new google.visualization.BarChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: title,
+                vAxis: {title: 'Day'},
+                hAxis: {title: 'Surveys Administered'},
+                isStacked: true
+            });
+    } else if (chartType === Chart.Pie) {
+        chartData = prepareSurveyTitlesPerDay(
+            selectedSurveys!, 
+            (!allNavigators ? data.get(selectedNavigators![0]) : data), 
+            false, 
+            true);
+
+        new google.visualization.PieChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: title,
+                pieSliceText: "percentage"
+            });
+    } else if (chartType === Chart.Table) {
+        chartData = prepareSurveyTitlesPerDay(
+            selectedSurveys!, 
+            (!allNavigators ? data.get(selectedNavigators![0]) : data), 
+            true, 
+            false);
 
             new google.visualization.Table(document.getElementById('chart')!)
                 .draw(chartData!, {
                     height: 300
                 });
-            break;
     }
 }
 
@@ -159,7 +195,12 @@ async function drawTitlesPerDay(subject: Subject, queryType: DataQuery, chartTyp
  * @param total whether to calculate the total appearance of the desired surveys per week instead of per day
  * @returns the Google Chart-recognizable set of data
  */
-function prepareTitlesPerDay(selectedSurveys: string[], data: Map<string, SerializedEntry[]>, includeAverage: boolean, total: boolean): google.visualization.DataTable {
+function prepareSurveyTitlesPerDay(
+    selectedSurveys: string[], 
+    data: Map<string, SerializedEntry[]>, 
+    includeAverage: boolean, total: boolean
+    ) {
+
     var chartData = new google.visualization.DataTable();
 
     var dateCounter = 0;     
@@ -279,7 +320,18 @@ function prepareTitlesPerDay(selectedSurveys: string[], data: Map<string, Serial
  * @param selectedDate the desired day to see data for
  * @param selectedNavigators the desired set of navigator(s) to see data for
  */
-async function drawPerDay(subject: Subject, queryType: DataQuery, chartType: Chart, allNavigators: boolean, forDay: boolean, startDate: string, selectedNavigators?: string[]) {
+async function drawSurveysPerDay(
+    subject: Subject, 
+    queryType: DataQuery, 
+    chartType: Chart, 
+    allNavigators: boolean, 
+    dateSelection: DateSelection, 
+    selectionArrays: SelectionArrays) {
+
+    const forDay = dateSelection.forDay;
+    const startDate = dateSelection.startDate;
+    const selectedNavigators = selectionArrays.navigators;  
+
     var data: any
 
     if (!allNavigators) {
@@ -288,9 +340,10 @@ async function drawPerDay(subject: Subject, queryType: DataQuery, chartType: Cha
         data = await getQueryData(subject, queryType, forDay, startDate);
     }
 
-    const title = `Total for All Surveys Administered ${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
+    const title = `Total for All Surveys Administered ` +
+        `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
 
-    const chartData: google.visualization.DataTable = preparePerDay((!allNavigators ? data.get(selectedNavigators![0]) : data));
+    const chartData = prepareSurveysPerDay((!allNavigators ? data.get(selectedNavigators![0]) : data));
 
     switch (chartType) {
         case Chart.Line:
@@ -327,7 +380,7 @@ async function drawPerDay(subject: Subject, queryType: DataQuery, chartType: Cha
  * @param data the transformed data received from BigQuery
  * @returns the Google Chart-recognizable set of data
  */
-function preparePerDay(data: Map<string, SerializedEntry[]>): google.visualization.DataTable {
+function prepareSurveysPerDay(data: Map<string, SerializedEntry[]>) {
     var chartData = new google.visualization.DataTable();
     chartData.addColumn("string", "Date");
     chartData.addColumn("number", "Frequency");
@@ -360,7 +413,18 @@ function preparePerDay(data: Map<string, SerializedEntry[]>): google.visualizati
  * @param selectedDate the desired day to see data for
  * @param selectedNavigators the desired set of navigator(s) to see data for
  */
-async function drawTitles(subject: Subject, queryType: DataQuery, chartType: Chart, allNavigators: boolean, forDay: boolean, startDate:string, selectedNavigators?: string[]) {
+async function drawSurveyTitles(
+    subject: Subject, 
+    queryType: DataQuery, 
+    chartType: Chart, 
+    allNavigators: boolean, 
+    dateSelection: DateSelection, 
+    selectionArrays: SelectionArrays) {
+
+    const forDay = dateSelection.forDay;
+    const startDate = dateSelection.startDate;
+    const selectedNavigators = selectionArrays.navigators;
+    
     var data: any
     
     if (!allNavigators) {
@@ -369,9 +433,10 @@ async function drawTitles(subject: Subject, queryType: DataQuery, chartType: Cha
         data = await getQueryData(subject, queryType, forDay, startDate);
     }
 
-    const title = `Total Surveys Administered ${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
+    const title = `Total Surveys Administered ` +
+        `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
 
-    const chartData = prepareTitles((!allNavigators ? data.get(selectedNavigators![0]) : data));
+    const chartData = prepareSurveyTitles((!allNavigators ? data.get(selectedNavigators![0]) : data));
 
     switch (chartType) {
         case Chart.Pie:
@@ -398,7 +463,7 @@ async function drawTitles(subject: Subject, queryType: DataQuery, chartType: Cha
  * @param data the transformed data received from BigQuery
  * @returns the Google Chart-recognizable set of data
  */
-function prepareTitles(data: SerializedEntry[]) {
+function prepareSurveyTitles(data: SerializedEntry[]) {
     var chartData = new google.visualization.DataTable();
     chartData.addColumn("string", "Survey Title");
     chartData.addColumn("number", "Total Administrations");
@@ -410,10 +475,21 @@ function prepareTitles(data: SerializedEntry[]) {
     return chartData;
 }
 
-async function drawTotalMatches(subject: Subject, queryType: DataQuery, chartType: Chart, forDay: boolean, startDate: string, selectedJobs?: string[], selectedSurveys?: string[]) {
+async function drawTotalJobMatches(
+    subject: Subject, 
+    queryType: DataQuery, 
+    chartType: Chart, 
+    dateSelection: DateSelection, 
+    selectionArrays: SelectionArrays) {
+
+    const forDay = dateSelection.forDay;
+    const startDate = dateSelection.startDate;
+    const selectedJobs = selectionArrays.jobs;
+
     const forJobs = !([DataQuery.SurveyPositiveJobMatches, DataQuery.SurveyNegativeJobMatches].includes(queryType));
 
-    const title = `Total Job Matches ${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
+    const title = `Total Job Matches ` +
+        `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
 
     const data: any = await getQueryData(subject, queryType, forDay, startDate, undefined, selectedJobs);
     console.log(data);
@@ -422,7 +498,7 @@ async function drawTotalMatches(subject: Subject, queryType: DataQuery, chartTyp
 
     switch (chartType) {
         case Chart.Pie:
-            chartData = prepareTotalMatches(data, forJobs, true, selectedJobs, selectedSurveys);
+            chartData = prepareTotalJobMatches(data, forJobs, true, selectionArrays);
 
             new google.visualization.PieChart(document.getElementById('chart')!)
                 .draw(chartData!, {
@@ -431,7 +507,7 @@ async function drawTotalMatches(subject: Subject, queryType: DataQuery, chartTyp
                 });
             break;
         case Chart.Line:
-            chartData = prepareTotalMatches(data, forJobs, false, selectedJobs, selectedSurveys);
+            chartData = prepareTotalJobMatches(data, forJobs, false, selectionArrays);
 
             new google.visualization.LineChart(document.getElementById('chart')!)
                 .draw(chartData!, {
@@ -441,7 +517,7 @@ async function drawTotalMatches(subject: Subject, queryType: DataQuery, chartTyp
                 });
             break;
         case Chart.Bar:
-            chartData = prepareTotalMatches(data, forJobs, false, selectedJobs, selectedSurveys);
+            chartData = prepareTotalJobMatches(data, forJobs, false, selectionArrays);
 
             new google.visualization.BarChart(document.getElementById('chart')!)
                 .draw(chartData!, {
@@ -452,7 +528,7 @@ async function drawTotalMatches(subject: Subject, queryType: DataQuery, chartTyp
                 });
             break;
         case Chart.Table:
-            chartData = prepareTotalMatches(data, forJobs, false, selectedJobs, selectedSurveys);
+            chartData = prepareTotalJobMatches(data, forJobs, false, selectionArrays);
 
             new google.visualization.Table(document.getElementById('chart')!)
                 .draw(chartData!, {
@@ -462,8 +538,21 @@ async function drawTotalMatches(subject: Subject, queryType: DataQuery, chartTyp
     }    
 }
 
-function prepareTotalMatches(data: Map<string, SerializedEntry[]>, forJobs: boolean, total: boolean, selectedJobs?: string[], selectedSurveys?: string[]): google.visualization.DataTable {
+function prepareTotalJobMatches(
+    data: Map<string, SerializedEntry[]>, 
+    forJobs: boolean, 
+    total: boolean, 
+    selectionArrays: SelectionArrays) {
+
+    const selectedSurveys = selectionArrays.surveys;
+    const selectedJobs = selectionArrays.jobs;   
+   
     var chartData = new google.visualization.DataTable();
+
+    var dateCounter = 0;
+    var matchTotal = 0;
+    var matchFrequency: [any[]] = [[]];
+    var addList = [];
 
     if (forJobs) {
         if (total) {
@@ -478,7 +567,7 @@ function prepareTotalMatches(data: Map<string, SerializedEntry[]>, forJobs: bool
 
             for (const [key, value] of data) {
                 for (const job of value) {
-                    var matchTotal = eachJobTotal.get(job.jobName!)!;
+                    matchTotal = eachJobTotal.get(job.jobName!)!;
 
                     matchTotal += job.matchFrequency!;
 
@@ -491,16 +580,12 @@ function prepareTotalMatches(data: Map<string, SerializedEntry[]>, forJobs: bool
             }
         } else {
             var eachJobList: Map<string, number>[] = [];
-            var matchFrequency: [any[]] = [[]];
-            var addList = [];
 
             chartData.addColumn("string", "Date");
 
             selectedJobs!.forEach((jobName) => {
                 chartData.addColumn("number", jobName);
             });
-    
-            var dateCounter = 0;
 
             for (const [key, value] of data) {
                 if (dateCounter < data.size) {
@@ -550,7 +635,7 @@ function prepareTotalMatches(data: Map<string, SerializedEntry[]>, forJobs: bool
 
             for (const [key, value] of data) {
                 for (const survey of value) {
-                    var matchTotal = eachSurveyTotal.get(survey.surveyTitle!)!;
+                    matchTotal = eachSurveyTotal.get(survey.surveyTitle!)!;
 
                     matchTotal += survey.matchFrequency!;
 
@@ -563,16 +648,12 @@ function prepareTotalMatches(data: Map<string, SerializedEntry[]>, forJobs: bool
             }
         } else {
             var eachSurveyList: Map<string, number>[] = [];
-            var matchFrequency: [any[]] = [[]];
-            var addList = [];
 
             chartData.addColumn("string", "Date");
 
             selectedSurveys!.forEach((surveyName) => {
                 chartData.addColumn("number", surveyName);
             });
-    
-            var dateCounter = 0;
 
             for (const [key, value] of data) {
                 if (dateCounter < data.size) {
@@ -614,10 +695,21 @@ function prepareTotalMatches(data: Map<string, SerializedEntry[]>, forJobs: bool
     return chartData;
 }
 
-async function drawSingleAverageScores(subject: Subject, queryType: DataQuery, chartType: Chart, forDay: boolean, startDate: string, selectedJobs?: string[], selectedSurveys?: string[]) {
-    const forJobs = queryType == DataQuery.AverageJobMatches;
+async function drawAverageJobScores(
+    subject: Subject, 
+    queryType: DataQuery, 
+    chartType: Chart, 
+    dateSelection: DateSelection, 
+    selectionArrays: SelectionArrays) {
 
-    const title = `Average Job Matches ${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
+    const forDay = dateSelection.forDay;
+    const startDate = dateSelection.startDate;
+    const selectedJobs = selectionArrays.jobs;
+    
+    const forJobs = queryType === DataQuery.AverageJobMatches;
+
+    const title = `Average Job Matches ` +
+        `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
 
     const data: any = await getQueryData(subject, queryType, forDay, startDate, undefined, selectedJobs);
     console.log(data);
@@ -626,7 +718,7 @@ async function drawSingleAverageScores(subject: Subject, queryType: DataQuery, c
 
     switch (chartType) {
         case Chart.Line:
-            chartData = prepareSingleAverageScores(data, forJobs, selectedJobs, selectedSurveys);
+            chartData = prepareAverageJobScores(data, forJobs, selectionArrays);
 
             new google.visualization.LineChart(document.getElementById('chart')!)
             .draw(chartData!, {
@@ -636,7 +728,7 @@ async function drawSingleAverageScores(subject: Subject, queryType: DataQuery, c
               });
             break;
         case Chart.Bar:
-            chartData = prepareSingleAverageScores(data, forJobs, selectedJobs, selectedSurveys);
+            chartData = prepareAverageJobScores(data, forJobs, selectionArrays);
 
             new google.visualization.BarChart(document.getElementById('chart')!)
                 .draw(chartData!, {
@@ -647,7 +739,7 @@ async function drawSingleAverageScores(subject: Subject, queryType: DataQuery, c
                 });
             break;
         case Chart.Table:
-            chartData = prepareSingleAverageScores(data, forJobs, selectedJobs, selectedSurveys);
+            chartData = prepareAverageJobScores(data, forJobs, selectionArrays);
 
             new google.visualization.Table(document.getElementById('chart')!)
                 .draw(chartData!, {
@@ -657,21 +749,28 @@ async function drawSingleAverageScores(subject: Subject, queryType: DataQuery, c
     }    
 }
 
-function prepareSingleAverageScores(data: Map<string, SerializedEntry[]>, forJobs: boolean, selectedJobs?: string[], selectedSurveys?: string[]) {
+function prepareAverageJobScores(
+    data: Map<string, SerializedEntry[]>, 
+    forJobs: boolean, 
+    selectionArrays: SelectionArrays) {
+
+    const selectedSurveys = selectionArrays.surveys;
+    const selectedJobs = selectionArrays.jobs;
+
     var chartData = new google.visualization.DataTable();
 
     chartData.addColumn("string", "Date");
 
+    var dateCounter = 0;
+    var matchFrequency: [any[]] = [[]];
+    var addList = [];
+
     if (forJobs) {
         var eachJobList: Map<string, number>[] = [];
-        var matchFrequency: [any[]] = [[]];
-        var addList = [];
 
         selectedJobs!.forEach((jobName) => {
             chartData.addColumn("number", jobName);
         });
-
-        var dateCounter = 0;
 
         for (const [key, value] of data) {
             if (dateCounter < data.size) {
@@ -709,14 +808,10 @@ function prepareSingleAverageScores(data: Map<string, SerializedEntry[]>, forJob
         chartData.addRows(addList);
     } else {
         var eachSurveyList: Map<string, number>[] = [];
-        var matchFrequency: [any[]] = [[]];
-        var addList = [];
 
         selectedSurveys!.forEach((surveyName) => {
             chartData.addColumn("number", surveyName);
         });
-
-        var dateCounter = 0;
 
         for (const [key, value] of data) {
             if (dateCounter < data.size) {
@@ -757,9 +852,18 @@ function prepareSingleAverageScores(data: Map<string, SerializedEntry[]>, forJob
     return chartData;
 }
 
-async function drawTieredAverages(subject: Subject, queryType: DataQuery, chartType: Chart, forDay: boolean, startDate: string) {
-    const highest = queryType == DataQuery.HighestAverageJobMatches;
-    const title = `${(highest ? "Highest Scoring Jobs " : "Lowest Scoring Jobs ")} ${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
+async function drawTieredAverageJobScores(
+    subject: Subject, 
+    queryType: DataQuery, 
+    chartType: Chart, 
+    dateSelection: DateSelection) {
+
+    const forDay = dateSelection.forDay;
+    const startDate = dateSelection.startDate;
+
+    const highest = queryType === DataQuery.HighestAverageJobMatches;
+    const title = `${(highest ? "Highest Scoring Jobs " : "Lowest Scoring Jobs ")} ` +
+        `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
 
     const data: any = await getQueryData(subject, queryType, forDay, startDate);
     console.log(data);
@@ -768,7 +872,7 @@ async function drawTieredAverages(subject: Subject, queryType: DataQuery, chartT
 
     switch (chartType) {
         case Chart.Bar:
-            chartData = prepareTieredAverages(data, false, highest);
+            chartData = prepareTieredAverageJobScores(data, false);
 
             new google.visualization.BarChart(document.getElementById('chart')!)
                 .draw(chartData!, {
@@ -779,7 +883,7 @@ async function drawTieredAverages(subject: Subject, queryType: DataQuery, chartT
                 });
             break;
         case Chart.Table:
-            chartData = prepareTieredAverages(data, false, highest);
+            chartData = prepareTieredAverageJobScores(data, false);
 
             new google.visualization.Table(document.getElementById('chart')!)
                 .draw(chartData!, {
@@ -787,20 +891,20 @@ async function drawTieredAverages(subject: Subject, queryType: DataQuery, chartT
                 });
             break;
         case Chart.TreeMap:
-            chartData = prepareTieredAverages(data, true, highest);
+            chartData = prepareTieredAverageJobScores(data, true);
 
             var minColor;
             var midColor;
             var maxColor;
 
-            if (queryType == DataQuery.HighestAverageJobMatches) {
-                minColor = '#38ff53';
-                midColor = '#36f9ff';
-                maxColor = '#3d4dff';
+            if (highest) {
+                minColor = '#00ff22';
+                midColor = '#00f7ff';
+                maxColor = '#1e00ff';
             } else {
-                minColor = '#ff2e2e';
-                midColor = '#ff9b30';
-                maxColor = '#fff933';
+                minColor = '#ff0000';
+                midColor = '#ff8400';
+                maxColor = '#fff700';
             }
 
             new google.visualization.TreeMap(document.getElementById('chart')!)
@@ -815,7 +919,7 @@ async function drawTieredAverages(subject: Subject, queryType: DataQuery, chartT
     }   
 }
 
-function prepareTieredAverages(data: SerializedEntry[], tree: boolean, highest: boolean) {
+function prepareTieredAverageJobScores(data: SerializedEntry[], tree: boolean) {
     var chartData = new google.visualization.DataTable();
 
     if (tree) {
@@ -826,14 +930,11 @@ function prepareTieredAverages(data: SerializedEntry[], tree: boolean, highest: 
 
         chartData.addRow(["All Jobs", null, 0, 0]);
 
-        var index = 0;
-
         for (const value of data) {
             const score = (value.score! < 0) ? (-1 * value.score!) : value.score!;
             const colorScale = (value.score! < 0) ? (score * 50) : (score * 50 + 50);
 
             chartData.addRow([value.jobName!, "All Jobs", score, colorScale]);
-            index++;
         }
     } else {
         chartData.addColumn("string", "Job Name");

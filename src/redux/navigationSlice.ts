@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { submitSurvey } from '../firebase/Firebase';
 import { AdministeredSurveyResponse } from '../firebase/Types';
-import { logJobsMatched } from '../firebase/Analytics/Logging';
+import { logJobsMatched, logLabelsMatched } from '../firebase/Analytics/Logging';
 
 /** This enum is used to distinguish between different types of pages */
 export enum PageType {

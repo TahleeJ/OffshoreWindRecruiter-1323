@@ -1,6 +1,4 @@
 import * as firestore from "@firebase/firestore";
-import { submitSurvey } from "../Firebase";
-import { logJobsMatched } from "../Analytics/Logging";
 
 import db from "../Firestore";
 import { id, SurveyTemplate, hasId, AdministeredSurveyResponse } from "../Types";

@@ -52,13 +52,12 @@ export async function logJobsMatched(surveyId: string, recommendedJobs: Recommen
 export async function logLabelsUsed(labelScores: [string, [number, number]][]) {
     for (const [key, value] of labelScores) {
         const labelName = (await getLabel(key)).name;
-        console.log(`${value[0]}, ${value[1]}`);
 
-        // logEvent(analyticsInstance, "label_used", {
-        //     label_title: labelName,
-        //     linear_score: value[0],
-        //     percentile_score: value[1],
-        //     debug_mode: true
-        // });
+        logEvent(analyticsInstance, "label_used", {
+            label_title: labelName,
+            linear_score: value[0],
+            percentile_score: value[1],
+            debug_mode: true
+        });
     }
 }

@@ -12,7 +12,7 @@ export const auth = admin.auth();
 
 export function assertValidRequest(context: functions.https.CallableContext): asserts context is (functions.https.CallableContext & { auth: AuthData }) {
     if (context.auth === undefined) {
-        functions.logger.log("Unauthorized function request with context: ", context);
+        functions.logger.log('Unauthorized function request with context: ', context);
         throw errors.unauthorized;
     }
 }
@@ -28,5 +28,5 @@ declare global {
 
 // eslint-disable-next-line no-extend-native
 Map.prototype.getOrDefault = function<K, V>(key: K, value: V): V {
-    return this.has(key) ? this.get(key) : value
-}
+    return this.has(key) ? this.get(key) : value;
+};

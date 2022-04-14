@@ -1,13 +1,14 @@
-import * as firestore from "firebase/firestore";
+import * as firestore from 'firebase/firestore';
 
-import db from "../Firestore";
-import { hasId, id, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion, JobOpp } from "../Types";
-import { editJobOpp } from "./JobQueries";
-import { editSurvey, getSurveys } from "./SurveyQueries";
+import db from '../Firestore';
+import { hasId, id, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion, JobOpp } from '../Types';
+import { editJobOpp } from './JobQueries';
+import { editSurvey, getSurveys } from './SurveyQueries';
+
 
 /**
  * Retrieves every label from Firestore and lists them in order based on label name
- * 
+ *
  * @returns an array of every label in Firestore that's sorted on label name
  */
 export async function getLabels() {
@@ -19,7 +20,7 @@ export async function getLabels() {
 
 /**
  * Retrieves a specific label from Firestore given a label id
- * 
+ *
  * @param id the id of the desired label
  * @returns a label object, which contains: name
  */
@@ -28,14 +29,14 @@ export async function getLabel(id: id) {
     const data = response.data();
 
     if (data === undefined)
-        throw new Error("Could not find Label/" + id); // Not sure what to do here
+        throw new Error('Could not find Label/' + id); // Not sure what to do here
 
     return { ...data, id: response.id } as Label & hasId;
 }
 
 /**
- * Adds a new label document to the Labels collection 
- * 
+ * Adds a new label document to the Labels collection
+ *
  * @param label the desired label object to be added in Firestore
  */
 export async function newLabel(label: Label) {
@@ -44,7 +45,7 @@ export async function newLabel(label: Label) {
 
 /**
  * Updates a specified label in Firestore
- * 
+ *
  * @param id the id of the desired label to be updated
  * @param label the updated label object to replace the current label
  */
@@ -54,46 +55,45 @@ export async function editLabel(id: id, label: Label) {
 
 /**
  * Deletes a Label and any references to that Label
- * @param id id of Label to delete
+ *
+ * @param id id of the Label to delete
  */
 export async function deleteLabel(id: id) {
-    try {
-        (await getJobReferencesToLabel(id)).forEach(job => {
-            job.labelIds = job.labelIds.filter(l => l !== id);
-            editJobOpp(job.id, job);
-        });
-    
-        (await getSurveyReferencesToLabel(id)).forEach((references, survey) => {
-            references.forEach(answers => {
-                answers.forEach(answer => answer.labelIds = answer.labelIds.filter(l => l !== id));
+    (await getJobReferencesToLabel(id)).forEach(job => {
+        job.labelIds = job.labelIds.filter(l => l !== id);
+        editJobOpp(job.id, job);
+    });
+
+    (await getSurveyReferencesToLabel(id)).forEach((references, survey) => {
+        references.forEach(answers => {
+            answers.forEach(answer => {
+                answer.labelIds = answer.labelIds.filter(l => l !== id);
             });
-            
-            editSurvey(survey.id, survey);
         });
-    
-        await firestore.deleteDoc(firestore.doc(db.Labels, id));
-    } catch (error) {
-        // Log error
-        throw error;
-    }
+
+        editSurvey(survey.id, survey);
+    });
+
+    await firestore.deleteDoc(firestore.doc(db.Labels, id));
 }
 
-
 /**
- * Returns any Job Opportunities that are referencing a label 
- * @param labelID label to search for 
- * @returns Sorted array of Jobs that reference the label
+ * Returns any Job Opportunities that are referencing a Label
+ *
+ * @param labelID Label to search for
+ * @returns Sorted array of Jobs that reference the Label
  */
 export async function getJobReferencesToLabel(labelID: id) {
-    return (await firestore.getDocs(firestore.query(db.JobOpps, firestore.where("labelIds", "array-contains", labelID))))
+    return (await firestore.getDocs(firestore.query(db.JobOpps, firestore.where('labelIds', 'array-contains', labelID))))
         .docs.map(job => ({ ...job.data(), id: job.id } as JobOpp & hasId))
         .sort((a, b) => a.companyName.localeCompare(b.companyName));
 }
 
 /**
- * Returns any answers that are referencing a label 
- * @param labelID label to search for
- * @returns Map of Surveys to a map of Questions to an array of Answers that reference the label
+ * Returns any answers that are referencing a Label
+ *
+ * @param labelID Label to search for
+ * @returns Map of Surveys to a map of Questions to an array of Answers that reference the Label
  */
 export async function getSurveyReferencesToLabel(labelID: id) {
     const relationMap = new Map<SurveyTemplate & hasId, Map<SurveyQuestion, SurveyAnswer[]>>();
@@ -102,7 +102,7 @@ export async function getSurveyReferencesToLabel(labelID: id) {
     surveys.forEach(s => {
         const foundQuestions = new Map<SurveyQuestion, SurveyAnswer[]>();
         s.questions.forEach(q => {
-            const foundAnswers: SurveyAnswer[] = []
+            const foundAnswers: SurveyAnswer[] = [];
             q.answers.forEach(o => {
                 if (o.labelIds.includes(labelID))
                     foundAnswers.push(o);

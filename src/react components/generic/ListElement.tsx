@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import Prompt from "./Prompt";
+import React, { useState } from 'react';
+import Prompt from './Prompt';
+
 
 interface props {
     name: string;
@@ -8,39 +9,40 @@ interface props {
     handleDelete?: () => void;
 }
 
-const ListElement: React.FC<props> = (p) => {
-    const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+
+const ListElement: React.FC<props> = props => {
+    const [popupVisible, setPopupVisible] = useState<Boolean>(false);
     const togglePopup = () => {
-        setPopupvisible(!popupVisible);
-    }
+        setPopupVisible(!popupVisible);
+    };
     return (
-        <div className={"listElement"}>
-            <div className={"name" + (p.handleView ? " viewable" : "")} onClick={p.handleView}>{p.name}</div>
-            {p.handleEdit && <i className="fas fa-edit edit" onClick={(e) => {
-                e.stopPropagation(); //used to not active the "handleView" function
-                e.nativeEvent.stopImmediatePropagation(); //used to not active the "handleView" function
-                p.handleEdit && p.handleEdit();
+        <div className={'listElement'}>
+            <div className={'name' + (props.handleView ? ' viewable' : '')} onClick={props.handleView}>{props.name}</div>
+            {props.handleEdit && <i className="fas fa-edit edit" onClick={(e) => {
+                e.stopPropagation(); // used to not active the "handleView" function
+                e.nativeEvent.stopImmediatePropagation(); // used to not active the "handleView" function
+                props.handleEdit && props.handleEdit();
             }} />}
-            {p.handleDelete && <i className="fas fa-trash-alt delete" onClick={(e) => {
-                e.stopPropagation(); //used to not active the "handleView" function
-                e.nativeEvent.stopImmediatePropagation(); //used to not active the "handleView" function
+            {props.handleDelete && <i className="fas fa-trash-alt delete" onClick={(e) => {
+                e.stopPropagation(); // used to not active the "handleView" function
+                e.nativeEvent.stopImmediatePropagation(); // used to not active the "handleView" function
                 togglePopup();
             }} />}
 
             {(popupVisible) &&
                 <Prompt
-                    title={"Are you sure you want to delete '" + p.name + "'?"}
+                    title={"Are you sure you want to delete '" + props.name + "'?"}
                     message="Deleting this item is not reversible"
                     handleCancel={togglePopup}
                     handleAction={() => {
-                        if (p.handleDelete)
-                            p.handleDelete();
-                        togglePopup()
+                        if (props.handleDelete)
+                            props.handleDelete();
+                        togglePopup();
                     }}
                 />
             }
         </div>
-    )
-}
+    );
+};
 
-export default ListElement
+export default ListElement;

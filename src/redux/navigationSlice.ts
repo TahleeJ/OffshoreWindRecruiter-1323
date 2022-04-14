@@ -1,7 +1,8 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { submitSurvey } from '../firebase/Firebase';
 import { AdministeredSurveyResponse } from '../firebase/Types';
 import { logJobsMatched } from '../firebase/Analytics/Logging';
+
 
 /** This enum is used to distinguish between different types of pages */
 export enum PageType {
@@ -28,8 +29,8 @@ export enum OperationType {
 }
 
 export enum Status {
-    idle = "idle",
-    pending = "pending",
+    idle = 'idle',
+    pending = 'pending',
     fulfilled = 'fulfilled',
     rejected = 'rejected'
 }
@@ -50,7 +51,7 @@ const initialState = {
     status: Status.idle
 } as navigationState;
 
-/** The slice of the state that deals with navigating to parts of the application*/
+/** The slice of the state that deals with navigating to parts of the application */
 const navigationSlice = createSlice({
     name: 'navigation',
     initialState,
@@ -72,7 +73,7 @@ const navigationSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(submitSurveyResponse.fulfilled, (state, action) => {
             action.payload.data.recommendedJobs.sort((a, b) => b.score - a.score);
-            
+
             state.operationData = action.payload.data;
             state.status = Status.fulfilled;
         });
@@ -83,8 +84,8 @@ const navigationSlice = createSlice({
             state.operationData = action.error;
             state.status = Status.rejected;
         });
-    },
-})
+    }
+});
 
 export const submitSurveyResponse = createAsyncThunk('navigation/submitSurveyResponse',
     async (survey: AdministeredSurveyResponse) => {
@@ -96,5 +97,5 @@ export const submitSurveyResponse = createAsyncThunk('navigation/submitSurveyRes
     }
 );
 
-export const { changePage, changeOperation, changeOperationData } = navigationSlice.actions
-export default navigationSlice.reducer
+export const { changePage, changeOperation, changeOperationData } = navigationSlice.actions;
+export default navigationSlice.reducer;

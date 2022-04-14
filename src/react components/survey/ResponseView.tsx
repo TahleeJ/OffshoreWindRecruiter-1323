@@ -3,11 +3,8 @@ import { JobOpp, QuestionType, RecommendedJobWithData, AdministeredSurveyRespons
 import { useAppSelector } from '../../redux/hooks';
 import RecJobView from './RecJobView';
 
-interface props {
 
-}
-
-const ResponseView: React.FC<props> = p => {
+const ResponseView: React.FC = () => {
     const response = useAppSelector(s => s.navigation.operationData as AdministeredSurveyResponse);
     const jobOpps = useAppSelector(s => s.data.jobOpps);
     const qs = useAppSelector(s => s.data.surveys);
@@ -18,7 +15,7 @@ const ResponseView: React.FC<props> = p => {
             return {
                 score: rj.score,
                 jobOpp: jobOpps.find(j => j.id === rj.jobOppId) as JobOpp
-            }
+            };
         }).sort((a, b) => b.score - a.score);
     };
     const survey = qs.find(s => s.id === response.surveyId);
@@ -44,7 +41,7 @@ const ResponseView: React.FC<props> = p => {
                 }
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default ResponseView;

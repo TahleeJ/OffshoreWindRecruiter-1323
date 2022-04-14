@@ -1417,7 +1417,7 @@ textarea {
   text-align: center;
 }
 
-#analytics .surveyList {
+#analytics .surveyList.listViewer {
   height: 50%;
   overflow: auto;
   text-align: left;

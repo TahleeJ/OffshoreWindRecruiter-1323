@@ -1,11 +1,13 @@
-import * as firestore from "@firebase/firestore";
-import { submitSurvey } from "../Firebase";
-import { logJobsMatched } from "../Analytics/Logging";
+import * as firestore from '@firebase/firestore';
 
-import db from "../Firestore";
-import { id, SurveyTemplate, hasId, AdministeredSurveyResponse } from "../Types";
+import db from '../Firestore';
+import { id, SurveyTemplate, hasId, AdministeredSurveyResponse } from '../Types';
 
-
+/**
+ * Retrieves every survey from Firestore and lists them in order based on survey title
+ *
+ * @returns an array of every survey in Firestore that's sorted on survey title
+ */
 export async function getSurveys() {
     const response = await firestore.getDocs(db.Surveys);
 
@@ -13,28 +15,55 @@ export async function getSurveys() {
         .sort((a, b) => a.title.localeCompare(b.title));
 }
 
+/**
+ * Retrieves a specific survey from Firestore given a survey id
+ *
+ * @param id the id of the desired survey
+ * @returns a survey object, which contains: description, questions array, title
+ */
 export async function getSurvey(id: id) {
     const response = await firestore.getDoc(firestore.doc(db.Surveys, id));
     const data = response.data();
 
     if (data === undefined)
-        throw new Error("Could not find Survey/" + id); // Not sure what to do here
+        throw new Error('Could not find Survey/' + id); // Not sure what to do here
 
     return { ...data, id: response.id } as SurveyTemplate & hasId;
 }
 
+/**
+ * Adds a new survey document to the Survey collection
+ *
+ * @param survey the desired survey object to be added in Firestore
+ */
 export async function newSurvey(survey: SurveyTemplate) {
     await firestore.addDoc(db.Surveys, survey);
 }
 
+/**
+ * Updates a specified survey in Firestore
+ *
+ * @param id the id of the desired survey to be updated
+ * @param survey the updated survey object to replace the current survey
+ */
 export async function editSurvey(id: id, survey: SurveyTemplate) {
     await firestore.updateDoc(firestore.doc(db.Surveys, id), survey);
 }
 
+/**
+ * Deletes a specified survey in Firestore
+ *
+ * @param id the id of the desired survey to be deleted
+ */
 export async function deleteSurvey(id: id) {
     await firestore.deleteDoc(firestore.doc(db.Surveys, id));
 }
 
+/**
+ * Retrieves every survey response from Firestore and lists them in descending order based on created time
+ *
+ * @returns an array of every survey response in Firestore listed in descending order based on created time
+ */
 export async function getSurveyResponses() {
     const response = await firestore.getDocs(
         firestore.query(db.SurveyResponse, firestore.orderBy('created', 'desc'), firestore.limit(100)));
@@ -42,6 +71,11 @@ export async function getSurveyResponses() {
     return response.docs.map(s => ({ ...s.data(), id: s.id } as AdministeredSurveyResponse & hasId));
 }
 
+/**
+ * Deletes a specified survey response in Firestore
+ *
+ * @param id the id of the desired survey response to be deleted
+ */
 export async function deleteSurveyResponse(id: id) {
     await firestore.deleteDoc(firestore.doc(db.SurveyResponse, id));
 }

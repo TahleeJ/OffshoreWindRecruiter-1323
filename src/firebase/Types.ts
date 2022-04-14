@@ -12,7 +12,7 @@ export interface SurveyQuestion {
     prompt: string
     answers: SurveyAnswer[]
     questionType: QuestionType
-}   
+}
 
 export enum QuestionType {
     MultipleChoice = 0,
@@ -31,7 +31,7 @@ export interface Label {
 
 
 export interface AdministeredSurveyResponse {
-    surveyId: id 
+    surveyId: id
     taker: SurveyTaker
     created?: number
 
@@ -40,7 +40,7 @@ export interface AdministeredSurveyResponse {
      * MultipleChoice: [0-n]
      * FreeResponse: string
      */
-    answers: (number | string)[]  
+    answers: (number | string)[]
 
     recommendedJobs?: RecommendedJob[]
 }
@@ -64,8 +64,8 @@ export interface RecommendedJobWithData {
 export interface ReturnedSurveyResponse {
     recommendedJobs: RecommendedJob[]
 
-    // Maps label to [ LabelScore / ExpectedScore, PercentileScore ]
-    labelScores: Map<string, [number, number]>
+    // Maps label id to [ Linear score, Percentile score ]
+    labelScores: { [k: string]: [number, number] }
 }
 
 

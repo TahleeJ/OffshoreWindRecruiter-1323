@@ -183,7 +183,7 @@ function serializeJobData(data: string[], queryType: DataQuery) {
                 for (const element of data) {
                     const elementJSON = JSON.parse(element);
 
-                    const frequency = (elementJSON.frequency == undefined) ? 0 : elementJSON.frequency;
+                    const frequency = (elementJSON.frequency === undefined) ? 0 : elementJSON.frequency;
 
                     serializedData.set(elementJSON.event_date, { jobName: elementJSON.job_title, matchFrequency: frequency });
                 }
@@ -197,7 +197,7 @@ function serializeJobData(data: string[], queryType: DataQuery) {
                 for (const element of data) {
                     const elementJSON = JSON.parse(element);
 
-                    const score = (elementJSON.average_score == undefined) ? 0 : elementJSON.average_score;
+                    const score = (elementJSON.average_score === undefined) ? 0 : elementJSON.average_score;
 
                     serializedData.set(elementJSON.event_date, { jobName: elementJSON.job_title, score: score });
                 }
@@ -212,7 +212,7 @@ function serializeJobData(data: string[], queryType: DataQuery) {
 
                 for (const element of data) {
                     const elementJSON = JSON.parse(element);
-                    const frequency = (elementJSON.frequency == undefined) ? 0 : elementJSON.frequency;
+                    const frequency = (elementJSON.frequency === undefined) ? 0 : elementJSON.frequency;
                     const newData = { surveyTitle: elementJSON.survey_title, matchFrequency: frequency };
 
                     if (serializedData.has(elementJSON.event_date)) {
@@ -234,7 +234,7 @@ function serializeJobData(data: string[], queryType: DataQuery) {
 
                 for (const element of data) {
                     const elementJSON = JSON.parse(element);
-                    const score = (elementJSON.average_score == undefined) ? 0 : elementJSON.average_score;
+                    const score = (elementJSON.average_score === undefined) ? 0 : elementJSON.average_score;
                     const newData = { surveyTitle: elementJSON.survey_title, score: score };
 
                     if (serializedData.has(elementJSON.event_date)) {
@@ -259,7 +259,7 @@ function serializeJobData(data: string[], queryType: DataQuery) {
         for (const element of data) {
             const elementJSON = JSON.parse(element);
 
-            const score = (elementJSON.average_score == undefined) ? 0 : elementJSON.average_score;
+            const score = (elementJSON.average_score === undefined) ? 0 : elementJSON.average_score;
 
             serializedData.push({ jobName: elementJSON.job_title, score: score });
         }

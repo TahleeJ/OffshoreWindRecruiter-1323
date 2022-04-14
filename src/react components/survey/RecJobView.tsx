@@ -1,16 +1,18 @@
 import React from 'react';
 import { RecommendedJobWithData } from '../../firebase/Types';
 
+
 interface props {
     jobs: RecommendedJobWithData[];
 }
 
-const RecJobView: React.FC<props> = (p) => {
+
+const RecJobView: React.FC<props> = props => {
     return (
         <>
             {/* <span>Here are some job recommendations that align with your survey answers:</span> */}
-            {p.jobs.map((recommendation, index) => (
-                <div id="jobRec" key={index} className={"recommendation " + ((recommendation.score > 0) ? "positive" : (recommendation.score >= -0.5) ? "neutral" : "negative")}>
+            {props.jobs.map((recommendation, index) => (
+                <div id="jobRec" key={index} className={'recommendation ' + ((recommendation.score > 0) ? 'positive' : (recommendation.score >= -0.5) ? 'neutral' : 'negative')}>
                     <div className="jobRecContainer">
                         <div className='title'>{recommendation.jobOpp.jobName}</div>
                         <div className='compName'>{recommendation.jobOpp.companyName}</div>
@@ -18,15 +20,15 @@ const RecJobView: React.FC<props> = (p) => {
                     </div>
                     <div className="divider"></div>
                     <div className="recContainer">
-                        {recommendation.score > 0 ?
-                        <span className="check">
-                            <div><i className="fas fa-check"></i></div>
-                            {recommendation.score >= .5 ? "highly" : ""} recommend
-                        </span>:
-                        <span className="x">
-                            <div><i className="fas fa-times"></i></div>
-                            {recommendation.score <= -.5 ? "highly" : ""} not recommend
-                        </span>
+                        {recommendation.score > 0
+                            ? <span className="check">
+                                <div><i className="fas fa-check"></i></div>
+                                {recommendation.score >= 0.5 ? 'highly' : ''} recommend
+                            </span>
+                            : <span className="x">
+                                <div><i className="fas fa-times"></i></div>
+                                {recommendation.score <= -0.5 ? 'highly' : ''} not recommend
+                            </span>
                         }
                     </div>
                     {/* <div className='jobLink'>{recommendation.jobOpp.jobLink}</div>
@@ -39,7 +41,7 @@ const RecJobView: React.FC<props> = (p) => {
                 </div>
             ))}
         </>
-    )
-}
+    );
+};
 
 export default RecJobView;

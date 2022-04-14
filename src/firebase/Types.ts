@@ -12,7 +12,7 @@ export interface SurveyQuestion {
     prompt: string
     answers: SurveyAnswer[]
     questionType: QuestionType
-}   
+}
 
 export enum QuestionType {
     MultipleChoice = 0,
@@ -31,7 +31,7 @@ export interface Label {
 
 
 export interface AdministeredSurveyResponse {
-    surveyId: id 
+    surveyId: id
     taker: SurveyTaker
     created?: number
 
@@ -40,7 +40,7 @@ export interface AdministeredSurveyResponse {
      * MultipleChoice: [0-n]
      * FreeResponse: string
      */
-    answers: (number | string)[]  
+    answers: (number | string)[]
 
     recommendedJobs?: RecommendedJob[]
 }

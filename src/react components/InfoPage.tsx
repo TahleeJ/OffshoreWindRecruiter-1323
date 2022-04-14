@@ -1,12 +1,7 @@
 import React from 'react';
 
-/** The props (arguments) to create this element */
-interface props {
-    
-}
 
-/** The header of the application. */
-const InfoPage: React.FC<props> = (props) => {
+const InfoPage: React.FC = () => {
     return (
         <div id='InfoPage'>
             <div className='container'>

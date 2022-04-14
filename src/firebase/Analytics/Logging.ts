@@ -1,7 +1,6 @@
 import { analyticsInstance } from "../Firebase";
 import { logEvent } from "@firebase/analytics";
 import { getSurvey } from "../Queries/SurveyQueries";
-import { getLabel } from "../Queries/LabelQueries";
 import { RecommendedJob } from "../Types";
 import { getJobOpp } from "../Queries/JobQueries";
 
@@ -47,4 +46,12 @@ export async function logJobsMatched(surveyId: string, recommendedJobs: Recommen
             debug_mode: true
         });
     }
+}
+
+export async function logLabelsMatched(labelScores: Map<string, [number, number]>) {
+    console.log(labelScores);
+
+    // for (const [key, value] of labelScores) {
+    //     console.log(`${key}: ${value}`);
+    // }
 }

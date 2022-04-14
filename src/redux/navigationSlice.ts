@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { submitSurvey } from '../firebase/Firebase';
 import { AdministeredSurveyResponse } from '../firebase/Types';
-import { logJobsMatched } from '../firebase/Analytics/Logging';
+import { logJobsMatched, logLabelsMatched } from '../firebase/Analytics/Logging';
 
 
 /** This enum is used to distinguish between different types of pages */
@@ -91,8 +91,11 @@ export const submitSurveyResponse = createAsyncThunk('navigation/submitSurveyRes
     async (survey: AdministeredSurveyResponse) => {
         const result = await submitSurvey(survey);
 
-        logJobsMatched(survey.surveyId, result.data.recommendedJobs);
+        // [LabelId, [linear score, percentile score]]
+        // const labelScores: [string, [number, number]][] = Object.entries(result.data.labelScores)
 
+        logJobsMatched(survey.surveyId, result.data.recommendedJobs);
+        
         return result;
     }
 );

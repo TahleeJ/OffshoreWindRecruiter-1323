@@ -64,8 +64,8 @@ export interface RecommendedJobWithData {
 export interface ReturnedSurveyResponse {
     recommendedJobs: RecommendedJob[]
 
-    // Maps label to [ LabelScore / ExpectedScore, PercentileScore ]
-    labelScores: Map<string, [number, number]>
+    // Maps label id to [ Linear score, Percentile score ]
+    labelScores: { [k: string]: [number, number] }
 }
 
 

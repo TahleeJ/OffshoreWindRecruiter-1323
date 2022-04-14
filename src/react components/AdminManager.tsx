@@ -80,14 +80,12 @@ const AdminManager: React.FC = () => {
         console.log(updateLevel);
 
         if (validateResult) {
-            let invalidEmail = false;
-            let errorEmailsMessage = '';
-
+            var errorEmailsMessage = "";
+    
             for (const email of updateEmails) {
                 const result = await setUserPermissionLevel(email, updateLevel);
-
-                if (result !== 'Update success!') {
-                    invalidEmail = true;
+    
+                if (result !== "Update success!") {
                     errorEmailsMessage = errorEmailsMessage + `${email}: ${result}\n`;
 
                     togglePopup();

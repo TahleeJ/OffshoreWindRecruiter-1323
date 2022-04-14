@@ -82,7 +82,7 @@ export const submitSurvey = functions.https.onCall(async (request: AdministeredS
         const score = stdDev !== 0 ? getPercentile((x - mean) / stdDev) : 1;
 
         scores.set(key, score);
-        labelScores.set(key, [x / mean, score]);
+        labelScores.set(key, [x / n, score]);
     }
 
 
@@ -117,7 +117,7 @@ export const submitSurvey = functions.https.onCall(async (request: AdministeredS
 
     const response: ReturnedSurveyResponse = {
         recommendedJobs: rankings.slice(0, 10),
-        labelScores: labelScores
+        labelScores: Object.fromEntries(labelScores)
     };
 
     return response;

@@ -94,7 +94,11 @@ export interface SerializedEntry {
     surveyFrequency?: number,
     jobName?: string,
     matchFrequency?: number,
-    score?: number
+    score?: number,
+    labelName?: string,
+    labelFrequency?: number,
+    linearScore?: number,
+    percentileScore?: number
 }
 
 export interface ValidChart {

@@ -62,6 +62,17 @@ export async function drawChart(
             }
 
             break;
+        case Subject.Labels:
+            if ([
+                DataQuery.LabelPoints
+                ].includes(queryType)) {
+                drawAllLabelScores(subject, queryType, chartType, dateSelection, selectionArrays);
+            } else if ([
+                DataQuery.LabelAverage
+                ].includes(queryType)) {
+                drawAverageLabelScores(subject, queryType, chartType, dateSelection, selectionArrays);
+            }
+            break;
     }
 }
 
@@ -944,6 +955,183 @@ function prepareTieredAverageJobScores(data: SerializedEntry[], tree: boolean) {
             chartData.addRow([value.jobName!, value.score!]);
         }
     }
+
+    return chartData;
+}
+
+async function drawAllLabelScores(
+    subject: Subject, 
+    queryType: DataQuery, 
+    chartType: Chart, 
+    dateSelection: DateSelection,
+    selectionArrays: SelectionArrays) {
+
+    const forDay = dateSelection.forDay;
+    const startDate = dateSelection.startDate;
+
+    const data: any = await getQueryData(subject, queryType, forDay, startDate, undefined, undefined, selectionArrays.labels);
+
+    const preparedData = prepareAllLabelScores(data);
+    var chartData: google.visualization.DataTable = preparedData.chartData;
+    var frequency = preparedData.frequency;
+
+    const title = `All Linear and Percentile Scores for ${frequency} Occurrences ` +
+        `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
+
+    switch (chartType) {
+        case Chart.Table:
+            new google.visualization.Table(document.getElementById('chart')!)
+                .draw(chartData!, {
+                    height: 300
+                });
+            break;
+        case Chart.Scatter:
+            new google.visualization.ScatterChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: title,
+                vAxis: {title: 'Linear Score', minValue: 0, maxValue: 1},
+                hAxis: {title: 'Percentile Score', minValue: -1, maxValue: 1},
+                legend: "none"
+            });
+            break;
+    }
+}
+
+function prepareAllLabelScores(data: SerializedEntry[]) {
+    var chartData = new google.visualization.DataTable();
+
+    chartData.addColumn("number", "Linear Score");
+    chartData.addColumn("number", "Percentile Score");
+
+    for (const value of data) {
+        chartData.addRow([value.linearScore!, value.percentileScore!]);
+    }
+
+    console.log(chartData);
+
+    return {
+        chartData: chartData,
+        frequency: data[0].labelFrequency!
+    };
+}
+
+async function drawAverageLabelScores(
+    subject: Subject, 
+    queryType: DataQuery, 
+    chartType: Chart, 
+    dateSelection: DateSelection, 
+    selectionArrays: SelectionArrays) {
+
+    const forDay = dateSelection.forDay;
+    const startDate = dateSelection.startDate;
+
+    const data: any = await getQueryData(subject, queryType, forDay, startDate, undefined, undefined, selectionArrays.labels!);
+    console.log(data);
+
+    var chartData: google.visualization.DataTable = prepareAverageLabelScores(data, selectionArrays.labels!);
+
+    const title = `Average Linear and Percentile Scores ` +
+        `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
+    
+    // 2 of each (darker, lighter) -> blue, green, yellow, orange, red
+    const colorArray = ['#3683ff', '#5193fc', '#00a619', '#36ff54', '#bd8a00', '#ffd829', '#ff8b17', '#ff9e3d', '#ff2e2e', '#ff4242'];
+
+    switch (chartType) {
+        case Chart.Line:
+            new google.visualization.LineChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: title,
+                vAxis: {title: 'Average Score'},
+                hAxis: {title: 'Day'},
+                colors: colorArray,
+                series: {
+                    1: {
+                        lineDashStyle: [7, 5]
+                    },
+                    3: {
+                        lineDashStyle: [7, 5]
+                    },
+                    5: {
+                        lineDashStyle: [7, 5]
+                    },
+                    7: {
+                        lineDashStyle: [7, 5]
+                    },
+                    9: {
+                        lineDashStyle: [7, 5]
+                    }
+                }
+              });
+            break;
+        case Chart.Bar:
+            new google.visualization.BarChart(document.getElementById('chart')!)
+            .draw(chartData!, {
+                title: title,
+                vAxis: {title: 'Day'},
+                hAxis: {title: 'Average Score'},
+                colors: colorArray
+              });
+            break;
+        case Chart.Table:
+            new google.visualization.Table(document.getElementById('chart')!)
+                .draw(chartData!, {
+                    height: 300
+                });
+            break;
+    }
+}
+
+function prepareAverageLabelScores(data: Map<string, SerializedEntry[]>, selectedLabels: string[]) {
+    var chartData = new google.visualization.DataTable();
+    console.log(data);
+
+    chartData.addColumn("string", "Date");
+
+    selectedLabels.forEach((labelName) => {
+        chartData.addColumn("number", `${labelName} Linear`);
+        chartData.addColumn("number", `${labelName} Percentile`);
+    })
+
+    var dateCounter = 0;
+    var eachScoreList: Map<string, [number, number]>[] = [];
+    var scoreFrequency: [any[]] = [[]];
+    var addList = [];
+
+    for (const [key, value] of data) {
+        if (dateCounter < data.size) {
+            const date = stringifyDate(key);
+            scoreFrequency[dateCounter] = [date];
+
+            // survey name -> {count}
+            var scoreMap = new Map<string, [number, number]>();
+
+            for (const score of value) {
+                scoreMap.set(score.labelName!, [score.linearScore!, score.percentileScore!]);
+            }
+
+            eachScoreList[dateCounter] = scoreMap;
+
+            dateCounter++;
+        } else {
+            break;
+        }
+    }
+
+    selectedLabels!.forEach((labelName) => {
+        var index = 0;
+
+        for (const dateElement of eachScoreList) {
+            scoreFrequency[index].push(dateElement.get(labelName!)![0]);
+            scoreFrequency[index].push(dateElement.get(labelName!)![1]);
+            index++;
+        }
+    })
+
+    for (const element of scoreFrequency) {
+        addList.unshift(element);
+    }
+
+    chartData.addRows(addList);
 
     return chartData;
 }

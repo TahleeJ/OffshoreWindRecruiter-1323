@@ -3,6 +3,7 @@ import { logEvent } from "@firebase/analytics";
 import { getSurvey } from "../Queries/SurveyQueries";
 import { RecommendedJob } from "../Types";
 import { getJobOpp } from "../Queries/JobQueries";
+import { getLabel } from "../Queries/LabelQueries";
 
 /**
  * Custom logging function to track the surveys created
@@ -48,10 +49,16 @@ export async function logJobsMatched(surveyId: string, recommendedJobs: Recommen
     }
 }
 
-export async function logLabelsMatched(labelScores: Map<string, [number, number]>) {
-    console.log(labelScores);
+export async function logLabelsUsed(labelScores: [string, [number, number]][]) {
+    for (const [key, value] of labelScores) {
+        const labelName = (await getLabel(key)).name;
+        console.log(`${value[0]}, ${value[1]}`);
 
-    // for (const [key, value] of labelScores) {
-    //     console.log(`${key}: ${value}`);
-    // }
+        // logEvent(analyticsInstance, "label_used", {
+        //     label_title: labelName,
+        //     linear_score: value[0],
+        //     percentile_score: value[1],
+        //     debug_mode: true
+        // });
+    }
 }

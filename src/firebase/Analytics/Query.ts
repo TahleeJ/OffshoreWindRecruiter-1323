@@ -12,7 +12,7 @@ import { queryFunctions, DataQuery, Subject, SerializedEntry } from "./Utility";
  * @param selectedNavigator the specific navigator email that they data should focus on
  * @returns the retrieved BigQuery data is a more easy to operate on format
  */
-export async function getQueryData(subject: Subject, queryType: DataQuery, forDay: boolean, startDate: string, selectedNavigator?: string, jobNames?: string[]) {
+export async function getQueryData(subject: Subject, queryType: DataQuery, forDay: boolean, startDate: string, selectedNavigator?: string, jobNames?: string[], labelNames?: string[]) {
     const queryFunction = queryFunctions[queryType];
     var response;
 
@@ -60,6 +60,42 @@ export async function getQueryData(subject: Subject, queryType: DataQuery, forDa
                 response = await getBigQueryData({ queryString: queryString }); 
                 
                 const serializedData = serializeJobData(response.data as string[], queryType);
+
+                return serializedData;
+            }
+        case Subject.Labels:
+            if (queryType === DataQuery.LabelAverage) {
+                const serializedLabelData = new Map<string, SerializedEntry[]>();
+
+                for (const labelName of labelNames!) {
+                    const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${labelName}", ${forDay}, "${startDate}")`;
+
+                    response = await getBigQueryData({ queryString: queryString });
+                    console.log(response);
+
+                    const serializedData: any = serializeLabelData(response.data as string[], queryType);
+
+                    for (const [key, value] of serializedData) {
+                        if (serializedLabelData.has(key)) {
+                            const currentData = serializedLabelData.get(key);
+
+                            currentData!.push(value);
+
+                            serializedLabelData.set(key, currentData!);
+                        } else {
+                            serializedLabelData.set(key, [value]);
+                        }
+                    }
+                }
+
+                return serializedLabelData;
+
+            } else {
+                const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${labelNames![0]}", ${forDay}, "${startDate}")`
+
+                response = await getBigQueryData({ queryString: queryString }); 
+                
+                const serializedData = serializeLabelData(response.data as string[], queryType);
 
                 return serializedData;
             }
@@ -266,4 +302,30 @@ function serializeJobData(data: string[], queryType: DataQuery) {
 
         return serializedData;
     }   
+}
+
+function serializeLabelData(data: string[], queryType: DataQuery) {
+    if (queryType === DataQuery.LabelPoints) {
+        const serializedData: SerializedEntry[] = [];
+
+        for (const element of data) {
+            const elementJSON = JSON.parse(element);
+
+            console.log(elementJSON);
+
+            serializedData.push({ labelFrequency: elementJSON.frequency, linearScore: elementJSON.linear_score, percentileScore: elementJSON.percentile_score });
+        }
+
+        return serializedData;
+    } else {
+        const serializedData: Map<string, SerializedEntry> = new Map<string, SerializedEntry>();
+
+        for (const element of data) {
+            const elementJSON = JSON.parse(element);
+
+            serializedData.set(elementJSON.event_date, { labelName: elementJSON.label_title, linearScore: elementJSON.average_linear, percentileScore: elementJSON.average_percentile });
+        }
+
+        return serializedData;
+    }
 }

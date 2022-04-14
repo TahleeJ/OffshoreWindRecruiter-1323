@@ -13,6 +13,7 @@ interface props {
 const Analytics: React.FC<props> = (props) => {
     const surveys = useAppSelector(s => s.data.surveys);
     const jobOpps = useAppSelector(s =>  s.data.jobOpps);
+    const labels = useAppSelector(s => s.data.labels);
     const userEmail = authInstance.currentUser!.email!;
   
     const [popupTitleState, setPopupTitleState] = useState("");
@@ -21,6 +22,7 @@ const Analytics: React.FC<props> = (props) => {
     const [queryTypeState, setQueryTypeState] = useState<DataQuery>(DataQuery.AllTitles);
     const [surveyQueryTypeState, setSurveyQueryTypeState] = useState<DataQuery>(DataQuery.AllTitles);
     const [jobQueryTypeState, setJobQueryTypeState] = useState<DataQuery>(DataQuery.HighestAverageJobMatches);
+    const [labelQueryTypeState, setLabelQueryTypeState] = useState<DataQuery>(DataQuery.LabelPoints);
 
     const [navigatorGroupingState, setNavigatorGroupingstate] = useState<NavigatorGrouping>(NavigatorGrouping.All);
     const [validDataFocusesState, setValidDataFocusesState] = useState(validChartInfo.get(Subject.Surveys)!.get(Chart.Pie)!.text);
@@ -28,12 +30,16 @@ const Analytics: React.FC<props> = (props) => {
     const [chartTypeState, setChartTypeState] = useState<Chart>(Chart.Pie);
     const [surveyChartTypeState, setSurveyChartTypeState] = useState(Chart.Pie);
     const [jobChartTypeState, setJobChartTypeState] = useState(Chart.TreeMap);
+    const [labelChartTypeState, setLabelChartTypeState] = useState(Chart.Scatter);
 
     const [navigatorEntryState, setNavigatorEntryState] = useState("");
+    const [selectedNavigatorState, setSelectedNavigatorState] = useState<string[]>();
     const [selectedSurveysState, setSelectedSurveysState] = useState<string[]>([]);
     const [selectedSurveysCheckState, setSelectedSurveysCheckState] = useState<Set<string>>(new Set<string>());
     const [selectedJobsState, setSelectedJobsState] = useState<string[]>([]);
     const [selectedJobsCheckState, setSelectedJobsCheckState] = useState<Set<string>>(new Set<string>());
+    const [selectedLabelsState, setSelectedLabelsState] = useState<string[]>([]);
+    const [selectedLabelsCheckState, setSelectedLabelsCheckState] = useState<Set<string>>(new Set<string>());
 
     const [dateGroupingState, setDateGroupingState] = useState<DateGrouping>(DateGrouping.Week);
     const [dayDateState, setDayDateState] = useState(today);
@@ -51,6 +57,7 @@ const Analytics: React.FC<props> = (props) => {
     var navigatorEntry = navigatorEntryState;
     var selectedSurveysCheck = selectedSurveysCheckState;
     var selectedJobsCheck = selectedJobsCheckState;
+    var selectedLabelsCheck = selectedLabelsCheckState;
     var dateGrouping = dateGroupingState;
     var dayDate = dayDateState.replaceAll("-", "");
     var sinceDate = sinceDateState.replaceAll("-", "");
@@ -68,11 +75,15 @@ const Analytics: React.FC<props> = (props) => {
     const maxSelectedSurveys = 5;
     var selectedSurveyCount = 0;
     var selectedSurveys = selectedSurveysState;
-    var selectedNavigators: string[] = [];
+    var selectedNavigators = selectedNavigatorState;
 
     const maxSelectedJobs = 5;
     var selectedJobCount = 0;
     var selectedJobs = selectedJobsState;
+
+    const maxSelectedLabels = 5;
+    var selectedLabelCount = 0;
+    var selectedLabels = selectedLabelsState;
 
     const validDataFocusesBox = document.getElementById("valid-focuses") as HTMLInputElement;
     const popupTitleBox = document.getElementById("popup-title") as HTMLInputElement;
@@ -100,6 +111,9 @@ const Analytics: React.FC<props> = (props) => {
             case Subject.Jobs:
                 setJobQueryTypeState(value);
                 break;
+            case Subject.Labels:
+                setLabelQueryTypeState(value);
+                break;
         }
 
         setQueryTypeState(value);
@@ -114,6 +128,9 @@ const Analytics: React.FC<props> = (props) => {
                 break;
             case Subject.Jobs:
                 setJobChartTypeState(value);
+                break;
+            case Subject.Labels:
+                setLabelChartTypeState(value);
                 break;
         }
 
@@ -151,6 +168,10 @@ const Analytics: React.FC<props> = (props) => {
             case Subject.Jobs:
                 updateQueryType(jobQueryTypeState);
                 updateChartType(jobChartTypeState);
+                break;
+            case Subject.Labels:
+                updateQueryType(labelQueryTypeState);
+                updateChartType(labelChartTypeState);
                 break;
         }
 
@@ -262,6 +283,35 @@ const Analytics: React.FC<props> = (props) => {
                 jobCheckbox.checked = selectedJobsCheck.has(name);
 
                 break;
+            case Subject.Labels:
+                const labelCheckbox = document.getElementById(name) as HTMLInputElement;
+
+                if (checked) {
+                    if (selectedLabelCount < maxSelectedLabels) {
+                        selectedLabels.push(name);
+                        selectedLabelsCheck.add(name);
+        
+                        selectedLabelsCheckState.add(name);
+                        setSelectedLabelsCheckState(selectedLabelsCheckState);
+        
+                        selectedLabelCount++;
+                    }
+                } else {            
+                    const removeIndex = selectedLabels.indexOf(name);
+                    selectedLabels.splice(removeIndex, 1);
+                    selectedLabelsCheck.delete(name);
+        
+                    selectedLabelsCheckState.delete(name);
+                    setSelectedLabelsCheckState(selectedLabelsCheckState);
+        
+                    selectedLabelCount--;
+                }
+        
+                setSelectedLabelsState(selectedLabels);
+        
+                labelCheckbox.checked = selectedLabelsCheck.has(name);
+
+                break;
         }     
     }
 
@@ -282,6 +332,7 @@ const Analytics: React.FC<props> = (props) => {
 
         setQueryTypeState(queryType);
         setStartDateState(startDate);
+        setSelectedNavigatorState(selectedNavigators);
         
         const queryRequiresSurveyName = [
             DataQuery.AllTitlesPerDay, 
@@ -331,6 +382,24 @@ const Analytics: React.FC<props> = (props) => {
 
             return;
         }
+        console.log(selectedLabelCount);
+        console.log(selectedLabels);
+
+        if (subject === Subject.Labels) {
+            if (selectedLabels.length === 0) {
+                popupTitle = "Empty Label Selection";
+                popupMessage = "Please select at least one label you would like to see data for.";
+                togglePopup();
+    
+                return;
+            } else if (queryType === DataQuery.LabelPoints && selectedLabels.length > 1) {
+                popupTitle = "Invalid Label Selection";
+                popupMessage = "Please select at most one label for this data focus.";
+                togglePopup();
+    
+                return;
+            }
+        }   
 
         if (!validChartInfo.get(subject)!.get(chartType)!.list!.includes(queryType)) {
             popupTitle = "Invalid Chart Type";
@@ -350,7 +419,8 @@ const Analytics: React.FC<props> = (props) => {
             const selectionArrays: SelectionArrays = {
                 navigators: selectedNavigators,
                 surveys: selectedSurveys,
-                jobs: selectedJobs
+                jobs: selectedJobs,
+                labels: selectedLabels
             };
 
             const dateSelection: DateSelection = {
@@ -379,6 +449,8 @@ const Analytics: React.FC<props> = (props) => {
                         <label htmlFor='surveys-administered'>Administered Surveys </label>
                         <input type="radio" id='jobs-matched' name='subject' defaultChecked={subjectState === Subject.Jobs} onClick={() => { updateSubject(Subject.Jobs) }}></input>
                         <label htmlFor='jobs-matched'>Matched Jobs </label>
+                        <input type="radio" id='labels-used' name='subject' defaultChecked={subjectState === Subject.Labels} onClick={() => { updateSubject(Subject.Labels) }}></input>
+                        <label htmlFor='labels-used'>Used Labels </label>
 
                         <p>Date Range:</p>
                         <input type="radio" id='since' name='date' defaultChecked={dateGroupingState === DateGrouping.Since} onClick={() => { updateDateGrouping(DateGrouping.Since) }}></input>
@@ -405,7 +477,7 @@ const Analytics: React.FC<props> = (props) => {
                                 {
                                     navigatorGrouping === NavigatorGrouping.One &&
                                     <>
-                                        <br></br><input className='navigatorText' type='text' id='navigator-emails' placeholder={userEmail} onChange={(e) => { updateNavigatorEntry(e.target.value) }}></input>
+                                        <br></br><input className='navigatorText' type='text' id='navigator-emails' defaultValue={navigatorEntryState.length > 0 ? navigatorEntryState : undefined} placeholder={userEmail} onChange={(e) => { updateNavigatorEntry(e.target.value) }}></input>
                                         <p className='availableWarning'>*Enter a maximum of 5 emails, separate by commas if more than one.</p>
                                     </>
                                 }
@@ -437,10 +509,22 @@ const Analytics: React.FC<props> = (props) => {
                                 </select>
                                 <label htmlFor='data-focus'>Over the Date Range</label>
                             </>
-                        }   
+                        } 
 
                         {
-                            subjectState === Subject.Jobs &&
+                            subject === Subject.Labels &&
+                            <>
+                                <p>Data Focus: </p>
+                                <select id="data-focus" name="Query Types" defaultValue={labelQueryTypeState} onChange={(e) => { updateQueryType(parseInt(e.target.value)) }}>
+                                    <option value={DataQuery.LabelPoints}>{dataFocusTypes.labels.allPoints}</option>
+                                    <option value={DataQuery.LabelAverage}>{dataFocusTypes.labels.average}</option>
+                                </select>
+                                <label htmlFor='data-focus'>Over the Date Range</label>
+                            </>
+                        } 
+
+                        {
+                            subject === Subject.Jobs &&
                             <>
                                 <p>Available Jobs:</p>
                                 <p className='availableWarning'>*Select a maximum of 5 job opportunities.</p>
@@ -459,22 +543,48 @@ const Analytics: React.FC<props> = (props) => {
                                 </div>
                             </>
                         }
+
+                        {
+                            subject === Subject.Labels &&
+                            <>
+                                <p>Available Labels:</p>
+                                <p className='availableWarning'>*Select a maximum of 5 labels.</p>
+                                <div className='surveyList listViewer'>
+                                    <div className='listElements'>
+                                    {labels.length > 0 ?
+                                        labels.map((label, ind) => {
+                                            return <div key={ind}>
+                                                    <input type='checkbox' id={label.name} value={label.name} defaultChecked={selectedLabelsCheckState.has(label.name)} onChange={(e) => { handleClick(Subject.Labels, label.name, e.target.checked) }}></input>
+                                                    <label htmlFor={label.name}>{label.name}</label>
+                                                </div>
+                                        })
+                                        : <div>There are no labels at the moment</div>
+                                    }
+                                    </div>
+                                </div>
+                            </>
+                        }
                         
-                        <p>Available Surveys:</p>
-                        <p className='availableWarning'>*Select a maximum of 5 survey titles.</p>
-                        <div className='surveyList listViewer'>
-                            <div className='listElements'>
-                            {surveys.length > 0 ?
-                                surveys.map((survey, ind) => {
-                                    return <div key={ind}>
-                                            <input type='checkbox' id={survey.title} value={survey.title} defaultChecked={selectedSurveysCheckState.has(survey.title)} onChange={(e) => { handleClick(Subject.Surveys, survey.title, e.target.checked) }}></input>
-                                            <label htmlFor={survey.title}>{survey.title}</label>
-                                        </div>
-                                })
-                                : <div>There are no survey templates at the moment</div>
-                            }
-                            </div>
-                        </div>
+                        {
+                            subject !== Subject.Labels &&
+                            <>
+                                <p>Available Surveys:</p>
+                                <p className='availableWarning'>*Select a maximum of 5 survey titles.</p>
+                                <div className='surveyList listViewer'>
+                                    <div className='listElements'>
+                                    {surveys.length > 0 ?
+                                        surveys.map((survey, ind) => {
+                                            return <div key={ind}>
+                                                    <input type='checkbox' id={survey.title} value={survey.title} defaultChecked={selectedSurveysCheckState.has(survey.title)} onChange={(e) => { handleClick(Subject.Surveys, survey.title, e.target.checked) }}></input>
+                                                    <label htmlFor={survey.title}>{survey.title}</label>
+                                                </div>
+                                        })
+                                        : <div>There are no survey templates at the moment</div>
+                                    }
+                                    </div>
+                                </div>
+                            </>
+                        }
                         
                     </div>
                 </div>
@@ -486,30 +596,41 @@ const Analytics: React.FC<props> = (props) => {
                         <div className='chartTypeContainer center'>
                             <div className='chartInfoHeader center'>Chart Type</div><br></br>
                             <div className='generateBox center'>
-                            {
-                                subjectState === Subject.Surveys &&
-                                <>
-                                    <select id="chart-types" defaultValue={surveyChartTypeState} name="Chart Types" onChange={(e) => {updateChartType(parseInt(e.target.value))}}>
-                                        <option value={Chart.Pie}>Pie</option>
-                                        <option value={Chart.Combo}>Combo</option>
-                                        <option value={Chart.Line}>Line</option>
-                                        <option value={Chart.Bar}>Bar</option>
-                                        <option value={Chart.Table}>Table</option>
-                                    </select>
-                                </>
-                            }
-                            {
-                                subjectState === Subject.Jobs &&
-                                <>
-                                    <select id="chart-types" defaultValue={jobChartTypeState} name="Chart Types" onChange={(e) => {updateChartType(parseInt(e.target.value))}}>
-                                        <option value={Chart.Pie}>Pie</option>
-                                        <option value={Chart.Line}>Line</option>
-                                        <option value={Chart.Bar}>Bar</option>
-                                        <option value={Chart.Table}>Table</option>
-                                        <option value={Chart.TreeMap}>Tree Map</option>
-                                    </select>
-                                </>
-                            }
+                                {
+                                    subjectState === Subject.Surveys &&
+                                    <>
+                                        <select id="chart-types" defaultValue={surveyChartTypeState} name="Chart Types" onChange={(e) => {updateChartType(parseInt(e.target.value))}}>
+                                            <option value={Chart.Pie}>Pie</option>
+                                            <option value={Chart.Combo}>Combo</option>
+                                            <option value={Chart.Line}>Line</option>
+                                            <option value={Chart.Bar}>Bar</option>
+                                            <option value={Chart.Table}>Table</option>
+                                        </select>
+                                    </>
+                                }
+                                {
+                                    subjectState === Subject.Jobs &&
+                                    <>
+                                        <select id="chart-types" defaultValue={jobChartTypeState} name="Chart Types" onChange={(e) => {updateChartType(parseInt(e.target.value))}}>
+                                            <option value={Chart.Pie}>Pie</option>
+                                            <option value={Chart.Line}>Line</option>
+                                            <option value={Chart.Bar}>Bar</option>
+                                            <option value={Chart.Table}>Table</option>
+                                            <option value={Chart.TreeMap}>Tree Map</option>
+                                        </select>
+                                    </>
+                                }
+                                {
+                                    subjectState === Subject.Labels &&
+                                    <>
+                                        <select id="chart-types" defaultValue={labelChartTypeState} name="Chart Types" onChange={(e) => {updateChartType(parseInt(e.target.value))}}>
+                                            <option value={Chart.Line}>Line</option>
+                                            <option value={Chart.Bar}>Bar</option>
+                                            <option value={Chart.Table}>Table</option>
+                                            <option value={Chart.Scatter}>Scatter Plot</option>
+                                        </select>
+                                    </>
+                                }
                                 <br></br><br></br>
                                 <button className='generate-button' onClick={generateChart}>Generate</button>
                             </div>

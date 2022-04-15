@@ -60,7 +60,7 @@ const App: React.FC = () => {
                         appDispatch(setSurveys(await getSurveys()));
                         appDispatch(setSurveyResponses(await getSurveyResponses()));
                     })();
-                } else {
+                } else if ((await getUser(authInstance.currentUser?.uid!))?.permissionLevel === PermissionLevel.Navigator) {
                     (async () => {
                         appDispatch(setLabels(await getLabels()));
                         appDispatch(setSurveys(await getSurveys()));

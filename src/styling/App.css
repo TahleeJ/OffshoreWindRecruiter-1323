@@ -723,6 +723,28 @@ textarea {
   text-align: left;
 }
 
+#surveyHome .surveyCreator .createdQuestion .shiftUp {
+  position: absolute;
+  left: -40px;
+  opacity: 0;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+#surveyHome .surveyCreator .createdQuestion .shiftDown {
+  position: absolute;
+  left: -60px;
+  top: 40px;
+  opacity: 0;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+#surveyHome .surveyCreator .createdQuestion:hover .shiftUp,
+#surveyHome .surveyCreator .createdQuestion:hover .shiftDown {
+  opacity: 1;
+}
+
 #surveyHome .surveyCreator .createdQuestion .header {
   display: -webkit-box;
   display: -ms-flexbox;

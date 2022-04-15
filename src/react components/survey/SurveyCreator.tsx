@@ -184,7 +184,7 @@ const SurveyCreator: React.FC = () => {
             const cloneQuestions = lodash.cloneDeep(reduxSurveyData.questions);
             cloneQuestions.forEach(q => setHash(q));
 
-            setDesc(reduxSurveyData.description)
+            setDesc(reduxSurveyData.description);
             setTitle(reduxSurveyData.title);
             setQuestions(cloneQuestions);
         }
@@ -204,6 +204,8 @@ const SurveyCreator: React.FC = () => {
                         <div className="createdQuestion" key={qIndex}>
                             <div>
                                 <div className="header">
+                                    {(qIndex > 0) && <button className='shiftUp' onClick={() => moveQuestion(qIndex, qIndex - 1)}>Up</button>}
+                                    {(qIndex < questions.length - 1) && <button className='shiftDown' onClick={() => moveQuestion(qIndex, qIndex + 1)}>Down</button>}
                                     <input type='text' className="prompt" value={q.prompt} placeholder="Question Prompt..." onChange={(e) => changeQuestionPrompt(qIndex, e.target.value)} />
                                     <div className="questionType">
                                         <select name="questionType" title="Question Type" onChange={e => changeQuestionType(qIndex, e.target.selectedIndex)} value={q.questionType}>

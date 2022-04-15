@@ -1248,6 +1248,15 @@ textarea {
     font-size: $large-font-size;
     overflow-y: auto;
 
+    select {
+        font-size: 18px;
+    }
+
+    p {
+        color: #1c5380;
+        font-weight: bold;
+    }
+
     .topGrid {
         display: flex;
         flex-wrap: wrap;
@@ -1269,14 +1278,8 @@ textarea {
     .middleColumn.left {
         flex: 1 1 40%;
 
-        .listViewer.top {
-            max-height: 25%;
-        }
-    }
-
-    .middleColumn.left {
-        .listViewer.bottom {
-            max-height: 75%;
+        .listViewer {
+            max-height: 100%;
         }
     }
 
@@ -1284,18 +1287,15 @@ textarea {
         flex: 1 1 60%;
 
         .listViewer.top {
-            max-height: 35%;
+            max-height: calc(30% - 3.5px);
         }
     }
 
     .middleColumn.right {
         .listViewer.bottom {
-            max-height: 65%;
+            max-height: calc(70% - 3.5px);
+            overflow: auto;
         }
-    }
-
-    select {
-        font-size: 18px;
     }
 
     .navigatorText {
@@ -1306,12 +1306,35 @@ textarea {
         text-align: center;
     }
 
+    .availableWarning {
+        color: red;
+        font-weight: normal;
+    }
+
     .surveyList {
         .listViewer {
             height: 50%;
             overflow: auto;
             text-align: left;
         }
+    }
+
+    .chartGenerationContainer {
+        display: flex;
+        height: calc(100% - 40px); 
+    }
+
+    .chartInfoHeader {
+        color: #1c5380;
+        font-weight: bold;
+    }
+
+    .chartTypeContainer {
+        width: 50%;
+        border-style: none solid none none;
+        border-left-width: 10px;
+        border-color: $mainColor;
+        padding: 7px; 
     }
 
     .generateBox {
@@ -1326,8 +1349,21 @@ textarea {
         font-size: 18px;
     }
 
-    .chartWait {
-        font-style: italic;
+    .chartValidityContainer {
+        width: 50%;
+        padding: 7px;
+        overflow: auto;
+    }
+
+    .validFocusesHeader {
+        color: green;
+        font-weight: bold;
+    }
+
+    .validFocuses {
+        color: black;
+        font-weight: normal;
+        white-space: pre-wrap;
     }
 
     .popup {
@@ -1340,11 +1376,9 @@ textarea {
     }
 
     .chartContainer {
-        min-height: 600px;
-        min-width: 900px;
+        min-height: 100%;
+        width: 100%;
         height: auto;
-        width: auto;
-        overflow: auto;
         margin: auto;
     }
 

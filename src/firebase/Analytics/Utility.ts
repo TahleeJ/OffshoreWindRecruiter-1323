@@ -1,25 +1,25 @@
 // List of query functions recognized by BigQuery
 export const queryFunctions = [
-    "get_all_title_day",
-    "get_all_day",
-    "get_all_titles",
-    "get_each_title_day",
-    "get_each_day",
-    "get_each_titles",
-    "get_navigator_title_day",
-    "get_navigator_day",
-    "get_navigator_titles",
-    "get_total_job",
-    "get_positive_job",
-    "get_negative_job",
-    "get_average_job",
-    "get_highest_average_job",
-    "get_lowest_average_job",
-    "get_average_survey",
-    "get_positive_survey",
-    "get_negative_survey",
-    "get_all_label",
-    "get_average_label"
+    'get_all_title_day',
+    'get_all_day',
+    'get_all_titles',
+    'get_each_title_day',
+    'get_each_day',
+    'get_each_titles',
+    'get_navigator_title_day',
+    'get_navigator_day',
+    'get_navigator_titles',
+    'get_total_job',
+    'get_positive_job',
+    'get_negative_job',
+    'get_average_job',
+    'get_highest_average_job',
+    'get_lowest_average_job',
+    'get_average_survey',
+    'get_positive_survey',
+    'get_negative_survey',
+    'get_all_label',
+    'get_average_label'
 ];
 
 // List of query functions in a more operational format
@@ -94,7 +94,11 @@ export interface SerializedEntry {
     surveyFrequency?: number,
     jobName?: string,
     matchFrequency?: number,
-    score?: number
+    score?: number,
+    labelName?: string,
+    labelFrequency?: number,
+    linearScore?: number,
+    percentileScore?: number
 }
 
 export interface ValidChart {
@@ -104,24 +108,24 @@ export interface ValidChart {
 
 export const dataFocusTypes = {
     surveys: {
-        titleDay: "Each selected survey per day",
-        perDay: "All surveys per day",
-        titles: "All surveys"
-    }, 
-    jobs: {
-        totalPerJob: "Total matches for each selected job",
-        totalPositivePerJob: "Total positive matches of each selected job",
-        totalNegativePerJob: "Total negative matches of each selected job",
-        averagePerJob: "Average score of each selected job",
-        highestAverage: "10 highest scoring jobs",
-        lowestAverage: "10 lowest scoring jobs",
-        averagePerSurvey: "Average score for each selected survey",
-        totalPositivePerSurvey: "Total positive matches for each selected survey",
-        totalNegativePerSurvey: "Total negative matches for each selected survey"
+        titleDay: 'Each selected survey per day',
+        perDay: 'All surveys per day',
+        titles: 'All surveys'
     },
-    labels : {
-        allPoints: "Each linear/percentile score occurrence for the selected label",
-        average: "Each linear/percentile average for each selected label"
+    jobs: {
+        totalPerJob: 'Total matches for each selected job',
+        totalPositivePerJob: 'Total positive matches of each selected job',
+        totalNegativePerJob: 'Total negative matches of each selected job',
+        averagePerJob: 'Average score of each selected job',
+        highestAverage: '10 highest scoring jobs',
+        lowestAverage: '10 lowest scoring jobs',
+        averagePerSurvey: 'Average score for each selected survey',
+        totalPositivePerSurvey: 'Total positive matches for each selected survey',
+        totalNegativePerSurvey: 'Total negative matches for each selected survey'
+    },
+    labels: {
+        allPoints: 'Each linear/percentile score occurrence for the selected label',
+        average: 'Each linear/percentile average for each selected label'
     }
 };
 
@@ -136,41 +140,37 @@ const surveyValidChartMap = new Map<Chart, ValidChart>();
 
 surveyValidChartMap.set(Chart.Pie, {
     list: [
-        DataQuery.AllTitles, 
-        DataQuery.OneTitles, 
-        DataQuery.AllTitlesPerDay, 
+        DataQuery.AllTitles,
+        DataQuery.OneTitles,
+        DataQuery.AllTitlesPerDay,
         DataQuery.OneTitlesPerDay],
     text: `${dataFocusTypes.surveys.titleDay}\n` +
         `${dataFocusTypes.surveys.titles}`
 });
-
 surveyValidChartMap.set(Chart.Combo, {
     list: [
-        DataQuery.AllTitlesPerDay, 
+        DataQuery.AllTitlesPerDay,
         DataQuery.OneTitlesPerDay],
     text: `${dataFocusTypes.surveys.titleDay}`
 });
-
 surveyValidChartMap.set(Chart.Line, {
     list: [
-        DataQuery.AllTitlesPerDay, 
-        DataQuery.OneTitlesPerDay, 
-        DataQuery.AllPerDay, 
+        DataQuery.AllTitlesPerDay,
+        DataQuery.OneTitlesPerDay,
+        DataQuery.AllPerDay,
         DataQuery.OnePerDay],
     text: `${dataFocusTypes.surveys.titleDay}\n` +
         `${dataFocusTypes.surveys.perDay}`
 });
-
 surveyValidChartMap.set(Chart.Bar, {
     list: [
         DataQuery.AllTitlesPerDay,
-        DataQuery.OneTitlesPerDay, 
-        DataQuery.AllPerDay, 
+        DataQuery.OneTitlesPerDay,
+        DataQuery.AllPerDay,
         DataQuery.OnePerDay],
     text: `${dataFocusTypes.surveys.titleDay}\n` +
         `${dataFocusTypes.surveys.perDay}`
 });
-
 surveyValidChartMap.set(Chart.Table, {
     list: allDataQueries,
     text: 'All focuses are valid for this chart type.'
@@ -181,10 +181,10 @@ const jobValidChartMap = new Map<Chart, ValidChart>();
 
 jobValidChartMap.set(Chart.Pie, {
     list: [
-        DataQuery.TotalJobMatches, 
-        DataQuery.PositiveJobMatches, 
-        DataQuery.NegativeJobMatches, 
-        DataQuery.SurveyPositiveJobMatches, 
+        DataQuery.TotalJobMatches,
+        DataQuery.PositiveJobMatches,
+        DataQuery.NegativeJobMatches,
+        DataQuery.SurveyPositiveJobMatches,
         DataQuery.SurveyNegativeJobMatches],
     text: `${dataFocusTypes.jobs.totalPerJob}\n` +
         `${dataFocusTypes.jobs.totalPositivePerJob}\n` +
@@ -192,15 +192,14 @@ jobValidChartMap.set(Chart.Pie, {
         `${dataFocusTypes.jobs.totalPositivePerSurvey}\n` +
         `${dataFocusTypes.jobs.totalNegativePerSurvey}`
 });
-
 jobValidChartMap.set(Chart.Line, {
     list: [
-        DataQuery.TotalJobMatches, 
-        DataQuery.PositiveJobMatches, 
-        DataQuery.NegativeJobMatches, 
-        DataQuery.AverageJobMatches, 
-        DataQuery.AverageSurveyMatches, 
-        DataQuery.SurveyPositiveJobMatches, 
+        DataQuery.TotalJobMatches,
+        DataQuery.PositiveJobMatches,
+        DataQuery.NegativeJobMatches,
+        DataQuery.AverageJobMatches,
+        DataQuery.AverageSurveyMatches,
+        DataQuery.SurveyPositiveJobMatches,
         DataQuery.SurveyNegativeJobMatches],
     text: `${dataFocusTypes.jobs.totalPerJob}\n` +
         `${dataFocusTypes.jobs.totalPositivePerJob}\n` +
@@ -210,20 +209,17 @@ jobValidChartMap.set(Chart.Line, {
         `${dataFocusTypes.jobs.totalPositivePerSurvey}\n` +
         `${dataFocusTypes.jobs.totalNegativePerSurvey}`
 });
-
 jobValidChartMap.set(Chart.Bar, {
     list: allDataQueries,
     text: 'All focuses are valid for this chart type.'
 });
-
 jobValidChartMap.set(Chart.Table, {
     list: allDataQueries,
     text: 'All focuses are valid for this chart type.'
 });
-
 jobValidChartMap.set(Chart.TreeMap, {
     list: [
-        DataQuery.HighestAverageJobMatches, 
+        DataQuery.HighestAverageJobMatches,
         DataQuery.LowestAverageJobMatches],
     text: `${dataFocusTypes.jobs.highestAverage}\n` +
         `${dataFocusTypes.jobs.lowestAverage}`
@@ -237,18 +233,15 @@ labelValidChartMap.set(Chart.Line, {
         DataQuery.LabelAverage],
     text: `${dataFocusTypes.labels.average}`
 });
-
 labelValidChartMap.set(Chart.Bar, {
     list: [
         DataQuery.LabelAverage],
     text: `${dataFocusTypes.labels.average}`
 });
-
 labelValidChartMap.set(Chart.Table, {
     list: allDataQueries,
     text: 'All focuses are valid for this chart type.'
 });
-
 labelValidChartMap.set(Chart.Scatter, {
     list: [
         DataQuery.LabelPoints],
@@ -261,7 +254,7 @@ validChartInfo.set(Subject.Labels, labelValidChartMap);
 
 /**
  * Turns the BigQuery provided dates into a more readable format
- * 
+ *
  * @param date the event date sent back from BigQuery
  * @returns the human-friendly date format
  */
@@ -284,19 +277,19 @@ export const today = () => {
     const todayString = `${year}-${month}-${day}`;
 
     return todayString;
-}
+};
 
 function getPastStart(dayDifference: number) {
-    const tempToday = today().replaceAll("-", "");
+    const tempToday = today().replaceAll('-', '');
     const tempYear = parseInt(tempToday.substring(0, 4));
     const tempMonth = parseInt(tempToday.substring(4, 6));
     const tempDay = parseInt(tempToday.substring(6));
 
-    var pastYear = tempYear;
-    var pastMonth = tempMonth;
-    var pastDay = tempDay;
+    let pastYear = tempYear;
+    let pastMonth = tempMonth;
+    let pastDay = tempDay;
 
-    var difference = pastDay - dayDifference;
+    const difference = pastDay - dayDifference;
 
     if (difference <= 0) {
         pastDay = 31 + difference;
@@ -310,27 +303,27 @@ function getPastStart(dayDifference: number) {
         pastDay = difference;
     }
 
-    const startDate = `${pastYear}${((pastMonth < 10) ? "0" : "") + pastMonth}${((pastDay < 10) ? "0" : "") + pastDay}`;
+    const startDate = `${pastYear}${((pastMonth < 10) ? '0' : '') + pastMonth}${((pastDay < 10) ? '0' : '') + pastDay}`;
 
     return startDate;
 }
 
 export function determineStartDate(dateGrouping: DateGrouping, dayDate: string, sinceDate: string) {
-    var startDate;
+    let startDate;
 
     switch (dateGrouping) {
-        case DateGrouping.Day:
-            startDate = dayDate;
-            break;
-        case DateGrouping.Week:
-            startDate = getPastStart(6);
-            break;
-        case DateGrouping.Month:
-            startDate = getPastStart(30);
-            break;
-        case DateGrouping.Since:
-            startDate = sinceDate;
-            break;
+    case DateGrouping.Day:
+        startDate = dayDate;
+        break;
+    case DateGrouping.Week:
+        startDate = getPastStart(6);
+        break;
+    case DateGrouping.Month:
+        startDate = getPastStart(30);
+        break;
+    case DateGrouping.Since:
+        startDate = sinceDate;
+        break;
     }
 
     return startDate;

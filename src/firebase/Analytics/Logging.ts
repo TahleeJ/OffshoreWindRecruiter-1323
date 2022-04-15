@@ -1,17 +1,18 @@
-import { analyticsInstance } from "../Firebase";
-import { logEvent } from "@firebase/analytics";
-import { getSurvey } from "../Queries/SurveyQueries";
-import { RecommendedJob } from "../Types";
-import { getJobOpp } from "../Queries/JobQueries";
+import { analyticsInstance } from '../Firebase';
+import { logEvent } from '@firebase/analytics';
+import { getSurvey } from '../Queries/SurveyQueries';
+import { RecommendedJob } from '../Types';
+import { getJobOpp } from '../Queries/JobQueries';
+import { getLabel } from '../Queries/LabelQueries';
 
 /**
  * Custom logging function to track the surveys created
- * 
- * @param title 
- * @param user 
+ *
+ * @param title
+ * @param user
  */
 export function logSurveyCreation(title: string, user: string) {
-    logEvent(analyticsInstance, "survey_created", {
+    logEvent(analyticsInstance, 'survey_created', {
         created_survey_title: title,
         survey_created_by: user,
         debug_mode: true
@@ -20,12 +21,12 @@ export function logSurveyCreation(title: string, user: string) {
 
 /**
  * Custom logging function to track the surveys administered
- * 
- * @param title 
- * @param navigator 
+ *
+ * @param title
+ * @param navigator
  */
 export function logSurveyAdministered(title: string, navigator: string) {
-    logEvent(analyticsInstance, "survey_administered", {
+    logEvent(analyticsInstance, 'survey_administered', {
         administered_survey_title: title,
         administering_navigator: navigator,
         debug_mode: true
@@ -39,7 +40,7 @@ export async function logJobsMatched(surveyId: string, recommendedJobs: Recommen
         const jobOpp = await getJobOpp(recJob.jobOppId);
         const score = recJob.score;
 
-        logEvent(analyticsInstance, "job_matched", {
+        logEvent(analyticsInstance, 'job_matched', {
             administered_survey_title: surveyName,
             job_title: jobOpp.jobName,
             matched_score: score,
@@ -48,10 +49,15 @@ export async function logJobsMatched(surveyId: string, recommendedJobs: Recommen
     }
 }
 
-export async function logLabelsMatched(labelScores: Map<string, [number, number]>) {
-    console.log(labelScores);
+export async function logLabelsUsed(labelScores: [string, [number, number]][]) {
+    for (const [key, value] of labelScores) {
+        const labelName = (await getLabel(key)).name;
 
-    // for (const [key, value] of labelScores) {
-    //     console.log(`${key}: ${value}`);
-    // }
+        logEvent(analyticsInstance, 'label_used', {
+            label_title: labelName,
+            linear_score: value[0],
+            percentile_score: value[1],
+            debug_mode: true
+        });
+    }
 }

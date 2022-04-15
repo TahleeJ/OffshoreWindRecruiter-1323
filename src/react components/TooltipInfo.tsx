@@ -13,7 +13,7 @@ const ToolTipInfo: React.FC<props> = (props) => {
         <Tooltip trigger={['click']} placement='bottom' overlay={props.textarea}>
             <i className='fas fa-info info'></i>
         </Tooltip>
-    )
-}
+    );
+};
 
 export default ToolTipInfo;

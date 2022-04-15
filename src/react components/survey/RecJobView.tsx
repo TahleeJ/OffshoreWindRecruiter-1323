@@ -8,10 +8,18 @@ interface props {
     jobs: RecommendedJobWithData[];
 }
 
+let first = false;
+
 const RecJobView: React.FC<props> = (p) => {
     var doc = new jsPDF();
     return (
         <>
+            <button onClick={() => { 
+                if (!first) {
+                    first = true;
+                    getPDF();
+                }
+            }}>Download Results</button>
             {/* <span>Here are some job recommendations that align with your survey answers:</span> */}
             <div className = "printThis">
             {p.jobs.map((recommendation, index) => (
@@ -43,9 +51,6 @@ const RecJobView: React.FC<props> = (p) => {
                     </div> */}
                 </div>
             ))}
-            <button onClick={() => { 
-                getPDF()
-            }}>Download Results</button>
             </div>
         </>
     )
@@ -77,13 +82,10 @@ export default RecJobView;
         pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
         
         
-        // for (var i = 1; i <= totalPDFPages; i++) { 
-        //     pdf.addPage([PDF_Width, PDF_Height]);
-        //     pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
-        // }
-
-        pdf.addPage([PDF_Width, PDF_Height]);
-        pdf.text("yes", 500, 50);
+        for (var i = 1; i <= totalPDFPages; i++) { 
+            pdf.addPage([PDF_Width, PDF_Height]);
+            pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
+        }
         
         pdf.save("HTML-Document.pdf");
     });

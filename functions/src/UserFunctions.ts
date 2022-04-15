@@ -8,6 +8,7 @@ import { UserRecord } from 'firebase-admin/auth';
 
 /**
  * Utility function for getting a user's permission level
+ *
  * @param uid Uid of the user
  * @returns The user's permission level
  */
@@ -46,7 +47,7 @@ export const checkAdmin = functions.https.onCall(async (request, context) => {
  * Given function caller's required privileges, a selected user can
  * remove or give another user administrator privileges
  *
- * @param request Parameters sent through function call:
+ * @param request Arguments sent through function call:
  * {
  *      userEmail: string,
  *      newPermissionLevel: integer

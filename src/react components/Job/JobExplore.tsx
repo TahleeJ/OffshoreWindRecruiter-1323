@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { hasId, JobOpp } from "../../firebase/Types";
-import { useAppSelector } from "../../redux/hooks";
-import ListViewer from "../generic/ListViewer";
-import Section from "../generic/Section";
-import JobView from "./JobView";
+import React, { useEffect, useState } from 'react';
+import { hasId, JobOpp } from '../../firebase/Types';
+import { useAppSelector } from '../../redux/hooks';
+import ListViewer from '../generic/ListViewer';
+import Section from '../generic/Section';
+import JobView from './JobView';
+
 
 interface props {
 
 }
 
-const JobExplore: React.FC<props> = p => {
+
+const JobExplore: React.FC<props> = props => {
     const [currentJob, setCurrentJob] = useState<(JobOpp & hasId)>();
     const [filterLabelIds, setFilterLabelIds] = useState<string[]>([]);
     const [filterByALL, setAllRequirement] = useState(false);
@@ -21,23 +23,23 @@ const JobExplore: React.FC<props> = p => {
         if (filterByALL) {
             return jobs.filter(job => {
                 return filterLabelIds.every(fli => job.labelIds.includes(fli));
-            })
+            });
         }
         return jobs.filter(job => {
             return filterLabelIds.some(fli => job.labelIds.includes(fli));
-        })
+        });
     })();
     const toggleLabel = (id: string) => {
         if (filterLabelIds.indexOf(id) === -1)
-            setFilterLabelIds([...filterLabelIds, id])
+            setFilterLabelIds([...filterLabelIds, id]);
         else
-            setFilterLabelIds(filterLabelIds.filter(fli => fli !== id))
-        console.log("added")
-    }
+            setFilterLabelIds(filterLabelIds.filter(fli => fli !== id));
+        console.log('added');
+    };
 
     useEffect(() => {
-        setCurrentJob((filteredJobs.length > 0) ? filteredJobs[0] : undefined)
-    }, [filterLabelIds])
+        setCurrentJob((filteredJobs.length > 0) ? filteredJobs[0] : undefined);
+    }, [filterLabelIds]);
 
     return (
         <div className="jobExplore container">
@@ -45,7 +47,7 @@ const JobExplore: React.FC<props> = p => {
                 <div className="left">
                     <ListViewer>
                         {labels.map((l, i) => (
-                            <div className={"label" + (filterLabelIds.indexOf(l.id) !== -1 ? " active" : "")} onClick={() => toggleLabel(l.id)} key={i}>
+                            <div className={'label' + (filterLabelIds.indexOf(l.id) !== -1 ? ' active' : '')} onClick={() => toggleLabel(l.id)} key={i}>
                                 {l.name}
                             </div>
                         ))}
@@ -54,7 +56,7 @@ const JobExplore: React.FC<props> = p => {
                 <div className="right">
                     <div>
                         <span>Filter jobs to have </span>
-                        <button className="allChoice" onClick={() => setAllRequirement(!filterByALL)}>{filterByALL ? "ALL" : "AT LEAST ONE"} </button>
+                        <button className="allChoice" onClick={() => setAllRequirement(!filterByALL)}>{filterByALL ? 'ALL' : 'AT LEAST ONE'} </button>
                         <span> of the selected labels</span>
                     </div>
                     <br />
@@ -67,7 +69,7 @@ const JobExplore: React.FC<props> = p => {
                 <div className="left">
                     <ListViewer>
                         {filteredJobs.map((j, i) => (
-                            <div className={"jobOpp" + (currentJob === j ? " active" : "")} onClick={() => setCurrentJob(j)} key={i}>
+                            <div className={'jobOpp' + (currentJob === j ? ' active' : '')} onClick={() => setCurrentJob(j)} key={i}>
                                 {j.jobName}
                                 <span className="labelCount">{labels.filter(l => j.labelIds.findIndex(jli => jli === l.id) !== -1).length}</span>
                             </div>
@@ -76,15 +78,15 @@ const JobExplore: React.FC<props> = p => {
                 </div>
                 <div className="right">
                     <div className="jobHolder">
-                        {currentJob ?
-                            <JobView jobOpp={currentJob} />
-                            : "Select a job from the left list and/or filter by "
+                        {currentJob
+                            ? <JobView jobOpp={currentJob} />
+                            : 'Select a job from the left list and/or filter by '
                         }
                     </div>
                 </div>
             </Section>
         </div>
-    )
-}
+    );
+};
 
 export default JobExplore;

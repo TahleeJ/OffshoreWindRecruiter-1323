@@ -130,6 +130,19 @@ textarea {
   height: calc(100% - 38px);
 }
 
+.listViewer .title .info {
+  color: grey;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 5px;
+  position: absolute;
+  top: 5px;
+}
+
+.listViewer .title .info:hover {
+  color: #7ba1ff;
+}
+
 .listViewer .addNew {
   position: absolute;
   right: 3px;
@@ -1027,6 +1040,23 @@ textarea {
   padding-bottom: 5px;
 }
 
+#promoteUser .inputContainer .infoIcon {
+  display: inline;
+}
+
+#promoteUser .inputContainer .info {
+  display: inline;
+  color: grey;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 5px;
+  padding-bottom: 10px;
+}
+
+#promoteUser .inputContainer .info:hover {
+  color: #7ba1ff;
+}
+
 #promoteUser .inputContainer input {
   width: 350px;
   height: 30px;
@@ -1325,6 +1355,15 @@ textarea {
   overflow-y: auto;
 }
 
+#analytics select {
+  font-size: 18px;
+}
+
+#analytics p {
+  color: #1c5380;
+  font-weight: bold;
+}
+
 #analytics .topGrid {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1353,12 +1392,8 @@ textarea {
           flex: 1 1 40%;
 }
 
-#analytics .middleColumn.left .listViewer.top {
-  max-height: 25%;
-}
-
-#analytics .middleColumn.left .listViewer.bottom {
-  max-height: 75%;
+#analytics .middleColumn.left .listViewer {
+  max-height: 100%;
 }
 
 #analytics .middleColumn.right {
@@ -1368,15 +1403,12 @@ textarea {
 }
 
 #analytics .middleColumn.right .listViewer.top {
-  max-height: 35%;
+  max-height: calc(30% - 3.5px);
 }
 
 #analytics .middleColumn.right .listViewer.bottom {
-  max-height: 65%;
-}
-
-#analytics select {
-  font-size: 18px;
+  max-height: calc(70% - 3.5px);
+  overflow: auto;
 }
 
 #analytics .navigatorText {
@@ -1387,10 +1419,33 @@ textarea {
   text-align: center;
 }
 
+#analytics .availableWarning {
+  color: red;
+  font-weight: normal;
+}
+
 #analytics .surveyList.listViewer {
   height: 50%;
   overflow: auto;
   text-align: left;
+}
+
+#analytics .chartGenerationContainer {
+  display: flex;
+  height: calc(100% - 40px); 
+}
+
+#analytics .chartInfoHeader {
+  color: #1c5380;
+  font-weight: bold;
+}
+
+#analytics .chartTypeContainer {
+  width: 50%;
+  border-style: none solid none none;
+  border-left-width: 10px;
+  border-color: #7ba1ff; /* $mainColor */
+  padding: 7px;
 }
 
 #analytics .generateBox {
@@ -1405,8 +1460,21 @@ textarea {
   font-size: 18px;
 }
 
-#analytics .chartWait {
-  font-style: italic;
+#analytics .chartValidityContainer {
+  width: 50%;
+  padding: 7px;
+  overflow: auto;
+}
+
+#analytics .validFocusesHeader {
+  color: green;
+  font-weight: bold;
+}
+
+#analytics .validFocuses {
+  color: black;
+  font-weight: normal;
+  white-space: pre-wrap;
 }
 
 #analytics .popup {
@@ -1419,11 +1487,9 @@ textarea {
 }
 
 #analytics .chartContainer {
-  min-height: 600px;
-  min-width: 900px;
+  min-height: 100%;
+  width: 100%;
   height: auto;
-  width: auto;
-  overflow: auto;
   margin: auto;
 }
 

@@ -1,14 +1,14 @@
 import * as functions from 'firebase-functions';
 
 import { auth } from './Utility';
-import { errors } from "./Errors";
+import { errors } from './Errors';
 
-const {BigQuery} = require("@google-cloud/bigquery");
+const { BigQuery } = require('@google-cloud/bigquery');
 const bigquery = new BigQuery();
 
 export const getBigQueryData = functions.https.onCall(async (request: { queryString: string, navigatorEmail?: string }, context) => {
-    if (request.queryString.includes("navigator")) {
-        if (request.navigatorEmail == null || request.navigatorEmail == undefined) {
+    if (request.queryString.includes('navigator')) {
+        if (request.navigatorEmail == null || request.navigatorEmail === undefined) {
             throw errors.illegalArgument.navigatorEmail;
         }
 
@@ -17,11 +17,11 @@ export const getBigQueryData = functions.https.onCall(async (request: { queryStr
         } catch (error) {
             throw errors.invalidUser;
         }
-    }  
+    }
 
     const options = {
         query: request.queryString,
-        location: "US"
+        location: 'US'
     };
 
     // Run the query as a job
@@ -30,7 +30,7 @@ export const getBigQueryData = functions.https.onCall(async (request: { queryStr
     // Wait for the query to finish
     const [rows] = await job.getQueryResults();
 
-    var data: string[] = [];
+    const data: string[] = [];
 
     rows.forEach((row: any) => data.push(JSON.stringify(row)));
 

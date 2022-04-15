@@ -57,13 +57,13 @@ const ResponseView: React.FC = () => {
                     survey.questions.map((q, i) =>
                         answerMap.has(q.hash)
                             ? (
-                                <>
+                                <React.Fragment key={i}>
                                     <div className='question'>{q.prompt}</div>
                                     <div>{q.questionType === QuestionType.MultipleChoice
                                         ? q.answers[answers[i] as number]?.text
                                         : answers[i]
                                     }</div>
-                                </>
+                                </React.Fragment>
                             )
                             : <div className='question'>This question was added after this response was taken. </div>
                     )

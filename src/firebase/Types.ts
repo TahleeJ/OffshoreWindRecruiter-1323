@@ -5,20 +5,27 @@ export type hasId = { id: id };
 export interface SurveyTemplate {
     title: string
     description: string
-    questions: SurveyQuestion[]
+    components: SurveyComponent[]
 }
 
-export interface SurveyQuestion {
+export interface SurveyComponent {
     prompt: string
     answers: SurveyAnswer[]
-    questionType: QuestionType
     hash: number
+
+    componentType: ComponentType
 }
 
-export enum QuestionType {
-    MultipleChoice = 0,
-    Scale = 1,
-    FreeResponse = 2
+// Flag enum for
+export enum ComponentType {
+    Text = 1,
+    Image = 2,
+
+    MultipleChoice = 4,
+    Scale = 8,
+    FreeResponse = 16,
+
+    NoLabel = Text | Image | FreeResponse
 }
 
 export interface SurveyAnswer {

@@ -88,6 +88,7 @@ const AdminManager: React.FC = () => {
 
                 if (result !== 'Update success!') {
                     errorEmailsMessage = errorEmailsMessage + `${email}: ${result}\n`;
+                    console.log(result)
 
                     togglePopup();
                 } else {

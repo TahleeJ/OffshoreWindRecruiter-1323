@@ -19,7 +19,7 @@ export async function getSurveys() {
  * Retrieves a specific survey from Firestore given a survey id
  *
  * @param id the id of the desired survey
- * @returns a survey object, which contains: description, questions array, title
+ * @returns a survey object, which contains: description, components array, title
  */
 export async function getSurvey(id: id) {
     const response = await firestore.getDoc(firestore.doc(db.Surveys, id));

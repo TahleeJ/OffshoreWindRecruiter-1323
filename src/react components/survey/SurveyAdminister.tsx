@@ -1,6 +1,6 @@
 import lodash from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { hasId, QuestionType, AdministeredSurveyResponse, SurveyTemplate } from '../../firebase/Types';
+import { hasId, ComponentType, AdministeredSurveyResponse, SurveyTemplate } from '../../firebase/Types';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changeOperation, changePage, OperationType, PageType, submitSurveyResponse } from '../../redux/navigationSlice';
 import Prompt from '../generic/Prompt';
@@ -58,7 +58,7 @@ const SurveyAdminister: React.FC = (p: props) => {
     };
 
     useEffect(() => {
-        setAnswers(reduxSurveyData.questions.map(q => ''));
+        setAnswers(reduxSurveyData.components.map(q => ''));
     }, [reduxSurveyData]);
 
     return (
@@ -67,26 +67,35 @@ const SurveyAdminister: React.FC = (p: props) => {
                 <div className='surveyTitle'>{reduxSurveyData.title}</div>
                 <div className='description'>{reduxSurveyData.description}</div>
                 <div className='questions'>
-                    <div className={'question ' + QuestionType.FreeResponse}>
+                    <div className={'question ' + ComponentType.FreeResponse}>
                         <div className='title'>Name:</div>
                         <input type="text" placeholder='John Doe...' value={name} onChange={(e) => setName(e.target.value)} />
                     </div>
-                    <div className={'question ' + QuestionType.FreeResponse}>
+                    <div className={'question ' + ComponentType.FreeResponse}>
                         <div className='title'>Phone Number (optional):</div>
                         <input type="text" placeholder='111 222 3456' value={phone} onChange={(e) => setPhone(e.target.value)} />
                     </div>
-                    <div className={'question ' + QuestionType.FreeResponse}>
+                    <div className={'question ' + ComponentType.FreeResponse}>
                         <div className='title'>Email (optional):</div>
                         <input type="text" placeholder='example@email.com' value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
-                    {reduxSurveyData.questions.map((question, qI) => {
+                    {reduxSurveyData.components.map((question, qI) => {
                         return (
-                            <div className={'question ' + QuestionType[question.questionType]} key={qI}>
-                                <div className='title'>{question.prompt}</div>
-                                {question.questionType === QuestionType.FreeResponse &&
+                            <div className={'question ' + ComponentType[question.componentType]} key={qI}>
+                                {question.componentType !== ComponentType.Image &&
+                                    <div className='title'>{question.prompt}</div>
+                                }
+
+                                {question.componentType === ComponentType.Text &&
+                                    <label> {question.prompt}</label>
+                                }
+                                {question.componentType === ComponentType.Image && question.prompt &&
+                                    <img src={question.prompt} alt="Image" />
+                                }
+                                {question.componentType === ComponentType.FreeResponse &&
                                     <textarea rows={5} placeholder='Answer...' value={answers[qI]} onChange={(e) => handleTextChange(qI, e.target.value)} />
                                 }
-                                {question.questionType === QuestionType.MultipleChoice &&
+                                {question.componentType === ComponentType.MultipleChoice &&
                                     <div className='answers'>
                                         {question.answers.map((answer, aI) => {
                                             return (
@@ -100,7 +109,7 @@ const SurveyAdminister: React.FC = (p: props) => {
                                         }
                                     </div>
                                 }
-                                {question.questionType === QuestionType.Scale &&
+                                {question.componentType === ComponentType.Scale &&
                                     <div className='answers'>
                                         Strongly Disagree
                                         {[0, 1, 2, 3, 4].map((index) => {

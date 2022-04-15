@@ -1,5 +1,5 @@
 import React from 'react';
-import { JobOpp, QuestionType, RecommendedJobWithData, AdministeredSurveyResponse } from '../../firebase/Types';
+import { JobOpp, ComponentType, RecommendedJobWithData, AdministeredSurveyResponse } from '../../firebase/Types';
 import { useAppSelector } from '../../redux/hooks';
 import RecJobView from './RecJobView';
 
@@ -29,10 +29,10 @@ const ResponseView: React.FC = () => {
             <div className='section'>
                 <div className='title'>Response:</div>
                 {
-                    survey?.questions.map((q, i) => (
+                    survey?.components.map((q, i) => (
                         <>
                             <div className='question'>{q.prompt}</div>
-                            <div>{q.questionType === QuestionType.MultipleChoice
+                            <div>{q.componentType === ComponentType.MultipleChoice
                                 ? q.answers[response.answers[i] as number]?.text
                                 : response.answers[i]
                             }</div>

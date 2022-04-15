@@ -1,7 +1,7 @@
 import * as firestore from 'firebase/firestore';
 
 import db from '../Firestore';
-import { hasId, id, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion, JobOpp } from '../Types';
+import { hasId, id, Label, SurveyTemplate, SurveyAnswer, SurveyComponent, JobOpp } from '../Types';
 import { editJobOpp } from './JobQueries';
 import { editSurvey, getSurveys } from './SurveyQueries';
 
@@ -93,15 +93,15 @@ export async function getJobReferencesToLabel(labelID: id) {
  * Returns any answers that are referencing a Label
  *
  * @param labelID Label to search for
- * @returns Map of Surveys to a map of Questions to an array of Answers that reference the Label
+ * @returns Map of Surveys to a map of Components to an array of Answers that reference the Label
  */
 export async function getSurveyReferencesToLabel(labelID: id) {
-    const relationMap = new Map<SurveyTemplate & hasId, Map<SurveyQuestion, SurveyAnswer[]>>();
+    const relationMap = new Map<SurveyTemplate & hasId, Map<SurveyComponent, SurveyAnswer[]>>();
 
     const surveys = await getSurveys();
     surveys.forEach(s => {
-        const foundQuestions = new Map<SurveyQuestion, SurveyAnswer[]>();
-        s.questions.forEach(q => {
+        const foundComponents = new Map<SurveyComponent, SurveyAnswer[]>();
+        s.components.forEach(q => {
             const foundAnswers: SurveyAnswer[] = [];
             q.answers.forEach(o => {
                 if (o.labelIds.includes(labelID))
@@ -109,11 +109,11 @@ export async function getSurveyReferencesToLabel(labelID: id) {
             });
 
             if (foundAnswers.length)
-                foundQuestions.set(q, foundAnswers);
+                foundComponents.set(q, foundAnswers);
         });
 
-        if (foundQuestions.size)
-            relationMap.set(s, foundQuestions);
+        if (foundComponents.size)
+            relationMap.set(s, foundComponents);
     });
 
     return relationMap;

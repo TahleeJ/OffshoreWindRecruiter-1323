@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 
 import { assertValidRequest, firestore } from './Utility';
 import { errors } from './Errors';
-import { ReturnedSurveyResponse, JobOpp, QuestionType, RecommendedJob, AdministeredSurveyResponse, SurveyTemplate } from '../../src/firebase/Types';
+import { ReturnedSurveyResponse, JobOpp, ComponentType, RecommendedJob, AdministeredSurveyResponse, SurveyTemplate } from '../../src/firebase/Types';
 import { Timestamp } from 'firebase-admin/firestore';
 
 
@@ -16,7 +16,7 @@ export const submitSurvey = functions.https.onCall(async (request: AdministeredS
     const jobOpps = (firestore.collection('JobOpps') as FirebaseFirestore.CollectionReference<JobOpp>).get(); // Start loading early
     const survey = (await (firestore.collection('Survey') as FirebaseFirestore.CollectionReference<SurveyTemplate>)
         .doc(request.surveyId).get()).data();
-    if (survey === undefined || survey.questions.length !== request.answers.length)
+    if (survey === undefined || survey.components.length !== request.answers.length)
         throw errors.illegalArgument.surveyResponse;
 
 
@@ -34,7 +34,7 @@ export const submitSurvey = functions.https.onCall(async (request: AdministeredS
         });
     }
 
-    survey.questions.forEach((currentQuestion, currentQuestionIndex) => {
+    survey.components.forEach((currentQuestion, currentQuestionIndex) => {
         const currentAnswers = currentQuestion.answers;
 
         /**
@@ -47,19 +47,19 @@ export const submitSurvey = functions.https.onCall(async (request: AdministeredS
 
         // Increment labels that were answered
         switch (currentQuestion.questionType) {
-        case QuestionType.Scale: {
+        case ComponentType.Scale: {
             const normalizedAnswer = chosenAnswer / 4;
             incrementScores(0, currentAnswers[0].labelIds, normalizedAnswer);
 
             expectedScore = 0.5;
             break;
         }
-        case QuestionType.MultipleChoice:
+        case ComponentType.MultipleChoice:
             incrementScores(0, currentAnswers[chosenAnswer].labelIds, 1);
 
             expectedScore = 1 / currentAnswers.length;
             break;
-        case QuestionType.FreeResponse:
+        case ComponentType.FreeResponse:
             // Skip any free response questions
             return;
         }

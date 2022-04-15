@@ -141,6 +141,17 @@ textarea {
         ~ .listElements {
             height: calc(100% - 38px);
         }
+        .info {
+            color:grey;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 5px;
+            position: absolute;
+            top:5px;
+            &:hover {
+                color: $mainColor;
+            }
+        }
     }
     .addNew {
         position: absolute;
@@ -966,6 +977,21 @@ textarea {
         .userEmail {
             padding-bottom: 5px;
         }
+        .infoIcon {
+            display: inline;
+        }
+        .info {
+            display: inline;
+            color:grey;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 5px;
+            padding-bottom: 10px;
+            &:hover {
+                color: $mainColor;
+            }
+
+        }       
         input {
             width: 350px;
             height: 30px;

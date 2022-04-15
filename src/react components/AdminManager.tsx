@@ -6,6 +6,7 @@ import { PermissionLevel } from '../firebase/Types';
 import { setUserPermissionLevel } from '../firebase/Queries/AdminQueries';
 
 import Prompt from './generic/Prompt';
+import TooltipInfo from './TooltipInfo';
 
 
 const AdminManager: React.FC = () => {
@@ -117,7 +118,11 @@ const AdminManager: React.FC = () => {
             </div>
 
             <div className="inputContainer">
-                <div className="userEmail">User Email(s):</div>
+                <div className="userEmail">User Email(s):
+                    <div className='infoIcon'>
+                        <TooltipInfo textarea="Type the user's email you want to promote/demote"></TooltipInfo>
+                    </div> 
+                </div>
                 <input type="text" defaultValue={emailsState} onChange={(e) => setEmails(e.target.value)} placeholder='example@gmail.com'></input>
                 <div className="error" style={{ whiteSpace: 'pre-wrap', height: '75px', overflow: 'auto' }}>{errorTextState}</div>
             </div>

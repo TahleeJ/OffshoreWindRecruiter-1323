@@ -130,6 +130,19 @@ textarea {
   height: calc(100% - 38px);
 }
 
+.listViewer .title .info {
+  color: grey;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 5px;
+  position: absolute;
+  top: 5px;
+}
+
+.listViewer .title .info:hover {
+  color: #7ba1ff;
+}
+
 .listViewer .addNew {
   position: absolute;
   right: 3px;
@@ -1025,6 +1038,23 @@ textarea {
 
 #promoteUser .inputContainer .userEmail {
   padding-bottom: 5px;
+}
+
+#promoteUser .inputContainer .infoIcon {
+  display: inline;
+}
+
+#promoteUser .inputContainer .info {
+  display: inline;
+  color: grey;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 5px;
+  padding-bottom: 10px;
+}
+
+#promoteUser .inputContainer .info:hover {
+  color: #7ba1ff;
 }
 
 #promoteUser .inputContainer input {

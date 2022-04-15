@@ -17,7 +17,7 @@ const Home: React.FC = () => {
             <p id="userEmail">{user?.email}</p>
             <button className="toggle" onClick={() => setListView(!isListView)}>{!isListView ? 'List View' : 'Card View'}</button>
             {isListView
-                ? <ListViewer height="calc(100% - 130px)" title='Administer Survey'>
+                ? <ListViewer height="calc(100% - 130px)" title='Administer Survey' content='Created surveys to help potential workers to find jobs.'>
                     {surveys.length > 0
                         ? surveys.map((survey, ind) => {
                             return <div

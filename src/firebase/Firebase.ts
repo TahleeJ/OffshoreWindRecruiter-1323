@@ -5,7 +5,7 @@ import * as firestore from '@firebase/firestore';
 import * as functions from '@firebase/functions';
 import * as analytics from '@firebase/analytics';
 
-import { ReturnedSurveyResponse, PermissionLevel, AdministeredSurveyResponse } from './Types';
+import { ReturnedSurveyResponse, PermissionLevel, SentSurveyResponse } from './Types';
 
 
 // Firebase config read from .env file
@@ -32,7 +32,7 @@ export const analyticsInstance = analytics.getAnalytics(firebaseApp);
 export const updatePermissions = functions.httpsCallable<{ userEmail: string, newPermissionLevel: number }, undefined>(functionsInstance, 'updatePermissions');
 export const checkAdmin = functions.httpsCallable<undefined, { isAdmin: PermissionLevel }>(functionsInstance, 'checkAdmin');
 export const getBigQueryData = functions.httpsCallable<{queryString: string, navigatorEmail?: string}>(functionsInstance, 'getBigQueryData');
-export const submitSurvey = functions.httpsCallable<AdministeredSurveyResponse, ReturnedSurveyResponse>(functionsInstance, 'submitSurvey');
+export const submitSurvey = functions.httpsCallable<SentSurveyResponse, ReturnedSurveyResponse>(functionsInstance, 'submitSurvey');
 
 // Local function testing
 // functions.connectFunctionsEmulator(functionsInstance, 'localhost', 5001);

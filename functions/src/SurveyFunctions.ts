@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 
 import { assertValidRequest, firestore } from './Utility';
 import { errors } from './Errors';
-import { ReturnedSurveyResponse, JobOpp, QuestionType, RecommendedJob, AdministeredSurveyResponse, SurveyTemplate } from '../../src/firebase/Types';
+import { ReturnedSurveyResponse, JobOpp, QuestionType, RecommendedJob, SentSurveyResponse, SurveyTemplate, StoredSurveyResponse } from '../../src/firebase/Types';
 import { Timestamp } from 'firebase-admin/firestore';
 
 
@@ -20,7 +20,7 @@ import { Timestamp } from 'firebase-admin/firestore';
  * @param context Function caller user's authentication information
  * @return Recommended jobs and score information for each label
  */
-export const submitSurvey = functions.https.onCall(async (request: AdministeredSurveyResponse, context) => {
+export const submitSurvey = functions.https.onCall(async (request: SentSurveyResponse, context) => {
     assertValidRequest(context);
 
 
@@ -120,10 +120,17 @@ export const submitSurvey = functions.https.onCall(async (request: AdministeredS
     firestore.collection('SurveyResponse').add({
         surveyId: request.surveyId,
         taker: request.taker,
-        answers: request.answers,
-        recommendedJobs: rankings,
-        created: Timestamp.now().toMillis()
-    } as AdministeredSurveyResponse);
+        created: Timestamp.now().toMillis(),
+
+        answers: request.answers.map((answer, index) => {
+            return {
+                questionHash: survey.questions[index].hash,
+                answer: answer
+            };
+        }),
+
+        recommendedJobs: rankings
+    } as StoredSurveyResponse);
 
 
     const response: ReturnedSurveyResponse = {

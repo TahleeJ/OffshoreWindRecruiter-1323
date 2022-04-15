@@ -723,7 +723,6 @@ async function drawAverageJobScores(
         `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
 
     const data: any = await getQueryData(subject, queryType, forDay, startDate, undefined, selectedJobs);
-    console.log(data);
 
     var chartData: google.visualization.DataTable;
 
@@ -1007,8 +1006,6 @@ function prepareAllLabelScores(data: SerializedEntry[]) {
         chartData.addRow([value.linearScore!, value.percentileScore!]);
     }
 
-    console.log(chartData);
-
     return {
         chartData: chartData,
         frequency: data[0].labelFrequency!
@@ -1045,21 +1042,11 @@ async function drawAverageLabelScores(
                 hAxis: {title: 'Day'},
                 colors: colorArray,
                 series: {
-                    1: {
-                        lineDashStyle: [7, 5]
-                    },
-                    3: {
-                        lineDashStyle: [7, 5]
-                    },
-                    5: {
-                        lineDashStyle: [7, 5]
-                    },
-                    7: {
-                        lineDashStyle: [7, 5]
-                    },
-                    9: {
-                        lineDashStyle: [7, 5]
-                    }
+                    1: { lineDashStyle: [7, 5] },
+                    3: { lineDashStyle: [7, 5] },
+                    5: { lineDashStyle: [7, 5] },
+                    7: { lineDashStyle: [7, 5] },
+                    9: { lineDashStyle: [7, 5] }
                 }
               });
             break;
@@ -1102,7 +1089,6 @@ function prepareAverageLabelScores(data: Map<string, SerializedEntry[]>, selecte
             const date = stringifyDate(key);
             scoreFrequency[dateCounter] = [date];
 
-            // survey name -> {count}
             var scoreMap = new Map<string, [number, number]>();
 
             for (const score of value) {

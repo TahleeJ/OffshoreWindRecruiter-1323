@@ -147,14 +147,12 @@ surveyValidChartMap.set(Chart.Pie, {
     text: `${dataFocusTypes.surveys.titleDay}\n` +
         `${dataFocusTypes.surveys.titles}`
 });
-
 surveyValidChartMap.set(Chart.Combo, {
     list: [
         DataQuery.AllTitlesPerDay, 
         DataQuery.OneTitlesPerDay],
     text: `${dataFocusTypes.surveys.titleDay}`
 });
-
 surveyValidChartMap.set(Chart.Line, {
     list: [
         DataQuery.AllTitlesPerDay, 
@@ -164,7 +162,6 @@ surveyValidChartMap.set(Chart.Line, {
     text: `${dataFocusTypes.surveys.titleDay}\n` +
         `${dataFocusTypes.surveys.perDay}`
 });
-
 surveyValidChartMap.set(Chart.Bar, {
     list: [
         DataQuery.AllTitlesPerDay,
@@ -174,7 +171,6 @@ surveyValidChartMap.set(Chart.Bar, {
     text: `${dataFocusTypes.surveys.titleDay}\n` +
         `${dataFocusTypes.surveys.perDay}`
 });
-
 surveyValidChartMap.set(Chart.Table, {
     list: allDataQueries,
     text: 'All focuses are valid for this chart type.'
@@ -196,7 +192,6 @@ jobValidChartMap.set(Chart.Pie, {
         `${dataFocusTypes.jobs.totalPositivePerSurvey}\n` +
         `${dataFocusTypes.jobs.totalNegativePerSurvey}`
 });
-
 jobValidChartMap.set(Chart.Line, {
     list: [
         DataQuery.TotalJobMatches, 
@@ -214,17 +209,14 @@ jobValidChartMap.set(Chart.Line, {
         `${dataFocusTypes.jobs.totalPositivePerSurvey}\n` +
         `${dataFocusTypes.jobs.totalNegativePerSurvey}`
 });
-
 jobValidChartMap.set(Chart.Bar, {
     list: allDataQueries,
     text: 'All focuses are valid for this chart type.'
 });
-
 jobValidChartMap.set(Chart.Table, {
     list: allDataQueries,
     text: 'All focuses are valid for this chart type.'
 });
-
 jobValidChartMap.set(Chart.TreeMap, {
     list: [
         DataQuery.HighestAverageJobMatches, 
@@ -241,18 +233,15 @@ labelValidChartMap.set(Chart.Line, {
         DataQuery.LabelAverage],
     text: `${dataFocusTypes.labels.average}`
 });
-
 labelValidChartMap.set(Chart.Bar, {
     list: [
         DataQuery.LabelAverage],
     text: `${dataFocusTypes.labels.average}`
 });
-
 labelValidChartMap.set(Chart.Table, {
     list: allDataQueries,
     text: 'All focuses are valid for this chart type.'
 });
-
 labelValidChartMap.set(Chart.Scatter, {
     list: [
         DataQuery.LabelPoints],

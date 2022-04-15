@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import { useAppSelector } from '../redux/hooks';
-import { DataQuery, Subject, NavigatorGrouping, DateGrouping, dataFocusTypes } from '../firebase/Analytics/Utility';
 import { drawChart } from '../firebase/Analytics/Draw';
+import { DataQuery, Chart, Subject, NavigatorGrouping, DateGrouping, SelectionArrays, DateSelection } from '../firebase/Analytics/Utility';
+import { dataFocusTypes, validChartInfo, today, determineStartDate } from '../firebase/Analytics/Utility';
 import { authInstance } from '../firebase/Firebase';
-import { Chart, SelectionArrays, DateSelection, validChartInfo, today, determineStartDate } from '../firebase/Analytics/Utility';
 
-/** The props (arguments) to create this element */
-interface props {
 
-}
-
-const Analytics: React.FC<props> = (props) => {
+const Analytics: React.FC = () => {
     const surveys = useAppSelector(s => s.data.surveys);
     const jobOpps = useAppSelector(s =>  s.data.jobOpps);
     const labels = useAppSelector(s => s.data.labels);

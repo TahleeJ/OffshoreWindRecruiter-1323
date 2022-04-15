@@ -12,6 +12,7 @@ export interface SurveyQuestion {
     prompt: string
     answers: SurveyAnswer[]
     questionType: QuestionType
+    hash: number
 }
 
 export enum QuestionType {

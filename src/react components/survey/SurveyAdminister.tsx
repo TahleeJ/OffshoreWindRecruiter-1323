@@ -8,7 +8,12 @@ import { authInstance } from '../../firebase/Firebase';
 import { logSurveyAdministered } from '../../firebase/Analytics/Logging';
 
 
-const SurveyAdminister: React.FC = () => {
+interface props {
+
+}
+
+
+const SurveyAdminister: React.FC = (p: props) => {
     const reduxSurveyData = useAppSelector(s => s.navigation.operationData as SurveyTemplate & hasId);
     const [answers, setAnswers] = useState<(string | number)[]>([]);
     const [name, setName] = useState('');

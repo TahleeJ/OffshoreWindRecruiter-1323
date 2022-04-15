@@ -20,7 +20,7 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "indent": ["error", 4],
+        "indent": ["warn", 4],
         "semi": ["warn", "always"],
         "no-multiple-empty-lines": ["warn", {"max": 2, "maxEOF": 1}],
 

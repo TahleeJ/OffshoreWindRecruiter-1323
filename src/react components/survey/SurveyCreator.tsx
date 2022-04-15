@@ -63,7 +63,7 @@ const SurveyCreator: React.FC = () => {
 
     const addNewQuestion = () => {
         setQuestions(s => [...s, { prompt: '', answers: [], questionType: QuestionType.MultipleChoice, hash: 0 }]);
-    }
+    };
     const moveQuestion = (oldQIndex: number, newQIndex: number) => {
         const cloneQuestions = lodash.cloneDeep(questions);
 
@@ -71,7 +71,7 @@ const SurveyCreator: React.FC = () => {
         cloneQuestions.splice(newQIndex, 0, movedQuestion);
 
         setQuestions(cloneQuestions);
-    }
+    };
     const addNewAnswer = (qIndex: number) => {
         const cloneQuestions = lodash.cloneDeep(questions);
         const newAnswer: SurveyAnswer = { text: '', labelIds: [] };
@@ -97,7 +97,7 @@ const SurveyCreator: React.FC = () => {
 
         setHash(cloneQuestions[qIndex]);
         setQuestions(cloneQuestions);
-    }
+    };
     const changeAnswerText = (qIndex: number, aIndex: number, newText: string) => {
         const cloneQuestions = lodash.cloneDeep(questions);
 

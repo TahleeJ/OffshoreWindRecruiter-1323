@@ -1,7 +1,7 @@
 import * as firestore from '@firebase/firestore';
 
 import db from '../Firestore';
-import { id, SurveyTemplate, hasId, AdministeredSurveyResponse } from '../Types';
+import { id, SurveyTemplate, hasId, StoredSurveyResponse } from '../Types';
 
 /**
  * Retrieves every survey from Firestore and lists them in order based on survey title
@@ -66,9 +66,9 @@ export async function deleteSurvey(id: id) {
  */
 export async function getSurveyResponses() {
     const response = await firestore.getDocs(
-        firestore.query(db.SurveyResponse, firestore.orderBy('created', 'desc'), firestore.limit(100)));
+        firestore.query(db.SurveyResponse, firestore.orderBy('created', 'desc'), firestore.limit(30)));
 
-    return response.docs.map(s => ({ ...s.data(), id: s.id } as AdministeredSurveyResponse & hasId));
+    return response.docs.map(s => ({ ...s.data(), id: s.id } as StoredSurveyResponse & hasId));
 }
 
 /**

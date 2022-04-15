@@ -31,10 +31,9 @@ export interface Label {
 }
 
 
-export interface AdministeredSurveyResponse {
+export interface SentSurveyResponse {
     surveyId: id
     taker: SurveyTaker
-    created?: number
 
     /**
      * Scale: [0-4]
@@ -42,8 +41,21 @@ export interface AdministeredSurveyResponse {
      * FreeResponse: string
      */
     answers: (number | string)[]
+}
 
-    recommendedJobs?: RecommendedJob[]
+export interface StoredSurveyResponse {
+    surveyId: id
+    taker: SurveyTaker
+    created: number
+
+    answers: StoredSurveyAnswer[]
+
+    recommendedJobs: RecommendedJob[]
+}
+
+export interface StoredSurveyAnswer {
+    questionHash: number
+    answer: (number | string)
 }
 
 export interface SurveyTaker {

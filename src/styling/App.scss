@@ -1124,6 +1124,7 @@ textarea {
     .label {
         cursor: pointer;
         transition: 0.1s;
+        position: relative;
 
         &.active {
             background-color: $mainColor;

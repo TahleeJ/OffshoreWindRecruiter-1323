@@ -1206,6 +1206,7 @@ textarea {
   cursor: pointer;
   -webkit-transition: 0.1s;
   transition: 0.1s;
+  position: relative;
 }
 
 .jobExplore .jobOpp.active,
@@ -1424,15 +1425,17 @@ textarea {
   font-weight: normal;
 }
 
-#analytics .surveyList.listViewer {
+#analytics .surveyList .listViewer {
   height: 50%;
   overflow: auto;
   text-align: left;
 }
 
 #analytics .chartGenerationContainer {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  height: calc(100% - 40px); 
+  height: calc(100% - 40px);
 }
 
 #analytics .chartInfoHeader {
@@ -1444,7 +1447,7 @@ textarea {
   width: 50%;
   border-style: none solid none none;
   border-left-width: 10px;
-  border-color: #7ba1ff; /* $mainColor */
+  border-color: #7ba1ff;
   padding: 7px;
 }
 

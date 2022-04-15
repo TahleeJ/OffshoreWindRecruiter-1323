@@ -13,7 +13,7 @@ export interface SurveyQuestion {
     answers: SurveyAnswer[]
     questionType: QuestionType
     hash: number
-}   
+}
 
 export enum QuestionType {
     MultipleChoice = 0,

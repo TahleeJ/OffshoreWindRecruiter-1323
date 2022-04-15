@@ -44,5 +44,5 @@ export async function getUser(id: id) {
  * @returns whether the specified user is an admin or not
  */
 export async function assertIsAdmin(id: id): Promise<boolean> {
-    return ((await firestore.getDoc(firestore.doc(db.Users, id))).data()?.permissionLevel! > PermissionLevel.None);
+    return ((await firestore.getDoc(firestore.doc(db.Users, id))).data()?.permissionLevel! > PermissionLevel.Navigator);
 }

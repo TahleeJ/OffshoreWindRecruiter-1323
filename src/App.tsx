@@ -6,7 +6,7 @@ import { authInstance } from './firebase/Firebase';
 
 import Home from './react components/Home';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
-import { PageType } from './redux/navigationSlice';
+import { changePage, PageType } from './redux/navigationSlice';
 import AdminHome from './react components/AdminHome';
 import Header from './react components/Header';
 import SurveyHome from './react components/survey/SurveyHome';
@@ -20,9 +20,9 @@ import { getSurveyResponses, getSurveys } from './firebase/Queries/SurveyQueries
 import { setLabels, setSurveys, setJobOpps, setSurveyResponses } from './redux/dataSlice.ts';
 import { getLabels } from './firebase/Queries/LabelQueries';
 import { getJobOpps } from './firebase/Queries/JobQueries';
-import { assertIsAdmin } from './firebase/Queries/AdminQueries';
+import { assertIsAdmin, getUser } from './firebase/Queries/AdminQueries';
 import InfoPage from './react components/InfoPage';
-
+import { PermissionLevel } from '../src/firebase/Types';
 
 const getOverallPageFromType = (type: PageType) => {
     switch (type) {
@@ -37,12 +37,12 @@ const getOverallPageFromType = (type: PageType) => {
     }
 };
 
+let firstLogin = false;
 
 const App: React.FC = () => {
     const [isLoggedIn, setLoggedIn] = useState(false);
     const pageType = useAppSelector(s => s.navigation.currentPage);
     const appDispatch = useAppDispatch();
-
     firebaseAuth.setPersistence(authInstance, firebaseAuth.browserLocalPersistence);
 
     useEffect(() => {
@@ -66,16 +66,32 @@ const App: React.FC = () => {
                         appDispatch(setSurveys(await getSurveys()));
                     })();
                 }
+
+                const permissionLevel = (await getUser(user?.uid!))!.permissionLevel;
+
+                if (permissionLevel === PermissionLevel.None && !firstLogin) {
+                    firstLogin = true;
+                    appDispatch(changePage({ type: PageType.Survey })); // change to PageType.InfoPage when info page is created
+                } else if (permissionLevel === PermissionLevel.Navigator && !firstLogin) {
+                    firstLogin = true;
+                    appDispatch(changePage({ type: PageType.Survey }));
+                } else if (!firstLogin) {
+                    firstLogin = true;
+                    appDispatch(changePage({ type: PageType.AdminHome }));
+                }
             } catch (e) {}
         });
     });
+
 
     return (
         <>
             {isLoggedIn
                 ? <>
                     <Header />
-                    {getOverallPageFromType(pageType)}
+                    {
+                        getOverallPageFromType(pageType)
+                    }
                 </>
                 : <AuthPage />
             }

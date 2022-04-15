@@ -21,54 +21,29 @@ export async function drawChart(
     selectionArrays: SelectionArrays) {
     switch (subject) {
     case Subject.Surveys:
-        if ([
-            DataQuery.AllTitlesPerDay,
-            DataQuery.OneTitlesPerDay
-        ].includes(queryType)) {
+        if ((queryType & DataQuery.SurveysTitlesPerDay) !== 0) {
             drawSurveyTitlesPerDay(subject, queryType, chartType, allNavigators, dateSelection, selectionArrays);
-        } else if ([
-            DataQuery.AllPerDay,
-            DataQuery.OnePerDay
-        ].includes(queryType)) {
+        } else if ((queryType & DataQuery.SurveysPerDay) !== 0) {
             drawSurveysPerDay(subject, queryType, chartType, allNavigators, dateSelection, selectionArrays);
-        } else if ([
-            DataQuery.AllTitles,
-            DataQuery.OneTitles
-        ].includes(queryType)) {
+        } else if ((queryType & DataQuery.SurveysTitles) !== 0) {
             drawSurveyTitles(subject, queryType, chartType, allNavigators, dateSelection, selectionArrays);
         }
 
         break;
     case Subject.Jobs:
-        if ([
-            DataQuery.TotalJobMatches,
-            DataQuery.PositiveJobMatches,
-            DataQuery.NegativeJobMatches,
-            DataQuery.SurveyPositiveJobMatches,
-            DataQuery.SurveyNegativeJobMatches
-        ].includes(queryType)) {
+        if ((queryType & DataQuery.JobsTotalMatches) !== 0) {
             drawTotalJobMatches(subject, queryType, chartType, dateSelection, selectionArrays);
-        } else if ([
-            DataQuery.AverageJobMatches,
-            DataQuery.AverageSurveyMatches
-        ].includes(queryType)) {
+        } else if ((queryType & DataQuery.JobsSingleAverageMatches) !== 0) {
             drawAverageJobScores(subject, queryType, chartType, dateSelection, selectionArrays);
-        } else if ([
-            DataQuery.HighestAverageJobMatches,
-            DataQuery.LowestAverageJobMatches
-        ].includes(queryType)) {
+        } else if ((queryType & DataQuery.JobsTieredAverageMatches) !== 0) {
             drawTieredAverageJobScores(subject, queryType, chartType, dateSelection);
         }
 
         break;
     case Subject.Labels:
-        if ([
-            DataQuery.LabelPoints
-        ].includes(queryType)) {
+        if (queryType === DataQuery.LabelPoints) {
             drawAllLabelScores(subject, queryType, chartType, dateSelection, selectionArrays);
-        } else if ([
-            DataQuery.LabelAverage
-        ].includes(queryType)) {
+        } else if (queryType === DataQuery.LabelAverage) {
             drawAverageLabelScores(subject, queryType, chartType, dateSelection, selectionArrays);
         }
         break;
@@ -491,7 +466,7 @@ async function drawTotalJobMatches(
     const startDate = dateSelection.startDate;
     const selectedJobs = selectionArrays.jobs;
 
-    const forJobs = !([DataQuery.SurveyPositiveJobMatches, DataQuery.SurveyNegativeJobMatches].includes(queryType));
+    const forJobs = (queryType & DataQuery.JobsSurveys) === 0;
 
     const title = 'Total Job Matches ' +
         `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;

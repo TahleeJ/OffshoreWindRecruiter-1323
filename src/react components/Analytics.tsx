@@ -396,21 +396,11 @@ const Analytics: React.FC = () => {
         // Updates the starting date state
         setStartDateState(startDate);
         
-        const queryRequiresSurveyName = [
-            DataQuery.AllTitlesPerDay,
-            DataQuery.AverageSurveyMatches,
-            DataQuery.SurveyPositiveJobMatches,
-            DataQuery.SurveyNegativeJobMatches
-        ].includes(queryType);
+        const queryRequiresSurveyName = (queryType & DataQuery.RequiresSurveyName) !== 0;
 
-        const jobQueryDoesNotRequireJobName = [
-            DataQuery.HighestAverageJobMatches,
-            DataQuery.LowestAverageJobMatches
-        ].includes(queryType);
+        const jobQueryDoesNotRequireJobName = (queryType & DataQuery.RequiresJobName) === 0;
 
-        const queryDoesNotRequireNavigatorName = [
-            NavigatorGrouping.All
-        ].includes(navigatorGrouping);
+        const queryDoesNotRequireNavigatorName = navigatorGrouping == NavigatorGrouping.All;
 
         if (queryType === DataQuery.None) {
             return;

@@ -18,7 +18,7 @@ export async function getQueryData(subject: Subject, queryType: DataQuery, forDa
 
     switch (subject) {
     case Subject.Surveys:
-        if (!([DataQuery.AllTitlesPerDay, DataQuery.AllPerDay, DataQuery.AllTitles].includes(queryType))) {
+        if ((queryType & DataQuery.SurveysAll) === 0) {
             const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${selectedNavigator}", ${forDay}, "${startDate}")`;
 
             response = await getBigQueryData({ queryString: queryString, navigatorEmail: selectedNavigator });
@@ -30,7 +30,7 @@ export async function getQueryData(subject: Subject, queryType: DataQuery, forDa
 
         return serializeSurveyData(response.data as string[], queryType);
     case Subject.Jobs:
-        if (!([DataQuery.SurveyNegativeJobMatches, DataQuery.SurveyPositiveJobMatches, DataQuery.AverageSurveyMatches, DataQuery.HighestAverageJobMatches, DataQuery.LowestAverageJobMatches].includes(queryType))) {
+        if ((queryType & DataQuery.RequiresJobName) !== 0) {
             const serializedJobData = new Map<string, SerializedEntry[]>();
 
             for (const jobName of jobNames!) {
@@ -118,7 +118,7 @@ export async function getQueryData(subject: Subject, queryType: DataQuery, forDa
  * @returns the transformed set of data
  */
 function serializeSurveyData(data: string[], queryType: DataQuery) {
-    if ([DataQuery.AllTitlesPerDay, DataQuery.AllPerDay, DataQuery.AllTitles].includes(queryType)) {
+    if ((queryType & DataQuery.SurveysAll) !== 0) {
         if (queryType !== DataQuery.AllTitles) {
             const serializedData = new Map<string, SerializedEntry[]>();
 
@@ -127,7 +127,7 @@ function serializeSurveyData(data: string[], queryType: DataQuery) {
                 const elementJSON = JSON.parse(element);
                 const newData = { surveyFrequency: elementJSON.frequency } as SerializedEntry;
 
-                if (queryType % 3 === 0) {
+                if (queryType === DataQuery.AllTitlesPerDay) {
                     newData.surveyTitle = elementJSON.survey_title;
                 }
 
@@ -155,14 +155,14 @@ function serializeSurveyData(data: string[], queryType: DataQuery) {
             return serializedData;
         }
     } else {
-        if (!([DataQuery.EachTitles, DataQuery.OneTitles].includes(queryType))) {
+        if ((queryType & DataQuery.SurveysTitles) === 0) {
             const serializedData = new Map<string, Map<string, SerializedEntry[]>>();
 
             for (const element of data) {
                 const elementJSON = JSON.parse(element);
                 const newData = { surveyFrequency: elementJSON.frequency } as SerializedEntry;
 
-                if (queryType % 3 === 0) {
+                if (queryType === DataQuery.OneTitlesPerDay) {
                     newData.surveyTitle = elementJSON.survey_title;
                 }
 
@@ -208,9 +208,9 @@ function serializeSurveyData(data: string[], queryType: DataQuery) {
 }
 
 function serializeJobData(data: string[], queryType: DataQuery) {
-    if (!([DataQuery.HighestAverageJobMatches, DataQuery.LowestAverageJobMatches].includes(queryType))) {
-        if (!([DataQuery.AverageSurveyMatches, DataQuery.SurveyPositiveJobMatches, DataQuery.SurveyNegativeJobMatches].includes(queryType))) {
-            if (([DataQuery.TotalJobMatches, DataQuery.PositiveJobMatches, DataQuery.NegativeJobMatches].includes(queryType))) {
+    if ((queryType & DataQuery.JobsTieredAverageMatches) === 0) {
+        if ((queryType & DataQuery.JobsSurveys) === 0) {
+            if ((queryType & DataQuery.JobsTotalMatches) !== 0) {
                 // date -> {job title, count}
 
                 const serializedData = new Map<string, SerializedEntry>();
@@ -240,7 +240,7 @@ function serializeJobData(data: string[], queryType: DataQuery) {
                 return serializedData;
             }
         } else {
-            if (([DataQuery.SurveyPositiveJobMatches, DataQuery.SurveyNegativeJobMatches].includes(queryType))) {
+            if ((queryType & DataQuery.JobsSurveysTotalMatches) !== 0) {
                 // date -> {survey title, count}
                 console.log('here');
                 const serializedData = new Map<string, SerializedEntry[]>();

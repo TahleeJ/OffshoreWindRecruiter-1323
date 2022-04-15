@@ -141,6 +141,17 @@ textarea {
         ~ .listElements {
             height: calc(100% - 38px);
         }
+        .info {
+            color: grey;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 5px;
+            position: absolute;
+            top: 5px;
+            &:hover {
+                color: $mainColor;
+            }
+        }
     }
     .addNew {
         position: absolute;
@@ -675,6 +686,25 @@ textarea {
             position: relative;
             text-align: left;
 
+            .shiftUp {
+                position: absolute;
+                left: -40px;
+                opacity: 0;
+                transition: 0.2s;
+            }
+            .shiftDown {
+                position: absolute;
+                left: -60px;
+                top: 40px;
+                opacity: 0;
+                transition: 0.2s;
+            }
+
+            &:hover .shiftUp,
+            &:hover .shiftDown {
+                opacity: 1;
+            }
+
             .header {
                 display: flex;
                 .prompt {
@@ -966,6 +996,20 @@ textarea {
         .userEmail {
             padding-bottom: 5px;
         }
+        .infoIcon {
+            display: inline;
+        }
+        .info {
+            display: inline;
+            color: grey;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 5px;
+            padding-bottom: 10px;
+            &:hover {
+                color: $mainColor;
+            }
+        }
         input {
             width: 350px;
             height: 30px;
@@ -1098,6 +1142,7 @@ textarea {
     .label {
         cursor: pointer;
         transition: 0.1s;
+        position: relative;
 
         &.active {
             background-color: $mainColor;
@@ -1321,7 +1366,7 @@ textarea {
 
     .chartGenerationContainer {
         display: flex;
-        height: calc(100% - 40px); 
+        height: calc(100% - 40px);
     }
 
     .chartInfoHeader {
@@ -1334,7 +1379,7 @@ textarea {
         border-style: none solid none none;
         border-left-width: 10px;
         border-color: $mainColor;
-        padding: 7px; 
+        padding: 7px;
     }
 
     .generateBox {

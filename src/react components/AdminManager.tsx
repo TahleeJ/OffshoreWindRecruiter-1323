@@ -6,6 +6,7 @@ import { PermissionLevel } from '../firebase/Types';
 import { setUserPermissionLevel } from '../firebase/Queries/AdminQueries';
 
 import Prompt from './generic/Prompt';
+import TooltipInfo from './TooltipInfo';
 
 
 const AdminManager: React.FC = () => {
@@ -80,12 +81,12 @@ const AdminManager: React.FC = () => {
         console.log(updateLevel);
 
         if (validateResult) {
-            var errorEmailsMessage = "";
-    
+            let errorEmailsMessage = '';
+
             for (const email of updateEmails) {
                 const result = await setUserPermissionLevel(email, updateLevel);
-    
-                if (result !== "Update success!") {
+
+                if (result !== 'Update success!') {
                     errorEmailsMessage = errorEmailsMessage + `${email}: ${result}\n`;
 
                     togglePopup();
@@ -108,20 +109,24 @@ const AdminManager: React.FC = () => {
                 <div className='textBlock' style={{ fontWeight: 'bold' }}>Type the email address(es) of the user(s) that you would like to change permissions for.</div>
                 <br /><br />
                 <div className='textBlock'>
-                Owners have all accesses of administrators as well as full administrative access in changing permission levels.
+                    Owners have all accesses of administrators as well as full administrative access in changing permission levels.
                     <br /><br />
-                Administrators have full access to the application: they are able to create new surveys, labels, jobs, administer surveys, and view analytics.
+                    Administrators have full access to the application: they are able to create new surveys, labels, jobs, administer surveys, and view analytics.
                     <br /><br />
-                None-level users will only be able to administer surveys.
+                    None-level users will only be able to administer surveys.
                 </div>
             </div>
 
             <div className="inputContainer">
-                <div className="userEmail">User Email(s):</div>
+                <div className="userEmail">User Email(s):
+                    <div className='infoIcon'>
+                        <TooltipInfo textarea="Type the user's email you want to promote/demote"></TooltipInfo>
+                    </div>
+                </div>
                 <input type="text" defaultValue={emailsState} onChange={(e) => setEmails(e.target.value)} placeholder='example@gmail.com'></input>
                 <div className="error" style={{ whiteSpace: 'pre-wrap', height: '75px', overflow: 'auto' }}>{errorTextState}</div>
             </div>
-            <div className = "dropDown">
+            <div className="dropDown">
                 <label className='dropText' htmlFor='permission-select'>Update to: </label>
                 <select id='permission-select' value={changeLevelState} onChange={(e) => setNewUpdateLevel(e.target.value)}>
                     <option value="Navigator">Navigator</option>
@@ -136,11 +141,11 @@ const AdminManager: React.FC = () => {
                 <button className='red' onClick={update}>Demote to None</button>
 
                 {popupVisible &&
-                <Prompt
-                    title="Permission Update Error"
-                    message="There was an error updating the permission level of some of your selected users. Please make sure you have entered valid email addresses and that your selected users are members of this application."
-                    handleCancel={togglePopup}
-                />
+                    <Prompt
+                        title="Permission Update Error"
+                        message="There was an error updating the permission level of some of your selected users. Please make sure you have entered valid email addresses and that your selected users are members of this application."
+                        handleCancel={togglePopup}
+                    />
                 }
             </div>
 

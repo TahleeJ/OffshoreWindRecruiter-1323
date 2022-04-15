@@ -32,7 +32,7 @@ const SurveyReviewer: React.FC = () => {
                     {status === Status.fulfilled && <RecJobView jobs={jobs()}/>}
                     {status === Status.pending &&
                         <>
-                            Loading Results:
+                            Loading Results:&nbsp;
                             <i className="fa fa-spinner fa-pulse loadIcon"></i>
                         </>
                     }

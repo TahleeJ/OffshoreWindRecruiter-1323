@@ -5,38 +5,35 @@
 Development with Firebase for this repository will require this Firebase project's configuration keys for app initialization. These keys are hidden inside of the provided `.env` file to be stored in the root directory.
 
 ## Node Modules
-`npm install firebase`
 `npm install -g firebase-tools`
-`npm install --save firebase`  
-`npm i firebase@9.6.6`  
-`npm install dotenv`  
+`npm install`
 
-# App API Uage
-API reference found here: https://firebase.google.com/docs/reference/js  
+# App API Usage
+API reference found here: https://firebase.google.com/docs/reference/js
 
     ** All firebase references live in the `src/firebase` directory. When using any of these references, please make sure to update the import path accordingly *
 ## Authentication
-1. Include the following to reference the Firebase authentication library:  
+1. Include the following to reference the Firebase authentication library:
 `import * as firebaseAuth from '@firebase/auth';`
 
-2. Include the following to reference this project's Firebase authentication instance:  
+2. Include the following to reference this project's Firebase authentication instance:
 `import { authInstance } from './firebase/Firebase';`
 
 ## Firestore
-1. Include the following to reference the Firestore library:  
+1. Include the following to reference the Firestore library:
 `import * as firestore from '@firebase/firestore';`
 
-2. Include the following to reference this project's Firestore instance:  
+2. Include the following to reference this project's Firestore instance:
 `import { db } from './firebase/Firebase';`
 
 ## Functions
-1. Include the following to reference the Firebase functions library:  
+1. Include the following to reference the Firebase functions library:
 `import * as functions from '@firebase/functions';`
 
-2. Include the following to reference this project's Firebase functions instance:  
+2. Include the following to reference this project's Firebase functions instance:
 `import { functionsInstance } from './firebase/Firebase';`
 
-3. To reference a function created and deployed from `functions/index.js`, include the following:  
+3. To reference a function created and deployed from `functions/index.js`, include the following:
 `import { <function name from Firebase.ts> } from './firebase/Firebase';`
 
 4. To call a function and parse its results, do the following:

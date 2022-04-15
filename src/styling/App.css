@@ -130,6 +130,19 @@ textarea {
   height: calc(100% - 38px);
 }
 
+.listViewer .title .info {
+  color: grey;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 5px;
+  position: absolute;
+  top: 5px;
+}
+
+.listViewer .title .info:hover {
+  color: #7ba1ff;
+}
+
 .listViewer .addNew {
   position: absolute;
   right: 3px;
@@ -710,6 +723,28 @@ textarea {
   text-align: left;
 }
 
+#surveyHome .surveyCreator .createdQuestion .shiftUp {
+  position: absolute;
+  left: -40px;
+  opacity: 0;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+#surveyHome .surveyCreator .createdQuestion .shiftDown {
+  position: absolute;
+  left: -60px;
+  top: 40px;
+  opacity: 0;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+#surveyHome .surveyCreator .createdQuestion:hover .shiftUp,
+#surveyHome .surveyCreator .createdQuestion:hover .shiftDown {
+  opacity: 1;
+}
+
 #surveyHome .surveyCreator .createdQuestion .header {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1027,6 +1062,23 @@ textarea {
   padding-bottom: 5px;
 }
 
+#promoteUser .inputContainer .infoIcon {
+  display: inline;
+}
+
+#promoteUser .inputContainer .info {
+  display: inline;
+  color: grey;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 5px;
+  padding-bottom: 10px;
+}
+
+#promoteUser .inputContainer .info:hover {
+  color: #7ba1ff;
+}
+
 #promoteUser .inputContainer input {
   width: 350px;
   height: 30px;
@@ -1176,6 +1228,7 @@ textarea {
   cursor: pointer;
   -webkit-transition: 0.1s;
   transition: 0.1s;
+  position: relative;
 }
 
 .jobExplore .jobOpp.active,
@@ -1394,15 +1447,17 @@ textarea {
   font-weight: normal;
 }
 
-#analytics .surveyList.listViewer {
+#analytics .surveyList .listViewer {
   height: 50%;
   overflow: auto;
   text-align: left;
 }
 
 #analytics .chartGenerationContainer {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  height: calc(100% - 40px); 
+  height: calc(100% - 40px);
 }
 
 #analytics .chartInfoHeader {
@@ -1414,7 +1469,7 @@ textarea {
   width: 50%;
   border-style: none solid none none;
   border-left-width: 10px;
-  border-color: #7ba1ff; /* $mainColor */
+  border-color: #7ba1ff;
   padding: 7px;
 }
 

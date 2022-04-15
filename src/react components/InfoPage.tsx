@@ -15,13 +15,13 @@ const InfoPage: React.FC = () => {
                 </div>
                 <div className='inner'>
                     <div className="fa fa-tag"> LABEL</div>
-                    <div className='text'>A category that describes a job opportunity and can be linked to survey questions. 
+                    <div className='text'>A category that describes a job opportunity and can be linked to survey questions.
                         “Technician” could be a label for jobs involving hands on work or involves repairing machines.
                         It is used to provide recommended job opportunities to survey responders</div>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default InfoPage
+export default InfoPage;

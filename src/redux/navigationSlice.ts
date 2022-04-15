@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { submitSurvey } from '../firebase/Firebase';
-import { AdministeredSurveyResponse } from '../firebase/Types';
+import { SentSurveyResponse } from '../firebase/Types';
 import { logJobsMatched, logLabelsUsed } from '../firebase/Analytics/Logging';
 
 
@@ -88,15 +88,15 @@ const navigationSlice = createSlice({
 });
 
 export const submitSurveyResponse = createAsyncThunk('navigation/submitSurveyResponse',
-    async (survey: AdministeredSurveyResponse) => {
+    async (survey: SentSurveyResponse) => {
         const result = await submitSurvey(survey);
 
         // [LabelId, [linear score, percentile score]]
-        const labelScores: [string, [number, number]][] = Object.entries(result.data.labelScores)
+        const labelScores: [string, [number, number]][] = Object.entries(result.data.labelScores);
 
         logJobsMatched(survey.surveyId, result.data.recommendedJobs);
         logLabelsUsed(labelScores);
-        
+
         return result;
     }
 );

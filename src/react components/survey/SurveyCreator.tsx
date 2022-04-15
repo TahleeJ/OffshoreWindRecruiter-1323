@@ -15,9 +15,29 @@ const initQuestions: SurveyQuestion[] = [
     {
         prompt: '',
         questionType: QuestionType.MultipleChoice,
-        answers: []
+        answers: [],
+        hash: 0
     }
 ];
+
+
+function getHash(str: string) {
+    let hash = 0;
+    let i;
+    let chr;
+    if (str.length === 0) return hash;
+    for (i = 0; i < str.length; i++) {
+        chr = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+};
+
+function setHash(question: SurveyQuestion) {
+    const answerText = question.answers.reduce((prev, curr) => prev + '|' + curr.text, '');
+    question.hash = getHash(question.prompt + answerText + question.questionType.toFixed());
+}
 
 
 const SurveyCreator: React.FC = () => {
@@ -42,15 +62,22 @@ const SurveyCreator: React.FC = () => {
 
 
     const addNewQuestion = () => {
-        setQuestions(s => [...s, { prompt: '', answers: [], questionType: QuestionType.MultipleChoice }]);
+        setQuestions(s => [...s, { prompt: '', answers: [], questionType: QuestionType.MultipleChoice, hash: 0 }]);
+    };
+    const moveQuestion = (oldQIndex: number, newQIndex: number) => {
+        const cloneQuestions = lodash.cloneDeep(questions);
+
+        const movedQuestion = cloneQuestions.splice(oldQIndex, 1)[0];
+        cloneQuestions.splice(newQIndex, 0, movedQuestion);
+
+        setQuestions(cloneQuestions);
     };
     const addNewAnswer = (qIndex: number) => {
         const cloneQuestions = lodash.cloneDeep(questions);
         const newAnswer: SurveyAnswer = { text: '', labelIds: [] };
         cloneQuestions[qIndex].answers.push(newAnswer);
-        // setCountAns(cloneQuestions[qIndex].answers.length);
 
-        // console.log(countAns);
+        setHash(cloneQuestions[qIndex]);
         setQuestions(cloneQuestions);
     };
     const changeQuestionPrompt = (qIndex: number, newPrompt: string) => {
@@ -58,6 +85,7 @@ const SurveyCreator: React.FC = () => {
 
         cloneQuestions[qIndex].prompt = newPrompt;
 
+        setHash(cloneQuestions[qIndex]);
         setQuestions(cloneQuestions);
     };
     const changeQuestionType = (qIndex: number, newType: QuestionType) => {
@@ -66,6 +94,8 @@ const SurveyCreator: React.FC = () => {
         cloneQuestions[qIndex].questionType = newType;
         if (newType !== QuestionType.MultipleChoice)
             cloneQuestions[qIndex].answers = [{ text: '', labelIds: [] }];
+
+        setHash(cloneQuestions[qIndex]);
         setQuestions(cloneQuestions);
     };
     const changeAnswerText = (qIndex: number, aIndex: number, newText: string) => {
@@ -73,6 +103,7 @@ const SurveyCreator: React.FC = () => {
 
         cloneQuestions[qIndex].answers[aIndex].text = newText;
 
+        setHash(cloneQuestions[qIndex]);
         setQuestions(cloneQuestions);
     };
     const deleteQuestion = (qIndex: number) => {
@@ -87,6 +118,7 @@ const SurveyCreator: React.FC = () => {
 
         cloneQuestions[qIndex].answers.splice(aIndex, 1);
 
+        setHash(cloneQuestions[qIndex]);
         setQuestions(cloneQuestions);
     };
     const changeLabels = (qIndex: number, aIndex: number, labelId: string) => {
@@ -106,7 +138,31 @@ const SurveyCreator: React.FC = () => {
     };
     const conditionallySave = async () => {
         const hasLabel = questions.every(q => q.questionType === QuestionType.FreeResponse || q.answers.every(a => a.labelIds.length > 0));
-
+        const surveys = await getSurveys();
+        var duplicate = false;
+        surveys.forEach(s => {
+            if (s.title.trim() === title.trim()) {
+                duplicate = true;
+            }
+        });
+        var emptyQPrompt = false;
+        var noAnswers = false;
+        var emptyAnswer = false;
+        questions.forEach(q => {
+            if (q.prompt.trim().length === 0) {
+                emptyQPrompt = true;
+            }
+            if (q.answers.length === 0) {
+                noAnswers = true;
+            }
+            q.answers.forEach(a => {
+                if (a.text.trim().length === 0) {
+                    emptyAnswer = true;
+                }
+            })
+        });
+        console.log(questions.length);
+        console.log(questions);
         if (!title.trim()) {
             setErrorMessage('The survey title is currently empty.');
             setErrorTitle('Empty Title');
@@ -118,6 +174,26 @@ const SurveyCreator: React.FC = () => {
         } else if (!hasLabel) {
             setErrorTitle('Missing Label Connection(s)');
             setErrorMessage('Each answer must have at least one label connected to it');
+            togglePopup();
+        } else if (duplicate) {
+            setErrorTitle('Another Survey has this Title');
+            setErrorMessage('Please use a different title');
+            togglePopup();
+        } else if (questions.length === 1 && (questions.at(0)?.prompt.length === 0 || questions.at(0)?.answers.length === 0)) {
+            setErrorTitle('Survey is Empty');
+            setErrorMessage('Please enter at least one question with an answer');
+            togglePopup();
+        } else if (emptyQPrompt) {
+            setErrorTitle('At least one Question has no Prompt');
+            setErrorMessage('Please enter a question prompt for all questions');
+            togglePopup();
+        } else if (noAnswers) {
+            setErrorTitle('At least one Question has no Answers');
+            setErrorMessage('Please add at least one answer for all questions');
+            togglePopup();
+        } else if (emptyAnswer) {
+            setErrorTitle('At least one Answer has no Text');
+            setErrorMessage('Please add text for all Answers');
             togglePopup();
         } else {
             const survey: SurveyTemplate = {
@@ -131,7 +207,7 @@ const SurveyCreator: React.FC = () => {
                 logSurveyCreation(survey.title, authInstance.currentUser!.email!);
             } else {
                 if (surveyResponses.filter(sr => sr.surveyId === reduxSurveyData.id).length > 0) {
-                    if (window.confirm('There are survey responses of this survey. Editing this survey will also edit the questions seen on the response. It will not effect the job opportunities shown on the response.Press OK to continue'))
+                    if (window.confirm('There are survey responses of this survey. Editing this survey will also edit the questions seen on the response. It will not effect the job opportunities shown on the response. Press OK to continue'))
                         await editSurvey(reduxSurveyData.id, survey);
                     else return;
                 }
@@ -148,9 +224,13 @@ const SurveyCreator: React.FC = () => {
     useEffect(() => {
         // copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
         if (currentOperation === OperationType.Editing) {
+            // Add hashes to old surveys, can remove soon
+            const cloneQuestions = lodash.cloneDeep(reduxSurveyData.questions);
+            cloneQuestions.forEach(q => setHash(q));
+
             setDesc(reduxSurveyData.description);
             setTitle(reduxSurveyData.title);
-            setQuestions(reduxSurveyData.questions);
+            setQuestions(cloneQuestions);
         }
     }, [reduxSurveyData, currentOperation]);
 
@@ -168,6 +248,8 @@ const SurveyCreator: React.FC = () => {
                         <div className="createdQuestion" key={qIndex}>
                             <div>
                                 <div className="header">
+                                    {(qIndex > 0) && <button className='shiftUp' onClick={() => moveQuestion(qIndex, qIndex - 1)}>Up</button>}
+                                    {(qIndex < questions.length - 1) && <button className='shiftDown' onClick={() => moveQuestion(qIndex, qIndex + 1)}>Down</button>}
                                     <input type='text' className="prompt" value={q.prompt} placeholder="Question Prompt..." onChange={(e) => changeQuestionPrompt(qIndex, e.target.value)} />
                                     <div className="questionType">
                                         <select name="questionType" title="Question Type" onChange={e => changeQuestionType(qIndex, e.target.selectedIndex)} value={q.questionType}>

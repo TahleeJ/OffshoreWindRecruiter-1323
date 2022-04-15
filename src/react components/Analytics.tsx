@@ -7,14 +7,17 @@ import { authInstance } from '../firebase/Firebase';
 
 
 const Analytics: React.FC = () => {
+    // Get data from redux
     const surveys = useAppSelector(s => s.data.surveys);
     const jobOpps = useAppSelector(s =>  s.data.jobOpps);
     const labels = useAppSelector(s => s.data.labels);
     const userEmail = authInstance.currentUser!.email!;
   
+    // Stateful storage of the current state of the input error message
     const [popupTitleState, setPopupTitleState] = useState("");
     const [popupMessageState, setPopupMessageState] = useState("");
 
+    // Stateful storage of query type selection, what is in current use and for each subject
     const [queryTypeState, setQueryTypeState] = useState<DataQuery>(DataQuery.AllTitles);
     const [surveyQueryTypeState, setSurveyQueryTypeState] = useState<DataQuery>(DataQuery.AllTitles);
     const [jobQueryTypeState, setJobQueryTypeState] = useState<DataQuery>(DataQuery.HighestAverageJobMatches);
@@ -23,28 +26,41 @@ const Analytics: React.FC = () => {
     const [navigatorGroupingState, setNavigatorGroupingstate] = useState<NavigatorGrouping>(NavigatorGrouping.All);
     const [validDataFocusesState, setValidDataFocusesState] = useState(validChartInfo.get(Subject.Surveys)!.get(Chart.Pie)!.text);
 
+    // Stateful storage of chart type selection: what is in current use and for each subject
     const [chartTypeState, setChartTypeState] = useState<Chart>(Chart.Pie);
     const [surveyChartTypeState, setSurveyChartTypeState] = useState(Chart.Pie);
     const [jobChartTypeState, setJobChartTypeState] = useState(Chart.TreeMap);
     const [labelChartTypeState, setLabelChartTypeState] = useState(Chart.Scatter);
 
+    // Stateful storage of the entered in navigator emails
     const [navigatorEntryState, setNavigatorEntryState] = useState("");
+
+    // Stateful storage of the list of navigator emails/surveys/jobs/labels to view data for
     const [selectedNavigatorState, setSelectedNavigatorState] = useState<string[]>();
     const [selectedSurveysState, setSelectedSurveysState] = useState<string[]>([]);
-    const [selectedSurveysCheckState, setSelectedSurveysCheckState] = useState<Set<string>>(new Set<string>());
-    const [selectedJobsState, setSelectedJobsState] = useState<string[]>([]);
-    const [selectedJobsCheckState, setSelectedJobsCheckState] = useState<Set<string>>(new Set<string>());
+    const [selectedJobsState, setSelectedJobsState] = useState<string[]>([]);  
     const [selectedLabelsState, setSelectedLabelsState] = useState<string[]>([]);
+
+    // Stateful storage of which checkbox elements have been selected
+    const [selectedSurveysCheckState, setSelectedSurveysCheckState] = useState<Set<string>>(new Set<string>());
+    const [selectedJobsCheckState, setSelectedJobsCheckState] = useState<Set<string>>(new Set<string>());
     const [selectedLabelsCheckState, setSelectedLabelsCheckState] = useState<Set<string>>(new Set<string>());
 
+    // Stateful storage of the selected starting date to look at data from
     const [dateGroupingState, setDateGroupingState] = useState<DateGrouping>(DateGrouping.Week);
     const [dayDateState, setDayDateState] = useState(today);
     const [sinceDateState, setSinceDateState] = useState(today);
     const [startDateState, setStartDateState] = useState(today().replaceAll("-", ""));
 
+    // Stateful storage of the currently selected subject type
     const [subjectState, setSubjectState] = useState(Subject.Surveys);
+
+    // (Jobs subject only) Stateful storage of the type of tree chart to be used:
+    // largest data or smallest data (used to set tree informational box)
     const [treeState, setTreeState] = useState(DataQuery.None);
 
+    // Variables to hold the currently used data that the state will be set with;
+    // initialized with the previous state information
     var popupTitle = popupTitleState;
     var popupMessage = popupMessageState;
     var queryType = queryTypeState;
@@ -60,6 +76,29 @@ const Analytics: React.FC = () => {
     var startDate = startDateState;
     var subject = subjectState;
 
+    // Variables to check the validity of the number of surveys selected
+    const maxSelectedSurveys = 5;
+    var selectedSurveyCount = 0;
+    var selectedSurveys = selectedSurveysState;
+
+    var selectedNavigators = selectedNavigatorState;
+
+    // Variables to check the validity of the number of jobs selected
+    const maxSelectedJobs = 5;
+    var selectedJobCount = 0;
+    var selectedJobs = selectedJobsState;
+
+    // Variables to check the validity of the number of labels selected
+    const maxSelectedLabels = 5;
+    var selectedLabelCount = 0;
+    var selectedLabels = selectedLabelsState;
+
+    // HTML elements necessary to immediately set data for without waiting for state update
+    const validDataFocusesBox = document.getElementById("valid-focuses") as HTMLInputElement;
+    const popupTitleBox = document.getElementById("popup-title") as HTMLInputElement;
+    const popupMessageBox = document.getElementById("popup-message") as HTMLInputElement;
+
+    // Sets the error box on the page with the necessary error message
     const togglePopup = () => {
         popupTitleBox!.innerHTML = popupTitle;
         popupMessageBox!.innerHTML = popupMessage;
@@ -68,35 +107,35 @@ const Analytics: React.FC = () => {
         setPopupMessageState(popupMessage);
     };
 
-    const maxSelectedSurveys = 5;
-    var selectedSurveyCount = 0;
-    var selectedSurveys = selectedSurveysState;
-    var selectedNavigators = selectedNavigatorState;
-
-    const maxSelectedJobs = 5;
-    var selectedJobCount = 0;
-    var selectedJobs = selectedJobsState;
-
-    const maxSelectedLabels = 5;
-    var selectedLabelCount = 0;
-    var selectedLabels = selectedLabelsState;
-
-    const validDataFocusesBox = document.getElementById("valid-focuses") as HTMLInputElement;
-    const popupTitleBox = document.getElementById("popup-title") as HTMLInputElement;
-    const popupMessageBox = document.getElementById("popup-message") as HTMLInputElement;
-
     google.charts.load("current", {packages:["corechart", "table", "treemap"]});
 
+    /**
+     * Updates how many navigators the data should focus on
+     * 
+     * @param value the new set of navigators to focus on
+     */
     function updateNavigatorGrouping(value: NavigatorGrouping) {
         navigatorGrouping = value;
         setNavigatorGroupingstate(value);
     }
 
+    /**
+     * Updates the variables keeping track of the emails the
+     * user enters in in the navigators text box
+     * 
+     * @param value the entered in string by the user
+     */
     function updateNavigatorEntry(value: string) {
         navigatorEntry = value;
         setNavigatorEntryState(value);
     }
 
+    /**
+     * Updates the data query that will be used to retrieve data
+     * and updates the state
+     * 
+     * @param value the new query to pull data with
+     */
     function updateQueryType(value: DataQuery) {
         queryType = value;
 
@@ -115,6 +154,12 @@ const Analytics: React.FC = () => {
         setQueryTypeState(value);
     }
 
+    /**
+     * Updates the chart type that will be used to display the
+     * data and updates the state
+     * 
+     * @param value the new chart to display the data on
+     */
     function updateChartType(value: Chart) {
         chartType = value;
 
@@ -130,6 +175,7 @@ const Analytics: React.FC = () => {
                 break;
         }
 
+        // Displays which queries (data focuses) the selected chart is able to display
         const validChartTypeText = validChartInfo.get(subject)!.get(value)!.text;
 
         validDataFocusesBox.innerHTML = validChartTypeText;
@@ -138,11 +184,26 @@ const Analytics: React.FC = () => {
         setValidDataFocusesState(validChartTypeText);
     }
 
+    /**
+     * Updates the starting date type that the data should begin from (a 
+     * specific day, a week back, a month back, or starting from a specific date)
+     * and updates the state 
+     * 
+     * @param value the new starting date type
+     */
     function updateDateGrouping(value: DateGrouping) {
         dateGrouping = value;
         setDateGroupingState(value);
     }
 
+    /**
+     * Updates the actual date that the data will start at based on a
+     * selected date, sanitizing the date string into a form
+     * recognizable by BigQuery (i.e., YYYYMMDD)
+     * 
+     * @param value the new starting date string in HTML date input format
+     * @param rangeType the starting date type of the selected starting date
+     */
     function updateDate(value: string, rangeType: DateGrouping) {
         if (rangeType === DateGrouping.Day) {
             dayDate = value.replaceAll("-", "");
@@ -153,6 +214,12 @@ const Analytics: React.FC = () => {
         }  
     }
 
+    /**
+     * Updates the subject that the data should focus on (surveys, jobs, or labels)
+     * and updates the state
+     * 
+     * @param value the new subject of the data
+     */
     function updateSubject(value: Subject) {
         subject = value;
 
@@ -189,6 +256,7 @@ const Analytics: React.FC = () => {
             return false;
         } else {
             if (navigatorGrouping === NavigatorGrouping.Set && navigators.length < 2) {
+                setSelectedNavigatorState(selectedNavigators);
                 return false;
             }
 
@@ -198,9 +266,11 @@ const Analytics: React.FC = () => {
                 if (adjustedEntry.length < 5) {
                     selectedNavigators = [];
 
+                    setSelectedNavigatorState(selectedNavigators);
                     return false;
                 }
 
+                setSelectedNavigatorState(selectedNavigators);
                 selectedNavigators.push(adjustedEntry);
             }
 
@@ -209,14 +279,14 @@ const Analytics: React.FC = () => {
     }
 
     /**
-     * Updates the list of survey names that will be used to pull data for,
-     * ensuring that only a maximum of 5 surveys are selected at any given
-     * time.
+     * Updates the list of survey, job, or label names that will be used to pull data for
+     * based on the currently selected subject, ensuring that only a maximum of 5 are selected 
+     * at any given time.
      * 
      * @param subjectSelected the subject that the data focuses on
-     * @param name the name of the survey/job to add/remove from the chart's
-     *                   survey data
-     * @param checked whether or not the checkbox for a given survey has just been
+     * @param name the name of the survey/job/label to add/remove from the chart's
+     *                   survey/job/label data
+     * @param checked whether or not the checkbox for a given survey/job/label has just been
      *                selected or deselected
      */
     function handleClick(subjectSelected: Subject, name: string, checked: boolean) {
@@ -312,23 +382,19 @@ const Analytics: React.FC = () => {
     }
 
     /**
-     * Begins the chart generation process. Charts will only start to be generated when the
-     * following conditions are met:
-     *      - A (valid) email has been entered if data for a specific navigator was desired
-     *      - The desired chart type is able to represent the desired data set
-     *      - At least one survey has been selected if data for a specific set of surveys was
-     *        desired
+     * Begins the chart generation process.
      */
     const generateChart = async() => {
+        // Resets the displayed error message
         popupTitle = "";
         popupMessage = "";
         togglePopup();
 
+        // Retrieves the BigQuery-recognizable start date
         startDate = determineStartDate(dateGrouping, dayDate, sinceDate);
 
-        setQueryTypeState(queryType);
+        // Updates the starting date state
         setStartDateState(startDate);
-        setSelectedNavigatorState(selectedNavigators);
         
         const queryRequiresSurveyName = [
             DataQuery.AllTitlesPerDay, 
@@ -378,8 +444,6 @@ const Analytics: React.FC = () => {
 
             return;
         }
-        console.log(selectedLabelCount);
-        console.log(selectedLabels);
 
         if (subject === Subject.Labels) {
             if (selectedLabels.length === 0) {
@@ -406,6 +470,7 @@ const Analytics: React.FC = () => {
         }
 
         try {
+            // Sets the Tree Map chart type state to update its informational box
             if (jobQueryDoesNotRequireJobName && chartType === Chart.TreeMap) {
                 setTreeState(queryType);
             } else {
@@ -424,6 +489,7 @@ const Analytics: React.FC = () => {
                 startDate: startDate
             };
 
+            // Entry point into the chart drawing
             await drawChart(subject, chartType, queryType, queryDoesNotRequireNavigatorName, dateSelection, selectionArrays);
         } catch (error) {
             const { details } = JSON.parse(JSON.stringify(error));

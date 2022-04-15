@@ -17,8 +17,9 @@
     },
     "plugins": [
         "react",
-        "@typescript-eslint"
-    ],
+        "@typescript-eslint",
+        "only-warn"
+    ], 
     "rules": {
         "indent": ["error", 4],
         "semi": ["warn", "always"],

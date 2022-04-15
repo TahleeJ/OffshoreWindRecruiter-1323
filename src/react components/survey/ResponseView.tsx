@@ -1,6 +1,7 @@
 import React from 'react';
 import { JobOpp, QuestionType, RecommendedJobWithData, StoredSurveyResponse } from '../../firebase/Types';
 import { useAppSelector } from '../../redux/hooks';
+import Section from '../generic/Section';
 import RecJobView from './RecJobView';
 
 
@@ -45,14 +46,13 @@ const ResponseView: React.FC = () => {
 
     return (
         <div className='ResponseView container'>
-            <div className='section'>
-                <div className='title'>Recommendations:</div>
+            <Section title='Recommendations:'>
                 <RecJobView jobs={jobs()} />
-            </div>
-            <div className='section'>
-                <div className='title'>Response:</div>
-                <div className='question'>Since the survey was taken,
-                    {removedQuestions === 1 ? ' 1 question has' : removedQuestions + ' questions have'} been removed. </div>
+            </Section>
+            <Section title='Response:'>
+                <div className='question'>
+                    <span>Since the survey was taken, </span>
+                    {removedQuestions === 1 ? '1 question has' : removedQuestions + ' questions have'} been removed. </div>
                 {
                     survey.questions.map((q, i) =>
                         answerMap.has(q.hash)
@@ -68,7 +68,7 @@ const ResponseView: React.FC = () => {
                             : <div className='question'>This question was added after this response was taken. </div>
                     )
                 }
-            </div>
+            </Section>
         </div>
     );
 };

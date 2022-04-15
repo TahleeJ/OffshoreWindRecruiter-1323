@@ -8,7 +8,7 @@ import { JobOpp, Label, AdministeredSurveyResponse, SurveyTemplate, User } from 
 const table = <T>(collectionPath: string) => collection(firestoreInstance, collectionPath) as CollectionReference<T>;
 
 // Used to create lazily evaluated and memorized Firestore collection references to reduce Firestore reads
-class db {
+class DB {
     _Users = lodash.once(() => table<User>('User'));
     public get Users() {
         return this._Users();
@@ -35,4 +35,4 @@ class db {
     }
 }
 
-export default new db();
+export default new DB();

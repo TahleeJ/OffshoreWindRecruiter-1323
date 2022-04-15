@@ -1,9 +1,9 @@
-import { getBigQueryData } from "../Firebase";
-import { queryFunctions, DataQuery, Subject, SerializedEntry } from "./Utility";
+import { getBigQueryData } from '../Firebase';
+import { queryFunctions, DataQuery, Subject, SerializedEntry } from './Utility';
 
 /**
  * Function to actually send a desired query to BigQuery
- * 
+ *
  * @param subject the subject type the query will focus around
  * @param queryType the type of query that will be sent
  * @param forDay whether the data should be focused on a single, specified day
@@ -14,106 +14,105 @@ import { queryFunctions, DataQuery, Subject, SerializedEntry } from "./Utility";
  */
 export async function getQueryData(subject: Subject, queryType: DataQuery, forDay: boolean, startDate: string, selectedNavigator?: string, jobNames?: string[], labelNames?: string[]) {
     const queryFunction = queryFunctions[queryType];
-    var response;
+    let response;
 
     switch (subject) {
-        case Subject.Surveys:
-            if (!([DataQuery.AllTitlesPerDay, DataQuery.AllPerDay, DataQuery.AllTitles].includes(queryType))) {
-                const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${selectedNavigator}", ${forDay}, "${startDate}")`;
-        
-                response = await getBigQueryData({ queryString: queryString, navigatorEmail: selectedNavigator });
-            } else {
-                const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(${forDay}, "${startDate}")`;
-        
+    case Subject.Surveys:
+        if (!([DataQuery.AllTitlesPerDay, DataQuery.AllPerDay, DataQuery.AllTitles].includes(queryType))) {
+            const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${selectedNavigator}", ${forDay}, "${startDate}")`;
+
+            response = await getBigQueryData({ queryString: queryString, navigatorEmail: selectedNavigator });
+        } else {
+            const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(${forDay}, "${startDate}")`;
+
+            response = await getBigQueryData({ queryString: queryString });
+        }
+
+        return serializeSurveyData(response.data as string[], queryType);
+    case Subject.Jobs:
+        if (!([DataQuery.SurveyNegativeJobMatches, DataQuery.SurveyPositiveJobMatches, DataQuery.AverageSurveyMatches, DataQuery.HighestAverageJobMatches, DataQuery.LowestAverageJobMatches].includes(queryType))) {
+            const serializedJobData = new Map<string, SerializedEntry[]>();
+
+            for (const jobName of jobNames!) {
+                const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${jobName}", ${forDay}, "${startDate}")`;
+
                 response = await getBigQueryData({ queryString: queryString });
-            }
 
-            return serializeSurveyData(response.data as string[], queryType);
-        case Subject.Jobs:
-            if (!([DataQuery.SurveyNegativeJobMatches, DataQuery.SurveyPositiveJobMatches, DataQuery.AverageSurveyMatches, DataQuery.HighestAverageJobMatches, DataQuery.LowestAverageJobMatches].includes(queryType))) {
-                const serializedJobData = new Map<string, SerializedEntry[]>();
-                
-                for (const jobName of jobNames!) {
-                    const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${jobName}", ${forDay}, "${startDate}")`;
+                const serializedData: any = serializeJobData(response.data as string[], queryType);
 
-                    response = await getBigQueryData({ queryString: queryString });
-
-                    const serializedData: any = serializeJobData(response.data as string[], queryType);
-
-                    for (const [key, value] of serializedData) {
-                        if (serializedJobData.has(key)) {
-                            const currentData = serializedJobData.get(key);
+                for (const [key, value] of serializedData) {
+                    if (serializedJobData.has(key)) {
+                        const currentData = serializedJobData.get(key);
 
                             currentData!.push(value);
 
                             serializedJobData.set(key, currentData!);
-                        } else {
-                            serializedJobData.set(key, [value]);
-                        }
+                    } else {
+                        serializedJobData.set(key, [value]);
                     }
                 }
-
-                return serializedJobData;
-            } else {
-                const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(${forDay}, "${startDate}")`
-
-                response = await getBigQueryData({ queryString: queryString }); 
-                
-                const serializedData = serializeJobData(response.data as string[], queryType);
-
-                return serializedData;
             }
-        case Subject.Labels:
-            if (queryType === DataQuery.LabelAverage) {
-                const serializedLabelData = new Map<string, SerializedEntry[]>();
 
-                for (const labelName of labelNames!) {
-                    const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${labelName}", ${forDay}, "${startDate}")`;
+            return serializedJobData;
+        } else {
+            const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(${forDay}, "${startDate}")`;
 
-                    response = await getBigQueryData({ queryString: queryString });
-                    console.log(response);
+            response = await getBigQueryData({ queryString: queryString });
 
-                    const serializedData: any = serializeLabelData(response.data as string[], queryType);
+            const serializedData = serializeJobData(response.data as string[], queryType);
 
-                    for (const [key, value] of serializedData) {
-                        if (serializedLabelData.has(key)) {
-                            const currentData = serializedLabelData.get(key);
+            return serializedData;
+        }
+    case Subject.Labels:
+        if (queryType === DataQuery.LabelAverage) {
+            const serializedLabelData = new Map<string, SerializedEntry[]>();
+
+            for (const labelName of labelNames!) {
+                const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${labelName}", ${forDay}, "${startDate}")`;
+
+                response = await getBigQueryData({ queryString: queryString });
+                console.log(response);
+
+                const serializedData: any = serializeLabelData(response.data as string[], queryType);
+
+                for (const [key, value] of serializedData) {
+                    if (serializedLabelData.has(key)) {
+                        const currentData = serializedLabelData.get(key);
 
                             currentData!.push(value);
 
                             serializedLabelData.set(key, currentData!);
-                        } else {
-                            serializedLabelData.set(key, [value]);
-                        }
+                    } else {
+                        serializedLabelData.set(key, [value]);
                     }
                 }
-
-                return serializedLabelData;
-
-            } else {
-                const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${labelNames![0]}", ${forDay}, "${startDate}")`
-
-                response = await getBigQueryData({ queryString: queryString }); 
-                
-                const serializedData = serializeLabelData(response.data as string[], queryType);
-
-                return serializedData;
             }
+
+            return serializedLabelData;
+        } else {
+            const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${labelNames![0]}", ${forDay}, "${startDate}")`;
+
+            response = await getBigQueryData({ queryString: queryString });
+
+            const serializedData = serializeLabelData(response.data as string[], queryType);
+
+            return serializedData;
+        }
     }
 }
 
-    // TitleDay
-    // date -> {title, frequency}
-    // 
-    // PerDay
-    // date -> {frequency}
-    //
-    // Titles
-    // {title, frequency}
+// TitleDay
+// date -> {title, frequency}
+//
+// PerDay
+// date -> {frequency}
+//
+// Titles
+// {title, frequency}
 
 /**
  * Turns the data received from BigQuery into a more chart-operational format
- * 
+ *
  * @param data the data sent back from BigQuery
  * @param queryType the type of query used to get data from BigQuery
  * @returns the transformed set of data
@@ -177,7 +176,7 @@ function serializeSurveyData(data: string[], queryType: DataQuery) {
 
                         serializedData.get(elementJSON.navigator)!.set(elementJSON.event_date, currentData);
                     } else {
-                        serializedData.get(elementJSON.navigator)!.set(elementJSON.event_date, [newData])
+                        serializedData.get(elementJSON.navigator)!.set(elementJSON.event_date, [newData]);
                     }
                 } else {
                     const newMap = new Map<string, SerializedEntry[]>();
@@ -199,13 +198,13 @@ function serializeSurveyData(data: string[], queryType: DataQuery) {
                 if (serializedData.has(elementJSON.navigator)) {
                     serializedData.get(elementJSON.navigator)!.push(newData);
                 } else {
-                    serializedData.set(elementJSON.navigator, [newData])
+                    serializedData.set(elementJSON.navigator, [newData]);
                 }
             }
 
             return serializedData;
         }
-    } 
+    }
 }
 
 function serializeJobData(data: string[], queryType: DataQuery) {
@@ -243,7 +242,7 @@ function serializeJobData(data: string[], queryType: DataQuery) {
         } else {
             if (([DataQuery.SurveyPositiveJobMatches, DataQuery.SurveyNegativeJobMatches].includes(queryType))) {
                 // date -> {survey title, count}
-                console.log("here");
+                console.log('here');
                 const serializedData = new Map<string, SerializedEntry[]>();
 
                 for (const element of data) {
@@ -301,7 +300,7 @@ function serializeJobData(data: string[], queryType: DataQuery) {
         }
 
         return serializedData;
-    }   
+    }
 }
 
 function serializeLabelData(data: string[], queryType: DataQuery) {

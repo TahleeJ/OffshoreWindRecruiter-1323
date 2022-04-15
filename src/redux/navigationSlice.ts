@@ -92,11 +92,11 @@ export const submitSurveyResponse = createAsyncThunk('navigation/submitSurveyRes
         const result = await submitSurvey(survey);
 
         // [LabelId, [linear score, percentile score]]
-        const labelScores: [string, [number, number]][] = Object.entries(result.data.labelScores)
+        const labelScores: [string, [number, number]][] = Object.entries(result.data.labelScores);
 
         logJobsMatched(survey.surveyId, result.data.recommendedJobs);
         logLabelsUsed(labelScores);
-        
+
         return result;
     }
 );

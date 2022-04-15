@@ -71,7 +71,7 @@ const App: React.FC = () => {
 
                 if (permissionLevel === PermissionLevel.None && !firstLogin) {
                     firstLogin = true;
-                    appDispatch(changePage({ type: PageType.Survey })); // change to PageType.InfoPage when info page is created
+                    appDispatch(changePage({ type: PageType.InfoPage })); // change to PageType.InfoPage when info page is created
                 } else if (permissionLevel === PermissionLevel.Navigator && !firstLogin) {
                     firstLogin = true;
                     appDispatch(changePage({ type: PageType.Survey }));

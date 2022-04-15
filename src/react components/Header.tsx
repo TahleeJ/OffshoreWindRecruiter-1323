@@ -6,17 +6,19 @@ import ReactTooltip from 'react-tooltip';
 import * as firebaseAuth from '@firebase/auth';
 import { authInstance } from '../firebase/Firebase';
 
-import { assertIsAdmin } from '../firebase/Queries/AdminQueries';
+import { assertIsAdmin, getUser } from '../firebase/Queries/AdminQueries';
+import { PermissionLevel } from '../firebase/Types';
 
 
 const Header: React.FC = () => {
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [level, setLevel] = useState<PermissionLevel>(PermissionLevel.None);
     const appDispatch = useAppDispatch();
 
     const updateIsAdmin = async () => {
         const isA = await assertIsAdmin(authInstance.currentUser?.uid!);
+        const level = (await getUser(authInstance.currentUser?.uid!))?.permissionLevel
 
-        setIsAdmin(isA);
+        setLevel(level ? level : PermissionLevel.None);
     };
     useEffect(() => { updateIsAdmin(); }, []);
 
@@ -24,18 +26,22 @@ const Header: React.FC = () => {
         <header id="header" >
             <div className='title'>{'Offshore Recruiter'.toUpperCase()}</div>
             <div className='buttonGroup'>
-                {// someone make this so this page will show if they are a "none" user
-                    // <i className='fas fa-info' onClick={() => { appDispatch(changePage({ type: PageType.InfoPage })) }} data-tip="Information"></i>
-                }
-
-                <i className='far fa-file-alt' onClick={() => { appDispatch(changePage({ type: PageType.Home })); }} data-tip="Survey Administer"></i>
-                <i className='fas fa-briefcase' onClick={() => { appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Administering })); }} data-tip="Job Explore"></i>
-                {isAdmin
-                    ? <i className='fas fa-tools admin-manager' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })); }} data-tip="Administrative Dashboard"></i>
+                {level === PermissionLevel.None ?
+                    <i className='fas fa-info' onClick={() => { appDispatch(changePage({ type: PageType.InfoPage })) }} data-tip="Information"></i>
                     : null
                 }
-                {isAdmin
-                    ? <i className="far fa-chart-bar" onClick={() => { appDispatch(changePage({ type: PageType.Analytics })); }} data-tip="Analytics"></i>
+                {level >= PermissionLevel.Navigator ?
+                    <>
+                        <i className='far fa-file-alt' onClick={() => { appDispatch(changePage({ type: PageType.Home })); }} data-tip="Survey Administer"></i><i className='fas fa-briefcase' onClick={() => { appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Administering })); }} data-tip="Job Explore"></i>
+                    </>
+                    : null
+
+                }
+                {level >= PermissionLevel.Admin
+                    ?
+                    <>
+                        <i className='fas fa-tools admin-manager' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })); }} data-tip="Administrative Dashboard"></i><i className="far fa-chart-bar" onClick={() => { appDispatch(changePage({ type: PageType.Analytics })); }} data-tip="Analytics"></i>
+                    </>
                     : null
                 }
                 <i className="fas fa-sign-out-alt sign-out" onClick={() => firebaseAuth.signOut(authInstance)} data-tip="Sign Out"></i>

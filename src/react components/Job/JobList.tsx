@@ -2,13 +2,13 @@ import React from 'react';
 import { useAppDispatch } from '../../redux/hooks';
 import { changeOperation, OperationType } from '../../redux/navigationSlice';
 
-/** The props (arguments) to create this element */
+
 interface props {
     title: String
 }
 
-/** The header of the application. */
-const JobList: React.FC<props> = (props) => {
+
+const JobList: React.FC<props> = props => {
     const appDispatch = useAppDispatch();
     return (
         <div id= 'jobList'>
@@ -19,11 +19,11 @@ const JobList: React.FC<props> = (props) => {
                 <button className = 'red'>
                     Delete
                 </button>
-                <button className='green' onClick={() => {appDispatch(changeOperation({ operation: OperationType.Editing })) }}>
+                <button className='green' onClick={() => { appDispatch(changeOperation({ operation: OperationType.Editing })); }}>
                     Edit
                 </button>
             </div>
         </div>
     );
-}
+};
 export default JobList;

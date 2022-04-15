@@ -206,7 +206,4 @@ serviceAccountKey.json
 
 # End of https://www.toptal.com/developers/gitignore/api/firebase,macos,node,visualstudiocode
 
-
-# End of https://www.toptal.com/developers/gitignore/api/amplify,macos,node,visualstudiocode
-
-# End of https://www.toptal.com/developers/gitignore/api/firebase,macos,node,visualstudiocode
+build/**

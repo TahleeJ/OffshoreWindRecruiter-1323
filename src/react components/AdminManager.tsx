@@ -1,103 +1,156 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAppDispatch } from '../redux/hooks';
 import { changePage, PageType } from '../redux/navigationSlice';
 
-import { authInstance } from '../firebase/Firebase';
 import { PermissionLevel } from '../firebase/Types';
-import { getUser, setUserPermissionLevel } from '../firebase/Queries/AdminQueries';
+import { setUserPermissionLevel } from '../firebase/Queries/AdminQueries';
 
-import Prompt from './Prompt';
+import Prompt from './generic/Prompt';
+import TooltipInfo from './TooltipInfo';
 
 
-/** The props (arguments) to create this element */
-interface props {
-
-}
-
-/** The header of the application. */
-const AdminManager: React.FC<props> = (props) => {
-    const [email, setEmail] = useState("");
-    const [permissionLevel, setPermission] = useState(PermissionLevel.None);
+const AdminManager: React.FC = () => {
+    const [emailsState, setEmailsState] = useState('');
+    const [updateEmailsState, setUpdateEmailsState] = useState(['']);
     const dispatch = useAppDispatch();
-    const [changeLevel, setChangeLevel] = useState("Admin");
-    const [errorMessage, setErrorMessage] = useState("");
+    const [changeLevelState, setChangeLevelState] = useState('Admin');
+    const [errorTextState, setErrorTextState] = useState('');
+    const [updateLevelState, setUpdateLevelState] = useState(PermissionLevel.Navigator);
 
-    const updateIsAdmin = async () => {
-        const uid = authInstance.currentUser?.uid!;
-        const userDoc = await getUser(uid);
+    const [popupVisible, setPopupVisible] = useState<Boolean>(false);
+    const togglePopup = () => setPopupVisible(!popupVisible);
 
-        if (userDoc !== undefined)
-            setPermission(userDoc.permissionLevel);
+    let emails = emailsState;
+    let updateEmails = updateEmailsState;
+    let updateLevel = updateLevelState;
+
+    function validateEmailEntry() {
+        const updateEmailEntries = [];
+        if (emails.length > 0) {
+            const newUpdateEmails: string[] = emails.split(',');
+
+            for (const entry of newUpdateEmails) {
+                const adjustedEntry = entry.trim();
+                if (adjustedEntry.length < 5) {
+                    updateEmails = [];
+                    setUpdateEmailsState([]);
+
+                    return false;
+                }
+
+                updateEmailEntries.push(adjustedEntry);
+            }
+
+            updateEmails = updateEmailEntries;
+            setUpdateEmailsState(updateEmails);
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+    function setEmails(newEmails: string) {
+        emails = newEmails;
+        setEmailsState(emails);
+    }
 
-    const togglePopup = () => setPopupvisible(!popupVisible);
-    const promote = async () => {
-        if (!email.trim()) {
-            setErrorMessage("*This field is required");
+    function setNewUpdateLevel(newLevel: string) {
+        console.log('hi');
+        switch (newLevel) {
+        case 'Owner':
+            updateLevel = PermissionLevel.Owner;
+            break;
+        case 'Admin':
+            updateLevel = PermissionLevel.Admin;
+            break;
+        case 'Navigator':
+            updateLevel = PermissionLevel.Navigator;
+            break;
+        case 'None':
+            updateLevel = PermissionLevel.None;
+            break;
         }
-        var get;
-        if (changeLevel === "Owner") {
-            get = await setUserPermissionLevel(email, PermissionLevel.Owner);
-        } else if (changeLevel === "Admin") {
-            get = await setUserPermissionLevel(email, PermissionLevel.Admin);
-        }
-        //const get = await setUserPermissionLevel(email, PermissionLevel.Owner);
-        if (get !== "Update success!") {
+
+        setUpdateLevelState(updateLevel);
+        setChangeLevelState(newLevel);
+    }
+
+    const update = async () => {
+        const validateResult = validateEmailEntry();
+        console.log(updateLevel);
+
+        if (validateResult) {
+            let errorEmailsMessage = '';
+
+            for (const email of updateEmails) {
+                const result = await setUserPermissionLevel(email, updateLevel);
+
+                if (result !== 'Update success!') {
+                    errorEmailsMessage = errorEmailsMessage + `${email}: ${result}\n`;
+
+                    togglePopup();
+                } else {
+                    errorEmailsMessage = errorEmailsMessage + `${email}: success!\n`;
+                }
+            }
+
+            setErrorTextState(errorEmailsMessage);
+        } else {
+            setErrorTextState('Please enter at least one email and separate the rest by commas.');
             togglePopup();
         }
-        //setUserPermissionLevel(email, 2);
-    }
-    const demote = () => {
-        setUserPermissionLevel(email, PermissionLevel.None)
-        dispatch(changePage({type: PageType.AdminHome}))
-    }
-    useEffect(() => { updateIsAdmin(); }, []);
+    };
 
     return (
-        <div id="promoteUser">
+        <div id="promoteUser" className='container'>
             <div className="title">Administrator Authorization</div>
-            <div className='textBlock'>Type the email address of the user that you would like to promote/demote to Administrator.
+            <div className='textBlock'>
+                <div className='textBlock' style={{ fontWeight: 'bold' }}>Type the email address(es) of the user(s) that you would like to change permissions for.</div>
                 <br /><br />
-                Administrators have full access to the application; They are able to create new surveys, labels, jobs, and administer surveys.</div>
+                <div className='textBlock'>
+                Owners have all accesses of administrators as well as full administrative access in changing permission levels.
+                    <br /><br />
+                Administrators have full access to the application: they are able to create new surveys, labels, jobs, administer surveys, and view analytics.
+                    <br /><br />
+                None-level users will only be able to administer surveys.
+                </div>
+            </div>
+
             <div className="inputContainer">
-                <div className="userEmail">User Email:</div>
-                <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder='example@gmail.com'></input>
-                <div className="error">{errorMessage}</div>
+                <div className="userEmail">User Email(s):
+                    <div className='infoIcon'>
+                        <TooltipInfo textarea="Type the user's email you want to promote/demote"></TooltipInfo>
+                    </div> 
+                </div>
+                <input type="text" defaultValue={emailsState} onChange={(e) => setEmails(e.target.value)} placeholder='example@gmail.com'></input>
+                <div className="error" style={{ whiteSpace: 'pre-wrap', height: '75px', overflow: 'auto' }}>{errorTextState}</div>
             </div>
             <div className = "dropDown">
-                <div className = "dropText">Promote to: </div>
-                <form>
-                <select value = {changeLevel} onChange={(e) => setChangeLevel(e.target.value)}>
-                    <option value = "Admin">Admin</option>
-                    {
-                        permissionLevel === PermissionLevel.Owner ? <option value = "Owner">Owner</option>
-                        : null
-                    }
-                
+                <label className='dropText' htmlFor='permission-select'>Update to: </label>
+                <select id='permission-select' value={changeLevelState} onChange={(e) => setNewUpdateLevel(e.target.value)}>
+                    <option value="Navigator">Navigator</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Owner">Owner</option>
                 </select>
-                </form>
             </div>
             <div className="buttonContainer">
                 <button className="gray" onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
-                <button onClick={promote}>Promote</button>
-                {
-                    permissionLevel === PermissionLevel.Owner ?
-                        <button className='red' onClick={demote}>Demote</button>
-                        : null
-                }
+
+                <button onClick={update}>Update</button>
+                <button className='red' onClick={update}>Demote to None</button>
+
                 {popupVisible &&
                 <Prompt
-                    title="Wrong Email Address"
-                    message="This email address does not exist. Please check your input."
+                    title="Permission Update Error"
+                    message="There was an error updating the permission level of some of your selected users. Please make sure you have entered valid email addresses and that your selected users are members of this application."
                     handleCancel={togglePopup}
                 />
-            }
+                }
             </div>
-            
+
         </div>
     );
-}
+};
 
 export default AdminManager;

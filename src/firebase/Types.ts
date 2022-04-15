@@ -12,7 +12,7 @@ export interface SurveyQuestion {
     prompt: string
     answers: SurveyAnswer[]
     questionType: QuestionType
-}   
+}
 
 export enum QuestionType {
     MultipleChoice = 0,
@@ -30,16 +30,17 @@ export interface Label {
 }
 
 
-export interface SurveyResponse {
-    surveyId: id 
+export interface AdministeredSurveyResponse {
+    surveyId: id
     taker: SurveyTaker
+    created?: number
 
     /**
      * Scale: [0-4]
      * MultipleChoice: [0-n]
      * FreeResponse: string
      */
-    answers: (number | string)[]  
+    answers: (number | string)[]
 
     recommendedJobs?: RecommendedJob[]
 }
@@ -55,11 +56,24 @@ export interface RecommendedJob {
     jobOppId: id
 }
 
+export interface RecommendedJobWithData {
+    score: number
+    jobOpp: JobOpp
+}
+
+export interface ReturnedSurveyResponse {
+    recommendedJobs: RecommendedJob[]
+
+    // Maps label id to [ Linear score, Percentile score ]
+    labelScores: { [k: string]: [number, number] }
+}
+
 
 export interface JobOpp {
     jobName: string
     companyName: string
     jobDescription: string
+    jobLink: string
 
     labelIds: id[]
 }
@@ -72,6 +86,7 @@ export interface User {
 
 export enum PermissionLevel {
     None,
+    Navigator,
     Admin,
     Owner
 }

@@ -1,12 +1,14 @@
 import { createContext } from 'react';
-import { initializeApp } from "firebase/app";
-import * as firebaseAuth from "@firebase/auth";
-import * as firestore from "@firebase/firestore";
-import * as functions from "@firebase/functions";
+import { initializeApp } from 'firebase/app';
+import * as firebaseAuth from '@firebase/auth';
+import * as firestore from '@firebase/firestore';
+import * as functions from '@firebase/functions';
+import * as analytics from '@firebase/analytics';
 
-import { JobOpp, PermissionLevel, SurveyResponse } from './Types';
+import { ReturnedSurveyResponse, PermissionLevel, AdministeredSurveyResponse } from './Types';
 
-    
+
+// Firebase config read from .env file
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_KEY,
     authDomain: process.env.REACT_APP_FIREBASE_DOMAIN,
@@ -16,16 +18,21 @@ const firebaseConfig = {
     appId: process.env.REACT_APP_FIREBASE_APP_ID
 };
 
+
 export const firebaseApp = initializeApp(firebaseConfig);
 
 export const AuthContext = createContext({} as any);
 export const authInstance = firebaseAuth.getAuth(firebaseApp);
 export const firestoreInstance = firestore.getFirestore(firebaseApp);
 export const functionsInstance = functions.getFunctions(firebaseApp);
+export const analyticsInstance = analytics.getAnalytics(firebaseApp);
 
+
+// Firebase functions
 export const updatePermissions = functions.httpsCallable<{ userEmail: string, newPermissionLevel: number }, undefined>(functionsInstance, 'updatePermissions');
 export const checkAdmin = functions.httpsCallable<undefined, { isAdmin: PermissionLevel }>(functionsInstance, 'checkAdmin');
-export const submitSurvey = functions.httpsCallable<SurveyResponse, { score: number, jobOpp: JobOpp }[]>(functionsInstance, 'submitSurvey');
+export const getBigQueryData = functions.httpsCallable<{queryString: string, navigatorEmail?: string}>(functionsInstance, 'getBigQueryData');
+export const submitSurvey = functions.httpsCallable<AdministeredSurveyResponse, ReturnedSurveyResponse>(functionsInstance, 'submitSurvey');
 
 // Local function testing
-// functions.connectFunctionsEmulator(functionsInstance, "localhost", 5001);
+// functions.connectFunctionsEmulator(functionsInstance, 'localhost', 5001);

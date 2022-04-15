@@ -1,101 +1,96 @@
-import { verify } from "crypto";
-import lodash from "lodash";
-import React, { useEffect, useState } from "react";
-import { editSurvey, getSurveys, newSurvey } from "../../firebase/Queries/SurveyQueries";
-import { QuestionType, SurveyTemplate, SurveyAnswer, SurveyQuestion } from "../../firebase/Types";
-import { setSurveys } from "../../redux/dataSlice.ts";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { changePage, OperationType, PageType } from "../../redux/navigationSlice";
-import LabelConnector from "../label/LabelConnector";
-import Prompt from "../Prompt";
+import lodash from 'lodash';
+import React, { useEffect, useRef, useState } from 'react';
+import { logSurveyCreation } from '../../firebase/Analytics/Logging';
+import { authInstance } from '../../firebase/Firebase';
+import { editSurvey, getSurveys, newSurvey } from '../../firebase/Queries/SurveyQueries';
+import { QuestionType, SurveyTemplate, SurveyAnswer, SurveyQuestion } from '../../firebase/Types';
+import { setSurveys } from '../../redux/dataSlice.ts';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
+import LabelConnector from '../label/LabelConnector';
+import Prompt from '../generic/Prompt';
 
-
-interface props {
-
-}
 
 const initQuestions: SurveyQuestion[] = [
     {
-        prompt: "",
+        prompt: '',
         questionType: QuestionType.MultipleChoice,
-        answers: [],
+        answers: []
     }
-]
+];
 
-const SurverCreator: React.FC = (props: props) => {
-    const [title, setTitle] = useState("");
-    const [desc, setDesc] = useState("");
+
+const SurveyCreator: React.FC = () => {
+    const [title, setTitle] = useState('');
+    const [desc, setDesc] = useState('');
     const [questions, setQuestions] = useState<SurveyQuestion[]>(initQuestions);
     /** This is the current operation that is being done with surveys...usually creating/editing */
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     /** This contains the old survey data. */
     const reduxSurveyData = useAppSelector(s => s.navigation.operationData as SurveyTemplate & { id: string });
     const labels = useAppSelector(s => s.data.labels);
+    const surveyResponses = useAppSelector(s => s.data.surveyResponses);
+    /** Used to get the scrollOffset for the label connectors */
+    const pageRef = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
-    const [popupVisible, setPopupvisible] = useState<Boolean>(false);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [popupVisible2, setPopupvisible2] = useState<Boolean>(false);
-    // const [countLabel, setCountLabel] = useState(0);
-    // const [countAns, setCountAns] = useState(0);
-    // let varifyLabel = 0;
-    // let countAns = 0;
-    const togglePopup = () => setPopupvisible(!popupVisible);
-    const togglePopup2 = () => setPopupvisible2(!popupVisible2);
+
+
+    const [popupVisible, setPopupVisible] = useState<Boolean>(false);
+    const [errorTitle, setErrorTitle] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const togglePopup = () => setPopupVisible(!popupVisible);
+
+
     const addNewQuestion = () => {
-        setQuestions(s => [...s, { prompt: "", answers: [], questionType: QuestionType.MultipleChoice }])
-    }
-
+        setQuestions(s => [...s, { prompt: '', answers: [], questionType: QuestionType.MultipleChoice }]);
+    };
     const addNewAnswer = (qIndex: number) => {
-        let cloneQuestions = lodash.cloneDeep(questions);
+        const cloneQuestions = lodash.cloneDeep(questions);
         const newAnswer: SurveyAnswer = { text: '', labelIds: [] };
-        cloneQuestions[qIndex].answers.push(newAnswer)
-        //setCountAns(cloneQuestions[qIndex].answers.length);
-        
-        //console.log(countAns);
-        setQuestions(cloneQuestions);
-    }
+        cloneQuestions[qIndex].answers.push(newAnswer);
+        // setCountAns(cloneQuestions[qIndex].answers.length);
 
+        // console.log(countAns);
+        setQuestions(cloneQuestions);
+    };
     const changeQuestionPrompt = (qIndex: number, newPrompt: string) => {
-        let cloneQuestions = lodash.cloneDeep(questions);
+        const cloneQuestions = lodash.cloneDeep(questions);
 
         cloneQuestions[qIndex].prompt = newPrompt;
 
         setQuestions(cloneQuestions);
-    }
+    };
     const changeQuestionType = (qIndex: number, newType: QuestionType) => {
-        let cloneQuestions = lodash.cloneDeep(questions);
+        const cloneQuestions = lodash.cloneDeep(questions);
 
         cloneQuestions[qIndex].questionType = newType;
         if (newType !== QuestionType.MultipleChoice)
-            cloneQuestions[qIndex].answers = [{ text: "", labelIds: [] }]
+            cloneQuestions[qIndex].answers = [{ text: '', labelIds: [] }];
         setQuestions(cloneQuestions);
-
-    }
+    };
     const changeAnswerText = (qIndex: number, aIndex: number, newText: string) => {
-        let cloneQuestions = lodash.cloneDeep(questions);
+        const cloneQuestions = lodash.cloneDeep(questions);
 
         cloneQuestions[qIndex].answers[aIndex].text = newText;
 
         setQuestions(cloneQuestions);
-    }
-
+    };
     const deleteQuestion = (qIndex: number) => {
-        let cloneQuestions = lodash.cloneDeep(questions);
+        const cloneQuestions = lodash.cloneDeep(questions);
 
         cloneQuestions.splice(qIndex, 1);
 
         setQuestions(cloneQuestions);
-    }
-
+    };
     const deleteAnswer = (qIndex: number, aIndex: number) => {
-        let cloneQuestions = lodash.cloneDeep(questions);
+        const cloneQuestions = lodash.cloneDeep(questions);
 
         cloneQuestions[qIndex].answers.splice(aIndex, 1);
 
         setQuestions(cloneQuestions);
-    }
+    };
     const changeLabels = (qIndex: number, aIndex: number, labelId: string) => {
-        let cloneQuestions = lodash.cloneDeep(questions);
+        const cloneQuestions = lodash.cloneDeep(questions);
 
         const indexOfLabelId = questions[qIndex].answers[aIndex].labelIds.indexOf(labelId);
         if (indexOfLabelId === -1)
@@ -104,70 +99,67 @@ const SurverCreator: React.FC = (props: props) => {
             cloneQuestions[qIndex].answers[aIndex].labelIds.splice(indexOfLabelId, 1);
 
         setQuestions(cloneQuestions);
-    }
+    };
 
     const getLabelConnections = (qIndex: number, aIndex: number) => {
-        
-        return labels.map(l => {
-            //console.log(questions[qIndex].answers[aIndex].labelIds);
-            //setCountLabel(questions[qIndex].answers[aIndex].labelIds.length)
-            //varifyLabel = questions[qIndex].answers[aIndex].labelIds.length;
-            //console.log(l);
-            return {
-                ...l,
-                isEnabled: questions[qIndex].answers[aIndex].labelIds.indexOf(l.id) !== -1
-                
-            }
-        });
-    }
+        return labels.map(l => { return { ...l, isEnabled: questions[qIndex].answers[aIndex].labelIds.indexOf(l.id) !== -1 }; });
+    };
     const conditionallySave = async () => {
-        let hasLabel = true;
-        console.log(questions);
-        questions.map(q =>{
-            q.answers.map(a => {
-                if (a.labelIds.length == 0) {
-                    hasLabel = false;
-                }
-            })
-        })
+        const hasLabel = questions.every(q => q.questionType === QuestionType.FreeResponse || q.answers.every(a => a.labelIds.length > 0));
+
         if (!title.trim()) {
+            setErrorMessage('The survey title is currently empty.');
+            setErrorTitle('Empty Title');
             togglePopup();
-            setErrorMessage("*This field is required");
+        } else if (!desc.trim()) {
+            setErrorMessage('The survey description is currently empty.');
+            setErrorTitle('Empty Description');
+            togglePopup();
         } else if (!hasLabel) {
-            togglePopup2();
-        }
-        else {
-            console.log(hasLabel);
-            let survey: SurveyTemplate = {
+            setErrorTitle('Missing Label Connection(s)');
+            setErrorMessage('Each answer must have at least one label connected to it');
+            togglePopup();
+        } else {
+            const survey: SurveyTemplate = {
                 title: title,
                 description: desc,
-                questions: questions,
-            }
-            if (currentOperation === OperationType.Creating)
+                questions: questions
+            };
+            if (currentOperation === OperationType.Creating) {
                 await newSurvey(survey);
-            else
-                await editSurvey(reduxSurveyData.id, survey);
+
+                logSurveyCreation(survey.title, authInstance.currentUser!.email!);
+            } else {
+                if (surveyResponses.filter(sr => sr.surveyId === reduxSurveyData.id).length > 0) {
+                    if (window.confirm('There are survey responses of this survey. Editing this survey will also edit the questions seen on the response. It will not effect the job opportunities shown on the response.Press OK to continue'))
+                        await editSurvey(reduxSurveyData.id, survey);
+                    else return;
+                }
+            }
 
             dispatch(changePage({ type: PageType.AdminHome }));
             dispatch(setSurveys(await getSurveys()));
         }
-    }
-    
+    };
+    const conditionallyExit = async () => {
+        dispatch(changePage({ type: PageType.AdminHome }));
+    };
+
     useEffect(() => {
-        //copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
+        // copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
         if (currentOperation === OperationType.Editing) {
-            setDesc(reduxSurveyData.description)
+            setDesc(reduxSurveyData.description);
             setTitle(reduxSurveyData.title);
             setQuestions(reduxSurveyData.questions);
         }
     }, [reduxSurveyData, currentOperation]);
 
     return (
-        <div className="surveyCreator">
-            <button className="red" onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
+        <div className="surveyCreator" ref={pageRef}>
+            <button className="red" onClick={conditionallyExit}>Go Back</button>
             <div className="surveyHeader">
                 <input type='text' className="surveyTitle" placeholder="Survey Title*..." value={title} onChange={(e) => setTitle(e.target.value)} />
-                <div className="error">{errorMessage}</div>
+                {/* <div className="error">{errorMessage}</div> */}
                 <textarea className="surveyDescription" placeholder="Survey Description..." value={desc} onChange={(e) => setDesc(e.target.value)} />
             </div>
             {
@@ -184,8 +176,9 @@ const SurverCreator: React.FC = (props: props) => {
                                             <option value={2}>Free Response</option>
                                         </select>
                                     </div>
-                                    {q.questionType === QuestionType.Scale ?
-                                        <LabelConnector
+                                    {q.questionType === QuestionType.Scale
+                                        ? <LabelConnector
+                                            topOffset={pageRef.current ? pageRef.current.scrollTop : 0}
                                             toggleLabel={(labelId: string) => changeLabels(qIndex, 0, labelId)}
                                             labels={getLabelConnections(qIndex, 0)}
                                         />
@@ -193,27 +186,28 @@ const SurverCreator: React.FC = (props: props) => {
                                     }
                                     <i className="fas fa-trash-alt delete" onClick={() => deleteQuestion(qIndex)}></i>
                                 </div>
-                                {q.questionType === QuestionType.MultipleChoice ?
-                                    <div className='answers'>
+                                {q.questionType === QuestionType.MultipleChoice
+                                    ? <div className='answers'>
                                         {
                                             q.answers?.map((option, aIndex) => {
-                                                return <div key={"answer" + aIndex} className="answer" >
+                                                return <div key={'answer' + aIndex} className="answer" >
                                                     <input type="radio" placeholder='N/A' />
                                                     <input type="text" placeholder="Answer..." onChange={(e) => changeAnswerText(qIndex, aIndex, e.target.value)} value={option.text} />
                                                     <LabelConnector
+                                                        topOffset={pageRef.current ? pageRef.current.scrollTop : 0}
                                                         toggleLabel={(labelId: string) => changeLabels(qIndex, aIndex, labelId)}
                                                         labels={getLabelConnections(qIndex, aIndex)}
                                                     />
                                                     <i className="fas fa-trash-alt delete" onClick={() => deleteAnswer(qIndex, aIndex)}></i>
-                                                </div >
+                                                </div >;
                                             })
                                         }
                                         <button onClick={() => addNewAnswer(qIndex)}>Add Answer</button>
                                     </div>
                                     : null
                                 }
-                                {q.questionType === QuestionType.Scale ?
-                                    <div className='s-answers'>
+                                {q.questionType === QuestionType.Scale
+                                    ? <div className='s-answers'>
                                         Strongly Disagree
                                         <input type="radio" placeholder='N/A' />
                                         <input type="radio" placeholder='N/A' />
@@ -224,8 +218,8 @@ const SurverCreator: React.FC = (props: props) => {
                                     </div>
                                     : null
                                 }
-                                {q.questionType === QuestionType.FreeResponse ?
-                                    <div>
+                                {q.questionType === QuestionType.FreeResponse
+                                    ? <div>
                                         During survey administering, the user will be presented with a text input field
                                     </div>
                                     : null
@@ -233,27 +227,20 @@ const SurverCreator: React.FC = (props: props) => {
                             </div>
                             <div></div>
                         </div>
-                    )
+                    );
                 })
             }
             <button onClick={addNewQuestion}>New Question</button>
-            <button onClick={conditionallySave}>{currentOperation === OperationType.Creating ? "Save Survey as New" : "Save Edits"}</button>
+            <button className='new-survey' id={title} onClick={conditionallySave}>{currentOperation === OperationType.Creating ? 'Save Survey as New' : 'Save Edits'}</button>
             {popupVisible &&
                 <Prompt
-                    title="Empty Input"
-                    message="There are currently some empty text input fields. Please fill them all in before saving"
+                    title={errorTitle}
+                    message={errorMessage}
                     handleCancel={togglePopup}
                 />
             }
-            {popupVisible2 &&
-                <Prompt
-                    title="Missing Label"
-                    message="At least one label must be connected to answer"
-                    handleCancel={togglePopup2}
-                />
-            }
         </div >
-    )
-}
+    );
+};
 
-export default SurverCreator;
+export default SurveyCreator;

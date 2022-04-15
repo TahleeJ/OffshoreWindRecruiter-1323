@@ -1,59 +1,59 @@
 import lodash from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { hasId, QuestionType, SurveyResponse, SurveyTemplate } from '../../firebase/Types';
+import { hasId, QuestionType, AdministeredSurveyResponse, SurveyTemplate } from '../../firebase/Types';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changeOperation, changePage, OperationType, PageType, submitSurveyResponse } from '../../redux/navigationSlice';
-import Prompt from '../Prompt';
-
-interface props {
-
-}
+import Prompt from '../generic/Prompt';
+import { authInstance } from '../../firebase/Firebase';
+import { logSurveyAdministered } from '../../firebase/Analytics/Logging';
 
 
-
-const SurveyAdminister: React.FC = (p: props) => {
+const SurveyAdminister: React.FC = () => {
     const reduxSurveyData = useAppSelector(s => s.navigation.operationData as SurveyTemplate & hasId);
     const [answers, setAnswers] = useState<(string | number)[]>([]);
-    const [name, setName] = useState("");
-    const [phone, setPhone] = useState("");
-    const [email, setEmail] = useState("");
-    const [popupVisible, setPopupvisible] = useState<Boolean>(false);
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [popupVisible, setPopupVisible] = useState<Boolean>(false);
     const dispatch = useAppDispatch();
 
-    const togglePopup = () => setPopupvisible(!popupVisible);
+    const togglePopup = () => setPopupVisible(!popupVisible);
     const handleRadioChange = (qI: number, aI: number) => {
-        let clone = lodash.cloneDeep(answers);
+        const clone = lodash.cloneDeep(answers);
         clone[qI] = aI;
 
-        setAnswers(clone)
-    }
+        setAnswers(clone);
+    };
     const handleTextChange = (qI: number, text: string) => {
-        let clone = lodash.cloneDeep(answers);
+        const clone = lodash.cloneDeep(answers);
         clone[qI] = text;
 
-        setAnswers(clone)
-    }
+        setAnswers(clone);
+    };
     const conditionallySave = async () => {
-        if (answers.filter(a => a === "").length > 0) {
+        if (answers.some(a => a === '')) {
             togglePopup();
         } else {
-            let survey: SurveyResponse = {
+            const survey: AdministeredSurveyResponse = {
                 surveyId: reduxSurveyData.id,
                 taker: {
                     name: name,
                     email: email,
-                    phone: phone,
+                    phone: phone
                 },
                 answers: answers
-            }
+            };
 
-            dispatch(submitSurveyResponse(survey))
+
+            logSurveyAdministered(reduxSurveyData.title, authInstance.currentUser!.email!);
+
+            dispatch(submitSurveyResponse(survey));
             dispatch(changeOperation({ operation: OperationType.Reviewing }));
         }
-    }
+    };
 
     useEffect(() => {
-        setAnswers(reduxSurveyData.questions.map(q => ""))
+        setAnswers(reduxSurveyData.questions.map(q => ''));
     }, [reduxSurveyData]);
 
     return (
@@ -86,11 +86,11 @@ const SurveyAdminister: React.FC = (p: props) => {
                                         {question.answers.map((answer, aI) => {
                                             return (
                                                 <React.Fragment key={aI}>
-                                                    <input type="radio" id={qI + "," + aI} name={qI.toString()} placeholder='N/A' checked={answers[qI] === aI} onChange={() => handleRadioChange(qI, aI)} />
-                                                    <label htmlFor={qI + "," + aI}>{answer.text}</label>
+                                                    <input type="radio" id={qI + ',' + aI} name={qI.toString()} placeholder='N/A' checked={answers[qI] === aI} onChange={() => handleRadioChange(qI, aI)} />
+                                                    <label htmlFor={qI + ',' + aI}>{answer.text}</label>
                                                     <br />
                                                 </React.Fragment>
-                                            )
+                                            );
                                         })
                                         }
                                     </div>
@@ -100,8 +100,8 @@ const SurveyAdminister: React.FC = (p: props) => {
                                         Strongly Disagree
                                         {[0, 1, 2, 3, 4].map((index) => {
                                             return (
-                                                <input key={index} type="radio" id={qI + "," + index} name={qI.toString()} placeholder='N/A' checked={answers[qI] === index} onChange={() => handleRadioChange(qI, index)} />
-                                            )
+                                                <input key={index} type="radio" id={qI + ',' + index} name={qI.toString()} placeholder='N/A' checked={answers[qI] === index} onChange={() => handleRadioChange(qI, index)} />
+                                            );
                                         })}
 
 
@@ -109,7 +109,7 @@ const SurveyAdminister: React.FC = (p: props) => {
                                     </div>
                                 }
                             </div>
-                        )
+                        );
                     })}
                     <button
                         onClick={() => dispatch(changePage({ type: PageType.Home }))}
@@ -117,7 +117,7 @@ const SurveyAdminister: React.FC = (p: props) => {
                     >
                         Cancel Survey
                     </button>
-                    <button onClick={conditionallySave}>Submit</button>
+                    <button className='submit-survey' id={reduxSurveyData.title} onClick={conditionallySave}>Submit</button>
                 </div>
             </div>
             {popupVisible &&
@@ -128,7 +128,7 @@ const SurveyAdminister: React.FC = (p: props) => {
                 />
             }
         </div>
-    )
-}
+    );
+};
 
 export default SurveyAdminister;

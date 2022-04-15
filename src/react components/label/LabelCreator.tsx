@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { editLabel, getJobReferencesToLabel, getLabels, getSurveyReferencesToLabel } from '../../firebase/Queries/LabelQueries';
-import { hasId, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion, JobOpp } from '../../firebase/Types';
+import { hasId, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion, JobOpp, QuestionType } from '../../firebase/Types';
 import { setLabels } from '../../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
-import ListViewer from '../ListViewer';
-import ListElement from '../survey/ListElement';
+import ListViewer from '../generic/ListViewer';
+import ListElement from '../generic/ListElement';
 
 
-/** The props (arguments) to create this element */
 interface props {
 
 }
 
-/** The header of the application. */
-const LabelManager: React.FC<props> = (props) => {
-    const [labelName, setInputValue] = useState("");
+
+const LabelManager: React.FC<props> = props => {
+    const [labelName, setInputValue] = useState('');
     const [surveyRefs, setSurveyRefs] = useState<Map<SurveyTemplate & hasId, Map<SurveyQuestion, SurveyAnswer[]>>>(new Map());
     const [jobRefs, setJobRefs] = useState<JobOpp[]>([]);
     const appDispatch = useAppDispatch();
@@ -28,8 +27,8 @@ const LabelManager: React.FC<props> = (props) => {
             name: labelName
         });
         appDispatch(setLabels(await getLabels()));
-        appDispatch(changePage({ type: PageType.LabelManage }))
-    }
+        appDispatch(changePage({ type: PageType.LabelManage }));
+    };
 
     useEffect(() => {
         // Copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
@@ -43,7 +42,6 @@ const LabelManager: React.FC<props> = (props) => {
 
         getJobReferencesToLabel(reduxLabel.id)
             .then(data => setJobRefs(data));
-
     }, [reduxLabel, currentOperation]);
 
     return (
@@ -54,18 +52,20 @@ const LabelManager: React.FC<props> = (props) => {
                     <input type="text" className="labelNameInput" value={labelName} onChange={(e) => setInputValue(e.target.value)} placeholder='Label Name'></input>
                 </div>
                 <ListViewer height="350px" title="Associated Answers">
-                    {surveyRefs ?
-                        [...surveyRefs].map(([survey, questionRefs], sI) => {
+                    {surveyRefs
+                        ? [...surveyRefs].map(([survey, questionRefs], sI) => {
                             return <div className='association' key={sI}>
                                 <div className='surveyTitle'>Survey: {survey.title}</div>
                                 {[...questionRefs].map(([question, answers], qI) => {
                                     return <div key={qI}>
                                         <div className='questionTitle'>Question: {question.prompt}</div>
-                                        {answers.map((answer, aI) => <div className='answerTitle' key={aI}>Answer: {answer.text}</div>)}
-                                    </div>
+                                        {answers.map((answer, aI) => (
+                                            <div className='answerTitle' key={aI}>{question.questionType === QuestionType.MultipleChoice ? answer.text : '------'}</div>
+                                        ))}
+                                    </div>;
                                 })
                                 }
-                            </div>
+                            </div>;
                         })
                         : null
                     }
@@ -73,17 +73,17 @@ const LabelManager: React.FC<props> = (props) => {
                 <ListViewer height="350px" title="Associated Job Opportunities">
                     {
                         jobRefs.map((ref, index) => {
-                            return <ListElement name={ref.jobName} key={index} />
+                            return <ListElement name={ref.jobName} key={index} />;
                         })
                     }
                 </ListViewer>
             </div>
             <div className="buttons">
-                <button className='gray' onClick={() => { appDispatch(changePage({ type: PageType.LabelManage })) }}>Cancel</button>
+                <button className='gray' onClick={() => { appDispatch(changePage({ type: PageType.LabelManage })); }}>Cancel</button>
                 <button className="green" onClick={changeLabel}>Save Changes</button>
             </div>
         </div>
     );
-}
+};
 
 export default LabelManager;

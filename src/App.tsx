@@ -20,9 +20,10 @@ import { getSurveyResponses, getSurveys } from './firebase/Queries/SurveyQueries
 import { setLabels, setSurveys, setJobOpps, setSurveyResponses } from './redux/dataSlice.ts';
 import { getLabels } from './firebase/Queries/LabelQueries';
 import { getJobOpps } from './firebase/Queries/JobQueries';
-import { assertIsAdmin, getUser } from './firebase/Queries/AdminQueries';
+import { getCurrentPermissionLevel, getUser } from './firebase/Queries/AdminQueries';
 import InfoPage from './react components/InfoPage';
 import { PermissionLevel } from '../src/firebase/Types';
+
 
 const getOverallPageFromType = (type: PageType) => {
     switch (type) {
@@ -37,6 +38,7 @@ const getOverallPageFromType = (type: PageType) => {
     }
 };
 
+
 const App: React.FC = () => {
     const [isLoggedIn, setLoggedIn] = useState(false);
     const [dataHasBeenFetched, setDataHasBeenFetched] = useState(false);
@@ -47,39 +49,36 @@ const App: React.FC = () => {
     useEffect(() => {
         authInstance.onAuthStateChanged(async (user) => {
             setLoggedIn(user != null);
-            if (!isLoggedIn) return;
+            if (!isLoggedIn || dataHasBeenFetched) return;
 
             // Set the redux state with Firestore's data
             try {
-                if (dataHasBeenFetched) return;
                 console.log('FETCHING DATA...');
-
-                if (await assertIsAdmin(user?.uid!)) {
-                    (async () => {
-                        appDispatch(setLabels(await getLabels()));
-                        appDispatch(setJobOpps(await getJobOpps()));
-                        appDispatch(setSurveys(await getSurveys()));
-                        appDispatch(setSurveyResponses(await getSurveyResponses()));
-                    })();
-                } else if ((await getUser(authInstance.currentUser?.uid!))?.permissionLevel === PermissionLevel.Navigator) {
-                    (async () => {
-                        appDispatch(setLabels(await getLabels()));
-                        appDispatch(setSurveys(await getSurveys()));
-                    })();
-                } else {
-                    console.log('user is none level permission');
-                }
-
-                const permissionLevel = (await getUser(user?.uid!))!.permissionLevel;
-
-                if (permissionLevel === PermissionLevel.None)
-                    appDispatch(changePage({ type: PageType.InfoPage }));
-                else if (permissionLevel === PermissionLevel.Navigator)
-                    appDispatch(changePage({ type: PageType.Survey }));
-                else
-                    appDispatch(changePage({ type: PageType.AdminHome }));
-
                 setDataHasBeenFetched(true);
+
+
+                await getUser(authInstance.currentUser?.uid!);
+                const currentPermissionLevel = getCurrentPermissionLevel();
+                if (currentPermissionLevel >= PermissionLevel.Admin) {
+                    // Load docs in parallel
+                    await Promise.all([
+                        appDispatch(setLabels(await getLabels())),
+                        appDispatch(setJobOpps(await getJobOpps())),
+                        appDispatch(setSurveys(await getSurveys())),
+                        appDispatch(setSurveyResponses(await getSurveyResponses()))
+                    ]);
+
+                    appDispatch(changePage({ type: PageType.AdminHome }));
+                } else if (currentPermissionLevel === PermissionLevel.Navigator) {
+                    await Promise.all([
+                        appDispatch(setLabels(await getLabels())),
+                        appDispatch(setSurveys(await getSurveys()))
+                    ]);
+
+                    appDispatch(changePage({ type: PageType.Survey }));
+                } else {
+                    appDispatch(changePage({ type: PageType.InfoPage }));
+                }
             } catch (e) { }
         });
     });

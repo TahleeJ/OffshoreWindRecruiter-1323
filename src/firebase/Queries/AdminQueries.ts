@@ -1,8 +1,11 @@
 import * as firestore from '@firebase/firestore';
 
 import db from '../Firestore';
-import { updatePermissions } from '../Firebase';
+import { authInstance, updatePermissions } from '../Firebase';
 import { id, PermissionLevel } from '../Types';
+
+
+let currentPermissionLevel: PermissionLevel | null = null;
 
 
 /**
@@ -33,16 +36,19 @@ export async function setUserPermissionLevel(email: string, newLevel: Permission
  */
 export async function getUser(id: id) {
     const response = await firestore.getDoc(firestore.doc(db.Users, id));
+    const user = response.data();
 
-    return response.data();
+    if (user != null && authInstance.currentUser?.uid === id)
+        currentPermissionLevel = user.permissionLevel;
+
+    return user;
 }
 
 /**
- * Asserts whether a specified user has at least admin-level permissions
+ * Retrieves a the last fetched permission level for the current user
  *
- * @param id the UID of the desired user
- * @returns whether the specified user is an admin or not
+ * @returns the last fetched permission level for the current user
  */
-export async function assertIsAdmin(id: id): Promise<boolean> {
-    return ((await firestore.getDoc(firestore.doc(db.Users, id))).data()?.permissionLevel! > PermissionLevel.Navigator);
+export function getCurrentPermissionLevel() {
+    return currentPermissionLevel!;
 }

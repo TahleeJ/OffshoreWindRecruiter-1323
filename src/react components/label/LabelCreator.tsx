@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { editLabel, getJobReferencesToLabel, getLabels, getSurveyReferencesToLabel } from '../../firebase/Queries/LabelQueries';
-import { hasId, Label, SurveyTemplate, SurveyAnswer, SurveyQuestion, JobOpp, QuestionType } from '../../firebase/Types';
+import { hasId, Label, SurveyTemplate, SurveyAnswer, SurveyComponent, JobOpp, ComponentType } from '../../firebase/Types';
 import { setLabels } from '../../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
@@ -15,7 +15,7 @@ interface props {
 
 const LabelManager: React.FC<props> = props => {
     const [labelName, setInputValue] = useState('');
-    const [surveyRefs, setSurveyRefs] = useState<Map<SurveyTemplate & hasId, Map<SurveyQuestion, SurveyAnswer[]>>>(new Map());
+    const [surveyRefs, setSurveyRefs] = useState<Map<SurveyTemplate & hasId, Map<SurveyComponent, SurveyAnswer[]>>>(new Map());
     const [jobRefs, setJobRefs] = useState<JobOpp[]>([]);
     const appDispatch = useAppDispatch();
     const currentOperation = useAppSelector(s => s.navigation.operationType);
@@ -53,14 +53,14 @@ const LabelManager: React.FC<props> = props => {
                 </div>
                 <ListViewer height="350px" title="Associated Answers">
                     {surveyRefs
-                        ? [...surveyRefs].map(([survey, questionRefs], sI) => {
+                        ? [...surveyRefs].map(([survey, componentRefs], sI) => {
                             return <div className='association' key={sI}>
                                 <div className='surveyTitle'>Survey: {survey.title}</div>
-                                {[...questionRefs].map(([question, answers], qI) => {
+                                {[...componentRefs].map(([component, answers], qI) => {
                                     return <div key={qI}>
-                                        <div className='questionTitle'>Question: {question.prompt}</div>
+                                        <div className='questionTitle'>Question: {component.prompt}</div>
                                         {answers.map((answer, aI) => (
-                                            <div className='answerTitle' key={aI}>{question.questionType === QuestionType.MultipleChoice ? answer.text : '------'}</div>
+                                            <div className='answerTitle' key={aI}>{component.componentType === ComponentType.MultipleChoice ? answer.text : '------'}</div>
                                         ))}
                                     </div>;
                                 })

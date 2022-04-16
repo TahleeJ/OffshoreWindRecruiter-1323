@@ -1,4 +1,4 @@
-import { SentSurveyResponse } from '../../src/firebase/Types';
+import { ComponentType, JobOpp, Label, SentSurveyResponse, SurveyComponent, SurveyTemplate } from '../../src/firebase/Types';
 
 
 /**
@@ -6,10 +6,10 @@ import { SentSurveyResponse } from '../../src/firebase/Types';
  */
 export const surveyTestData = {
     labels: {
-        label1: { name: '1' },
-        label2: { name: '2' },
-        label3: { name: '3' },
-        label4: { name: '4' }
+        label1: { name: '1' } as Label,
+        label2: { name: '2' } as Label,
+        label3: { name: '3' } as Label,
+        label4: { name: '4' } as Label
     },
 
     jobOpps: [
@@ -19,21 +19,21 @@ export const surveyTestData = {
                 'label1',
                 'label2'
             ]
-        },
+        } as JobOpp,
         {
             jobName: '3,4',
             labelIds: [
                 'label4',
                 'label3'
             ]
-        },
+        } as JobOpp,
         {
             jobName: '1,3',
             labelIds: [
                 'label1',
                 'label3'
             ]
-        }
+        } as JobOpp
     ],
 
     response: {
@@ -44,9 +44,10 @@ export const surveyTestData = {
 
     surveyTemplate: {
         surveyTemplate1: {
-            questions: [
+            components: [
                 {
-                    questionType: 1,
+                    componentType: ComponentType.Scale,
+                    hash: 0,
                     answers: [
                         {
                             labelIds: [
@@ -55,9 +56,10 @@ export const surveyTestData = {
                             text: ''
                         }
                     ]
-                },
+                } as SurveyComponent,
                 {
-                    questionType: 1,
+                    componentType: ComponentType.Scale,
+                    hash: 0,
                     answers: [
                         {
                             labelIds: [
@@ -66,9 +68,10 @@ export const surveyTestData = {
                             text: ''
                         }
                     ]
-                },
+                } as SurveyComponent,
                 {
-                    questionType: 1,
+                    componentType: ComponentType.Scale,
+                    hash: 0,
                     answers: [
                         {
                             labelIds: [
@@ -77,9 +80,10 @@ export const surveyTestData = {
                             text: ''
                         }
                     ]
-                },
+                } as SurveyComponent,
                 {
-                    questionType: 1,
+                    componentType: ComponentType.Scale,
+                    hash: 0,
                     answers: [
                         {
                             labelIds: [
@@ -88,9 +92,10 @@ export const surveyTestData = {
                             text: ''
                         }
                     ]
-                },
+                } as SurveyComponent,
                 {
-                    questionType: 1,
+                    componentType: ComponentType.Scale,
+                    hash: 0,
                     answers: [
                         {
                             text: '',
@@ -100,9 +105,10 @@ export const surveyTestData = {
                             ]
                         }
                     ]
-                },
+                } as SurveyComponent,
                 {
-                    questionType: 1,
+                    componentType: ComponentType.Scale,
+                    hash: 0,
                     answers: [
                         {
                             text: '',
@@ -112,8 +118,8 @@ export const surveyTestData = {
                             ]
                         }
                     ]
-                }
+                } as SurveyComponent
             ]
-        }
+        } as SurveyTemplate
     }
 };

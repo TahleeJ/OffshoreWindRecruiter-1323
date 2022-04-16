@@ -1,5 +1,5 @@
 import React from 'react';
-import { JobOpp, QuestionType, RecommendedJobWithData, StoredSurveyResponse } from '../../firebase/Types';
+import { JobOpp, ComponentType, RecommendedJobWithData, StoredSurveyResponse } from '../../firebase/Types';
 import { useAppSelector } from '../../redux/hooks';
 import Section from '../generic/Section';
 import RecJobView from './RecJobView';
@@ -34,15 +34,15 @@ const ResponseView: React.FC = () => {
     }
 
 
-    // Maps question hash to answer
+    // Maps component hash to answer
     const answerMap = new Map<number, (number | string)>();
-    response.answers.forEach(a => answerMap.set(a.questionHash, a.answer));
-    const answers = survey.questions.map(q => answerMap.get(q.hash));
+    response.components.forEach(a => answerMap.set(a.componentHash, a.answer));
+    const answers = survey.components.map(q => answerMap.get(q.hash));
 
-    // Number of questions without an answer in the stored response
-    const addedQuestions = survey.questions.reduce((prev, curr) => prev + (answerMap.has(curr.hash) ? 0 : 1), 0);
-    // Number of answers without a question in the survey
-    const removedQuestions = answerMap.size + addedQuestions - survey.questions.length;
+    // Number of components without an answer in the stored response
+    const addedComponents = survey.components.reduce((prev, curr) => prev + (answerMap.has(curr.hash) ? 0 : 1), 0);
+    // Number of answers without a component in the survey
+    const removedComponents = answerMap.size + addedComponents - survey.components.length;
 
     return (
         <div className='ResponseView container'>
@@ -50,22 +50,26 @@ const ResponseView: React.FC = () => {
                 <RecJobView jobs={jobs()} />
             </Section>
             <Section title='Response:'>
-                <div className='question'>
-                    <span>Since the survey was taken, </span>
-                    {removedQuestions === 1 ? '1 question has' : removedQuestions + ' questions have'} been removed. </div>
+                { removedComponents > 0
+                    ? <div className='question'>
+                        <span>Since the survey was taken, </span>
+                        {removedComponents === 1 ? '1 component has' : removedComponents + ' component have'} been removed.
+                    </div>
+                    : null
+                }
                 {
-                    survey.questions.map((q, i) =>
-                        answerMap.has(q.hash)
+                    survey.components.map((c, i) =>
+                        answerMap.has(c.hash)
                             ? (
                                 <React.Fragment key={i}>
-                                    <div className='question'>{q.prompt}</div>
-                                    <div>{q.questionType === QuestionType.MultipleChoice
-                                        ? q.answers[answers[i] as number]?.text
+                                    <div className='question'>{c.prompt}</div>
+                                    <div>{c.componentType === ComponentType.MultipleChoice
+                                        ? c.answers[answers[i] as number]?.text
                                         : answers[i]
                                     }</div>
                                 </React.Fragment>
                             )
-                            : <div className='question'>This question was added after this response was taken. </div>
+                            : <div className='question'>This component was added after this response was taken. </div>
                     )
                 }
             </Section>

@@ -45,7 +45,6 @@ const JobCreator: React.FC<props> = props => {
     };
     const getLabelConnections = () => {
         return labels.map(l => {
-            // console.log(questions[qIndex].options[aIndex].labelIds);
             return {
                 ...l,
                 isEnabled: labelAssociations.indexOf(l.id) !== -1

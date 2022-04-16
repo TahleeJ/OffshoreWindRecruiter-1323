@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 
 import { assertValidRequest, firestore } from './Utility';
 import { errors } from './Errors';
-import { ReturnedSurveyResponse, JobOpp, QuestionType, RecommendedJob, SentSurveyResponse, SurveyTemplate, StoredSurveyResponse } from '../../src/firebase/Types';
+import { ReturnedSurveyResponse, JobOpp, RecommendedJob, SentSurveyResponse, SurveyTemplate, StoredSurveyResponse, ComponentType } from '../../src/firebase/Types';
 import { Timestamp } from 'firebase-admin/firestore';
 
 
@@ -24,11 +24,12 @@ export const submitSurvey = functions.https.onCall(async (request: SentSurveyRes
     assertValidRequest(context);
 
 
-    const jobOpps = (firestore.collection('JobOpps') as FirebaseFirestore.CollectionReference<JobOpp>).get(); // Start loading early
     const survey = (await (firestore.collection('Survey') as FirebaseFirestore.CollectionReference<SurveyTemplate>)
         .doc(request.surveyId).get()).data();
-    if (survey === undefined || survey.questions.length !== request.answers.length)
+    if (survey === undefined || survey.components.length !== request.answers.length)
         throw errors.illegalArgument.surveyResponse;
+
+    const jobOpps = (firestore.collection('JobOpps') as FirebaseFirestore.CollectionReference<JobOpp>).get(); // Start loading early
 
 
     // Calculate raw scores [Answered score, Expected score, Max score] for each label
@@ -45,34 +46,33 @@ export const submitSurvey = functions.https.onCall(async (request: SentSurveyRes
         });
     }
 
-    survey.questions.forEach((currentQuestion, currentQuestionIndex) => {
-        const currentAnswers = currentQuestion.answers;
+    survey.components.forEach((currentComponent, currentComponentIndex) => {
+        const currentAnswers = currentComponent.answers;
 
         /**
          * Scale: [0-4]
          * MultipleChoice: [0-n]
          * FreeResponse: string
          */
-        const chosenAnswer = request.answers[currentQuestionIndex] as number;
+        const chosenAnswer = request.answers[currentComponentIndex] as number;
         let expectedScore: number = 0;
 
         // Increment labels that were answered
-        switch (currentQuestion.questionType) {
-        case QuestionType.Scale: {
+        switch (currentComponent.componentType) {
+        case ComponentType.Scale: {
             const normalizedAnswer = chosenAnswer / 4;
             incrementScores(0, currentAnswers[0].labelIds, normalizedAnswer);
 
             expectedScore = 0.5;
             break;
         }
-        case QuestionType.MultipleChoice:
+        case ComponentType.MultipleChoice:
             incrementScores(0, currentAnswers[chosenAnswer].labelIds, 1);
 
             expectedScore = 1 / currentAnswers.length;
             break;
-        case QuestionType.FreeResponse:
-            // Skip any free response questions
-            return;
+
+        // Skip any free response questions, image components, or text components
         }
 
         // Increment scores for labels that could have been answered
@@ -122,9 +122,9 @@ export const submitSurvey = functions.https.onCall(async (request: SentSurveyRes
         taker: request.taker,
         created: Timestamp.now().toMillis(),
 
-        answers: request.answers.map((answer, index) => {
+        components: request.answers.map((answer, index) => {
             return {
-                questionHash: survey.questions[index].hash,
+                componentHash: survey.components[index].hash,
                 answer: answer
             };
         }),

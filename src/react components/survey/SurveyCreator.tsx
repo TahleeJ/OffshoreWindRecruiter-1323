@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { logSurveyCreation } from '../../firebase/Analytics/Logging';
 import { authInstance } from '../../firebase/Firebase';
 import { editSurvey, getSurveys, newSurvey } from '../../firebase/Queries/SurveyQueries';
-import { QuestionType, SurveyTemplate, SurveyAnswer, SurveyQuestion } from '../../firebase/Types';
+import { ComponentType, SurveyTemplate, SurveyAnswer, SurveyComponent } from '../../firebase/Types';
 import { setSurveys } from '../../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
@@ -11,10 +11,10 @@ import LabelConnector from '../label/LabelConnector';
 import Prompt from '../generic/Prompt';
 
 
-const initQuestions: SurveyQuestion[] = [
+const initComponents: SurveyComponent[] = [
     {
         prompt: '',
-        questionType: QuestionType.MultipleChoice,
+        componentType: ComponentType.MultipleChoice,
         answers: [],
         hash: 0
     }
@@ -34,16 +34,16 @@ function getHash(str: string) {
     return hash;
 };
 
-function setHash(question: SurveyQuestion) {
-    const answerText = question.answers.reduce((prev, curr) => prev + '|' + curr.text, '');
-    question.hash = getHash(question.prompt + answerText + question.questionType.toFixed());
+function setHash(component: SurveyComponent) {
+    const answerText = component.answers.reduce((prev, curr) => prev + '|' + curr.text, '');
+    component.hash = getHash(component.prompt + answerText + component.componentType.toFixed());
 }
 
 
 const SurveyCreator: React.FC = () => {
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
-    const [questions, setQuestions] = useState<SurveyQuestion[]>(initQuestions);
+    const [components, setComponents] = useState<SurveyComponent[]>(initComponents);
     /** This is the current operation that is being done with surveys...usually creating/editing */
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     /** This contains the old survey data. */
@@ -61,108 +61,111 @@ const SurveyCreator: React.FC = () => {
     const togglePopup = () => setPopupVisible(!popupVisible);
 
 
-    const addNewQuestion = () => {
-        setQuestions(s => [...s, { prompt: '', answers: [], questionType: QuestionType.MultipleChoice, hash: 0 }]);
+    const addNewComponent = () => {
+        setComponents(s => [...s, { prompt: '', answers: [], componentType: ComponentType.MultipleChoice, hash: 0 }]);
     };
-    const moveQuestion = (oldQIndex: number, newQIndex: number) => {
-        const cloneQuestions = lodash.cloneDeep(questions);
+    const moveComponent = (oldCIndex: number, newCIndex: number) => {
+        const cloneComponents = lodash.cloneDeep(components);
 
-        const movedQuestion = cloneQuestions.splice(oldQIndex, 1)[0];
-        cloneQuestions.splice(newQIndex, 0, movedQuestion);
+        const movedComponent = cloneComponents.splice(oldCIndex, 1)[0];
+        cloneComponents.splice(newCIndex, 0, movedComponent);
 
-        setQuestions(cloneQuestions);
+        setComponents(cloneComponents);
     };
-    const addNewAnswer = (qIndex: number) => {
-        const cloneQuestions = lodash.cloneDeep(questions);
+    const addNewAnswer = (cIndex: number) => {
+        const cloneComponents = lodash.cloneDeep(components);
         const newAnswer: SurveyAnswer = { text: '', labelIds: [] };
-        cloneQuestions[qIndex].answers.push(newAnswer);
+        cloneComponents[cIndex].answers.push(newAnswer);
 
-        setHash(cloneQuestions[qIndex]);
-        setQuestions(cloneQuestions);
+        setHash(cloneComponents[cIndex]);
+        setComponents(cloneComponents);
     };
-    const changeQuestionPrompt = (qIndex: number, newPrompt: string) => {
-        const cloneQuestions = lodash.cloneDeep(questions);
+    const changeComponentPrompt = (cIndex: number, newPrompt: string) => {
+        const cloneComponents = lodash.cloneDeep(components);
 
-        cloneQuestions[qIndex].prompt = newPrompt;
+        cloneComponents[cIndex].prompt = newPrompt;
 
-        setHash(cloneQuestions[qIndex]);
-        setQuestions(cloneQuestions);
+        setHash(cloneComponents[cIndex]);
+        setComponents(cloneComponents);
     };
-    const changeQuestionType = (qIndex: number, newType: QuestionType) => {
-        const cloneQuestions = lodash.cloneDeep(questions);
+    const changeComponentType = (cIndex: number, newType: ComponentType) => {
+        const cloneComponents = lodash.cloneDeep(components);
 
-        cloneQuestions[qIndex].questionType = newType;
-        if (newType !== QuestionType.MultipleChoice)
-            cloneQuestions[qIndex].answers = [{ text: '', labelIds: [] }];
+        cloneComponents[cIndex].componentType = newType;
+        if (newType & (ComponentType.Scale | ComponentType.FreeResponse))
+            cloneComponents[cIndex].answers = [{ text: '', labelIds: [] }];
+        else if (newType & (ComponentType.Text | ComponentType.Image))
+            cloneComponents[cIndex].answers = [];
 
-        setHash(cloneQuestions[qIndex]);
-        setQuestions(cloneQuestions);
+        setHash(cloneComponents[cIndex]);
+        setComponents(cloneComponents);
     };
-    const changeAnswerText = (qIndex: number, aIndex: number, newText: string) => {
-        const cloneQuestions = lodash.cloneDeep(questions);
+    const changeAnswerText = (cIndex: number, aIndex: number, newText: string) => {
+        const cloneComponents = lodash.cloneDeep(components);
 
-        cloneQuestions[qIndex].answers[aIndex].text = newText;
+        cloneComponents[cIndex].answers[aIndex].text = newText;
 
-        setHash(cloneQuestions[qIndex]);
-        setQuestions(cloneQuestions);
+        setHash(cloneComponents[cIndex]);
+        setComponents(cloneComponents);
     };
-    const deleteQuestion = (qIndex: number) => {
-        const cloneQuestions = lodash.cloneDeep(questions);
+    const deleteComponent = (cIndex: number) => {
+        const cloneComponents = lodash.cloneDeep(components);
 
-        cloneQuestions.splice(qIndex, 1);
+        cloneComponents.splice(cIndex, 1);
 
-        setQuestions(cloneQuestions);
+        setComponents(cloneComponents);
     };
-    const deleteAnswer = (qIndex: number, aIndex: number) => {
-        const cloneQuestions = lodash.cloneDeep(questions);
+    const deleteAnswer = (cIndex: number, aIndex: number) => {
+        const cloneComponents = lodash.cloneDeep(components);
 
-        cloneQuestions[qIndex].answers.splice(aIndex, 1);
+        cloneComponents[cIndex].answers.splice(aIndex, 1);
 
-        setHash(cloneQuestions[qIndex]);
-        setQuestions(cloneQuestions);
+        setHash(cloneComponents[cIndex]);
+        setComponents(cloneComponents);
     };
-    const changeLabels = (qIndex: number, aIndex: number, labelId: string) => {
-        const cloneQuestions = lodash.cloneDeep(questions);
+    const changeLabels = (cIndex: number, aIndex: number, labelId: string) => {
+        const cloneComponents = lodash.cloneDeep(components);
 
-        const indexOfLabelId = questions[qIndex].answers[aIndex].labelIds.indexOf(labelId);
+        const indexOfLabelId = components[cIndex].answers[aIndex].labelIds.indexOf(labelId);
         if (indexOfLabelId === -1)
-            cloneQuestions[qIndex].answers[aIndex].labelIds.push(labelId);
+            cloneComponents[cIndex].answers[aIndex].labelIds.push(labelId);
         else
-            cloneQuestions[qIndex].answers[aIndex].labelIds.splice(indexOfLabelId, 1);
+            cloneComponents[cIndex].answers[aIndex].labelIds.splice(indexOfLabelId, 1);
 
-        setQuestions(cloneQuestions);
+        setComponents(cloneComponents);
     };
 
-    const getLabelConnections = (qIndex: number, aIndex: number) => {
-        return labels.map(l => { return { ...l, isEnabled: questions[qIndex].answers[aIndex].labelIds.indexOf(l.id) !== -1 }; });
+    const getLabelConnections = (cIndex: number, aIndex: number) => {
+        return labels.map(l => { return { ...l, isEnabled: components[cIndex].answers[aIndex].labelIds.indexOf(l.id) !== -1 }; });
     };
     const conditionallySave = async () => {
-        const hasLabel = questions.every(q => q.questionType === QuestionType.FreeResponse || q.answers.every(a => a.labelIds.length > 0));
+        const hasLabel = components.every(q => q.componentType & ComponentType.NoLabel || q.answers.every(a => a.labelIds.length > 0));
+
         const surveys = await getSurveys();
-        var duplicate = false;
+        let duplicate = false;
         surveys.forEach(s => {
             if (s.title.trim() === title.trim()) {
                 duplicate = true;
             }
         });
-        var emptyQPrompt = false;
-        var noAnswers = false;
-        var emptyAnswer = false;
-        questions.forEach(q => {
-            if (q.prompt.trim().length === 0) {
-                emptyQPrompt = true;
+
+        let emptyCPrompt = false;
+        let noAnswers = false;
+        let emptyAnswer = false;
+        components.forEach(c => {
+            if (c.prompt.trim().length === 0) {
+                emptyCPrompt = true;
             }
-            if (q.answers.length === 0) {
+            if (c.componentType === ComponentType.Question && c.answers.length === 0) {
                 noAnswers = true;
             }
-            q.answers.forEach(a => {
-                if (a.text.trim().length === 0) {
+            c.answers.forEach(a => {
+                if (c.componentType === ComponentType.MultipleChoice && a.text.trim().length === 0) {
                     emptyAnswer = true;
                 }
-            })
+            });
         });
-        console.log(questions.length);
-        console.log(questions);
+
         if (!title.trim()) {
             setErrorMessage('The survey title is currently empty.');
             setErrorTitle('Empty Title');
@@ -179,17 +182,17 @@ const SurveyCreator: React.FC = () => {
             setErrorTitle('Another Survey has this Title');
             setErrorMessage('Please use a different title');
             togglePopup();
-        } else if (questions.length === 1 && (questions.at(0)?.prompt.length === 0 || questions.at(0)?.answers.length === 0)) {
+        } else if (components.length === 1 && (components.at(0)?.prompt.length === 0 || components.at(0)?.answers.length === 0)) {
             setErrorTitle('Survey is Empty');
-            setErrorMessage('Please enter at least one question with an answer');
+            setErrorMessage('Please enter at least one component with answers');
             togglePopup();
-        } else if (emptyQPrompt) {
-            setErrorTitle('At least one Question has no Prompt');
-            setErrorMessage('Please enter a question prompt for all questions');
+        } else if (emptyCPrompt) {
+            setErrorTitle('At least one Component has no Prompt');
+            setErrorMessage('Please enter a prompt for all components');
             togglePopup();
         } else if (noAnswers) {
-            setErrorTitle('At least one Question has no Answers');
-            setErrorMessage('Please add at least one answer for all questions');
+            setErrorTitle('At least one multiple choice component has no Answers');
+            setErrorMessage('Please add at least one answer for all multiple choice components');
             togglePopup();
         } else if (emptyAnswer) {
             setErrorTitle('At least one Answer has no Text');
@@ -199,7 +202,7 @@ const SurveyCreator: React.FC = () => {
             const survey: SurveyTemplate = {
                 title: title,
                 description: desc,
-                questions: questions
+                components: components
             };
             if (currentOperation === OperationType.Creating) {
                 await newSurvey(survey);
@@ -225,12 +228,22 @@ const SurveyCreator: React.FC = () => {
         // copy the data from the redux state into the local state if editing (and only do it when the redux state changes)
         if (currentOperation === OperationType.Editing) {
             // Add hashes to old surveys, can remove soon
-            const cloneQuestions = lodash.cloneDeep(reduxSurveyData.questions);
-            cloneQuestions.forEach(q => setHash(q));
+            if (reduxSurveyData.components === undefined) {
+                const cloneComponents = lodash.cloneDeep((reduxSurveyData as any).questions!) as SurveyComponent[];
 
-            setDesc(reduxSurveyData.description);
-            setTitle(reduxSurveyData.title);
-            setQuestions(cloneQuestions);
+                cloneComponents.forEach(c => {
+                    c.componentType = 4 << (c as any).questionType;
+                });
+                cloneComponents.forEach(c => setHash(c));
+
+                setDesc(reduxSurveyData.description);
+                setTitle(reduxSurveyData.title);
+                setComponents(cloneComponents);
+            } else {
+                setDesc(reduxSurveyData.description);
+                setTitle(reduxSurveyData.title);
+                setComponents(reduxSurveyData.components);
+            }
         }
     }, [reduxSurveyData, currentOperation]);
 
@@ -243,52 +256,64 @@ const SurveyCreator: React.FC = () => {
                 <textarea className="surveyDescription" placeholder="Survey Description..." value={desc} onChange={(e) => setDesc(e.target.value)} />
             </div>
             {
-                questions.map((q, qIndex) => {
+                components.map((q, cIndex) => {
                     return (
-                        <div className="createdQuestion" key={qIndex}>
+                        <div className="createdQuestion" key={cIndex}>
                             <div>
                                 <div className="header">
-                                    {(qIndex > 0) && <button className='shiftUp' onClick={() => moveQuestion(qIndex, qIndex - 1)}>Up</button>}
-                                    {(qIndex < questions.length - 1) && <button className='shiftDown' onClick={() => moveQuestion(qIndex, qIndex + 1)}>Down</button>}
-                                    <input type='text' className="prompt" value={q.prompt} placeholder="Question Prompt..." onChange={(e) => changeQuestionPrompt(qIndex, e.target.value)} />
-                                    <div className="questionType">
-                                        <select name="questionType" title="Question Type" onChange={e => changeQuestionType(qIndex, e.target.selectedIndex)} value={q.questionType}>
-                                            <option value={0}>Multiple Choice</option>
-                                            <option value={1}>Scale</option>
-                                            <option value={2}>Free Response</option>
+                                    {(cIndex > 0) && <button className='shiftUp' onClick={() => moveComponent(cIndex, cIndex - 1)}>Up</button>}
+                                    {(cIndex < components.length - 1) && <button className='shiftDown' onClick={() => moveComponent(cIndex, cIndex + 1)}>Down</button>}
+                                    <input type='text' className="prompt" value={q.prompt} placeholder="Component Prompt..." onChange={(e) => changeComponentPrompt(cIndex, e.target.value)} />
+                                    <div className="ComponentType">
+                                        <select name="ComponentType" title="Question Type" onChange={e => changeComponentType(cIndex, parseInt(e.target.value) as ComponentType)} value={q.componentType}>
+                                            <option value={ComponentType.Text}>Information Text</option>
+                                            <option value={ComponentType.Image}>Image</option>
+                                            <option value={ComponentType.MultipleChoice}>Multiple Choice</option>
+                                            <option value={ComponentType.Scale}>Scale</option>
+                                            <option value={ComponentType.FreeResponse}>Free Response</option>
                                         </select>
                                     </div>
-                                    {q.questionType === QuestionType.Scale
+                                    {q.componentType === ComponentType.Scale
                                         ? <LabelConnector
                                             topOffset={pageRef.current ? pageRef.current.scrollTop : 0}
-                                            toggleLabel={(labelId: string) => changeLabels(qIndex, 0, labelId)}
-                                            labels={getLabelConnections(qIndex, 0)}
+                                            toggleLabel={(labelId: string) => changeLabels(cIndex, 0, labelId)}
+                                            labels={getLabelConnections(cIndex, 0)}
                                         />
                                         : null
                                     }
-                                    <i className="fas fa-trash-alt delete" onClick={() => deleteQuestion(qIndex)}></i>
+                                    <i className="fas fa-trash-alt delete" onClick={() => deleteComponent(cIndex)}></i>
                                 </div>
-                                {q.questionType === QuestionType.MultipleChoice
+                                {q.componentType === ComponentType.Text
+                                    ? null
+                                    : null
+                                }
+                                {q.componentType === ComponentType.Image
+                                    ? q.prompt === ''
+                                        ? <div> Insert the URL of the image above. </div>
+                                        : <img src={q.prompt} alt="Image" />
+                                    : null
+                                }
+                                {q.componentType === ComponentType.MultipleChoice
                                     ? <div className='answers'>
                                         {
                                             q.answers?.map((option, aIndex) => {
                                                 return <div key={'answer' + aIndex} className="answer" >
                                                     <input type="radio" placeholder='N/A' />
-                                                    <input type="text" placeholder="Answer..." onChange={(e) => changeAnswerText(qIndex, aIndex, e.target.value)} value={option.text} />
+                                                    <input type="text" placeholder="Answer..." onChange={(e) => changeAnswerText(cIndex, aIndex, e.target.value)} value={option.text} />
                                                     <LabelConnector
                                                         topOffset={pageRef.current ? pageRef.current.scrollTop : 0}
-                                                        toggleLabel={(labelId: string) => changeLabels(qIndex, aIndex, labelId)}
-                                                        labels={getLabelConnections(qIndex, aIndex)}
+                                                        toggleLabel={(labelId: string) => changeLabels(cIndex, aIndex, labelId)}
+                                                        labels={getLabelConnections(cIndex, aIndex)}
                                                     />
-                                                    <i className="fas fa-trash-alt delete" onClick={() => deleteAnswer(qIndex, aIndex)}></i>
+                                                    <i className="fas fa-trash-alt delete" onClick={() => deleteAnswer(cIndex, aIndex)}></i>
                                                 </div >;
                                             })
                                         }
-                                        <button onClick={() => addNewAnswer(qIndex)}>Add Answer</button>
+                                        <button onClick={() => addNewAnswer(cIndex)}>Add Answer</button>
                                     </div>
                                     : null
                                 }
-                                {q.questionType === QuestionType.Scale
+                                {q.componentType === ComponentType.Scale
                                     ? <div className='s-answers'>
                                         Strongly Disagree
                                         <input type="radio" placeholder='N/A' />
@@ -300,7 +325,7 @@ const SurveyCreator: React.FC = () => {
                                     </div>
                                     : null
                                 }
-                                {q.questionType === QuestionType.FreeResponse
+                                {q.componentType === ComponentType.FreeResponse
                                     ? <div>
                                         During survey administering, the user will be presented with a text input field
                                     </div>
@@ -312,7 +337,7 @@ const SurveyCreator: React.FC = () => {
                     );
                 })
             }
-            <button onClick={addNewQuestion}>New Question</button>
+            <button onClick={addNewComponent}>Add Component</button>
             <button className='new-survey' id={title} onClick={conditionallySave}>{currentOperation === OperationType.Creating ? 'Save Survey as New' : 'Save Edits'}</button>
             {popupVisible &&
                 <Prompt

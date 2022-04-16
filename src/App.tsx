@@ -26,21 +26,20 @@ import { PermissionLevel } from '../src/firebase/Types';
 
 const getOverallPageFromType = (type: PageType) => {
     switch (type) {
-    case PageType.Home: return <Home />;
-    case PageType.AdminHome: return <AdminHome />;
-    case PageType.Survey: return <SurveyHome />;
-    case PageType.AdminManage: return <AdminManager />;
-    case PageType.LabelManage: return <LabelManager />;
-    case PageType.JobManage: return <JobManager />;
-    case PageType.Analytics: return <Analytics />;
-    case PageType.InfoPage: return <InfoPage />;
+        case PageType.Home: return <Home />;
+        case PageType.AdminHome: return <AdminHome />;
+        case PageType.Survey: return <SurveyHome />;
+        case PageType.AdminManage: return <AdminManager />;
+        case PageType.LabelManage: return <LabelManager />;
+        case PageType.JobManage: return <JobManager />;
+        case PageType.Analytics: return <Analytics />;
+        case PageType.InfoPage: return <InfoPage />;
     }
 };
 
-let firstLogin = false;
-
 const App: React.FC = () => {
     const [isLoggedIn, setLoggedIn] = useState(false);
+    const [dataHasBeenFetched, setDataHasBeenFetched] = useState(false);
     const pageType = useAppSelector(s => s.navigation.currentPage);
     const appDispatch = useAppDispatch();
     firebaseAuth.setPersistence(authInstance, firebaseAuth.browserLocalPersistence);
@@ -48,11 +47,13 @@ const App: React.FC = () => {
     useEffect(() => {
         authInstance.onAuthStateChanged(async (user) => {
             setLoggedIn(user != null);
-            if (!isLoggedIn)
-                return;
+            if (!isLoggedIn) return;
 
             // Set the redux state with Firestore's data
             try {
+                if (dataHasBeenFetched) return;
+                console.log('FETCHING DATA...');
+
                 if (await assertIsAdmin(user?.uid!)) {
                     (async () => {
                         appDispatch(setLabels(await getLabels()));
@@ -65,21 +66,21 @@ const App: React.FC = () => {
                         appDispatch(setLabels(await getLabels()));
                         appDispatch(setSurveys(await getSurveys()));
                     })();
+                } else {
+                    console.log('user is none level permission');
                 }
 
                 const permissionLevel = (await getUser(user?.uid!))!.permissionLevel;
 
-                if (permissionLevel === PermissionLevel.None && !firstLogin) {
-                    firstLogin = true;
-                    appDispatch(changePage({ type: PageType.InfoPage })); // change to PageType.InfoPage when info page is created
-                } else if (permissionLevel === PermissionLevel.Navigator && !firstLogin) {
-                    firstLogin = true;
+                if (permissionLevel === PermissionLevel.None)
+                    appDispatch(changePage({ type: PageType.InfoPage }));
+                else if (permissionLevel === PermissionLevel.Navigator)
                     appDispatch(changePage({ type: PageType.Survey }));
-                } else if (!firstLogin) {
-                    firstLogin = true;
+                else
                     appDispatch(changePage({ type: PageType.AdminHome }));
-                }
-            } catch (e) {}
+
+                setDataHasBeenFetched(true);
+            } catch (e) { }
         });
     });
 

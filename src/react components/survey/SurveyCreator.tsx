@@ -1,4 +1,4 @@
-import lodash from 'lodash';
+import lodash, { identity } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { logSurveyCreation } from '../../firebase/Analytics/Logging';
 import { authInstance } from '../../firebase/Firebase';
@@ -144,7 +144,7 @@ const SurveyCreator: React.FC = () => {
         const surveys = await getSurveys();
         let duplicate = false;
         surveys.forEach(s => {
-            if (s.title.trim() === title.trim()) {
+            if (s.title.trim() === title.trim() && s.id !== reduxSurveyData.id) {
                 duplicate = true;
             }
         });

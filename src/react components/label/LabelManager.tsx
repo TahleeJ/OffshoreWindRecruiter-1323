@@ -63,7 +63,7 @@ const LabelManager: React.FC<props> = props => {
                             {popupVisible && <Prompt title="Empty Input" message="You must provide text in order to create a new label" handleCancel={togglePopup} />}
                             <div className="error">{errorMessage}</div>
                         </div>
-                        <ListViewer height="350px" title='Current Labels' content='A category that describes a job opportunity and can be linked to survey questions.
+                        <ListViewer height="350px" title='Current Labels' content='A category that describes a job opportunity and can be linked to survey components.
                         “Technician” could be a label for jobs involving hands on work or involves repairing machines.
                         It is used to provide recommended job opportunities to survey responders'>
                             {labels.length > 0

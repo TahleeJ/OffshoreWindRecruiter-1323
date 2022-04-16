@@ -19,7 +19,7 @@ export async function setUserPermissionLevel(email: string, newLevel: Permission
 
         return 'Update success!';
     } catch (error) {
-        const details = JSON.parse(JSON.stringify(error));
+        const details = JSON.parse(JSON.stringify(error)).details;
 
         return details;
     }

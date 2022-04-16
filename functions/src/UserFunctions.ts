@@ -84,6 +84,10 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
 
     const userPermissionLevel = await getPermissionLevelByUid(userRecord.uid);
 
+    if (callerPermissionLevel === PermissionLevel.None || callerPermissionLevel === PermissionLevel.Navigator) {
+        throw errors.unauthorized;
+    }
+
     // Determine new permissions level
     let newLevel = userPermissionLevel;
     switch (request.newPermissionLevel) {
@@ -100,7 +104,7 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
 
         break;
     case PermissionLevel.Admin:
-        if (callerPermissionLevel < PermissionLevel.Admin || userPermissionLevel > callerPermissionLevel) {
+        if (userPermissionLevel > callerPermissionLevel) {
             throw errors.unauthorized;
         }
 
@@ -122,7 +126,7 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
             }
         }
 
-        if (callerPermissionLevel !== PermissionLevel.Owner) {
+        if (userPermissionLevel >= PermissionLevel.Admin && callerPermissionLevel !== PermissionLevel.Owner) {
             throw errors.unauthorized;
         }
 

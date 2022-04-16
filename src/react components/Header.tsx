@@ -16,9 +16,9 @@ const Header: React.FC = () => {
 
     const updateIsAdmin = async () => {
         const isA = await assertIsAdmin(authInstance.currentUser?.uid!);
-        const level = (await getUser(authInstance.currentUser?.uid!))?.permissionLevel
+        const level = (await getUser(authInstance.currentUser?.uid!))?.permissionLevel;
 
-        setLevel(level ? level : PermissionLevel.None);
+        setLevel(level || PermissionLevel.None);
     };
     useEffect(() => { updateIsAdmin(); }, []);
 
@@ -26,20 +26,19 @@ const Header: React.FC = () => {
         <header id="header" >
             <div className='title'>{'Offshore Recruiter'.toUpperCase()}</div>
             <div className='buttonGroup'>
-                {level === PermissionLevel.None ?
-                    <i className='fas fa-info' onClick={() => { appDispatch(changePage({ type: PageType.InfoPage })) }} data-tip="Information"></i>
+                {level === PermissionLevel.None
+                    ? <i className='fas fa-info' onClick={() => { appDispatch(changePage({ type: PageType.InfoPage })); }} data-tip="Information"></i>
                     : null
                 }
-                {level >= PermissionLevel.Navigator ?
-                    <>
+                {level >= PermissionLevel.Navigator
+                    ? <>
                         <i className='far fa-file-alt' onClick={() => { appDispatch(changePage({ type: PageType.Home })); }} data-tip="Survey Administer"></i><i className='fas fa-briefcase' onClick={() => { appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Administering })); }} data-tip="Job Explore"></i>
                     </>
                     : null
 
                 }
                 {level >= PermissionLevel.Admin
-                    ?
-                    <>
+                    ? <>
                         <i className='fas fa-tools admin-manager' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })); }} data-tip="Administrative Dashboard"></i><i className="far fa-chart-bar" onClick={() => { appDispatch(changePage({ type: PageType.Analytics })); }} data-tip="Analytics"></i>
                     </>
                     : null

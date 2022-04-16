@@ -5,7 +5,7 @@ import { authInstance, updatePermissions } from '../Firebase';
 import { id, PermissionLevel } from '../Types';
 
 
-let currentPermissionLevel: PermissionLevel | null = null;
+let currentPermissionLevel: PermissionLevel = PermissionLevel.None;
 
 
 /**
@@ -50,5 +50,5 @@ export async function getUser(id: id) {
  * @returns the last fetched permission level for the current user
  */
 export function getCurrentPermissionLevel() {
-    return currentPermissionLevel!;
+    return currentPermissionLevel;
 }

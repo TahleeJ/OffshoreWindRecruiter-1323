@@ -1,4 +1,4 @@
-import lodash, { identity } from 'lodash';
+import lodash from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { logSurveyCreation } from '../../firebase/Analytics/Logging';
 import { authInstance } from '../../firebase/Firebase';

@@ -26,14 +26,14 @@ import { PermissionLevel } from '../src/firebase/Types';
 
 const getOverallPageFromType = (type: PageType) => {
     switch (type) {
-        case PageType.Home: return <Home />;
-        case PageType.AdminHome: return <AdminHome />;
-        case PageType.Survey: return <SurveyHome />;
-        case PageType.AdminManage: return <AdminManager />;
-        case PageType.LabelManage: return <LabelManager />;
-        case PageType.JobManage: return <JobManager />;
-        case PageType.Analytics: return <Analytics />;
-        case PageType.InfoPage: return <InfoPage />;
+    case PageType.Home: return <Home />;
+    case PageType.AdminHome: return <AdminHome />;
+    case PageType.Survey: return <SurveyHome />;
+    case PageType.AdminManage: return <AdminManager />;
+    case PageType.LabelManage: return <LabelManager />;
+    case PageType.JobManage: return <JobManager />;
+    case PageType.Analytics: return <Analytics />;
+    case PageType.InfoPage: return <InfoPage />;
     }
 };
 

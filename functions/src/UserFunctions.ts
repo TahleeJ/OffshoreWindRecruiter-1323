@@ -8,6 +8,7 @@ import { UserRecord } from 'firebase-admin/auth';
 
 /**
  * Utility function for getting a user's permission level
+ *
  * @param uid Uid of the user
  * @returns The user's permission level
  */
@@ -46,7 +47,7 @@ export const checkAdmin = functions.https.onCall(async (request, context) => {
  * Given function caller's required privileges, a selected user can
  * remove or give another user administrator privileges
  *
- * @param request Parameters sent through function call:
+ * @param request Arguments sent through function call:
  * {
  *      userEmail: string,
  *      newPermissionLevel: integer
@@ -83,6 +84,10 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
 
     const userPermissionLevel = await getPermissionLevelByUid(userRecord.uid);
 
+    if (callerPermissionLevel === PermissionLevel.None || callerPermissionLevel === PermissionLevel.Navigator) {
+        throw errors.unauthorized;
+    }
+
     // Determine new permissions level
     let newLevel = userPermissionLevel;
     switch (request.newPermissionLevel) {
@@ -99,7 +104,7 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
 
         break;
     case PermissionLevel.Admin:
-        if (callerPermissionLevel < PermissionLevel.Admin || userPermissionLevel > callerPermissionLevel) {
+        if (userPermissionLevel > callerPermissionLevel) {
             throw errors.unauthorized;
         }
 
@@ -121,7 +126,7 @@ export const updatePermissions = functions.https.onCall(async (request: { userEm
             }
         }
 
-        if (callerPermissionLevel !== PermissionLevel.Owner) {
+        if (userPermissionLevel >= PermissionLevel.Admin && callerPermissionLevel !== PermissionLevel.Owner) {
             throw errors.unauthorized;
         }
 

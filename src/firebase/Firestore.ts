@@ -2,7 +2,7 @@ import { collection, CollectionReference } from 'firebase/firestore';
 import lodash from 'lodash';
 
 import { firestoreInstance } from './Firebase';
-import { JobOpp, Label, AdministeredSurveyResponse, SurveyTemplate, User } from './Types';
+import { JobOpp, Label, StoredSurveyResponse, SurveyTemplate, User } from './Types';
 
 
 const table = <T>(collectionPath: string) => collection(firestoreInstance, collectionPath) as CollectionReference<T>;
@@ -29,7 +29,7 @@ class DB {
         return this._JobOpps();
     }
 
-    _SurveyResponses = lodash.once(() => table<AdministeredSurveyResponse>('SurveyResponse'));
+    _SurveyResponses = lodash.once(() => table<StoredSurveyResponse>('SurveyResponse'));
     public get SurveyResponse() {
         return this._SurveyResponses();
     }

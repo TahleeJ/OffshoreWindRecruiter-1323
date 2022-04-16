@@ -17,14 +17,15 @@
     },
     "plugins": [
         "react",
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "only-warn"
     ],
     "rules": {
         "indent": ["warn", 4],
         "semi": ["warn", "always"],
         "no-multiple-empty-lines": ["warn", {"max": 2, "maxEOF": 1}],
+        "no-trailing-spaces": ["warn", { "skipBlankLines": true }],
 
-        
         "space-before-function-paren": "off",
         "no-use-before-define": "off",
         "curly": "off",
@@ -32,6 +33,7 @@
         "no-unused-vars": "off",
         "react/no-unescaped-entities": "off",
         "no-case-declarations": "off",
-        "react/react-in-jsx-scope": "off"
+        "react/react-in-jsx-scope": "off",
+        "func-call-spacing": "off"
     }
 }

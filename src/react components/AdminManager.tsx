@@ -13,7 +13,6 @@ const AdminManager: React.FC = () => {
     const [emailsState, setEmailsState] = useState('');
     const [updateEmailsState, setUpdateEmailsState] = useState(['']);
     const dispatch = useAppDispatch();
-    const [changeLevelState, setChangeLevelState] = useState('Admin');
     const [errorTextState, setErrorTextState] = useState('');
     const [updateLevelState, setUpdateLevelState] = useState(PermissionLevel.Navigator);
 
@@ -55,30 +54,13 @@ const AdminManager: React.FC = () => {
         setEmailsState(emails);
     }
 
-    function setNewUpdateLevel(newLevel: string) {
-        console.log('hi');
-        switch (newLevel) {
-        case 'Owner':
-            updateLevel = PermissionLevel.Owner;
-            break;
-        case 'Admin':
-            updateLevel = PermissionLevel.Admin;
-            break;
-        case 'Navigator':
-            updateLevel = PermissionLevel.Navigator;
-            break;
-        case 'None':
-            updateLevel = PermissionLevel.None;
-            break;
-        }
-
+    function setNewUpdateLevel(newLevel: PermissionLevel) {
+        updateLevel = newLevel;
         setUpdateLevelState(updateLevel);
-        setChangeLevelState(newLevel);
     }
 
     const update = async () => {
         const validateResult = validateEmailEntry();
-        console.log(updateLevel);
 
         if (validateResult) {
             let errorEmailsMessage = '';
@@ -89,6 +71,31 @@ const AdminManager: React.FC = () => {
                 if (result !== 'Update success!') {
                     errorEmailsMessage = errorEmailsMessage + `${email}: ${result}\n`;
                     console.log(result)
+
+                    togglePopup();
+                } else {
+                    errorEmailsMessage = errorEmailsMessage + `${email}: success!\n`;
+                }
+            }
+
+            setErrorTextState(errorEmailsMessage);
+        } else {
+            setErrorTextState('Please enter at least one email and separate the rest by commas.');
+            togglePopup();
+        }
+    };
+
+    const demoteToNone = async () => {
+        const validateResult = validateEmailEntry();
+
+        if (validateResult) {
+            let errorEmailsMessage = '';
+
+            for (const email of updateEmails) {
+                const result = await setUserPermissionLevel(email, PermissionLevel.None);
+
+                if (result !== 'Update success!') {
+                    errorEmailsMessage = errorEmailsMessage + `${email}: ${result}\n`;
 
                     togglePopup();
                 } else {
@@ -129,17 +136,17 @@ const AdminManager: React.FC = () => {
             </div>
             <div className="dropDown">
                 <label className='dropText' htmlFor='permission-select'>Update to: </label>
-                <select id='permission-select' value={changeLevelState} onChange={(e) => setNewUpdateLevel(e.target.value)}>
-                    <option value="Navigator">Navigator</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Owner">Owner</option>
+                <select id='permission-select' value={updateLevelState} onChange={(e) => setNewUpdateLevel(parseInt(e.target.value))}>
+                    <option value={PermissionLevel.Navigator}>Navigator</option>
+                    <option value={PermissionLevel.Admin}>Admin</option>
+                    <option value={PermissionLevel.Owner}>Owner</option>
                 </select>
             </div>
             <div className="buttonContainer">
                 <button className="gray" onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
 
                 <button onClick={update}>Update</button>
-                <button className='red' onClick={update}>Demote to None</button>
+                <button className='red' onClick={demoteToNone}>Demote to None</button>
 
                 {popupVisible &&
                     <Prompt

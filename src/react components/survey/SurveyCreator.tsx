@@ -139,6 +139,30 @@ const SurveyCreator: React.FC = () => {
     const conditionallySave = async () => {
         const hasLabel = components.every(q => q.componentType & ComponentType.NoLabel || q.answers.every(a => a.labelIds.length > 0));
 
+        const surveys = await getSurveys();
+        var duplicate = false;
+        surveys.forEach(s => {
+            if (s.title.trim() === title.trim()) {
+                duplicate = true;
+            }
+        });
+        var emptyCPrompt = false;
+        var noAnswers = false;
+        var emptyAnswer = false;
+        components.forEach(c => {
+            if (c.prompt.trim().length === 0) {
+                emptyCPrompt = true;
+            }
+            if (c.answers.length === 0) {
+                noAnswers = true;
+            }
+            c.answers.forEach(a => {
+                if (a.text.trim().length === 0) {
+                    emptyAnswer = true;
+                }
+            })
+        });
+
         if (!title.trim()) {
             setErrorMessage('The survey title is currently empty.');
             setErrorTitle('Empty Title');
@@ -150,6 +174,26 @@ const SurveyCreator: React.FC = () => {
         } else if (!hasLabel) {
             setErrorTitle('Missing Label Connection(s)');
             setErrorMessage('Each answer must have at least one label connected to it');
+            togglePopup();
+        } else if (duplicate) {
+            setErrorTitle('Another Survey has this Title');
+            setErrorMessage('Please use a different title');
+            togglePopup();
+        } else if (components.length === 1 && (components.at(0)?.prompt.length === 0 || components.at(0)?.answers.length === 0)) {
+            setErrorTitle('Survey is Empty');
+            setErrorMessage('Please enter at least one question with an answer');
+            togglePopup();
+        } else if (emptyCPrompt) {
+            setErrorTitle('At least one Question has no Prompt');
+            setErrorMessage('Please enter a question prompt for all questions');
+            togglePopup();
+        } else if (noAnswers) {
+            setErrorTitle('At least one Question has no Answers');
+            setErrorMessage('Please add at least one answer for all questions');
+            togglePopup();
+        } else if (emptyAnswer) {
+            setErrorTitle('At least one Answer has no Text');
+            setErrorMessage('Please add text for all Answers');
             togglePopup();
         } else {
             const survey: SurveyTemplate = {

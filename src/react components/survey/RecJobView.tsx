@@ -14,9 +14,14 @@ const RecJobView: React.FC<props> = props => {
             {props.jobs.map((recommendation, index) => (
                 <div id="jobRec" key={index} className={'recommendation ' + ((recommendation.score > 0) ? 'positive' : (recommendation.score >= -0.5) ? 'neutral' : 'negative')}>
                     <div className="jobRecContainer">
-                        <div className='title'>{recommendation.jobOpp.jobName}</div>
-                        <div className='compName'>{recommendation.jobOpp.companyName}</div>
-                        <div className='jobDesc'>{recommendation.jobOpp.jobDescription}</div>
+                        {recommendation.jobOpp ?
+                            <>
+                                <div className='title'>{recommendation.jobOpp.jobName}</div>
+                                <div className='compName'>{recommendation.jobOpp.companyName}</div>
+                                <div className='jobDesc'>{recommendation.jobOpp.jobDescription}</div>
+                            </>
+                            : <div>Job no longer exists</div>
+                        }
                     </div>
                     <div className="divider"></div>
                     <div className="recContainer">

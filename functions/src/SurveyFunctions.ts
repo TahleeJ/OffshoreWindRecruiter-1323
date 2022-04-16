@@ -2,14 +2,25 @@ import * as functions from 'firebase-functions';
 
 import { assertValidRequest, firestore } from './Utility';
 import { errors } from './Errors';
-import { ReturnedSurveyResponse, JobOpp, ComponentType, RecommendedJob, AdministeredSurveyResponse, SurveyTemplate } from '../../src/firebase/Types';
+import { ReturnedSurveyResponse, JobOpp, RecommendedJob, SentSurveyResponse, SurveyTemplate, StoredSurveyResponse, ComponentType } from '../../src/firebase/Types';
 import { Timestamp } from 'firebase-admin/firestore';
 
 
 /**
  * Stores submitted survey in Firestore then returns the recommended jobs.
+ *
+ * The recommendation algorithm is as follows:
+ * 1. Calculate the raw scores for each label which will be used to create a binomial distribution to
+ *    approximate the label's probability distribution.
+ * 2. Calculate the percentile for each label using a normal approximation to the binomial distribution.
+ * 3. The strength of each job will then be calculated as the sum of all percentiles of each label the
+ *    job is paired with.
+ *
+ * @param request Contains the administered survey information
+ * @param context Function caller user's authentication information
+ * @return Recommended jobs and score information for each label
  */
-export const submitSurvey = functions.https.onCall(async (request: AdministeredSurveyResponse, context) => {
+export const submitSurvey = functions.https.onCall(async (request: SentSurveyResponse, context) => {
     assertValidRequest(context);
 
 
@@ -46,7 +57,7 @@ export const submitSurvey = functions.https.onCall(async (request: AdministeredS
         let expectedScore: number = 0;
 
         // Increment labels that were answered
-        switch (currentQuestion.questionType) {
+        switch (currentQuestion.componentType) {
         case ComponentType.Scale: {
             const normalizedAnswer = chosenAnswer / 4;
             incrementScores(0, currentAnswers[0].labelIds, normalizedAnswer);
@@ -109,10 +120,17 @@ export const submitSurvey = functions.https.onCall(async (request: AdministeredS
     firestore.collection('SurveyResponse').add({
         surveyId: request.surveyId,
         taker: request.taker,
-        answers: request.answers,
-        recommendedJobs: rankings,
-        created: Timestamp.now().toMillis()
-    } as AdministeredSurveyResponse);
+        created: Timestamp.now().toMillis(),
+
+        components: request.answers.map((answer, index) => {
+            return {
+                componentHash: survey.components[index].hash,
+                answer: answer
+            };
+        }),
+
+        recommendedJobs: rankings
+    } as StoredSurveyResponse);
 
 
     const response: ReturnedSurveyResponse = {

@@ -53,14 +53,14 @@ const LabelManager: React.FC<props> = props => {
                 </div>
                 <ListViewer height="350px" title="Associated Answers">
                     {surveyRefs
-                        ? [...surveyRefs].map(([survey, questionRefs], sI) => {
+                        ? [...surveyRefs].map(([survey, componentRefs], sI) => {
                             return <div className='association' key={sI}>
                                 <div className='surveyTitle'>Survey: {survey.title}</div>
-                                {[...questionRefs].map(([question, answers], qI) => {
+                                {[...componentRefs].map(([component, answers], qI) => {
                                     return <div key={qI}>
-                                        <div className='questionTitle'>Question: {question.prompt}</div>
+                                        <div className='questionTitle'>Question: {component.prompt}</div>
                                         {answers.map((answer, aI) => (
-                                            <div className='answerTitle' key={aI}>{question.componentType === ComponentType.MultipleChoice ? answer.text : '------'}</div>
+                                            <div className='answerTitle' key={aI}>{component.componentType === ComponentType.MultipleChoice ? answer.text : '------'}</div>
                                         ))}
                                     </div>;
                                 })

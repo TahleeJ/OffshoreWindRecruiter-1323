@@ -51,7 +51,7 @@ const Home: React.FC = () => {
                                 }}>
                                 <div className='title'>{survey.title}</div>
                                 <div className='description'>{survey.description ? survey.description : 'No Description'}</div>
-                                <div className='questions'>{survey.components.length} question(s)</div>
+                                <div className='questions'>{survey.components.length === 1 ? '1 component' : survey.components.length + ' components'}</div>
                                 <div className='responses'>{responses.filter(r => r.surveyId === survey.id).length} responses(s)</div>
                             </div>
                         ))

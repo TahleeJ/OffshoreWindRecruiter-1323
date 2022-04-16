@@ -66,7 +66,7 @@ export async function deleteSurvey(id: id) {
  */
 export async function getSurveyResponses() {
     const response = await firestore.getDocs(
-        firestore.query(db.SurveyResponse, firestore.orderBy('created', 'desc'), firestore.limit(30)));
+        firestore.query(db.SurveyResponse, firestore.orderBy('created', 'desc'), firestore.limit(10)));
 
     return response.docs.map(s => ({ ...s.data(), id: s.id } as StoredSurveyResponse & hasId));
 }

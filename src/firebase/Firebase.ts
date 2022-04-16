@@ -35,4 +35,4 @@ export const getBigQueryData = functions.httpsCallable<{queryString: string, nav
 export const submitSurvey = functions.httpsCallable<SentSurveyResponse, ReturnedSurveyResponse>(functionsInstance, 'submitSurvey');
 
 // Local function testing
-// functions.connectFunctionsEmulator(functionsInstance, 'localhost', 5001);
+functions.connectFunctionsEmulator(functionsInstance, 'localhost', 5001);

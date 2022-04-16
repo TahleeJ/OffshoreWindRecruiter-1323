@@ -50,9 +50,13 @@ const ResponseView: React.FC = () => {
                 <RecJobView jobs={jobs()} />
             </Section>
             <Section title='Response:'>
-                <div className='question'>
-                    <span>Since the survey was taken, </span>
-                    {removedComponents === 1 ? '1 question has' : removedComponents + ' questions have'} been removed. </div>
+                { removedComponents > 0
+                    ? <div className='question'>
+                        <span>Since the survey was taken, </span>
+                        {removedComponents === 1 ? '1 component has' : removedComponents + ' component have'} been removed.
+                    </div>
+                    : null
+                }
                 {
                     survey.components.map((c, i) =>
                         answerMap.has(c.hash)
@@ -65,7 +69,7 @@ const ResponseView: React.FC = () => {
                                     }</div>
                                 </React.Fragment>
                             )
-                            : <div className='question'>This question was added after this response was taken. </div>
+                            : <div className='question'>This component was added after this response was taken. </div>
                     )
                 }
             </Section>

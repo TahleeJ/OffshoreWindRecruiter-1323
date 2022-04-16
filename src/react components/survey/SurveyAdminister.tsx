@@ -31,7 +31,7 @@ const SurveyAdminister: React.FC = () => {
         setAnswers(clone);
     };
     const conditionallySave = async () => {
-        if (answers.some(a => a === '')) {
+        if (answers.some((answer, index) => reduxSurveyData.components[index].componentType & ComponentType.Question && answer === '')) {
             togglePopup();
         } else {
             const survey: SentSurveyResponse = {
@@ -74,29 +74,30 @@ const SurveyAdminister: React.FC = () => {
                         <div className='title'>Email (optional):</div>
                         <input type="text" placeholder='example@email.com' value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
-                    {reduxSurveyData.components.map((question, qI) => {
+                    {reduxSurveyData.components.map((component, cI) => {
                         return (
-                            <div className={'question ' + ComponentType[question.componentType]} key={qI}>
-                                {question.componentType !== ComponentType.Image &&
-                                    <div className='title'>{question.prompt}</div>
+                            <div className={'question ' + ComponentType[component.componentType]} key={cI}>
+                                {component.componentType & ComponentType.Question
+                                    ? <div className='title'>{component.prompt}</div>
+                                    : null
                                 }
 
-                                {question.componentType === ComponentType.Text &&
-                                    <label> {question.prompt}</label>
+                                {component.componentType === ComponentType.Text &&
+                                    <label>{component.prompt}</label>
                                 }
-                                {question.componentType === ComponentType.Image && question.prompt &&
-                                    <img src={question.prompt} alt="Image" />
+                                {component.componentType === ComponentType.Image &&
+                                    <img src={component.prompt} alt="Image" />
                                 }
-                                {question.componentType === ComponentType.FreeResponse &&
-                                    <textarea rows={5} placeholder='Answer...' value={answers[qI]} onChange={(e) => handleTextChange(qI, e.target.value)} />
+                                {component.componentType === ComponentType.FreeResponse &&
+                                    <textarea rows={5} placeholder='Answer...' value={answers[cI]} onChange={(e) => handleTextChange(cI, e.target.value)} />
                                 }
-                                {question.componentType === ComponentType.MultipleChoice &&
+                                {component.componentType === ComponentType.MultipleChoice &&
                                     <div className='answers'>
-                                        {question.answers.map((answer, aI) => {
+                                        {component.answers.map((answer, aI) => {
                                             return (
                                                 <React.Fragment key={aI}>
-                                                    <input type="radio" id={qI + ',' + aI} name={qI.toString()} placeholder='N/A' checked={answers[qI] === aI} onChange={() => handleRadioChange(qI, aI)} />
-                                                    <label htmlFor={qI + ',' + aI}>{answer.text}</label>
+                                                    <input type="radio" id={cI + ',' + aI} name={cI.toString()} placeholder='N/A' checked={answers[cI] === aI} onChange={() => handleRadioChange(cI, aI)} />
+                                                    <label htmlFor={cI + ',' + aI}>{answer.text}</label>
                                                     <br />
                                                 </React.Fragment>
                                             );
@@ -104,12 +105,12 @@ const SurveyAdminister: React.FC = () => {
                                         }
                                     </div>
                                 }
-                                {question.componentType === ComponentType.Scale &&
+                                {component.componentType === ComponentType.Scale &&
                                     <div className='answers'>
                                         Strongly Disagree
                                         {[0, 1, 2, 3, 4].map((index) => {
                                             return (
-                                                <input key={index} type="radio" id={qI + ',' + index} name={qI.toString()} placeholder='N/A' checked={answers[qI] === index} onChange={() => handleRadioChange(qI, index)} />
+                                                <input key={index} type="radio" id={cI + ',' + index} name={cI.toString()} placeholder='N/A' checked={answers[cI] === index} onChange={() => handleRadioChange(cI, index)} />
                                             );
                                         })}
 

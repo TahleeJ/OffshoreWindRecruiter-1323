@@ -144,7 +144,7 @@ const SurveyCreator: React.FC = () => {
         const surveys = await getSurveys();
         let duplicate = false;
         surveys.forEach(s => {
-            if (s.title.trim() === title.trim()) {
+            if (s.title.trim() === title.trim() && s.id !== reduxSurveyData.id) {
                 duplicate = true;
             }
         });

@@ -4,6 +4,7 @@ import { drawChart } from '../firebase/Analytics/Draw';
 import { DataQuery, Chart, Subject, NavigatorGrouping, DateGrouping, SelectionArrays, DateSelection, dataFocusTypes, validChartInfo, today, determineStartDate } from '../firebase/Analytics/Utility';
 
 import { authInstance } from '../firebase/Firebase';
+import TooltipInfo from './TooltipInfo';
 
 
 const Analytics: React.FC = () => {
@@ -514,8 +515,11 @@ const Analytics: React.FC = () => {
         <div id='analytics'>
             <div className='topGrid'>
                 <div className='middleColumn left'>
-                    <div className='listViewer'>
-                        <div className='title'>Data Configuration</div>
+                    <div className='listViewer'>     
+                        <div className='title'>
+                            Data Configuration
+                            <TooltipInfo textarea={'Section to refine and configure the focus and type of data you would like to view.'}></TooltipInfo>
+                        </div>
                         <p>Subject:</p>
                         <input type='radio' id='surveys-administered' name='subject' defaultChecked={subjectState === Subject.Surveys} onClick={() => { updateSubject(Subject.Surveys); }}></input>
                         <label htmlFor='surveys-administered'>Administered Surveys </label>
@@ -663,7 +667,10 @@ const Analytics: React.FC = () => {
 
                 <div className='middleColumn right'>
                     <div className='listViewer top'>
-                        <div className='title'>Chart Generation</div>
+                        <div className='title'>
+                            Chart Generation
+                            <TooltipInfo textarea={'Section to select which format your would like to view your configured data in and tell you which data focuses are supported by your selected chart type.'}></TooltipInfo>
+                        </div>
                         <div className='chartGenerationContainer'>
                             <div className='chartTypeContainer center'>
                                 <div className='chartInfoHeader center'>Chart Type</div><br></br>
@@ -719,21 +726,22 @@ const Analytics: React.FC = () => {
 
                     </div>
                     <div className='listViewer bottom'>
-                        <div className='title'>Your Chart!</div>
-                        {
-                            treeState === DataQuery.LowestAverageJobMatches &&
-                            <>
-                                <p>The size of the box is how large the absolute value of the average is.</p>
-                                <p>Red (relative lowest average) {'->'} Yellow (relative highest average)</p>
-                            </>
-                        }
-                        {
-                            treeState === DataQuery.HighestAverageJobMatches &&
-                            <>
-                                <p>The size of the box is how large the absolute value of the average is.</p>
-                                <p>Green (relative lowest average) {'->'} Blue (relative highest average)</p>
-                            </>
-                        }
+                        <div className='title'>
+                            Your Chart!
+                            <TooltipInfo textarea={'Your configured chart! *It may take a view seconds for the chart to finish rendering.'}></TooltipInfo>
+                        </div>
+                            {
+                                treeState === DataQuery.LowestAverageJobMatches &&
+                                <>
+                                    <TooltipInfo textarea='The size of the box is how large the absolute value of the average is. Red (relative lowest average) -> Yellow (relative highest average)'></TooltipInfo>
+                                </>
+                            }
+                            {
+                                treeState === DataQuery.HighestAverageJobMatches &&
+                                <>
+                                    <TooltipInfo textarea='The size of the box is how large the absolute value of the average is. Green (relative lowest average) -> Blue (relative highest average)'></TooltipInfo>
+                                </>
+                            }
                         <div className='chartContainer' id='chart'></div>
                     </div>
                 </div>

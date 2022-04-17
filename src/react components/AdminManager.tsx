@@ -110,8 +110,8 @@ const AdminManager: React.FC = () => {
     };
 
     return (
-        <div id="promoteUser" className='container'>
-            <div className="title">Administrator Authorization</div>
+        <div id='promoteUser' className='container'>
+            <div className='title'>Administrator Authorization</div>
             <div className='textBlock'>
                 <div className='textBlock' style={{ fontWeight: 'bold' }}>Type the email address(es) of the user(s) that you would like to change permissions for.</div>
                 <br /><br />
@@ -124,16 +124,16 @@ const AdminManager: React.FC = () => {
                 </div>
             </div>
 
-            <div className="inputContainer">
-                <div className="userEmail">User Email(s):
+            <div className='inputContainer'>
+                <div className='userEmail'>User Email(s):
                     <div className='infoIcon'>
-                        <TooltipInfo textarea="Type the user's email you want to promote/demote"></TooltipInfo>
+                        <TooltipInfo textarea='All of the emails of the users you would like to change permissions for, separated by commas if more than one.'></TooltipInfo>
                     </div>
                 </div>
-                <input type="text" defaultValue={emailsState} onChange={(e) => setEmails(e.target.value)} placeholder='example@gmail.com'></input>
-                <div className="error" style={{ whiteSpace: 'pre-wrap', height: '75px', overflow: 'auto' }}>{errorTextState}</div>
+                <input type='text' defaultValue={emailsState} onChange={(e) => setEmails(e.target.value)} placeholder='example@gmail.com'></input>
+                <div className='error' style={{ whiteSpace: 'pre-wrap', height: '75px', overflow: 'auto' }}>{errorTextState}</div>
             </div>
-            <div className="dropDown">
+            <div className='dropDown'>
                 <label className='dropText' htmlFor='permission-select'>Update to: </label>
                 <select id='permission-select' value={updateLevelState} onChange={(e) => setNewUpdateLevel(parseInt(e.target.value))}>
                     <option value={PermissionLevel.Navigator}>Navigator</option>
@@ -141,16 +141,16 @@ const AdminManager: React.FC = () => {
                     <option value={PermissionLevel.Owner}>Owner</option>
                 </select>
             </div>
-            <div className="buttonContainer">
-                <button className="gray" onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
+            <div className='buttonContainer'>
+                <button className='gray' onClick={() => dispatch(changePage({ type: PageType.AdminHome }))}>Go Back</button>
 
                 <button onClick={update}>Update</button>
                 <button className='red' onClick={demoteToNone}>Demote to None</button>
 
                 {popupVisible &&
                     <Prompt
-                        title="Permission Update Error"
-                        message="There was an error updating the permission level of some of your selected users. Please make sure you have entered valid email addresses and that your selected users are members of this application."
+                        title='Permission Update Error'
+                        message='There was an error updating the permission level of some of your selected users. Please make sure you have entered valid email addresses and that your selected users are members of this application.'
                         handleCancel={togglePopup}
                     />
                 }

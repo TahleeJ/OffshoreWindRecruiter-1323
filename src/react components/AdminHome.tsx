@@ -58,7 +58,7 @@ const AdminHome: React.FC = () => {
         <div id="adminHome" className='adminContainer'> {/* Contains the whole page */}
             <div className='topGrid'> {/* top part (notify center, job ops, surveys */}
                 <div className='leftColumn'>
-                    <ListViewer height={(document.body.getBoundingClientRect().height - 64) + 'px'} title='Responses' content='Survey responses that have been submitted'>
+                    <ListViewer height={(document.body.getBoundingClientRect().height - 64) + 'px'} title='Responses' content='Survey responses that have been submitted.'>
                         {responses.length > 0
                             ? responses.map((res, ind) => {
                                 return <ListElement
@@ -76,7 +76,7 @@ const AdminHome: React.FC = () => {
                     </ListViewer>
                 </div>
                 <div className='middleColumn'>
-                    <ListViewer height="50%" title='Job Opportunities' content='A job listing that administrators can add to find potential workers.' handleNew={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Creating }))} >
+                    <ListViewer height="50%" title='Job Opportunities' content='The list of all currently available jobs this application knows about.' handleNew={() => appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Creating }))} >
                         {jobOpps.length > 0
                             ? jobOpps.map((jobOpp, ind) => {
                                 return <ListElement
@@ -93,7 +93,7 @@ const AdminHome: React.FC = () => {
                             : <div>Click the "New" button to create a new job opportunity</div>
                         }
                     </ListViewer>
-                    <ListViewer height="50%" title='Survey Templates' content='A list of questions to be completed by potential workers to match jobs.' handleNew={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Creating }))}>
+                    <ListViewer height="50%" title='Survey Templates' content='The list of all surveys created in this application.' handleNew={() => appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Creating }))}>
                         {surveys.length > 0
                             ? surveys.map((survey, ind) => {
                                 return <ListElement

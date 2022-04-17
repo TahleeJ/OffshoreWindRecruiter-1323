@@ -515,7 +515,7 @@ const Analytics: React.FC = () => {
         <div id='analytics'>
             <div className='topGrid'>
                 <div className='middleColumn left'>
-                    <div className='listViewer'>     
+                    <div className='listViewer'>
                         <div className='title'>
                             Data Configuration
                             <TooltipInfo textarea={'Section to refine and configure the focus and type of data you would like to view.'}></TooltipInfo>
@@ -730,18 +730,18 @@ const Analytics: React.FC = () => {
                             Your Chart!
                             <TooltipInfo textarea={'Your configured chart! *It may take a view seconds for the chart to finish rendering.'}></TooltipInfo>
                         </div>
-                            {
-                                treeState === DataQuery.LowestAverageJobMatches &&
-                                <>
-                                    <TooltipInfo textarea='The size of the box is how large the absolute value of the average is. Red (relative lowest average) -> Yellow (relative highest average)'></TooltipInfo>
-                                </>
-                            }
-                            {
-                                treeState === DataQuery.HighestAverageJobMatches &&
-                                <>
-                                    <TooltipInfo textarea='The size of the box is how large the absolute value of the average is. Green (relative lowest average) -> Blue (relative highest average)'></TooltipInfo>
-                                </>
-                            }
+                        {
+                            treeState === DataQuery.LowestAverageJobMatches &&
+                            <>
+                                <TooltipInfo textarea='The size of the box is how large the absolute value of the average is. Red (relative lowest average) -> Yellow (relative highest average)'></TooltipInfo>
+                            </>
+                        }
+                        {
+                            treeState === DataQuery.HighestAverageJobMatches &&
+                            <>
+                                <TooltipInfo textarea='The size of the box is how large the absolute value of the average is. Green (relative lowest average) -> Blue (relative highest average)'></TooltipInfo>
+                            </>
+                        }
                         <div className='chartContainer' id='chart'></div>
                     </div>
                 </div>

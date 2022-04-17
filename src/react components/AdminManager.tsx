@@ -120,6 +120,8 @@ const AdminManager: React.FC = () => {
                     <br /><br />
                     Administrators have full access to the application: they are able to create new surveys, labels, jobs, administer surveys, and view analytics.
                     <br /><br />
+                    Navigators are only able to view jobs and administer surveys.
+                    <br /><br />
                     None-level users will only be able to administer surveys.
                 </div>
             </div>

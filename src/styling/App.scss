@@ -711,7 +711,7 @@ textarea {
                     width: calc(100% - 140px);
                 }
 
-                .questionType {
+                .ComponentType {
                     width: 130px;
                     height: 40px;
                     margin-left: 5px;
@@ -939,6 +939,13 @@ textarea {
             border: 10px solid $mainColor;
             outline: unset !important; /* I added this one for Edge (chromium) support */
         }
+    }
+
+    img {
+        max-width: 100%;
+        max-height: 100ex;
+        display: block;
+        margin: auto;
     }
 }
 #jobManager {
@@ -1356,12 +1363,10 @@ textarea {
         font-weight: normal;
     }
 
-    .surveyList {
-        .listViewer {
-            height: 50%;
-            overflow: auto;
-            text-align: left;
-        }
+    .surveyList.listViewer {
+        height: 50%;
+        overflow: auto;
+        text-align: left;
     }
 
     .chartGenerationContainer {

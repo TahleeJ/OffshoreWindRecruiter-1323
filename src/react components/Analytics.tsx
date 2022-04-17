@@ -14,8 +14,8 @@ const Analytics: React.FC = () => {
     const userEmail = authInstance.currentUser!.email!;
   
     // Stateful storage of the current state of the input error message
-    const [popupTitleState, setPopupTitleState] = useState("");
-    const [popupMessageState, setPopupMessageState] = useState("");
+    const [popupTitleState, setPopupTitleState] = useState('');
+    const [popupMessageState, setPopupMessageState] = useState('');
 
     // Stateful storage of query type selection, what is in current use and for each subject
     const [queryTypeState, setQueryTypeState] = useState<DataQuery>(DataQuery.AllTitles);
@@ -33,12 +33,12 @@ const Analytics: React.FC = () => {
     const [labelChartTypeState, setLabelChartTypeState] = useState(Chart.Scatter);
 
     // Stateful storage of the entered in navigator emails
-    const [navigatorEntryState, setNavigatorEntryState] = useState("");
+    const [navigatorEntryState, setNavigatorEntryState] = useState('');
 
     // Stateful storage of the list of navigator emails/surveys/jobs/labels to view data for
     const [selectedNavigatorState, setSelectedNavigatorState] = useState<string[]>();
     const [selectedSurveysState, setSelectedSurveysState] = useState<string[]>([]);
-    const [selectedJobsState, setSelectedJobsState] = useState<string[]>([]);  
+    const [selectedJobsState, setSelectedJobsState] = useState<string[]>([]);
     const [selectedLabelsState, setSelectedLabelsState] = useState<string[]>([]);
 
     // Stateful storage of which checkbox elements have been selected
@@ -59,44 +59,44 @@ const Analytics: React.FC = () => {
     // largest data or smallest data (used to set tree informational box)
     const [treeState, setTreeState] = useState(DataQuery.None);
 
-    // Variables to hold the currently used data that the state will be set with;
+    // letiables to hold the currently used data that the state will be set with;
     // initialized with the previous state information
-    var popupTitle = popupTitleState;
-    var popupMessage = popupMessageState;
-    var queryType = queryTypeState;
-    var navigatorGrouping = navigatorGroupingState;
-    var chartType = chartTypeState;
-    var navigatorEntry = navigatorEntryState;
-    var selectedSurveysCheck = selectedSurveysCheckState;
-    var selectedJobsCheck = selectedJobsCheckState;
-    var selectedLabelsCheck = selectedLabelsCheckState;
-    var dateGrouping = dateGroupingState;
-    var dayDate = dayDateState.replaceAll("-", "");
-    var sinceDate = sinceDateState.replaceAll("-", "");
-    var startDate = startDateState;
-    var subject = subjectState;
+    let popupTitle = popupTitleState;
+    let popupMessage = popupMessageState;
+    let queryType = queryTypeState;
+    let navigatorGrouping = navigatorGroupingState;
+    let chartType = chartTypeState;
+    let navigatorEntry = navigatorEntryState;
+    const selectedSurveysCheck = selectedSurveysCheckState;
+    const selectedJobsCheck = selectedJobsCheckState;
+    const selectedLabelsCheck = selectedLabelsCheckState;
+    let dateGrouping = dateGroupingState;
+    let dayDate = dayDateState.replaceAll('-', '');
+    let sinceDate = sinceDateState.replaceAll('-', '');
+    let startDate = startDateState;
+    let subject = subjectState;
 
-    // Variables to check the validity of the number of surveys selected
+    // letiables to check the validity of the number of surveys selected
     const maxSelectedSurveys = 5;
-    var selectedSurveyCount = 0;
-    var selectedSurveys = selectedSurveysState;
+    let selectedSurveyCount = 0;
+    const selectedSurveys = selectedSurveysState;
 
-    var selectedNavigators = selectedNavigatorState;
+    let selectedNavigators = selectedNavigatorState;
 
-    // Variables to check the validity of the number of jobs selected
+    // letiables to check the validity of the number of jobs selected
     const maxSelectedJobs = 5;
     let selectedJobCount = 0;
     const selectedJobs = selectedJobsState;
 
-    // Variables to check the validity of the number of labels selected
+    // letiables to check the validity of the number of labels selected
     const maxSelectedLabels = 5;
     let selectedLabelCount = 0;
     const selectedLabels = selectedLabelsState;
 
     // HTML elements necessary to immediately set data for without waiting for state update
-    const validDataFocusesBox = document.getElementById("valid-focuses") as HTMLInputElement;
-    const popupTitleBox = document.getElementById("popup-title") as HTMLInputElement;
-    const popupMessageBox = document.getElementById("popup-message") as HTMLInputElement;
+    const validDataFocusesBox = document.getElementById('valid-focuses') as HTMLInputElement;
+    const popupTitleBox = document.getElementById('popup-title') as HTMLInputElement;
+    const popupMessageBox = document.getElementById('popup-message') as HTMLInputElement;
 
     // Sets the error box on the page with the necessary error message
     const togglePopup = () => {
@@ -107,22 +107,49 @@ const Analytics: React.FC = () => {
         setPopupMessageState(popupMessage);
     };
 
-    google.charts.load("current", {packages:["corechart", "table", "treemap"]});
+    google.charts.load('current', { packages: ['corechart', 'table', 'treemap'] });
 
     /**
      * Updates how many navigators the data should focus on
-     * 
+     *
      * @param value the new set of navigators to focus on
      */
     function updateNavigatorGrouping(value: NavigatorGrouping) {
         navigatorGrouping = value;
+
+        if (value === NavigatorGrouping.All) {
+            switch (queryType) {
+            case DataQuery.OneTitlesPerDay:
+                updateQueryType(DataQuery.AllTitlesPerDay);
+                break;
+            case DataQuery.OnePerDay:
+                updateQueryType(DataQuery.AllPerDay);
+                break;
+            case DataQuery.OneTitles:
+                updateQueryType(DataQuery.AllTitles);
+                break;
+            }
+        } else {
+            switch (queryType) {
+            case DataQuery.AllTitlesPerDay:
+                updateQueryType(DataQuery.OneTitlesPerDay);
+                break;
+            case DataQuery.AllPerDay:
+                updateQueryType(DataQuery.OnePerDay);
+                break;
+            case DataQuery.AllTitles:
+                updateQueryType(DataQuery.OneTitles);
+                break;
+            }
+        }
+
         setNavigatorGroupingstate(value);
     }
 
     /**
-     * Updates the variables keeping track of the emails the
+     * Updates the letiables keeping track of the emails the
      * user enters in in the navigators text box
-     * 
+     *
      * @param value the entered in string by the user
      */
     function updateNavigatorEntry(value: string) {
@@ -133,7 +160,7 @@ const Analytics: React.FC = () => {
     /**
      * Updates the data query that will be used to retrieve data
      * and updates the state
-     * 
+     *
      * @param value the new query to pull data with
      */
     function updateQueryType(value: DataQuery) {
@@ -155,9 +182,8 @@ const Analytics: React.FC = () => {
     }
 
     /**
-     * Updates the chart type that will be used to display the
-     * data and updates the state
-     * 
+     * Updates the chart type that will be used to display the data and updates the state
+     *
      * @param value the new chart to display the data on
      */
     function updateChartType(value: Chart) {
@@ -185,10 +211,10 @@ const Analytics: React.FC = () => {
     }
 
     /**
-     * Updates the starting date type that the data should begin from (a 
-     * specific day, a week back, a month back, or starting from a specific date)
-     * and updates the state 
-     * 
+     * Updates the starting date type that the data should begin from: a
+     * specific day, a week back, a month back, or starting from a specific date
+     * and updates the state
+     *
      * @param value the new starting date type
      */
     function updateDateGrouping(value: DateGrouping) {
@@ -200,7 +226,7 @@ const Analytics: React.FC = () => {
      * Updates the actual date that the data will start at based on a
      * selected date, sanitizing the date string into a form
      * recognizable by BigQuery (i.e., YYYYMMDD)
-     * 
+     *
      * @param value the new starting date string in HTML date input format
      * @param rangeType the starting date type of the selected starting date
      */
@@ -217,7 +243,7 @@ const Analytics: React.FC = () => {
     /**
      * Updates the subject that the data should focus on (surveys, jobs, or labels)
      * and updates the state
-     * 
+     *
      * @param value the new subject of the data
      */
     function updateSubject(value: Subject) {
@@ -280,9 +306,9 @@ const Analytics: React.FC = () => {
 
     /**
      * Updates the list of survey, job, or label names that will be used to pull data for
-     * based on the currently selected subject, ensuring that only a maximum of 5 are selected 
+     * based on the currently selected subject, ensuring that only a maximum of 5 are selected
      * at any given time.
-     * 
+     *
      * @param subjectSelected the subject that the data focuses on
      * @param name the name of the survey/job/label to add/remove from the chart's
      *                   survey/job/label data
@@ -382,12 +408,12 @@ const Analytics: React.FC = () => {
     }
 
     /**
-     * Begins the chart generation process.
+     * Begins the chart generation process
      */
     const generateChart = async() => {
         // Resets the displayed error message
-        popupTitle = "";
-        popupMessage = "";
+        popupTitle = '';
+        popupMessage = '';
         togglePopup();
 
         // Retrieves the BigQuery-recognizable start date
@@ -395,18 +421,12 @@ const Analytics: React.FC = () => {
 
         // Updates the starting date state
         setStartDateState(startDate);
-        
-        const queryRequiresSurveyName = (queryType & DataQuery.RequiresSurveyName) !== 0;
-
-        const jobQueryDoesNotRequireJobName = (queryType & DataQuery.RequiresJobName) === 0;
-
-        const queryDoesNotRequireNavigatorName = navigatorGrouping == NavigatorGrouping.All;
 
         if (queryType === DataQuery.None) {
             return;
         }
 
-        if (!queryDoesNotRequireNavigatorName) {
+        if (navigatorGrouping !== NavigatorGrouping.All) {
             const validNavigatorEntry = validateNavigatorEntry();
 
             if (!validNavigatorEntry) {
@@ -419,7 +439,7 @@ const Analytics: React.FC = () => {
             }
         }
 
-        if (queryRequiresSurveyName && selectedSurveys.length === 0) {
+        if (((queryType & DataQuery.RequiresSurveyName) !== 0) && selectedSurveys.length === 0) {
             popupTitle = 'Empty Survey Selection';
             popupMessage = 'Please select at least one survey you would like to see data for.';
             togglePopup();
@@ -427,7 +447,7 @@ const Analytics: React.FC = () => {
             return;
         }
 
-        if (subject === Subject.Jobs && !jobQueryDoesNotRequireJobName && selectedJobs.length === 0) {
+        if (subject === Subject.Jobs && ((queryType & DataQuery.RequiresJobName) !== 0) && selectedJobs.length === 0) {
             popupTitle = 'Empty Job Selection';
             popupMessage = 'Please select at least one job you would like to see data for.';
             togglePopup();
@@ -451,7 +471,7 @@ const Analytics: React.FC = () => {
             }
         }
 
-        if (!validChartInfo.get(subject)!.get(chartType)!.list!.includes(queryType)) {
+        if (!(validChartInfo.get(subject)!.get(chartType)!.list!.includes(queryType))) {
             popupTitle = 'Invalid Chart Type';
             popupMessage = 'Selected chart type is incompatible with your selected data focus.';
             togglePopup();
@@ -461,7 +481,7 @@ const Analytics: React.FC = () => {
 
         try {
             // Sets the Tree Map chart type state to update its informational box
-            if (jobQueryDoesNotRequireJobName && chartType === Chart.TreeMap) {
+            if (((queryType & DataQuery.RequiresJobName) === 0) && chartType === Chart.TreeMap) {
                 setTreeState(queryType);
             } else {
                 setTreeState(DataQuery.None);
@@ -480,7 +500,7 @@ const Analytics: React.FC = () => {
             };
 
             // Entry point into the chart drawing
-            await drawChart(subject, chartType, queryType, queryDoesNotRequireNavigatorName, dateSelection, selectionArrays);
+            await drawChart(subject, chartType, queryType, (navigatorGrouping === NavigatorGrouping.All), dateSelection, selectionArrays);
         } catch (error) {
             const { details } = JSON.parse(JSON.stringify(error));
 
@@ -497,34 +517,34 @@ const Analytics: React.FC = () => {
                     <div className='listViewer'>
                         <div className='title'>Data Configuration</div>
                         <p>Subject:</p>
-                        <input type="radio" id='surveys-administered' name='subject' defaultChecked={subjectState === Subject.Surveys} onClick={() => { updateSubject(Subject.Surveys); }}></input>
+                        <input type='radio' id='surveys-administered' name='subject' defaultChecked={subjectState === Subject.Surveys} onClick={() => { updateSubject(Subject.Surveys); }}></input>
                         <label htmlFor='surveys-administered'>Administered Surveys </label>
-                        <input type="radio" id='jobs-matched' name='subject' defaultChecked={subjectState === Subject.Jobs} onClick={() => { updateSubject(Subject.Jobs); }}></input>
+                        <input type='radio' id='jobs-matched' name='subject' defaultChecked={subjectState === Subject.Jobs} onClick={() => { updateSubject(Subject.Jobs); }}></input>
                         <label htmlFor='jobs-matched'>Matched Jobs </label>
-                        <input type="radio" id='labels-used' name='subject' defaultChecked={subjectState === Subject.Labels} onClick={() => { updateSubject(Subject.Labels); }}></input>
+                        <input type='radio' id='labels-used' name='subject' defaultChecked={subjectState === Subject.Labels} onClick={() => { updateSubject(Subject.Labels); }}></input>
                         <label htmlFor='labels-used'>Used Labels </label>
 
                         <p>Date Range:</p>
-                        <input type="radio" id='since' name='date' defaultChecked={dateGroupingState === DateGrouping.Since} onClick={() => { updateDateGrouping(DateGrouping.Since); }}></input>
+                        <input type='radio' id='since' name='date' defaultChecked={dateGroupingState === DateGrouping.Since} onClick={() => { updateDateGrouping(DateGrouping.Since); }}></input>
                         <label htmlFor='since'>Since </label>
-                        <input type="date" id="data-date-since" defaultValue={sinceDateState} onChange={(e) => { updateDate(e.target.value, DateGrouping.Since); }}></input>
-                        <input type="radio" id='month' name='date' defaultChecked={dateGroupingState === DateGrouping.Month} onClick={() => { updateDateGrouping(DateGrouping.Month); }}></input>
+                        <input type='date' id='data-date-since' defaultValue={sinceDateState} onChange={(e) => { updateDate(e.target.value, DateGrouping.Since); }}></input>
+                        <input type='radio' id='month' name='date' defaultChecked={dateGroupingState === DateGrouping.Month} onClick={() => { updateDateGrouping(DateGrouping.Month); }}></input>
                         <label htmlFor='week'>Past 31 days </label>
-                        <input type="radio" id='week' name='date' defaultChecked={dateGroupingState === DateGrouping.Week} onClick={() => { updateDateGrouping(DateGrouping.Week); }}></input>
+                        <input type='radio' id='week' name='date' defaultChecked={dateGroupingState === DateGrouping.Week} onClick={() => { updateDateGrouping(DateGrouping.Week); }}></input>
                         <label htmlFor='week'>Past 7 days </label>
-                        <input type="radio" id='day' name='date' defaultChecked={dateGroupingState === DateGrouping.Day} onClick={() => { updateDateGrouping(DateGrouping.Day); }}></input>
+                        <input type='radio' id='day' name='date' defaultChecked={dateGroupingState === DateGrouping.Day} onClick={() => { updateDateGrouping(DateGrouping.Day); }}></input>
                         <label htmlFor='day'>One day: </label>
-                        <input type="date" id="data-date-day" defaultValue={dayDateState} onChange={(e) => { updateDate(e.target.value, DateGrouping.Day); }}></input>
+                        <input type='date' id='data-date-day' defaultValue={dayDateState} onChange={(e) => { updateDate(e.target.value, DateGrouping.Day); }}></input>
 
                         {
                             subject === Subject.Surveys &&
                             <>
                                 <p>Navigator Focus:</p>
-                                <input type="radio" id='all-navigators' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.All} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.All); }}></input>
+                                <input type='radio' id='all-navigators' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.All} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.All); }}></input>
                                 <label htmlFor='all-navigators'>All Navigators </label>
-                                {/* <input type="radio" id='set-navigators' name='navigator-grouping' onClick={() => { navigatorGrouping = NavigatorGrouping.Set}}></input>
+                                {/* <input type='radio' id='set-navigators' name='navigator-grouping' onClick={() => { navigatorGrouping = NavigatorGrouping.Set}}></input>
                                 <label htmlFor='set-navigators'>Set of Navigators</label><br></br> */}
-                                <input type="radio" id='one-navigator' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.One} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.One); }}></input>
+                                <input type='radio' id='one-navigator' name='navigator-grouping' defaultChecked={navigatorGroupingState === NavigatorGrouping.One} onClick={() => { updateNavigatorGrouping(NavigatorGrouping.One); }}></input>
                                 <label htmlFor='one-navigator'>One Navigator</label><br></br>
                                 {
                                     navigatorGrouping === NavigatorGrouping.One &&
@@ -536,7 +556,7 @@ const Analytics: React.FC = () => {
 
                                 <p>Data Focus:</p>
                                 <label htmlFor='data-focus'>Administration of </label>
-                                <select id="data-focus" name="Query Types" defaultValue={surveyQueryTypeState} onChange={(e) => { updateQueryType(parseInt(e.target.value)); }}>
+                                <select id='data-focus' name='Query Types' defaultValue={surveyQueryTypeState} onChange={(e) => { updateQueryType(parseInt(e.target.value)); }}>
                                     <option value={(navigatorGrouping === NavigatorGrouping.All ? DataQuery.AllTitlesPerDay : DataQuery.OneTitlesPerDay)}>{dataFocusTypes.surveys.titleDay}</option>
                                     <option value={(navigatorGrouping === NavigatorGrouping.All ? DataQuery.AllPerDay : DataQuery.OnePerDay)}>{dataFocusTypes.surveys.perDay}</option>
                                     <option value={(navigatorGrouping === NavigatorGrouping.All ? DataQuery.AllTitles : DataQuery.OneTitles)}>{dataFocusTypes.surveys.titles}</option>
@@ -548,16 +568,16 @@ const Analytics: React.FC = () => {
                             subject === Subject.Jobs &&
                             <>
                                 <p>Data Focus: </p>
-                                <select id="data-focus" name="Query Types" defaultValue={jobQueryTypeState} onChange={(e) => { updateQueryType(parseInt(e.target.value)); }}>
+                                <select id='data-focus' name='Query Types' defaultValue={jobQueryTypeState} onChange={(e) => { updateQueryType(parseInt(e.target.value)); }}>
                                     <option value={DataQuery.TotalJobMatches}>{dataFocusTypes.jobs.totalPerJob}</option>
                                     <option value={DataQuery.PositiveJobMatches}>{dataFocusTypes.jobs.totalPositivePerJob}</option>
                                     <option value={DataQuery.NegativeJobMatches}>{dataFocusTypes.jobs.totalNegativePerJob}</option>
                                     <option value={DataQuery.AverageJobMatches}>{dataFocusTypes.jobs.averagePerJob}</option>
                                     <option value={DataQuery.HighestAverageJobMatches}>{dataFocusTypes.jobs.highestAverage}</option>
                                     <option value={DataQuery.LowestAverageJobMatches}>{dataFocusTypes.jobs.lowestAverage}</option>
-                                    <option value={DataQuery.AverageSurveyMatches}>{dataFocusTypes.jobs.averagePerSurvey}</option>
                                     <option value={DataQuery.SurveyPositiveJobMatches}>{dataFocusTypes.jobs.totalPositivePerSurvey}</option>
                                     <option value={DataQuery.SurveyNegativeJobMatches}>{dataFocusTypes.jobs.totalNegativePerSurvey}</option>
+                                    <option value={DataQuery.AverageSurveyMatches}>{dataFocusTypes.jobs.averagePerSurvey}</option>
                                 </select>
                                 <label htmlFor='data-focus'>Over the Date Range</label>
                             </>
@@ -567,7 +587,7 @@ const Analytics: React.FC = () => {
                             subject === Subject.Labels &&
                             <>
                                 <p>Data Focus: </p>
-                                <select id="data-focus" name="Query Types" defaultValue={labelQueryTypeState} onChange={(e) => { updateQueryType(parseInt(e.target.value)); }}>
+                                <select id='data-focus' name='Query Types' defaultValue={labelQueryTypeState} onChange={(e) => { updateQueryType(parseInt(e.target.value)); }}>
                                     <option value={DataQuery.LabelPoints}>{dataFocusTypes.labels.allPoints}</option>
                                     <option value={DataQuery.LabelAverage}>{dataFocusTypes.labels.average}</option>
                                 </select>
@@ -651,7 +671,7 @@ const Analytics: React.FC = () => {
                                     {
                                         subjectState === Subject.Surveys &&
                                     <>
-                                        <select id="chart-types" defaultValue={surveyChartTypeState} name="Chart Types" onChange={(e) => { updateChartType(parseInt(e.target.value)); }}>
+                                        <select id='chart-types' defaultValue={surveyChartTypeState} name='Chart Types' onChange={(e) => { updateChartType(parseInt(e.target.value)); }}>
                                             <option value={Chart.Pie}>Pie</option>
                                             <option value={Chart.Combo}>Combo</option>
                                             <option value={Chart.Line}>Line</option>
@@ -663,7 +683,7 @@ const Analytics: React.FC = () => {
                                     {
                                         subjectState === Subject.Jobs &&
                                     <>
-                                        <select id="chart-types" defaultValue={jobChartTypeState} name="Chart Types" onChange={(e) => { updateChartType(parseInt(e.target.value)); }}>
+                                        <select id='chart-types' defaultValue={jobChartTypeState} name='Chart Types' onChange={(e) => { updateChartType(parseInt(e.target.value)); }}>
                                             <option value={Chart.Pie}>Pie</option>
                                             <option value={Chart.Line}>Line</option>
                                             <option value={Chart.Bar}>Bar</option>
@@ -675,7 +695,7 @@ const Analytics: React.FC = () => {
                                     {
                                         subjectState === Subject.Labels &&
                                     <>
-                                        <select id="chart-types" defaultValue={labelChartTypeState} name="Chart Types" onChange={(e) => { updateChartType(parseInt(e.target.value)); }}>
+                                        <select id='chart-types' defaultValue={labelChartTypeState} name='Chart Types' onChange={(e) => { updateChartType(parseInt(e.target.value)); }}>
                                             <option value={Chart.Line}>Line</option>
                                             <option value={Chart.Bar}>Bar</option>
                                             <option value={Chart.Table}>Table</option>
@@ -692,8 +712,8 @@ const Analytics: React.FC = () => {
                                 <div className='chartInfoHeader center'>Chart Validity</div>
                                 <p className='validFocusesHeader center'>Valid Data Focuses:</p>
                                 <p id='valid-focuses' className='validFocuses center'>{validDataFocusesState}</p>
-                                <p id="popup-title" className='popup popupTitle center'>{popupTitleState}</p>
-                                <p id="popup-message" className='popup center'>{popupMessageState}</p>
+                                <p id='popup-title' className='popup popupTitle center'>{popupTitleState}</p>
+                                <p id='popup-message' className='popup center'>{popupMessageState}</p>
                             </div>
                         </div>
 
@@ -714,7 +734,7 @@ const Analytics: React.FC = () => {
                                 <p>Green (relative lowest average) {'->'} Blue (relative highest average)</p>
                             </>
                         }
-                        <div className='chartContainer' id="chart"></div>
+                        <div className='chartContainer' id='chart'></div>
                     </div>
                 </div>
             </div>

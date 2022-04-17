@@ -1,5 +1,5 @@
 import { getBigQueryData } from '../Firebase';
-import { queryFunctions, DataQuery, Subject, SerializedEntry } from './Utility';
+import { queryFunctions, DataQuery, Subject, SerializedEntry, SelectionArrays } from './Utility';
 
 /**
  * Function to actually send a desired query to BigQuery
@@ -8,18 +8,26 @@ import { queryFunctions, DataQuery, Subject, SerializedEntry } from './Utility';
  * @param queryType the type of query that will be sent
  * @param forDay whether the data should be focused on a single, specified day
  * @param startDate the specific start date that the data should focus on
- * @param jobName the name of the job to pull data for
- * @param selectedNavigator the specific navigator email that they data should focus on
+ * @param selectionArrays the selected list of survey/job/labels to focus the data on
+ *                        depending on the subject
  * @returns the retrieved BigQuery data is a more easy to operate on format
  */
-export async function getQueryData(subject: Subject, queryType: DataQuery, forDay: boolean, startDate: string, selectedNavigator?: string, jobNames?: string[], labelNames?: string[]) {
-    const queryFunction = queryFunctions[queryType];
+export async function getQueryData(
+    subject: Subject,
+    queryType: DataQuery,
+    forDay: boolean,
+    startDate: string,
+    selectionArrays?: SelectionArrays) {
+    const queryIndex = Math.log2(queryType) - 1;
+    const queryFunction = queryFunctions[queryIndex];
     let response;
 
     switch (subject) {
     case Subject.Surveys:
         if ((queryType & DataQuery.SurveysAll) === 0) {
-            const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${selectedNavigator}", ${forDay}, "${startDate}")`;
+            const selectedNavigator = selectionArrays!.navigators![0];
+            const queryString =
+                `SELECT * FROM analytics_305371849.${queryFunction}("${selectedNavigator}", ${forDay}, "${startDate}")`;
 
             response = await getBigQueryData({ queryString: queryString, navigatorEmail: selectedNavigator });
         } else {
@@ -33,8 +41,34 @@ export async function getQueryData(subject: Subject, queryType: DataQuery, forDa
         if ((queryType & DataQuery.RequiresJobName) !== 0) {
             const serializedJobData = new Map<string, SerializedEntry[]>();
 
-            for (const jobName of jobNames!) {
-                const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${jobName}", ${forDay}, "${startDate}")`;
+            for (const jobName of selectionArrays!.jobs!) {
+                const queryString =
+                    `SELECT * FROM analytics_305371849.${queryFunction}("${jobName}", ${forDay}, "${startDate}")`;
+
+                response = await getBigQueryData({ queryString: queryString });
+
+                const serializedData: any = serializeJobData(response.data as string[], queryType);
+
+                for (const [key, value] of serializedData) {
+                    if (serializedJobData.has(key)) {
+                        const currentData = serializedJobData.get(key);
+
+                            currentData!.push(value);
+
+                            serializedJobData.set(key, currentData!);
+                    } else {
+                        serializedJobData.set(key, [value]);
+                    }
+                }
+            }
+
+            return serializedJobData;
+        } else if ((queryType & DataQuery.RequiresSurveyName) !== 0) {
+            const serializedJobData = new Map<string, SerializedEntry[]>();
+
+            for (const surveyName of selectionArrays!.surveys!) {
+                const queryString =
+                    `SELECT * FROM analytics_305371849.${queryFunction}("${surveyName}", ${forDay}, "${startDate}")`;
 
                 response = await getBigQueryData({ queryString: queryString });
 
@@ -67,11 +101,10 @@ export async function getQueryData(subject: Subject, queryType: DataQuery, forDa
         if (queryType === DataQuery.LabelAverage) {
             const serializedLabelData = new Map<string, SerializedEntry[]>();
 
-            for (const labelName of labelNames!) {
+            for (const labelName of selectionArrays!.labels!) {
                 const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${labelName}", ${forDay}, "${startDate}")`;
 
                 response = await getBigQueryData({ queryString: queryString });
-                console.log(response);
 
                 const serializedData: any = serializeLabelData(response.data as string[], queryType);
 
@@ -90,7 +123,8 @@ export async function getQueryData(subject: Subject, queryType: DataQuery, forDa
 
             return serializedLabelData;
         } else {
-            const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${labelNames![0]}", ${forDay}, "${startDate}")`;
+            const queryString =
+                `SELECT * FROM analytics_305371849.${queryFunction}("${selectionArrays!.labels![0]}", ${forDay}, "${startDate}")`;
 
             response = await getBigQueryData({ queryString: queryString });
 
@@ -100,15 +134,6 @@ export async function getQueryData(subject: Subject, queryType: DataQuery, forDa
         }
     }
 }
-
-// TitleDay
-// date -> {title, frequency}
-//
-// PerDay
-// date -> {frequency}
-//
-// Titles
-// {title, frequency}
 
 /**
  * Turns the data received from BigQuery into a more chart-operational format
@@ -120,9 +145,10 @@ export async function getQueryData(subject: Subject, queryType: DataQuery, forDa
 function serializeSurveyData(data: string[], queryType: DataQuery) {
     if ((queryType & DataQuery.SurveysAll) !== 0) {
         if (queryType !== DataQuery.AllTitles) {
+            // date -> { survey title?, count }
+
             const serializedData = new Map<string, SerializedEntry[]>();
 
-            // TitleDay & PerDay
             for (const element of data) {
                 const elementJSON = JSON.parse(element);
                 const newData = { surveyFrequency: elementJSON.frequency } as SerializedEntry;
@@ -133,9 +159,8 @@ function serializeSurveyData(data: string[], queryType: DataQuery) {
 
                 if (serializedData.has(elementJSON.event_date)) {
                     const currentData = serializedData.get(elementJSON.event_date)!;
-
+                    
                     currentData!.push(newData);
-
                     serializedData.set(elementJSON.event_date, currentData);
                 } else {
                     serializedData.set(elementJSON.event_date, [newData]);
@@ -144,18 +169,23 @@ function serializeSurveyData(data: string[], queryType: DataQuery) {
 
             return serializedData;
         } else {
+            // { survey title, count }
             const serializedData = [] as SerializedEntry[];
 
             for (const element of data) {
                 const elementJSON = JSON.parse(element);
 
-                serializedData.push({ surveyTitle: elementJSON.survey_title, surveyFrequency: elementJSON.frequency } as SerializedEntry);
+                serializedData.push({
+                    surveyTitle: elementJSON.survey_title,
+                    surveyFrequency: elementJSON.frequency
+                });
             }
 
             return serializedData;
         }
     } else {
         if ((queryType & DataQuery.SurveysTitles) === 0) {
+            // navigator -> { date -> { survey title?, count } }
             const serializedData = new Map<string, Map<string, SerializedEntry[]>>();
 
             for (const element of data) {
@@ -173,7 +203,6 @@ function serializeSurveyData(data: string[], queryType: DataQuery) {
                         const currentData = serializedData.get(elementJSON.navigator)!.get(elementJSON.event_date)!;
 
                         currentData!.push(newData);
-
                         serializedData.get(elementJSON.navigator)!.set(elementJSON.event_date, currentData);
                     } else {
                         serializedData.get(elementJSON.navigator)!.set(elementJSON.event_date, [newData]);
@@ -182,18 +211,19 @@ function serializeSurveyData(data: string[], queryType: DataQuery) {
                     const newMap = new Map<string, SerializedEntry[]>();
 
                     newMap.set(elementJSON.event_date, [newData]);
-
                     serializedData.set(elementJSON.navigator, newMap);
                 }
             }
 
             return serializedData;
         } else {
+            // navigator -> { survey title, count }
+
             const serializedData = new Map<string, SerializedEntry[]>();
 
             for (const element of data) {
                 const elementJSON = JSON.parse(element);
-                const newData = { surveyTitle: elementJSON.survey_title, surveyFrequency: elementJSON.frequency } as SerializedEntry;
+                const newData = { surveyTitle: elementJSON.survey_title, surveyFrequency: elementJSON.frequency };
 
                 if (serializedData.has(elementJSON.navigator)) {
                     serializedData.get(elementJSON.navigator)!.push(newData);
@@ -220,7 +250,10 @@ function serializeJobData(data: string[], queryType: DataQuery) {
 
                     const frequency = (elementJSON.frequency === undefined) ? 0 : elementJSON.frequency;
 
-                    serializedData.set(elementJSON.event_date, { jobName: elementJSON.job_title, matchFrequency: frequency });
+                    serializedData.set(elementJSON.event_date, {
+                        jobName: elementJSON.job_title,
+                        matchFrequency: frequency
+                    });
                 }
 
                 return serializedData;
@@ -234,7 +267,10 @@ function serializeJobData(data: string[], queryType: DataQuery) {
 
                     const score = (elementJSON.average_score === undefined) ? 0 : elementJSON.average_score;
 
-                    serializedData.set(elementJSON.event_date, { jobName: elementJSON.job_title, score: score });
+                    serializedData.set(elementJSON.event_date, {
+                        jobName: elementJSON.job_title,
+                        score: score
+                    });
                 }
 
                 return serializedData;
@@ -242,7 +278,7 @@ function serializeJobData(data: string[], queryType: DataQuery) {
         } else {
             if ((queryType & DataQuery.JobsSurveysTotalMatches) !== 0) {
                 // date -> {survey title, count}
-                console.log('here');
+                
                 const serializedData = new Map<string, SerializedEntry[]>();
 
                 for (const element of data) {
@@ -305,24 +341,32 @@ function serializeJobData(data: string[], queryType: DataQuery) {
 
 function serializeLabelData(data: string[], queryType: DataQuery) {
     if (queryType === DataQuery.LabelPoints) {
+        // { count, linear score, percentile score }
         const serializedData: SerializedEntry[] = [];
 
         for (const element of data) {
             const elementJSON = JSON.parse(element);
 
-            console.log(elementJSON);
-
-            serializedData.push({ labelFrequency: elementJSON.frequency, linearScore: elementJSON.linear_score, percentileScore: elementJSON.percentile_score });
+            serializedData.push({
+                labelFrequency: elementJSON.frequency,
+                linearScore: elementJSON.linear_score,
+                percentileScore: elementJSON.percentile_score
+            });
         }
 
         return serializedData;
     } else {
+        // date -> { label title, linear score, percentile score }
         const serializedData: Map<string, SerializedEntry> = new Map<string, SerializedEntry>();
 
         for (const element of data) {
             const elementJSON = JSON.parse(element);
 
-            serializedData.set(elementJSON.event_date, { labelName: elementJSON.label_title, linearScore: elementJSON.average_linear, percentileScore: elementJSON.average_percentile });
+            serializedData.set(elementJSON.event_date, {
+                labelName: elementJSON.label_title,
+                linearScore: elementJSON.average_linear,
+                percentileScore: elementJSON.average_percentile
+            });
         }
 
         return serializedData;

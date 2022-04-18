@@ -17,7 +17,7 @@ const Header: React.FC = () => {
 
     return (
         <header id="header" >
-            <div className='title'>{'Offshore Recruiter'.toUpperCase()}</div>
+            <div className='title'>Navigator Tool</div>
             <div className='buttonGroup'>
                 {currentPermissionLevel === PermissionLevel.None
                     ? <i className='fas fa-info' onClick={() => { appDispatch(changePage({ type: PageType.AppInfo })); }} data-tip="Information"></i>

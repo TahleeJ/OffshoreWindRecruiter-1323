@@ -1363,12 +1363,10 @@ textarea {
         font-weight: normal;
     }
 
-    .surveyList {
-        .listViewer {
-            height: 50%;
-            overflow: auto;
-            text-align: left;
-        }
+    .surveyList.listViewer {
+        height: 50%;
+        overflow: auto;
+        text-align: left;
     }
 
     .chartGenerationContainer {

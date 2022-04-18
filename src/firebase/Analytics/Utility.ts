@@ -24,27 +24,40 @@ export const queryFunctions = [
 
 // List of query functions in a more operational format
 export enum DataQuery {
-    AllTitlesPerDay = 0,
-    AllPerDay = 1,
-    AllTitles = 2,
-    EachTitlesPerDay = 3,
-    EachPerDay = 4,
-    EachTitles = 5,
-    OneTitlesPerDay = 6,
-    OnePerDay = 7,
-    OneTitles = 8,
-    TotalJobMatches = 9,
-    PositiveJobMatches = 10,
-    NegativeJobMatches = 11,
-    AverageJobMatches = 12,
-    HighestAverageJobMatches = 13,
-    LowestAverageJobMatches = 14,
-    AverageSurveyMatches = 15,
-    SurveyPositiveJobMatches = 16,
-    SurveyNegativeJobMatches = 17,
-    LabelPoints = 18,
-    LabelAverage = 19,
-    None = 20
+    AllTitlesPerDay = 1 << 1,
+    AllPerDay = 1 << 2,
+    AllTitles = 1 << 3,
+    EachTitlesPerDay = 1 << 4,
+    EachPerDay = 1 << 5,
+    EachTitles = 1 << 6,
+    OneTitlesPerDay = 1 << 7,
+    OnePerDay = 1 << 8,
+    OneTitles = 1 << 9,
+    TotalJobMatches = 1 << 10,
+    PositiveJobMatches = 1 << 11,
+    NegativeJobMatches = 1 << 12,
+    AverageJobMatches = 1 << 13,
+    HighestAverageJobMatches = 1 << 14,
+    LowestAverageJobMatches = 1 << 15,
+    AverageSurveyMatches = 1 << 16,
+    SurveyPositiveJobMatches = 1 << 17,
+    SurveyNegativeJobMatches = 1 << 18,
+    LabelPoints = 1 << 19,
+    LabelAverage = 1 << 20,
+    None = 1 << 21,
+
+    SurveysAll = AllTitlesPerDay | AllPerDay | AllTitles,
+    SurveysTitlesPerDay = AllTitlesPerDay | EachTitlesPerDay | OneTitlesPerDay,
+    SurveysPerDay = AllPerDay | EachPerDay | OnePerDay,
+    SurveysTitles = AllTitles | EachTitles | OneTitles,
+    JobsSurveys = AverageSurveyMatches | SurveyPositiveJobMatches | SurveyPositiveJobMatches,
+    JobsSurveysTotalMatches = SurveyPositiveJobMatches | SurveyNegativeJobMatches,
+    JobsTotalMatches = TotalJobMatches | PositiveJobMatches | NegativeJobMatches | SurveyPositiveJobMatches | SurveyNegativeJobMatches,
+    JobsSingleAverageMatches = AverageJobMatches | AverageSurveyMatches,
+    JobsTieredAverageMatches = HighestAverageJobMatches | LowestAverageJobMatches,
+
+    RequiresSurveyName = AllTitlesPerDay | EachTitlesPerDay | OneTitlesPerDay | AverageSurveyMatches | SurveyPositiveJobMatches | SurveyNegativeJobMatches,
+    RequiresJobName = TotalJobMatches | PositiveJobMatches | NegativeJobMatches | AverageJobMatches
 }
 
 export enum NavigatorGrouping {
@@ -141,11 +154,8 @@ const surveyValidChartMap = new Map<Chart, ValidChart>();
 surveyValidChartMap.set(Chart.Pie, {
     list: [
         DataQuery.AllTitles,
-        DataQuery.OneTitles,
-        DataQuery.AllTitlesPerDay,
-        DataQuery.OneTitlesPerDay],
-    text: `${dataFocusTypes.surveys.titleDay}\n` +
-        `${dataFocusTypes.surveys.titles}`
+        DataQuery.OneTitles],
+    text: `${dataFocusTypes.surveys.titles}`
 });
 surveyValidChartMap.set(Chart.Combo, {
     list: [

@@ -1454,7 +1454,7 @@ textarea {
   font-weight: normal;
 }
 
-#analytics .surveyList .listViewer {
+#analytics .surveyList.listViewer {
   height: 50%;
   overflow: auto;
   text-align: left;

@@ -4,13 +4,12 @@ import { SelectionArrays, DateSelection, DataQuery, Subject, Chart, SerializedEn
 /**
  * Function to begin the actual chart drawing process based on the desired representation parameters
  *
- * @param selectedSurveys the desired surveys to see data for
- * @param chartType the desired (chart) representation of the data
+ * @param subject the subject type the data will focus on
  * @param queryType the type of query to focus the data
+ * @param chartType the desired (chart) representation of the data
  * @param allNavigators whether the data should focus on all navigators
- * @param forDay whether the data should focus on a single, specified day
- * @param startDate the desired day to start to see data for
- * @param selectedNavigators the specific navigator(s) to see data for
+ * @param dateSelection the dateinformation that will be used to start pulling data from
+ * @param selectionArrays the selected list of survey/job/labels to focus the data on depending on the subject
  */
 export async function drawChart(
     subject: Subject,
@@ -21,54 +20,29 @@ export async function drawChart(
     selectionArrays: SelectionArrays) {
     switch (subject) {
     case Subject.Surveys:
-        if ([
-            DataQuery.AllTitlesPerDay,
-            DataQuery.OneTitlesPerDay
-        ].includes(queryType)) {
+        if ((queryType & DataQuery.SurveysTitlesPerDay) !== 0) {
             drawSurveyTitlesPerDay(subject, queryType, chartType, allNavigators, dateSelection, selectionArrays);
-        } else if ([
-            DataQuery.AllPerDay,
-            DataQuery.OnePerDay
-        ].includes(queryType)) {
+        } else if ((queryType & DataQuery.SurveysPerDay) !== 0) {
             drawSurveysPerDay(subject, queryType, chartType, allNavigators, dateSelection, selectionArrays);
-        } else if ([
-            DataQuery.AllTitles,
-            DataQuery.OneTitles
-        ].includes(queryType)) {
+        } else if ((queryType & DataQuery.SurveysTitles) !== 0) {
             drawSurveyTitles(subject, queryType, chartType, allNavigators, dateSelection, selectionArrays);
         }
 
         break;
     case Subject.Jobs:
-        if ([
-            DataQuery.TotalJobMatches,
-            DataQuery.PositiveJobMatches,
-            DataQuery.NegativeJobMatches,
-            DataQuery.SurveyPositiveJobMatches,
-            DataQuery.SurveyNegativeJobMatches
-        ].includes(queryType)) {
+        if ((queryType & DataQuery.JobsTotalMatches) !== 0) {
             drawTotalJobMatches(subject, queryType, chartType, dateSelection, selectionArrays);
-        } else if ([
-            DataQuery.AverageJobMatches,
-            DataQuery.AverageSurveyMatches
-        ].includes(queryType)) {
+        } else if ((queryType & DataQuery.JobsSingleAverageMatches) !== 0) {
             drawAverageJobScores(subject, queryType, chartType, dateSelection, selectionArrays);
-        } else if ([
-            DataQuery.HighestAverageJobMatches,
-            DataQuery.LowestAverageJobMatches
-        ].includes(queryType)) {
+        } else if ((queryType & DataQuery.JobsTieredAverageMatches) !== 0) {
             drawTieredAverageJobScores(subject, queryType, chartType, dateSelection);
         }
 
         break;
     case Subject.Labels:
-        if ([
-            DataQuery.LabelPoints
-        ].includes(queryType)) {
+        if (queryType === DataQuery.LabelPoints) {
             drawAllLabelScores(subject, queryType, chartType, dateSelection, selectionArrays);
-        } else if ([
-            DataQuery.LabelAverage
-        ].includes(queryType)) {
+        } else if (queryType === DataQuery.LabelAverage) {
             drawAverageLabelScores(subject, queryType, chartType, dateSelection, selectionArrays);
         }
         break;
@@ -76,16 +50,16 @@ export async function drawChart(
 }
 
 /**
- * Chart drawing function to handle viewing data for a desired set of surveys over the
- * time span of a week/day.
+ * Chart drawing function to handle viewing data for the administration total of a desired
+ * set of surveys over since the specified date.
  *
- * @param queryType the type of query to focus the data on
- * @param chartType the desired representation of the data
- * @param selectedSurveys the desired set of surveys to see data for
+ * @param subject the subject type the data will focus on
+ * @param queryType the type of query to focus the data
+ * @param chartType the desired (chart) representation of the data
  * @param allNavigators whether the data should focus on all navigators
- * @param forDay whether the data should focus on a single, specified day
- * @param startDate the desired day to start to see data for
- * @param selectedNavigators the desired set of navigator(s) to see data for
+ * @param dateSelection the date information that will be used to start pulling data from
+ * @param selectionArrays the selected list of survey/job/labels to focus the data on
+ *                        depending on the subject
  */
 async function drawSurveyTitlesPerDay(
     subject: Subject,
@@ -103,7 +77,7 @@ async function drawSurveyTitlesPerDay(
 
     // Retrieve data from BigQuery
     if (!allNavigators) {
-        data = await getQueryData(subject, queryType, forDay, startDate, selectedNavigators![0]);
+        data = await getQueryData(subject, queryType, forDay, startDate, selectionArrays);
     } else {
         data = await getQueryData(subject, queryType, forDay, startDate);
     }
@@ -111,10 +85,10 @@ async function drawSurveyTitlesPerDay(
     const title = 'Total for Selected Surveys Administered ' +
         `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
 
-    // Chart drawing using transformed BigQuery data
     let chartData: google.visualization.DataTable;
 
-    if (chartType === Chart.Combo) {
+    switch (chartType) {
+    case Chart.Combo:
         chartData = prepareSurveyTitlesPerDay(
             selectedSurveys!,
             (!allNavigators ? data.get(selectedNavigators![0]) : data),
@@ -126,7 +100,6 @@ async function drawSurveyTitlesPerDay(
 
         while (tempCounter < selectedSurveys!.length) {
             seriesOptions.push({});
-
             tempCounter++;
         }
 
@@ -140,7 +113,8 @@ async function drawSurveyTitlesPerDay(
                 seriesType: 'bars',
                 series: seriesOptions
             });
-    } else if (chartType === Chart.Line) {
+        break;
+    case Chart.Line:
         chartData = prepareSurveyTitlesPerDay(
             selectedSurveys!,
             (!allNavigators ? data.get(selectedNavigators![0]) : data),
@@ -153,7 +127,8 @@ async function drawSurveyTitlesPerDay(
                 vAxis: { title: 'Surveys Administered' },
                 hAxis: { title: 'Day' }
             });
-    } else if (chartType === Chart.Bar) {
+        break;
+    case Chart.Bar:
         chartData = prepareSurveyTitlesPerDay(
             selectedSurveys!,
             (!allNavigators ? data.get(selectedNavigators![0]) : data),
@@ -167,19 +142,8 @@ async function drawSurveyTitlesPerDay(
                 hAxis: { title: 'Surveys Administered' },
                 isStacked: true
             });
-    } else if (chartType === Chart.Pie) {
-        chartData = prepareSurveyTitlesPerDay(
-            selectedSurveys!,
-            (!allNavigators ? data.get(selectedNavigators![0]) : data),
-            false,
-            true);
-
-        new google.visualization.PieChart(document.getElementById('chart')!)
-            .draw(chartData!, {
-                title: title,
-                pieSliceText: 'percentage'
-            });
-    } else if (chartType === Chart.Table) {
+        break;
+    case Chart.Table:
         chartData = prepareSurveyTitlesPerDay(
             selectedSurveys!,
             (!allNavigators ? data.get(selectedNavigators![0]) : data),
@@ -190,25 +154,28 @@ async function drawSurveyTitlesPerDay(
             .draw(chartData!, {
                 height: 300
             });
+        break;
     }
 }
 
 /**
  * Converts the data received from BigQuery into a format recognized by Google Charts
  *
- * *Converts data particularly for a set of surveys over the time span of a week/day
+ * *Converts data particularly for the administration total of each selected survey
+ * since the specified date
  *
  * @param selectedSurveys the desired surveys to see data for
  * @param data the transformed data received from BigQuery
  * @param includeAverage whether to calculate (and include) an average line in the data set
- * @param total whether to calculate the total appearance of the desired surveys per week instead of per day
+ * @param total whether to calculate the total appearance of the desired surveys since the
+ *              specified date instead of per day
  * @returns the Google Chart-recognizable set of data
  */
 function prepareSurveyTitlesPerDay(
     selectedSurveys: string[],
     data: Map<string, SerializedEntry[]>,
-    includeAverage: boolean, total: boolean
-) {
+    includeAverage: boolean,
+    total: boolean) {
     const chartData = new google.visualization.DataTable();
 
     let dateCounter = 0;
@@ -230,7 +197,6 @@ function prepareSurveyTitlesPerDay(
                 const date = stringifyDate(key);
                 surveyFrequency[dateCounter] = [date];
 
-                // survey name -> {frequency}
                 const surveyMap = new Map<string, number>();
 
                 for (const survey of value) {
@@ -238,7 +204,6 @@ function prepareSurveyTitlesPerDay(
                 }
 
                 eachSurveyList[dateCounter] = surveyMap;
-
                 dateCounter++;
             } else {
                 break;
@@ -267,11 +232,9 @@ function prepareSurveyTitlesPerDay(
 
                 if (examineList.has(selectedSurvey)) {
                     usedFrequency = examineList.get(selectedSurvey)!;
-                    surveyFrequency[dateIndex].push(usedFrequency);
-                } else {
-                    surveyFrequency[dateIndex].push(usedFrequency);
                 }
-
+                    
+                surveyFrequency[dateIndex].push(usedFrequency);
                 sumFrequency += usedFrequency;
             }
 
@@ -280,6 +243,7 @@ function prepareSurveyTitlesPerDay(
                 surveyFrequency[dateIndex].push(average);
             }
 
+            // Reorder the data to make the furthest date the top-most date
             addList.unshift(surveyFrequency[dateIndex]);
         }
 
@@ -298,9 +262,7 @@ function prepareSurveyTitlesPerDay(
             if (dateCounter < data.size) {
                 for (const survey of value) {
                     let surveyTotal = eachSurveyTotal.get(survey.surveyTitle!)!;
-
                     surveyTotal += survey.surveyFrequency!;
-
                     eachSurveyTotal.set(survey.surveyTitle!, surveyTotal);
                 }
 
@@ -319,14 +281,16 @@ function prepareSurveyTitlesPerDay(
 }
 
 /**
- * Chart drawing function to handle viewing data for all surveys over the time span of a week/day.
+ * Chart drawing function to handle viewing data for the administration total of all surveys
+ * since the specified date
  *
- * @param queryType the type of query to focus the data on
- * @param chartType the desired representation of the data
+ * @param subject the subject type the data will focus on
+ * @param queryType the type of query to focus the data
+ * @param chartType the desired (chart) representation of the data
  * @param allNavigators whether the data should focus on all navigators
- * @param forDay whether the data should focus on a single, specified day
- * @param selectedDate the desired day to see data for
- * @param selectedNavigators the desired set of navigator(s) to see data for
+ * @param dateSelection the date information that will be used to start pulling data from
+ * @param selectionArrays the selected list of survey/job/labels to focus the data on
+ *                        depending on the subject
  */
 async function drawSurveysPerDay(
     subject: Subject,
@@ -341,8 +305,9 @@ async function drawSurveysPerDay(
 
     let data: any;
 
+    // Retrieve data from BigQuery
     if (!allNavigators) {
-        data = await getQueryData(subject, queryType, forDay, startDate, selectedNavigators![0]);
+        data = await getQueryData(subject, queryType, forDay, startDate, selectionArrays);
     } else {
         data = await getQueryData(subject, queryType, forDay, startDate);
     }
@@ -382,7 +347,7 @@ async function drawSurveysPerDay(
 /**
  * Converts the data received from BigQuery into a format recognized by Google Charts
  *
- * *Converts data particularly for all surveys over the time span of a week/day
+ * *Converts data particularly for the administration total of all surveys since the specified date
  *
  * @param data the transformed data received from BigQuery
  * @returns the Google Chart-recognizable set of data
@@ -393,12 +358,13 @@ function prepareSurveysPerDay(data: Map<string, SerializedEntry[]>) {
     chartData.addColumn('number', 'Frequency');
 
     const addList = [];
-
     const dateCounter = 0;
 
     for (const [key, value] of data) {
         if (dateCounter < 7 && dateCounter < data.size) {
             const date = stringifyDate(key);
+
+            // Reorder the data to make the furthest date the top-most date
             addList.unshift([date, value[0].surveyFrequency]);
         } else {
             break;
@@ -411,14 +377,16 @@ function prepareSurveysPerDay(data: Map<string, SerializedEntry[]>) {
 }
 
 /**
- * Chart drawing function to handle viewing data for each survey over the time span of a year/day.
+ * Chart drawing function to handle viewing data for the administration total of each survey
+ * since the specified date
  *
- * @param queryType the type of query to focus the data on
- * @param chartType the desired representation of the data
+ * @param subject the subject type the data will focus on
+ * @param queryType the type of query to focus the data
+ * @param chartType the desired (chart) representation of the data
  * @param allNavigators whether the data should focus on all navigators
- * @param forDay whether the data should focus on a single, specified day
- * @param selectedDate the desired day to see data for
- * @param selectedNavigators the desired set of navigator(s) to see data for
+ * @param dateSelection the date information that will be used to start pulling data from
+ * @param selectionArrays the selected list of survey/job/labels to focus the data on
+ *                        depending on the subject
  */
 async function drawSurveyTitles(
     subject: Subject,
@@ -433,8 +401,9 @@ async function drawSurveyTitles(
 
     let data: any;
 
+    // Retrieve data from BigQuery
     if (!allNavigators) {
-        data = await getQueryData(subject, queryType, forDay, startDate, selectedNavigators![0]);
+        data = await getQueryData(subject, queryType, forDay, startDate, selectionArrays);
     } else {
         data = await getQueryData(subject, queryType, forDay, startDate);
     }
@@ -464,7 +433,7 @@ async function drawSurveyTitles(
 /**
  * Converts the data received from BigQuery into a format recognized by Google Charts
  *
- * *Converts data particularly for each survey over the time span of a year/day
+ * *Converts data particularly for the administration total of each survey since the specified date.
  *
  * @param data the transformed data received from BigQuery
  * @returns the Google Chart-recognizable set of data
@@ -481,6 +450,17 @@ function prepareSurveyTitles(data: SerializedEntry[]) {
     return chartData;
 }
 
+/**
+ * Chart drawing function to handle viewing data for the total matches of each selected job
+ * since the specified date
+ *
+ * @param subject the subject type the data will focus on
+ * @param queryType the type of query to focus the data
+ * @param chartType the desired (chart) representation of the data
+ * @param dateSelection the date information that will be used to start pulling data from
+ * @param selectionArrays the selected list of survey/job/labels to focus the data on
+ *                        depending on the subject
+ */
 async function drawTotalJobMatches(
     subject: Subject,
     queryType: DataQuery,
@@ -489,15 +469,13 @@ async function drawTotalJobMatches(
     selectionArrays: SelectionArrays) {
     const forDay = dateSelection.forDay;
     const startDate = dateSelection.startDate;
-    const selectedJobs = selectionArrays.jobs;
 
-    const forJobs = !([DataQuery.SurveyPositiveJobMatches, DataQuery.SurveyNegativeJobMatches].includes(queryType));
+    // Retrieve data from BigQuery
+    const data: any = await getQueryData(subject, queryType, forDay, startDate, selectionArrays);
 
+    const forJobs = (queryType & DataQuery.JobsSurveys) === 0;
     const title = 'Total Job Matches ' +
         `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
-
-    const data: any = await getQueryData(subject, queryType, forDay, startDate, undefined, selectedJobs);
-    console.log(data);
 
     let chartData: google.visualization.DataTable;
 
@@ -529,7 +507,7 @@ async function drawTotalJobMatches(
                 title: title,
                 vAxis: { title: 'Day' },
                 hAxis: { title: 'Jobs Matched' },
-                colors: ['#6ed3ff']
+                isStacked: true
             });
         break;
     case Chart.Table:
@@ -543,6 +521,14 @@ async function drawTotalJobMatches(
     }
 }
 
+/**
+ * Converts the data received from BigQuery into a format recognized by Google Charts
+ *
+ * *Converts data particularly for the total matches of each selected job since the specified date
+ *
+ * @param data the transformed data received from BigQuery
+ * @returns the Google Chart-recognizable set of data
+ */
 function prepareTotalJobMatches(
     data: Map<string, SerializedEntry[]>,
     forJobs: boolean,
@@ -572,9 +558,7 @@ function prepareTotalJobMatches(
             for (const [key, value] of data) {
                 for (const job of value) {
                     matchTotal = eachJobTotal.get(job.jobName!)!;
-
                     matchTotal += job.matchFrequency!;
-
                     eachJobTotal.set(job.jobName!, matchTotal);
                 }
             }
@@ -596,7 +580,6 @@ function prepareTotalJobMatches(
                     const date = stringifyDate(key);
                     matchFrequency[dateCounter] = [date];
 
-                    // job name -> {count}
                     const jobMap = new Map<string, number>();
 
                     for (const job of value) {
@@ -604,7 +587,6 @@ function prepareTotalJobMatches(
                     }
 
                     eachJobList[dateCounter] = jobMap;
-
                     dateCounter++;
                 } else {
                     break;
@@ -620,6 +602,7 @@ function prepareTotalJobMatches(
                 }
             });
 
+            // Reorder the data to make the furthest date the top-most date
             for (const element of matchFrequency) {
                 addList.unshift(element);
             }
@@ -640,9 +623,7 @@ function prepareTotalJobMatches(
             for (const [key, value] of data) {
                 for (const survey of value) {
                     matchTotal = eachSurveyTotal.get(survey.surveyTitle!)!;
-
                     matchTotal += survey.matchFrequency!;
-
                     eachSurveyTotal.set(survey.surveyTitle!, matchTotal);
                 }
             }
@@ -664,7 +645,6 @@ function prepareTotalJobMatches(
                     const date = stringifyDate(key);
                     matchFrequency[dateCounter] = [date];
 
-                    // survey name -> {count}
                     const surveyMap = new Map<string, number>();
 
                     for (const survey of value) {
@@ -672,7 +652,6 @@ function prepareTotalJobMatches(
                     }
 
                     eachSurveyList[dateCounter] = surveyMap;
-
                     dateCounter++;
                 } else {
                     break;
@@ -688,6 +667,7 @@ function prepareTotalJobMatches(
                 }
             });
 
+            // Reorder the data to make the furthest date the top-most date
             for (const element of matchFrequency) {
                 addList.unshift(element);
             }
@@ -695,10 +675,22 @@ function prepareTotalJobMatches(
             chartData.addRows(addList);
         }
     }
+    console.log(chartData);
 
     return chartData;
 }
 
+/**
+ * Chart drawing function to handle viewing data for the average matching score of each selected job
+ * since the specified date
+ *
+ * @param subject the subject type the data will focus on
+ * @param queryType the type of query to focus the data
+ * @param chartType the desired (chart) representation of the data
+ * @param dateSelection the date information that will be used to start pulling data from
+ * @param selectionArrays the selected list of survey/job/labels to focus the data on
+ *                        depending on the subject
+ */
 async function drawAverageJobScores(
     subject: Subject,
     queryType: DataQuery,
@@ -707,14 +699,13 @@ async function drawAverageJobScores(
     selectionArrays: SelectionArrays) {
     const forDay = dateSelection.forDay;
     const startDate = dateSelection.startDate;
-    const selectedJobs = selectionArrays.jobs;
+
+    // Retrieve data from BigQuery
+    const data: any = await getQueryData(subject, queryType, forDay, startDate, selectionArrays);
 
     const forJobs = queryType === DataQuery.AverageJobMatches;
-
     const title = 'Average Job Matches ' +
         `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
-
-    const data: any = await getQueryData(subject, queryType, forDay, startDate, undefined, selectedJobs);
 
     let chartData: google.visualization.DataTable;
 
@@ -736,8 +727,7 @@ async function drawAverageJobScores(
             .draw(chartData!, {
                 title: title,
                 vAxis: { title: 'Day' },
-                hAxis: { title: 'Average Score' },
-                colors: ['#6ed3ff']
+                hAxis: { title: 'Average Score' }
             });
         break;
     case Chart.Table:
@@ -751,6 +741,15 @@ async function drawAverageJobScores(
     }
 }
 
+/**
+ * Converts the data received from BigQuery into a format recognized by Google Charts
+ *
+ * *Converts data particularly for the average matching score of each selected job
+ * since the specified date
+ *
+ * @param data the transformed data received from BigQuery
+ * @returns the Google Chart-recognizable set of data
+ */
 function prepareAverageJobScores(
     data: Map<string, SerializedEntry[]>,
     forJobs: boolean,
@@ -778,7 +777,6 @@ function prepareAverageJobScores(
                 const date = stringifyDate(key);
                 matchFrequency[dateCounter] = [date];
 
-                // job name -> {count}
                 const jobMap = new Map<string, number>();
 
                 for (const job of value) {
@@ -786,7 +784,6 @@ function prepareAverageJobScores(
                 }
 
                 eachJobList[dateCounter] = jobMap;
-
                 dateCounter++;
             } else {
                 break;
@@ -802,6 +799,7 @@ function prepareAverageJobScores(
             }
         });
 
+        // Reorder the data to make the furthest date the top-most date
         for (const element of matchFrequency) {
             addList.unshift(element);
         }
@@ -819,7 +817,6 @@ function prepareAverageJobScores(
                 const date = stringifyDate(key);
                 matchFrequency[dateCounter] = [date];
 
-                // survey name -> {count}
                 const surveyMap = new Map<string, number>();
 
                 for (const survey of value) {
@@ -827,7 +824,6 @@ function prepareAverageJobScores(
                 }
 
                 eachSurveyList[dateCounter] = surveyMap;
-
                 dateCounter++;
             } else {
                 break;
@@ -843,6 +839,7 @@ function prepareAverageJobScores(
             }
         });
 
+        // Reorder the data to make the furthest date the top-most date
         for (const element of matchFrequency) {
             addList.unshift(element);
         }
@@ -853,6 +850,15 @@ function prepareAverageJobScores(
     return chartData;
 }
 
+/**
+ * Chart drawing function to handle viewing data for the jobs with the highest/lowest average
+ * matching scores since the specified date
+ *
+ * @param subject the subject type the data will focus on
+ * @param queryType the type of query to focus the data
+ * @param chartType the desired (chart) representation of the data
+ * @param dateSelection the date information that will be used to start pulling data from
+ */
 async function drawTieredAverageJobScores(
     subject: Subject,
     queryType: DataQuery,
@@ -861,12 +867,12 @@ async function drawTieredAverageJobScores(
     const forDay = dateSelection.forDay;
     const startDate = dateSelection.startDate;
 
-    const highest = queryType === DataQuery.HighestAverageJobMatches;
+    // Retrieve data from BigQuery
+    const data: any = await getQueryData(subject, queryType, forDay, startDate);
+
+    const highest = (queryType === DataQuery.HighestAverageJobMatches);
     const title = `${(highest ? 'Highest Scoring Jobs ' : 'Lowest Scoring Jobs ')} ` +
         `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
-
-    const data: any = await getQueryData(subject, queryType, forDay, startDate);
-    console.log(data);
 
     let chartData: google.visualization.DataTable;
 
@@ -919,6 +925,16 @@ async function drawTieredAverageJobScores(
     }
 }
 
+/**
+ * Converts the data received from BigQuery into a format recognized by Google Charts
+ *
+ * *Converts data particularly for the jobs with the highest/lowest average
+ * matching scores since the specified date
+ *
+ * @param data the transformed data received from BigQuery
+ * @returns the Google Chart-recognizable set of data
+ *
+ */
 function prepareTieredAverageJobScores(data: SerializedEntry[], tree: boolean) {
     const chartData = new google.visualization.DataTable();
 
@@ -932,6 +948,8 @@ function prepareTieredAverageJobScores(data: SerializedEntry[], tree: boolean) {
 
         for (const value of data) {
             const score = (value.score! < 0) ? (-1 * value.score!) : value.score!;
+
+            // Force negative scores to have a "lower" color than positive scores
             const colorScale = (value.score! < 0) ? (score * 50) : (score * 50 + 50);
 
             chartData.addRow([value.jobName!, 'All Jobs', score, colorScale]);
@@ -948,6 +966,17 @@ function prepareTieredAverageJobScores(data: SerializedEntry[], tree: boolean) {
     return chartData;
 }
 
+/**
+ * Chart drawing function to handle viewing data for the matching scores for each selected label
+ * since the specified date
+ *
+ * @param subject the subject type the data will focus on
+ * @param queryType the type of query to focus the data
+ * @param chartType the desired (chart) representation of the data
+ * @param dateSelection the date information that will be used to start pulling data from
+ * @param selectionArrays the selected list of survey/job/labels to focus the data on
+ *                        depending on the subject
+ */
 async function drawAllLabelScores(
     subject: Subject,
     queryType: DataQuery,
@@ -957,12 +986,12 @@ async function drawAllLabelScores(
     const forDay = dateSelection.forDay;
     const startDate = dateSelection.startDate;
 
-    const data: any = await getQueryData(subject, queryType, forDay, startDate, undefined, undefined, selectionArrays.labels);
+    // Retrieve data from BigQuery
+    const data: any = await getQueryData(subject, queryType, forDay, startDate, selectionArrays);
 
     const preparedData = prepareAllLabelScores(data);
     const chartData: google.visualization.DataTable = preparedData.chartData;
     const frequency = preparedData.frequency;
-
     const title = `All Linear and Percentile Scores for ${frequency} Occurrences ` +
         `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
 
@@ -985,6 +1014,15 @@ async function drawAllLabelScores(
     }
 }
 
+/**
+ * Converts the data received from BigQuery into a format recognized by Google Charts
+ *
+ * *Converts data particularly for the matching scores for each selected label
+ * since the specified date
+ *
+ * @param data the transformed data received from BigQuery
+ * @returns the Google Chart-recognizable set of data
+ */
 function prepareAllLabelScores(data: SerializedEntry[]) {
     const chartData = new google.visualization.DataTable();
 
@@ -1001,6 +1039,17 @@ function prepareAllLabelScores(data: SerializedEntry[]) {
     };
 }
 
+/**
+ * Chart drawing function to handle viewing data for the average matching scores for each
+ * selected label since the specified date
+ *
+ * @param subject the subject type the data will focus on
+ * @param queryType the type of query to focus the data
+ * @param chartType the desired (chart) representation of the data
+ * @param dateSelection the date information that will be used to start pulling data from
+ * @param selectionArrays the selected list of survey/job/labels to focus the data on
+ *                        depending on the subject
+ */
 async function drawAverageLabelScores(
     subject: Subject,
     queryType: DataQuery,
@@ -1010,8 +1059,8 @@ async function drawAverageLabelScores(
     const forDay = dateSelection.forDay;
     const startDate = dateSelection.startDate;
 
-    const data: any = await getQueryData(subject, queryType, forDay, startDate, undefined, undefined, selectionArrays.labels!);
-    console.log(data);
+    // Retrieve data from BigQuery
+    const data: any = await getQueryData(subject, queryType, forDay, startDate, selectionArrays);
 
     const chartData: google.visualization.DataTable = prepareAverageLabelScores(data, selectionArrays.labels!);
 
@@ -1019,7 +1068,9 @@ async function drawAverageLabelScores(
         `${forDay ? `On ${stringifyDate(startDate)}` : `Since ${stringifyDate(startDate)}`}`;
 
     // 2 of each (darker, lighter) -> blue, green, yellow, orange, red
-    const colorArray = ['#3683ff', '#5193fc', '#00a619', '#36ff54', '#bd8a00', '#ffd829', '#ff8b17', '#ff9e3d', '#ff2e2e', '#ff4242'];
+    const colorArray = [
+        '#3683ff', '#38afff', '#00a619', '#36ff54', '#bd8a00', '#ffd829', '#ff8b17', '#ffaf5e', '#ff2e2e', '#ff4242'
+    ];
 
     switch (chartType) {
     case Chart.Line:
@@ -1029,7 +1080,7 @@ async function drawAverageLabelScores(
                 vAxis: { title: 'Average Score' },
                 hAxis: { title: 'Day' },
                 colors: colorArray,
-                series: {
+                series: { // Make each "percentile score" line dashed instead of solid
                     1: { lineDashStyle: [7, 5] },
                     3: { lineDashStyle: [7, 5] },
                     5: { lineDashStyle: [7, 5] },
@@ -1056,9 +1107,17 @@ async function drawAverageLabelScores(
     }
 }
 
+/**
+ * Converts the data received from BigQuery into a format recognized by Google Charts
+ *
+ * *Converts data particularly for the average matching scores for each
+ * selected label since the specified date
+ *
+ * @param data the transformed data received from BigQuery
+ * @returns the Google Chart-recognizable set of data
+ */
 function prepareAverageLabelScores(data: Map<string, SerializedEntry[]>, selectedLabels: string[]) {
     const chartData = new google.visualization.DataTable();
-    console.log(data);
 
     chartData.addColumn('string', 'Date');
 
@@ -1095,12 +1154,19 @@ function prepareAverageLabelScores(data: Map<string, SerializedEntry[]>, selecte
         let index = 0;
 
         for (const dateElement of eachScoreList) {
-            scoreFrequency[index].push(dateElement.get(labelName!)![0]);
-            scoreFrequency[index].push(dateElement.get(labelName!)![1]);
+            if (dateElement.get(labelName) !== undefined) {
+                scoreFrequency[index].push(dateElement.get(labelName)![0]);
+                scoreFrequency[index].push(dateElement.get(labelName)![1]);
+            } else {
+                scoreFrequency[index].push(0);
+                scoreFrequency[index].push(0);
+            }
+            
             index++;
         }
     });
 
+    // Reorder the data to make the furthest date the top-most date
     for (const element of scoreFrequency) {
         addList.unshift(element);
     }

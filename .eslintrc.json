@@ -19,7 +19,7 @@
         "react",
         "@typescript-eslint",
         "only-warn"
-    ],
+    ], 
     "rules": {
         "indent": ["warn", 4],
         "semi": ["warn", "always"],

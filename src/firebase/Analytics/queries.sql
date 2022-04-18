@@ -365,14 +365,14 @@ WHERE job_title IS NOT NULL AND score < 0
 GROUP BY job_title, event_date
 ORDER BY event_date DESC, LOWER(job_title) ASC;
 
-CREATE OR REPLACE TABLE FUNCTION analytics_305371849.get_positive_survey(forday BOOLEAN, startDate STRING) AS
+CREATE OR REPLACE TABLE FUNCTION analytics_305371849.get_positive_survey(surveyName STRING, forday BOOLEAN, startDate STRING) AS
 SELECT event_date, survey_title, COUNT(score) AS frequency 
 FROM (
     (SELECT event_date,
         (SELECT IF(value.double_value IS NOT NULL, value.double_value, 0) FROM UNNEST(event_params)
             WHERE key = "matched_score") AS score,
         (SELECT value.string_value FROM UNNEST(event_params)
-            WHERE key = "administered_survey_title") AS survey_title
+            WHERE key = "administered_survey_title" AND value.string_value = surveyName) AS survey_title
     FROM `hallowed-digit-338620.analytics_305371849.events_*`
     WHERE event_name = "job_matched" AND ((forDay AND event_date = startDate) OR (NOT(forDay) AND event_date >= startDate)))
     UNION ALL
@@ -380,21 +380,21 @@ FROM (
         (SELECT IF(value.double_value IS NOT NULL, value.double_value, 0) FROM UNNEST(event_params)
             WHERE key = "matched_score") AS score,
         (SELECT value.string_value FROM UNNEST(event_params)
-            WHERE key = "administered_survey_title") AS survey_title
+            WHERE key = "administered_survey_title" AND value.string_value = surveyName) AS survey_title
     FROM `hallowed-digit-338620.analytics_305371849.events_intraday_*`
     WHERE event_name = "job_matched" AND ((forDay AND event_date = startDate) OR (NOT(forDay) AND event_date >= startDate))))
 WHERE survey_title IS NOT NULL AND score > 0
 GROUP BY survey_title, event_date
 ORDER BY event_date DESC, LOWER(survey_title) ASC;
 
-CREATE OR REPLACE TABLE FUNCTION analytics_305371849.get_negative_survey(forday BOOLEAN, startDate STRING) AS
+CREATE OR REPLACE TABLE FUNCTION analytics_305371849.get_negative_survey(surveyName STRING, forday BOOLEAN, startDate STRING) AS
 SELECT event_date, survey_title, COUNT(score) AS frequency 
 FROM (
     (SELECT event_date,
         (SELECT IF(value.double_value IS NOT NULL, value.double_value, 0) FROM UNNEST(event_params)
             WHERE key = "matched_score") AS score,
         (SELECT value.string_value FROM UNNEST(event_params)
-            WHERE key = "administered_survey_title") AS survey_title
+            WHERE key = "administered_survey_title" AND value.string_value = surveyName) AS survey_title
     FROM `hallowed-digit-338620.analytics_305371849.events_*`
     WHERE event_name = "job_matched" AND ((forDay AND event_date = startDate) OR (NOT(forDay) AND event_date >= startDate)))
     UNION ALL
@@ -402,7 +402,7 @@ FROM (
         (SELECT IF(value.double_value IS NOT NULL, value.double_value, 0) FROM UNNEST(event_params)
             WHERE key = "matched_score") AS score,
         (SELECT value.string_value FROM UNNEST(event_params)
-            WHERE key = "administered_survey_title") AS survey_title
+            WHERE key = "administered_survey_title" AND value.string_value = surveyName) AS survey_title
     FROM `hallowed-digit-338620.analytics_305371849.events_intraday_*`
     WHERE event_name = "job_matched" AND ((forDay AND event_date = startDate) OR (NOT(forDay) AND event_date >= startDate))))
 WHERE survey_title IS NOT NULL AND score < 0
@@ -421,7 +421,7 @@ FROM (
         (SELECT value.string_value FROM UNNEST(event_params)
             WHERE key = "label_title" AND value.string_value = labelName) AS label_title,
         (SELECT IF(value.double_value IS NOT NULL, value.double_value, 0) FROM UNNEST(event_params)
-            WHERE key = "linear_score" AND value.double_value IS NOT NULL) AS linear_score,
+            WHERE key = "linear_score") AS linear_score,
         (SELECT IF(value.double_value IS NOT NULL, value.double_value, 0) FROM UNNEST(event_params)
             WHERE key = "percentile_score") AS percentile_score
     FROM `hallowed-digit-338620.analytics_305371849.events_*`
@@ -430,7 +430,7 @@ FROM (
     (SELECT
         (SELECT value.string_value FROM UNNEST(event_params)
             WHERE key = "label_title" AND value.string_value = labelName) AS label_title,
-        (SELECT IF(value.double_value IS NOT NULL, value.double_value, 0) FROM UNNEST(event_params)
+        (SELECT IF(value.double_value IS NOT NULL, value.double_value, value.int_value) FROM UNNEST(event_params)
             WHERE key = "linear_score") AS linear_score,
         (SELECT IF(value.double_value IS NOT NULL, value.double_value, 0) FROM UNNEST(event_params)
             WHERE key = "percentile_score") AS percentile_score
@@ -438,7 +438,7 @@ FROM (
     WHERE event_name = "label_used" AND ((forDay AND event_date = startDate) OR (NOT(forDay) AND event_date >= startDate))))
 WHERE label_title IS NOT NULL
 GROUP BY label_title, linear_score, percentile_score
-ORDER BY LOWER(label_title) ASC
+ORDER BY LOWER(label_title) ASC, frequency DESC
 LIMIT 100;
 
 CREATE OR REPLACE TABLE FUNCTION analytics_305371849.get_average_label(labelName STRING, forDay BOOLEAN, startDate STRING) AS

@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 
 import { authInstance } from '../firebase/Firebase';
-import { getUser } from '../firebase/Queries/AdminQueries';
+import { getCurrentPermissionLevel } from '../firebase/Queries/AdminQueries';
 import { deleteJobOpp, getJobOpps, newJobOpp } from '../firebase/Queries/JobQueries';
 import { deleteSurvey, deleteSurveyResponse, getSurveyResponses, getSurveys } from '../firebase/Queries/SurveyQueries';
 import { JobOpp, PermissionLevel } from '../firebase/Types';
@@ -20,20 +20,13 @@ const AdminHome: React.FC = () => {
     const responses = useAppSelector(s => s.data.surveyResponses);
     const appDispatch = useAppDispatch();
     const user = authInstance.currentUser;
-    const [level, setLevel] = useState(PermissionLevel.None);
     const [popupVisible, setPopupVisible] = useState(false);
     const togglePopup = () => setPopupVisible(!popupVisible);
 
-    const getPermissionLevel = async () => {
-        const uid = authInstance.currentUser?.uid!;
-        const userDoc = await getUser(uid);
-
-        if (userDoc !== undefined)
-            setLevel(userDoc.permissionLevel);
-    };
     const levelInfo = () => {
-        if (level === PermissionLevel.Owner) return 'Owner';
-        else if (level === PermissionLevel.Admin) return 'Administrator';
+        const currentPermissionLevel = getCurrentPermissionLevel();
+        if (currentPermissionLevel === PermissionLevel.Owner) return 'Owner';
+        else if (currentPermissionLevel === PermissionLevel.Admin) return 'Administrator';
         else return 'User';
     };
 
@@ -53,7 +46,7 @@ const AdminHome: React.FC = () => {
         });
     };
 
-    useEffect(() => { getPermissionLevel(); }, []);
+
     return (
         <div id="adminHome" className='adminContainer'> {/* Contains the whole page */}
             <div className='topGrid'> {/* top part (notify center, job ops, surveys */}

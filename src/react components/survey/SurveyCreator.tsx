@@ -213,9 +213,11 @@ const SurveyCreator: React.FC = () => {
                     if (window.confirm('There are survey responses of this survey. Editing this survey will also edit the questions seen on the response. It will not effect the job opportunities shown on the response. Press OK to continue'))
                         await editSurvey(reduxSurveyData.id, survey);
                     else return;
-                }
+                } else
+                    await editSurvey(reduxSurveyData.id, survey);
             }
 
+            console.log('Updating survey list');
             dispatch(changePage({ type: PageType.AdminHome }));
             dispatch(setSurveys(await getSurveys()));
         }

@@ -20,9 +20,10 @@ import { getSurveyResponses, getSurveys } from './firebase/Queries/SurveyQueries
 import { setLabels, setSurveys, setJobOpps, setSurveyResponses } from './redux/dataSlice.ts';
 import { getLabels } from './firebase/Queries/LabelQueries';
 import { getJobOpps } from './firebase/Queries/JobQueries';
-import { assertIsAdmin, getUser } from './firebase/Queries/AdminQueries';
+import { getCurrentPermissionLevel, getUser } from './firebase/Queries/AdminQueries';
 import InfoPage from './react components/InfoPage';
 import { PermissionLevel } from '../src/firebase/Types';
+
 
 const getOverallPageFromType = (type: PageType) => {
     switch (type) {
@@ -37,10 +38,10 @@ const getOverallPageFromType = (type: PageType) => {
     }
 };
 
-let firstLogin = false;
 
 const App: React.FC = () => {
     const [isLoggedIn, setLoggedIn] = useState(false);
+    const [dataHasBeenFetched, setDataHasBeenFetched] = useState(false);
     const pageType = useAppSelector(s => s.navigation.currentPage);
     const appDispatch = useAppDispatch();
     firebaseAuth.setPersistence(authInstance, firebaseAuth.browserLocalPersistence);
@@ -48,38 +49,37 @@ const App: React.FC = () => {
     useEffect(() => {
         authInstance.onAuthStateChanged(async (user) => {
             setLoggedIn(user != null);
-            if (!isLoggedIn)
-                return;
+            if (!isLoggedIn || dataHasBeenFetched) return;
 
             // Set the redux state with Firestore's data
             try {
-                if (await assertIsAdmin(user?.uid!)) {
-                    (async () => {
-                        appDispatch(setLabels(await getLabels()));
-                        appDispatch(setJobOpps(await getJobOpps()));
-                        appDispatch(setSurveys(await getSurveys()));
-                        appDispatch(setSurveyResponses(await getSurveyResponses()));
-                    })();
-                } else {
-                    (async () => {
-                        appDispatch(setLabels(await getLabels()));
-                        appDispatch(setSurveys(await getSurveys()));
-                    })();
-                }
+                console.log('FETCHING DATA...');
+                setDataHasBeenFetched(true);
 
-                const permissionLevel = (await getUser(user?.uid!))!.permissionLevel;
 
-                if (permissionLevel === PermissionLevel.None && !firstLogin) {
-                    firstLogin = true;
-                    appDispatch(changePage({ type: PageType.InfoPage })); // change to PageType.InfoPage when info page is created
-                } else if (permissionLevel === PermissionLevel.Navigator && !firstLogin) {
-                    firstLogin = true;
-                    appDispatch(changePage({ type: PageType.Survey }));
-                } else if (!firstLogin) {
-                    firstLogin = true;
+                await getUser(authInstance.currentUser?.uid!);
+                const currentPermissionLevel = getCurrentPermissionLevel();
+                if (currentPermissionLevel >= PermissionLevel.Admin) {
+                    // Load docs in parallel
+                    await Promise.all([
+                        appDispatch(setLabels(await getLabels())),
+                        appDispatch(setJobOpps(await getJobOpps())),
+                        appDispatch(setSurveys(await getSurveys())),
+                        appDispatch(setSurveyResponses(await getSurveyResponses()))
+                    ]);
+
                     appDispatch(changePage({ type: PageType.AdminHome }));
+                } else if (currentPermissionLevel === PermissionLevel.Navigator) {
+                    await Promise.all([
+                        appDispatch(setLabels(await getLabels())),
+                        appDispatch(setSurveys(await getSurveys()))
+                    ]);
+
+                    appDispatch(changePage({ type: PageType.Survey }));
+                } else {
+                    appDispatch(changePage({ type: PageType.InfoPage }));
                 }
-            } catch (e) {}
+            } catch (e) { }
         });
     });
 

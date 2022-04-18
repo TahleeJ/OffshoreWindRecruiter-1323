@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { hasId, JobOpp, Label, SurveyTemplate, StoredSurveyResponse } from '../firebase/Types';
+import { hasId, JobOpp, Label, SurveyTemplate, StoredSurveyResponse, PermissionLevel } from '../firebase/Types';
 
 
 interface dataState {

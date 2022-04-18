@@ -25,7 +25,7 @@ const Header: React.FC = () => {
                 }
                 {currentPermissionLevel >= PermissionLevel.Navigator
                     ? <>
-                        <i className='far fa-file-alt' onClick={() => { appDispatch(changePage({ type: PageType.Home })); }} data-tip="Survey Administer"></i>
+                        <i className='far fa-file-alt' onClick={() => { appDispatch(changePage({ type: PageType.Survey })); }} data-tip="Survey Administer"></i>
                         <i className='fas fa-briefcase' onClick={() => { appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Administering })); }} data-tip="Job Explore"></i>
                     </>
                     : null

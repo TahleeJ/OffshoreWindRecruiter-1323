@@ -25,7 +25,7 @@ const SurveyReviewer: React.FC = () => {
 
     return (
         <div className='administerSurveyPage container'>
-            <button className="red" onClick={() => dispatch(changePage({ type: PageType.Home }))}>Return to Home</button>
+            <button className="red" onClick={() => dispatch(changePage({ type: PageType.Survey }))}>Return to Home</button>
             <div className=''>
                 <div className='surveyTitle' >Recommended Jobs</div>
                 <div className=''>

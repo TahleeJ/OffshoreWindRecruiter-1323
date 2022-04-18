@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { authInstance } from '../firebase/Firebase';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { changePage, OperationType, PageType } from '../redux/navigationSlice';
-import ListViewer from './generic/ListViewer';
+import { authInstance } from '../../firebase/Firebase';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
+import ListViewer from '../generic/ListViewer';
 
 
-const Home: React.FC = () => {
+const SurveySelect: React.FC = () => {
     const surveys = useAppSelector(s => s.data.surveys);
     const responses = useAppSelector(s => s.data.surveyResponses);
     const [isListView, setListView] = useState(true);
@@ -37,8 +37,9 @@ const Home: React.FC = () => {
                     }
                 </ListViewer>
                 : <div className='cards'>
-                    {surveys.length > 0
+                    {(surveys && surveys.length > 0)
                         ? surveys.map((survey, ind) => (
+
                             <div
                                 key={ind}
                                 className="card survey"
@@ -49,10 +50,18 @@ const Home: React.FC = () => {
                                         data: survey
                                     }));
                                 }}>
+                                {console.log(survey.components)}
+
                                 <div className='title'>{survey.title}</div>
                                 <div className='description'>{survey.description ? survey.description : 'No Description'}</div>
                                 <div className='questions'>{survey.components.length === 1 ? '1 component' : survey.components.length + ' components'}</div>
-                                <div className='responses'>{responses.filter(r => r.surveyId === survey.id).length} responses(s)</div>
+                                {responses
+                                    ? <div className='responses'>
+                                        {responses.filter(r => r.surveyId === survey.id).length} responses(s)
+                                    </div>
+                                    : null
+                                }
+
                             </div>
                         ))
                         : <div>There are no survey templates at the moment</div>
@@ -63,4 +72,4 @@ const Home: React.FC = () => {
     );
 };
 
-export default Home;
+export default SurveySelect;

@@ -7,7 +7,6 @@ import { logJobsMatched, logLabelsUsed } from '../firebase/Analytics/Logging';
 /** This enum is used to distinguish between different types of pages */
 export enum PageType {
     AdminHome,
-    Home,
     Survey,
     LabelManage,
     JobManage,
@@ -46,7 +45,7 @@ interface navigationState {
 }
 
 const initialState = {
-    currentPage: PageType.Home,
+    currentPage: PageType.AppInfo,
     operationData: null,
     status: Status.idle
 } as navigationState;

@@ -14,8 +14,8 @@ export enum PageType {
     AdminManage,
     Analytics,
 
-    InfoPage,
-    DeletePopup
+    AppInfo,
+    OffShoreInfo
 }
 
 export enum OperationType {

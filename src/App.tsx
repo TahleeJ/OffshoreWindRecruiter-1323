@@ -23,6 +23,7 @@ import { getJobOpps } from './firebase/Queries/JobQueries';
 import { getCurrentPermissionLevel, getUser } from './firebase/Queries/AdminQueries';
 import InfoPage from './react components/InfoPage';
 import { PermissionLevel } from '../src/firebase/Types';
+import OffShoreInfo from './react components/OffshoreInfo';
 
 
 const getOverallPageFromType = (type: PageType) => {
@@ -34,7 +35,8 @@ const getOverallPageFromType = (type: PageType) => {
     case PageType.LabelManage: return <LabelManager />;
     case PageType.JobManage: return <JobManager />;
     case PageType.Analytics: return <Analytics />;
-    case PageType.InfoPage: return <InfoPage />;
+    case PageType.AppInfo: return <InfoPage />;
+    case PageType.OffShoreInfo: return <OffShoreInfo />;
     }
 };
 
@@ -77,7 +79,7 @@ const App: React.FC = () => {
 
                     appDispatch(changePage({ type: PageType.Survey }));
                 } else {
-                    appDispatch(changePage({ type: PageType.InfoPage }));
+                    appDispatch(changePage({ type: PageType.AppInfo }));
                 }
             } catch (e) { }
         });

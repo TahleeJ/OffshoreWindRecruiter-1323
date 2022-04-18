@@ -1280,11 +1280,13 @@ textarea {
     }
 }
 #InfoPage {
-    .container {
-        margin-top: 20px;
+    text-align: left;
+    
+    .title {
         color: $mainColor;
         font-size: $largest-font-size;
     }
+
     .text {
         font-size: $large-font-size;
         color: black;

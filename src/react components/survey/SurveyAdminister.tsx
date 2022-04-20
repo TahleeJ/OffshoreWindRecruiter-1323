@@ -122,7 +122,7 @@ const SurveyAdminister: React.FC = () => {
                         );
                     })}
                     <button
-                        onClick={() => dispatch(changePage({ type: PageType.Home }))}
+                        onClick={() => dispatch(changePage({ type: PageType.Survey }))}
                         className='red'
                     >
                         Cancel Survey

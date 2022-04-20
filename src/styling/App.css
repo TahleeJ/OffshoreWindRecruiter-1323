@@ -1363,8 +1363,11 @@ textarea {
   background-color: #dadada;
 }
 
-#InfoPage .container {
-  margin-top: 20px;
+#InfoPage {
+  text-align: left;
+}
+
+#InfoPage .title {
   color: #7ba1ff;
   font-size: 28px;
 }

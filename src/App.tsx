@@ -4,9 +4,9 @@ import './styling/App.css';
 import * as firebaseAuth from '@firebase/auth';
 import { authInstance } from './firebase/Firebase';
 
-import Home from './react components/Home';
+import SurveySelect from './react components/survey/SurveySelect';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
-import { changePage, PageType } from './redux/navigationSlice';
+import { changePage, OperationType, PageType } from './redux/navigationSlice';
 import AdminHome from './react components/AdminHome';
 import Header from './react components/Header';
 import SurveyHome from './react components/survey/SurveyHome';
@@ -23,18 +23,19 @@ import { getJobOpps } from './firebase/Queries/JobQueries';
 import { getCurrentPermissionLevel, getUser } from './firebase/Queries/AdminQueries';
 import InfoPage from './react components/InfoPage';
 import { PermissionLevel } from '../src/firebase/Types';
+import OffShoreInfo from './react components/OffshoreInfo';
 
 
 const getOverallPageFromType = (type: PageType) => {
     switch (type) {
-    case PageType.Home: return <Home />;
     case PageType.AdminHome: return <AdminHome />;
     case PageType.Survey: return <SurveyHome />;
     case PageType.AdminManage: return <AdminManager />;
     case PageType.LabelManage: return <LabelManager />;
     case PageType.JobManage: return <JobManager />;
     case PageType.Analytics: return <Analytics />;
-    case PageType.InfoPage: return <InfoPage />;
+    case PageType.AppInfo: return <InfoPage />;
+    case PageType.OffShoreInfo: return <OffShoreInfo />;
     }
 };
 
@@ -75,9 +76,9 @@ const App: React.FC = () => {
                         appDispatch(setSurveys(await getSurveys()))
                     ]);
 
-                    appDispatch(changePage({ type: PageType.Survey }));
+                    appDispatch(changePage({ type: PageType.Survey, operation: OperationType.Idle }));
                 } else {
-                    appDispatch(changePage({ type: PageType.InfoPage }));
+                    appDispatch(changePage({ type: PageType.AppInfo }));
                 }
             } catch (e) { }
         });

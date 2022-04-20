@@ -1,15 +1,108 @@
 import React from 'react';
-
-
+import image1 from '../images/image1.jpeg';
+import image2 from '../images/size.jpeg';
+import image3 from '../images/power.png';
+import image4 from '../images/turbine.png';
+import image5 from '../images/fundations.png';
+import image6 from '../images/connection.png';
+import box1 from '../images/box1.png';
+import box2 from '../images/box2.png';
+import box3 from '../images/box3.png';
+import box4 from '../images/box4.png';
+import image7 from '../images/jobs.jpeg'
 const OffShoreInfo: React.FC = () => {
     return (
-        <div id='InfoPage' className='container'>
+        <div id='Offshore101' className='container'>
             <div className='inner'>
-                <div className='title'>TITLE</div>
-                <div className='text'>The text content below the title</div>
+                <div className='title'>Offshore Wind 101</div>
+                <div className='text'>The strong wind resource off the U.S. Atlantic coast has tremendous renewable energy generation potential. New York State is working to responsibly and cost-effectively develop renewable energy sources to provide 70% of the State’s electrical power by 2030. Offshore wind is poised to become a major asset in the State’s transition away from harmful fossil fuels towards a 100% carbon-free energy future by 2040.</div>
+                <img className='centerImage' src={image1}></img>
+                <div className='title'>How Big Are Offshore Wind Turbines?</div>
+                <div className='combo'>
+                    <img className='leftImage' src={image2}></img>
+                    <div className='text'>Height comparisons
+                    <ul typeof='circle'>
+                        <li><strong>Statue of Liberty:</strong> 305 ft.</li>
+                        <li><strong>Empire State Building:</strong> 1,454 ft.</li>
+                        <li><strong>Average Onshore U.S. Turbine:</strong> 466 ft.</li>
+                        <li><strong>Tallest Onshore U.S. Turbine:</strong> 574 ft.</li>
+                        <li><strong>Block Island Offshore Wind Project:</strong> 590 ft.</li>
+                        <li><strong>GE Haliade-X Offshore Turbine:</strong> 853 ft.</li>
+                    </ul>
+                    </div>
+                </div>
+                <div className='title'>How It Works</div>
+                <div className='text'>Offshore wind turbines work to harness the ocean’s vast wind and convert it into 100% renewable electricity.</div>
+                <div className='subTitle'>Overview of Power Generation</div>
+                <div className='combo'>
+                    <img className='leftImage' src={image3}></img>
+                    <div className='text'>
+                    <ol>
+                        <li><strong>Offshore Turbines </strong>capture the wind's energy and generate electricity.</li>
+                        <li><strong>Foundations </strong>secure turbines to the ocean floor and cables transmit <br></br> electricity to an offshore substation</li>
+                        <li><strong>Electricity</strong> flows through a buried cable to an onshore substation and is <br></br> transferred to the existing transmission network.</li>
+                    </ol>
+                    </div>
+                </div>
+                <div className='subTitle'>Turbine Components</div>
+                <div className='combo'>
+                    <img className='leftImage' src={image4}></img>
+                    <div className='text'>
+                    <ol>
+                        <li><strong>Hub. </strong>The hub supports the blades and houses the pitch system, which optimizes blade angle and rotation speed.</li>
+                        <li><strong>Blades. </strong>Blades capture the wind's energy and convert it into mechanical energy.</li>
+                        <li><strong>Nacelle. </strong>The nacelle houses the components that convert mechanical energy to electrical energy.</li>
+                        <li><strong>Tower. </strong>The tower supports the mass of the nacelle, hub, and blades.</li>
+                    </ol>
+                    </div>
+                </div>
+                <div className='subTitle'>Foundations, Array Cables, and Offshore Substation</div>
+                <div className='combo'>
+                    <img className='leftImage' src={image5}></img>
+                    <div className='text'>
+                    <ol>
+                        <li><strong>Foundation. </strong>Foundations secure the tower and above-water turbine components <br></br>to the sea floor. A variety of technologies are available, including jackets, monopiles, and gravity-based <br></br>foundations.</li>
+                        <li><strong>Array Cables. </strong>Blades capture the wind's energy and convert it into mechanical energy.</li>
+                        <li><strong>Nacelle. </strong>A network of array cables link the wind turbines together and deliver power from the turbines to the <br></br>offshore substation.</li>
+                        <li><strong>Offshore Substation. </strong>The offshore substation collects and stabilizes the power generated by the turbines, preparing it for<br></br> transmission to shore.</li>
+                    </ol>
+                    </div>
+                </div>
+                <div className='subTitle'>Export Cable and Onshore Connection</div>
+                <div className='combo'>
+                    <img className='leftImage' src={image6}></img>
+                    <div className='text'>
+                    <ol>
+                        <li><strong>Export Cable. </strong>The export cable is buried deep enough to avoid disturbing ocean users and wildlife,<br></br> and it transmits power from the offshore substation to the onshore substation.</li>
+                        <li><strong>Cable Landing. </strong>Horizontal direction drilling, a common method for landing export transmission cables <br></br>from offshore wind farms, minimizes environmental impacts and disruption to beaches and the shoreline.</li>
+                        <li><strong>Onshore Connection.  </strong>Electricity is transferred to the existing transmission network.</li>
+                    </ol>
+                    </div>
+                </div>
+                <div className='subTitle'>Jobs for Today & Tomorrow</div>
+                <div className='combo'>
+                    <img className='leftImage' src={image7}></img>
+                    <div className='text'>
+                    Investing in sustainable energy means Dominion Energy is creating <br></br>new avenues for well-paying jobs. 
+                    The Hampton Roads Alliance <br></br>commissioned an offshore wind economic impact analysis that projects during <br></br>
+                    construction and operation, the project will generate millions of dollars in economic impact and <br></br>
+                    local and state taxes, and create thousands of construction and permanent jobs.
+                    </div>
+                </div>
+                <div className='subTitle'>Quick Project Facts</div>
+                <div className='fact'>
+                    <div className='factBox'>
+                        <img src={box1}></img>
+                        <img src={box2}></img>
+                        <img src={box3}></img>
+                        <img src={box4}></img>
+                    </div>
+                </div>
+                <a href='https://coastalvawind.com/about-offshore-wind/delivering-wind-power.aspx#sec3'>View all list of project facts for each phase</a>
             </div>
-            
         </div>
+
+            
     );
 };
 

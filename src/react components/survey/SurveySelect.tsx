@@ -3,8 +3,7 @@ import { authInstance } from '../../firebase/Firebase';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, OperationType, PageType } from '../../redux/navigationSlice';
 import ListViewer from '../generic/ListViewer';
-
-
+import images from '/Users/zhangxiwen/Desktop/OffshoreWindJobNavigator-1323/src/images/coastal-va-offshore-wind-banner.jpeg'
 const SurveySelect: React.FC = () => {
     const surveys = useAppSelector(s => s.data.surveys);
     const responses = useAppSelector(s => s.data.surveyResponses);

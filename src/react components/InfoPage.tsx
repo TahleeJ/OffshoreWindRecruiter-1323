@@ -6,6 +6,7 @@ const InfoPage: React.FC = () => {
         <div id='InfoPage'>
             <div className='container'>
                 <div className='inner'>
+                    <div className='text'><strong>This page is shown to non-users. Please contact your administer to promote you to use the website.</strong></div>
                     <div className="fa fa-users"> JOB OPPORTUNITY</div>
                     <div className='text'>A job listing that administrators can add to find potential workers.</div>
                 </div>

@@ -6,7 +6,7 @@ import { changePage, PageType, Status } from '../../redux/navigationSlice';
 import RecJobView from './RecJobView';
 
 
-const SurveyReviewer: React.FC = _ => {
+const SurveyReviewer: React.FC = () => {
     const status = useAppSelector(s => s.navigation.status);
     const jobOpps = useAppSelector(s => s.data.jobOpps);
     const response = useAppSelector(s => s.navigation.operationData as ReturnedSurveyResponse);
@@ -19,20 +19,20 @@ const SurveyReviewer: React.FC = _ => {
             return {
                 score: rj.score,
                 jobOpp: jobOpps.find(j => j.id === rj.jobOppId) as JobOpp
-            }
+            };
         }).sort((a, b) => b.score - a.score);
     };
 
     return (
         <div className='administerSurveyPage container'>
-            <button className="red" onClick={() => dispatch(changePage({ type: PageType.Home }))}>Return to Home</button>
+            <button className="red" onClick={() => dispatch(changePage({ type: PageType.Survey }))}>Return to Home</button>
             <div className=''>
                 <div className='surveyTitle' >Recommended Jobs</div>
                 <div className=''>
                     {status === Status.fulfilled && <RecJobView jobs={jobs()}/>}
                     {status === Status.pending &&
                         <>
-                            Loading Results:
+                            Loading Results:&nbsp;
                             <i className="fa fa-spinner fa-pulse loadIcon"></i>
                         </>
                     }
@@ -46,8 +46,8 @@ const SurveyReviewer: React.FC = _ => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 
 export default SurveyReviewer;

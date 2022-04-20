@@ -1,12 +1,7 @@
 import React from 'react';
 
-/** The props (arguments) to create this element */
-interface props {
-    
-}
 
-/** The header of the application. */
-const InfoPage: React.FC<props> = (props) => {
+const InfoPage: React.FC = () => {
     return (
         <div id='InfoPage'>
             <div className='container'>
@@ -20,13 +15,13 @@ const InfoPage: React.FC<props> = (props) => {
                 </div>
                 <div className='inner'>
                     <div className="fa fa-tag"> LABEL</div>
-                    <div className='text'>A category that describes a job opportunity and can be linked to survey questions. 
+                    <div className='text'>A category that describes a job opportunity and can be linked to survey questions.
                         “Technician” could be a label for jobs involving hands on work or involves repairing machines.
                         It is used to provide recommended job opportunities to survey responders</div>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default InfoPage
+export default InfoPage;

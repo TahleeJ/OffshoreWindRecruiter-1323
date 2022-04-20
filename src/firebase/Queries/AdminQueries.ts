@@ -1,12 +1,16 @@
-import * as firestore from "@firebase/firestore";
+import * as firestore from '@firebase/firestore';
 
-import db from "../Firestore";
-import { updatePermissions } from "../Firebase";
-import { id, PermissionLevel } from "../Types";
+import db from '../Firestore';
+import { authInstance, updatePermissions } from '../Firebase';
+import { id, PermissionLevel } from '../Types';
+
+
+let currentPermissionLevel: PermissionLevel = PermissionLevel.None;
+
 
 /**
  * Updates the permission level of a specified user to a desired level
- * 
+ *
  * @param email the email of the desired user to change permissions for
  * @param newLevel the new level to set the desired user's permissions to
  * @returns a message of success or failure based on the parameters given and
@@ -16,26 +20,35 @@ export async function setUserPermissionLevel(email: string, newLevel: Permission
     try {
         await updatePermissions({ userEmail: email, newPermissionLevel: newLevel });
 
-        return "Update success!"
+        return 'Update success!';
     } catch (error) {
-        const { details } = JSON.parse(JSON.stringify(error));
+        const details = JSON.parse(JSON.stringify(error)).details;
 
         return details;
     }
 }
 
+/**
+ * Retrieves a User object given an UID and returns its data
+ *
+ * @param id the UID of the desired user
+ * @returns a User object, which provides access to the user's email and permissionLevel
+ */
 export async function getUser(id: id) {
     const response = await firestore.getDoc(firestore.doc(db.Users, id));
+    const user = response.data();
 
-    return response.data();
+    if (user != null && authInstance.currentUser?.uid === id)
+        currentPermissionLevel = user.permissionLevel;
+
+    return user;
 }
 
 /**
- * Asserts whether a specified user has at least admin-level permissions
- * 
- * @param id the UID of the desired user
- * @returns whether the specified user is an admin or not
+ * Retrieves a the last fetched permission level for the current user
+ *
+ * @returns the last fetched permission level for the current user
  */
-export async function assertIsAdmin(id: id): Promise<boolean> {
-    return ((await firestore.getDoc(firestore.doc(db.Users, id))).data()?.permissionLevel! > PermissionLevel.None);
+export function getCurrentPermissionLevel() {
+    return currentPermissionLevel;
 }

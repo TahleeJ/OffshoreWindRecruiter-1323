@@ -1,93 +1,74 @@
-import React, { useState } from 'react';
-import lodash from "lodash"
+import React, { useState, useEffect } from 'react';
+import lodash from 'lodash';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changePage, PageType, OperationType } from '../../redux/navigationSlice';
-import { useEffect } from "react";
-import { JobOpp } from "../../firebase/Types";
+
+import { JobOpp } from '../../firebase/Types';
 import { getJobOpps, newJobOpp, editJobOpp } from '../../firebase/Queries/JobQueries';
-import { setJobOpps } from "../../redux/dataSlice.ts";
+import { setJobOpps } from '../../redux/dataSlice.ts';
 import Prompt from '../generic/Prompt';
 import ListViewer from '../generic/ListViewer';
 
 
-
-/** The props (arguments) to create this element */
 interface props {
 
 }
 
-/** The header of the application. */
-const JobCreator: React.FC<props> = (props) => {
-    const [jobOppName, setJobOppName] = useState("");
-    const [companyName, setCompanyName] = useState("");
-    const [labelsAssc, setLabelsAssc] = useState<Array<string>>([]);
-    const [description, setDescription] = useState("");
-    const [link, setLink] = useState("");
+
+const JobCreator: React.FC<props> = props => {
+    const [jobOppName, setJobOppName] = useState('');
+    const [companyName, setCompanyName] = useState('');
+    const [labelAssociations, setLabelAssociations] = useState<string[]>([]);
+    const [description, setDescription] = useState('');
+    const [link, setLink] = useState('');
     const currentOperation = useAppSelector(s => s.navigation.operationType);
     const appDispatch = useAppDispatch();
     const reduxJobOppData = useAppSelector(s => s.navigation.operationData as JobOpp & { id: string });
     const labels = useAppSelector(s => s.data.labels);
-    const [popupVisible, setPopupvisible] = useState(false);
-    const [oppNameError, setOppNameError] = useState("");
-    const [compNameError, setCompNameError] = useState("");
-    const [labelError, setLabelError] = useState("");
-    const [linkError, setLinkError] = useState("");
+    const [popupVisible, setPopupVisible] = useState(false);
+    const [oppNameError, setOppNameError] = useState('');
+    const [compNameError, setCompNameError] = useState('');
+    const [labelError, setLabelError] = useState('');
+    const [linkError, setLinkError] = useState('');
 
-    const togglePopup = () => setPopupvisible(!popupVisible);
+    const togglePopup = () => setPopupVisible(!popupVisible);
     const changeLabels = (labelId: string) => {
-        let cloneLabels = lodash.cloneDeep(labelsAssc);
+        const cloneLabels = lodash.cloneDeep(labelAssociations);
 
-        const indexOfLabelId = labelsAssc.indexOf(labelId);
+        const indexOfLabelId = labelAssociations.indexOf(labelId);
         if (indexOfLabelId === -1)
             cloneLabels.push(labelId);
         else
             cloneLabels.splice(indexOfLabelId, 1);
 
-        setLabelsAssc(cloneLabels);
-    }
+        setLabelAssociations(cloneLabels);
+    };
     const getLabelConnections = () => {
         return labels.map(l => {
-            // console.log(questions[qIndex].options[aIndex].labelIds);
             return {
                 ...l,
-                isEnabled: labelsAssc.indexOf(l.id) !== -1
-            }
+                isEnabled: labelAssociations.indexOf(l.id) !== -1
+            };
         });
-    }
+    };
     const saveIfValidInput = async () => {
-        let errorMessage ="*This field is required";
-        if (!jobOppName.trim() || !companyName.trim() || labelsAssc.length === 0) {
+        const errorMessage = '*This field is required';
+        if (!jobOppName.trim() || !companyName.trim() || labelAssociations.length === 0) {
             togglePopup();
-            if (!jobOppName.trim()) {
-                setOppNameError(errorMessage);
-            } else {
-                setOppNameError("");
-            }
-            if (!companyName.trim()) {
-                setCompNameError(errorMessage);
-            } else {
-                setCompNameError("");
-            }
-            if (labelsAssc.length === 0) {
-                setLabelError(errorMessage);
-            } else {
-                setLabelError("");
-            }
-            if (!link.trim()) {
-                setLinkError(errorMessage);
-            } else {
-                setLinkError("");
-            }
-        }
-        else {
-            let jobOpp: JobOpp = {
+
+            setOppNameError(jobOppName.trim() === '' ? '' : errorMessage);
+            setCompNameError(companyName.trim() === '' ? '' : errorMessage);
+            setLabelError(labelAssociations.length === 0 ? '' : errorMessage);
+            setLinkError(link.trim() ? '' : errorMessage);
+        } else {
+            const jobOpp: JobOpp = {
                 jobName: jobOppName,
                 companyName: companyName,
-                labelIds: labelsAssc,
+                labelIds: labelAssociations,
                 jobDescription: description,
-                jobLink: link,
+                jobLink: link
 
-            }
+            };
             if (currentOperation === OperationType.Creating)
                 await newJobOpp(jobOpp);
             else
@@ -96,14 +77,14 @@ const JobCreator: React.FC<props> = (props) => {
             appDispatch(changePage({ type: PageType.AdminHome }));
             appDispatch(setJobOpps(await getJobOpps()));
         }
-    }
+    };
     useEffect(() => {
         if (currentOperation === OperationType.Editing) {
             setJobOppName(reduxJobOppData.jobName);
             setCompanyName(reduxJobOppData.companyName);
-            setLabelsAssc(reduxJobOppData.labelIds);
+            setLabelAssociations(reduxJobOppData.labelIds);
             setDescription(reduxJobOppData.jobDescription);
-            setLink(reduxJobOppData.jobLink)
+            setLink(reduxJobOppData.jobLink);
         }
     }, [reduxJobOppData, currentOperation]);
 
@@ -136,10 +117,10 @@ const JobCreator: React.FC<props> = (props) => {
                     <span className="title"></span>
                     <ListViewer height='200px' title='Labels (Click to Toggle):'>
                         {getLabelConnections().map((label, ind) => (
-                            <div key={ind} className={"labelChoice" + (label.isEnabled ? " active" : "")} onClick={() => changeLabels(label.id)
+                            <div key={ind} className={'labelChoice' + (label.isEnabled ? ' active' : '')} onClick={() => changeLabels(label.id)
                             }>
                                 {/* {label.isEnabled ? <i className="fas fa-link"></i> : null} */}
-                                {label.isEnabled ? "✓ " : null}
+                                {label.isEnabled ? '✓ ' : null}
                                 {label.name}
                             </div>
                         ))}
@@ -147,8 +128,8 @@ const JobCreator: React.FC<props> = (props) => {
                     <div className="error">{labelError}</div>
                 </div>
                 <div className="buttons">
-                    <button className='gray' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })) }}>Cancel</button>
-                    <button onClick={saveIfValidInput}>{currentOperation === OperationType.Editing ? "Save Edits" : "Create"}</button>
+                    <button className='gray' onClick={() => { appDispatch(changePage({ type: PageType.AdminHome })); }}>Cancel</button>
+                    <button onClick={saveIfValidInput}>{currentOperation === OperationType.Editing ? 'Save Edits' : 'Create'}</button>
                 </div>
                 {popupVisible &&
                     <Prompt
@@ -160,6 +141,6 @@ const JobCreator: React.FC<props> = (props) => {
             </div>
         </div>
     );
-}
+};
 
 export default JobCreator;

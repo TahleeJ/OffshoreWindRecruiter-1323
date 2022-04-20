@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import { hasId, Label } from "../../firebase/Types";
-import LabelSelector from "./LabelSelector";
+import React, { useRef, useState } from 'react';
+import { hasId, Label } from '../../firebase/Types';
+import LabelSelector from './LabelSelector';
+
 
 interface props {
     labels: (Label & hasId & { isEnabled: boolean })[];
@@ -8,12 +9,13 @@ interface props {
     toggleLabel: (id: string) => void;
 }
 
-const LabelConnector: React.FC<props> = (p) => {
+
+const LabelConnector: React.FC<props> = props => {
     const [selectorOpen, setSelectorOpen] = useState(false);
     const elementRef = useRef<HTMLElement>(null);
     const toggleSelector = () => setSelectorOpen(!selectorOpen);
 
-    const labelCount = p.labels.filter(l => l.isEnabled).length;
+    const labelCount = props.labels.filter(l => l.isEnabled).length;
 
     return (
         <>
@@ -21,20 +23,20 @@ const LabelConnector: React.FC<props> = (p) => {
                 {labelCount > 0 ? <span className="labelCount">{labelCount}</span> : null}
             </i>
 
-            {selectorOpen ?
-                <LabelSelector
-                    toggleLabel={p.toggleLabel}
+            {selectorOpen
+                ? <LabelSelector
+                    toggleLabel={props.toggleLabel}
                     handleClose={(e) => {
                         toggleSelector();
                     }}
-                    labels={p.labels}
-                    top={(elementRef.current as HTMLElement).getBoundingClientRect().top - p.topOffset}
+                    labels={props.labels}
+                    top={(elementRef.current as HTMLElement).getBoundingClientRect().top - props.topOffset}
                     left={(elementRef.current as HTMLElement).getBoundingClientRect().left}
                 />
                 : null
             }
         </>
-    )
-}
+    );
+};
 
 export default LabelConnector;

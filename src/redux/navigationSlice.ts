@@ -1,20 +1,20 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { submitSurvey } from '../firebase/Firebase';
-import { AdministeredSurveyResponse } from '../firebase/Types';
-import { logJobsMatched } from '../firebase/Analytics/Logging';
+import { SentSurveyResponse } from '../firebase/Types';
+import { logJobsMatched, logLabelsUsed } from '../firebase/Analytics/Logging';
+
 
 /** This enum is used to distinguish between different types of pages */
 export enum PageType {
     AdminHome,
-    Home,
     Survey,
     LabelManage,
     JobManage,
     AdminManage,
     Analytics,
 
-    InfoPage,
-    DeletePopup
+    AppInfo,
+    OffShoreInfo
 }
 
 export enum OperationType {
@@ -28,8 +28,8 @@ export enum OperationType {
 }
 
 export enum Status {
-    idle = "idle",
-    pending = "pending",
+    idle = 'idle',
+    pending = 'pending',
     fulfilled = 'fulfilled',
     rejected = 'rejected'
 }
@@ -45,12 +45,12 @@ interface navigationState {
 }
 
 const initialState = {
-    currentPage: PageType.Home,
+    currentPage: PageType.AppInfo,
     operationData: null,
     status: Status.idle
 } as navigationState;
 
-/** The slice of the state that deals with navigating to parts of the application*/
+/** The slice of the state that deals with navigating to parts of the application */
 const navigationSlice = createSlice({
     name: 'navigation',
     initialState,
@@ -72,7 +72,7 @@ const navigationSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(submitSurveyResponse.fulfilled, (state, action) => {
             action.payload.data.recommendedJobs.sort((a, b) => b.score - a.score);
-            
+
             state.operationData = action.payload.data;
             state.status = Status.fulfilled;
         });
@@ -83,21 +83,22 @@ const navigationSlice = createSlice({
             state.operationData = action.error;
             state.status = Status.rejected;
         });
-    },
-})
+    }
+});
 
 export const submitSurveyResponse = createAsyncThunk('navigation/submitSurveyResponse',
-    async (survey: AdministeredSurveyResponse) => {
+    async (survey: SentSurveyResponse) => {
         const result = await submitSurvey(survey);
 
         // [LabelId, [linear score, percentile score]]
-        // const labelScores: [string, [number, number]][] = Object.entries(result.data.labelScores)
+        const labelScores: [string, [number, number]][] = Object.entries(result.data.labelScores);
 
         logJobsMatched(survey.surveyId, result.data.recommendedJobs);
-        
+        logLabelsUsed(labelScores);
+
         return result;
     }
 );
 
-export const { changePage, changeOperation, changeOperationData } = navigationSlice.actions
-export default navigationSlice.reducer
+export const { changePage, changeOperation, changeOperationData } = navigationSlice.actions;
+export default navigationSlice.reducer;

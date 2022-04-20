@@ -745,7 +745,7 @@ const Analytics: React.FC = () => {
                         {
                             subjectState === Subject.Labels &&
                             <>
-                                <TooltipInfo textarea='The linear score average should center around 1 and the percentile score average should center around 0.'></TooltipInfo>
+                                <TooltipInfo textarea='The linear score average should center around 1 and the percentile score average should center around 0. A tendency towards another value could indicate bias in the label usage.'></TooltipInfo>
                             </>
                         }
                         <div className='chartContainer' id='chart'></div>

@@ -742,6 +742,12 @@ const Analytics: React.FC = () => {
                                 <TooltipInfo textarea='The size of the box is how large the absolute value of the average is. Green (relative lowest average) -> Blue (relative highest average)'></TooltipInfo>
                             </>
                         }
+                        {
+                            subjectState === Subject.Labels &&
+                            <>
+                                <TooltipInfo textarea='The linear score average should center around 1 and the percentile score average should center around 0.'></TooltipInfo>
+                            </>
+                        }
                         <div className='chartContainer' id='chart'></div>
                     </div>
                 </div>

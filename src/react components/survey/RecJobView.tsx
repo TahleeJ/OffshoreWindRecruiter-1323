@@ -14,11 +14,9 @@ const RecJobView: React.FC<props> = props => {
     var doc = new jsPDF();
     return (
         <>
+        <div className = "printThis">
             <button onClick={() => { 
-                if (!first) {
-                    first = true;
-                    getPDF();
-                }
+                getPDF();
             }}>Download Results</button>
             {/* <span>Here are some job recommendations that align with your survey answers:</span> */}
             {props.jobs.length === 0
@@ -40,11 +38,11 @@ const RecJobView: React.FC<props> = props => {
                             {recommendation.score > 0
                                 ? <span className="check">
                                     <div><i className="fas fa-check"></i></div>
-                                    {recommendation.score >= 0.5 ? 'highly' : ''} recommend
+                                    {recommendation.score >= 0.5 ? 'highly' : ''} recommended
                                 </span>
                                 : <span className="x">
                                     <div><i className="fas fa-times"></i></div>
-                                    {recommendation.score <= -0.5 ? 'highly' : ''} not recommend
+                                    {recommendation.score <= -0.5 ? 'highly' : ''} not recommended
                                 </span>
                             }
                         </div>
@@ -57,6 +55,7 @@ const RecJobView: React.FC<props> = props => {
                     </div> */}
                 </div>
             ))}
+            </div>
         </>
     );
 };

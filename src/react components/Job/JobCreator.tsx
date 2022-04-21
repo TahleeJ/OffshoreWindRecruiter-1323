@@ -61,23 +61,25 @@ const JobCreator: React.FC<props> = props => {
             setLabelError(labelAssociations.length === 0 ? '' : errorMessage);
             setLinkError(link.trim() ? '' : errorMessage);
         } else {
-            const jobOpp: JobOpp = {
-                jobName: jobOppName,
-                companyName: companyName,
-                labelIds: labelAssociations,
-                jobDescription: description,
-                jobLink: link
-
-            };
-            if (currentOperation === OperationType.Creating)
-                await newJobOpp(jobOpp);
-            else
-                await editJobOpp(reduxJobOppData.id, jobOpp);
-
-            appDispatch(changePage({ type: PageType.AdminHome }));
-            appDispatch(setJobOpps(await getJobOpps()));
+            await save();
         }
     };
+    const save = async () => {
+        const jobOpp: JobOpp = {
+            jobName: jobOppName,
+            companyName: companyName,
+            labelIds: labelAssociations,
+            jobDescription: description,
+            jobLink: link
+        };
+        if (currentOperation === OperationType.Creating)
+            await newJobOpp(jobOpp);
+        else
+            await editJobOpp(reduxJobOppData.id, jobOpp);
+
+        appDispatch(changePage({ type: PageType.AdminHome }));
+        appDispatch(setJobOpps(await getJobOpps()));
+    }
     useEffect(() => {
         if (currentOperation === OperationType.Editing) {
             setJobOppName(reduxJobOppData.jobName);
@@ -135,7 +137,9 @@ const JobCreator: React.FC<props> = props => {
                     <Prompt
                         title="Input Validation"
                         message="Please fill out all the fields before saving"
+                        actionText='Save Anyway'
                         handleCancel={togglePopup}
+                        handleAction={save}
                     />
                 }
             </div>

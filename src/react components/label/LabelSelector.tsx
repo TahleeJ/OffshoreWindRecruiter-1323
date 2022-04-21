@@ -1,3 +1,4 @@
+import { max } from 'lodash';
 import React from 'react';
 import { hasId, Label } from '../../firebase/Types';
 
@@ -15,7 +16,7 @@ interface props {
 const LabelSelector: React.FC<props> = props => {
     return (
         <div className='transparentBackground' onClick={(e) => props.handleClose(e)}>
-            <div className='dropdown' style={{ top: props.top + 35, left: props.left - 100 }} onClick={e => e.stopPropagation()}>
+            <div className='dropdown' style={{ top: Math.min(props.top + 35, window.innerHeight - 410), left: props.left - 100 }} onClick={e => e.stopPropagation()}>
                 <div className='title'>Labels</div>
                 {props.labels.length > 0
                     ? props.labels.map((label, ind) => {

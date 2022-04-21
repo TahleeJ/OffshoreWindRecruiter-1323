@@ -3,7 +3,6 @@ body,
 #root {
   padding: 0;
   margin: 0;
-  overflow: hidden;
   height: 100vh;
   width: 100vw;
 }
@@ -1375,6 +1374,7 @@ textarea {
 #InfoPage .text {
   font-size: 20px;
   color: black;
+  margin-bottom: 30px;
 }
 
 #InfoPage .inner {
@@ -1532,5 +1532,98 @@ textarea {
   #analytics .topGrid {
     display: block;
   }
+}
+
+#Offshore101 {
+  overflow: auto;
+}
+
+#Offshore101 .inner {
+  text-align: center;
+  position: absolute;
+  left: 50px;
+  width: calc(100% - 100px);
+}
+
+#Offshore101 .inner .title {
+  font-size: 28px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-weight: 900;
+  color: #656565;
+}
+
+#Offshore101 .inner .text {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: black;
+}
+
+#Offshore101 .inner .centerImage {
+  max-width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#Offshore101 .inner .subTitle {
+  font-size: 20px;
+  color: #656565;
+  font-weight: 700;
+  margin-bottom: 15px;
+  margin-top: 15px;
+}
+
+#Offshore101 .inner .combo {
+  border: 1px dashed #bbb8b8;
+}
+
+#Offshore101 .inner .combo .leftImage {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: bottom;
+}
+
+#Offshore101 .inner .combo .text {
+  text-align: left;
+  margin-left: 20px;
+  display: inline-block;
+  margin-bottom: 30px;
+}
+
+#Offshore101 .inner .fact .factBox {
+  display: inline;
+}
+
+#Offshore101 .inner .fact .factBox img {
+  margin: 10px;
+}
+
+#Offshore101 .inner a:link, #Offshore101 .inner a:visited {
+  background-color: #2558b8;
+  color: white;
+  padding: 14px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+#Offshore101 .inner a:hover, #Offshore101 .inner a:active {
+  background-color: #4773c4;
+}
+
+#Offshore101 .inner .combo1 .leftImage {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: bottom;
+}
+
+#Offshore101 .inner .combo1 .text {
+  text-align: left;
+  display: inline-block;
+  margin-bottom: 30px;
+  margin-left: 20px;
 }
 /*# sourceMappingURL=App.css.map */

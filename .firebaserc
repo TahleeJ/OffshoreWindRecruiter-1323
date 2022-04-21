@@ -1,6 +1,23 @@
 {
   "projects": {
-    "default": "hallowed-digit-338620"
+    "default": "hallowed-digit-338620",
+    "prod": "hallowed-digit-338620",
+    "demo": "oswjn-demo-67fe4"
   },
-  "targets": {}
+  "targets": {
+    "hallowed-digit-338620": {
+      "hosting": {
+        "prod": [
+          "hallowed-digit-338620"
+        ]
+      }
+    },
+    "oswjn-demo-67fe4": {
+      "hosting": {
+        "demo": [
+          "oswjndemo"
+        ]
+      }
+    }
+  }
 }

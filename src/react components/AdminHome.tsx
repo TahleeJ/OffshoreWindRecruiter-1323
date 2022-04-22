@@ -66,11 +66,14 @@ const AdminHome: React.FC = () => {
                             })
                             : <div>There are currently no survey responses</div>
                         }
-                        <div className='adminButtons'>
-                            <button onClick={async () => { appDispatch(setSurveyResponses(responses.concat(await getNextSurveyResponses()))); }}>
+                        {responses.length > 0 && responses.length % 25 === 0
+                            ? <div className='adminButtons'>
+                                <button onClick={async () => { appDispatch(setSurveyResponses(responses.concat(await getNextSurveyResponses()))); }}>
                                 Load More Responses
-                            </button>
-                        </div>
+                                </button>
+                            </div>
+                            : null
+                        }
                     </ListViewer>
                 </div>
                 <div className='middleColumn'>

@@ -6,7 +6,7 @@ import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import { authInstance } from '../firebase/Firebase';
 import { getCurrentPermissionLevel } from '../firebase/Queries/AdminQueries';
 import { deleteJobOpp, getJobOpps, newJobOpp } from '../firebase/Queries/JobQueries';
-import { deleteSurvey, deleteSurveyResponse, getSurveyResponses, getSurveys } from '../firebase/Queries/SurveyQueries';
+import { deleteSurvey, deleteSurveyResponse, getNextSurveyResponses, getSurveyResponses, getSurveys } from '../firebase/Queries/SurveyQueries';
 import { JobOpp, PermissionLevel } from '../firebase/Types';
 
 import ListViewer from './generic/ListViewer';
@@ -66,6 +66,11 @@ const AdminHome: React.FC = () => {
                             })
                             : <div>There are currently no survey responses</div>
                         }
+                        <div className='adminButtons'>
+                            <button onClick={async () => { appDispatch(setSurveyResponses(responses.concat(await getNextSurveyResponses()))); }}>
+                                Load More Responses
+                            </button>
+                        </div>
                     </ListViewer>
                 </div>
                 <div className='middleColumn'>

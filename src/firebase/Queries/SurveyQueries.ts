@@ -1,4 +1,5 @@
 import * as firestore from '@firebase/firestore';
+import { QueryDocumentSnapshot, startAfter } from 'firebase/firestore';
 
 import db from '../Firestore';
 import { id, SurveyTemplate, hasId, StoredSurveyResponse } from '../Types';
@@ -59,15 +60,37 @@ export async function deleteSurvey(id: id) {
     await firestore.deleteDoc(firestore.doc(db.Surveys, id));
 }
 
+
+let lastSurveyResponse: QueryDocumentSnapshot<StoredSurveyResponse> | null = null;
+
 /**
- * Retrieves every survey response from Firestore and lists them in descending order based on created time
+ * Retrieves the 15 most recent survey responses and lists them in descending order based on created time
  *
- * @returns an array of every survey response in Firestore listed in descending order based on created time
+ * @returns an array of survey responses
  */
 export async function getSurveyResponses() {
-    const response = await firestore.getDocs(
-        firestore.query(db.SurveyResponse, firestore.orderBy('created', 'desc'), firestore.limit(10)));
+    const response = await firestore.getDocs(firestore.query(
+        db.SurveyResponse,
+        firestore.orderBy('created', 'desc'),
+        firestore.limit(15)));
 
+    lastSurveyResponse = response.docs[response.docs.length - 1];
+    return response.docs.map(s => ({ ...s.data(), id: s.id } as StoredSurveyResponse & hasId));
+}
+
+/**
+ * Retrieves the next 15 most recent survey responses
+ *
+ * @returns an array of survey responses
+ */
+export async function getNextSurveyResponses() {
+    const response = await firestore.getDocs(firestore.query(
+        db.SurveyResponse,
+        firestore.orderBy('created', 'desc'),
+        firestore.limit(15),
+        startAfter(lastSurveyResponse)));
+
+    lastSurveyResponse = response.docs[response.docs.length - 1];
     return response.docs.map(s => ({ ...s.data(), id: s.id } as StoredSurveyResponse & hasId));
 }
 

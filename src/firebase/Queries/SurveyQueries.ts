@@ -90,6 +90,9 @@ export async function getNextSurveyResponses() {
         firestore.limit(15),
         startAfter(lastSurveyResponse)));
 
+    if (response.empty)
+        return undefined;
+
     lastSurveyResponse = response.docs[response.docs.length - 1];
     return response.docs.map(s => ({ ...s.data(), id: s.id } as StoredSurveyResponse & hasId));
 }

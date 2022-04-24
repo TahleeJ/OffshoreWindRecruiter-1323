@@ -111,7 +111,7 @@ const AdminHome: React.FC = () => {
                     <div className='adminButtons'>
                         <button onClick={() => { appDispatch(changePage({ type: PageType.LabelManage })); }}>Manage Labels</button>
                         <button onClick={() => { appDispatch(changePage({ type: PageType.AdminManage })); }}>Manage Admins</button>
-                        <button onClick={() => togglePopup()}>Import Jobs</button>
+                        {/* <button onClick={() => togglePopup()}>Import Jobs</button> */}
                     </div>
                 </div>
             </div>

@@ -747,6 +747,8 @@ textarea {
     }
 
     .administerSurveyPage {
+        margin-bottom: 20px;
+
         .surveyTitle {
             font-weight: bold;
             color: $mainColor;
@@ -797,6 +799,9 @@ textarea {
             &.MultipleChoice {
                 text-align: left;
             }
+        }
+
+        button {
         }
     }
 
@@ -1444,6 +1449,7 @@ textarea {
 #Offshore101 {
     overflow: auto;
     height: $contentHeight;
+    padding-bottom: 50px;
 
     .title {
         font-size: $largest-font-size;

@@ -791,6 +791,10 @@ textarea {
   pointer-events: none;
 }
 
+#surveyHome .administerSurveyPage {
+  margin-bottom: 20px;
+}
+
 #surveyHome .administerSurveyPage .surveyTitle {
   font-weight: bold;
   color: #7ba1ff;
@@ -1539,6 +1543,7 @@ textarea {
 #Offshore101 {
   overflow: auto;
   height: calc(100% - 50px);
+  padding-bottom: 50px;
 }
 
 #Offshore101 .title {

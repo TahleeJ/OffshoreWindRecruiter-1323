@@ -9,7 +9,9 @@ import box1 from '../images/box1.png';
 import box2 from '../images/box2.png';
 import box3 from '../images/box3.png';
 import box4 from '../images/box4.png';
-import image7 from '../images/jobs.jpeg'
+import image7 from '../images/jobs.jpeg';
+
+
 const OffShoreInfo: React.FC = () => {
     return (
         <div id='Offshore101' className='container'>

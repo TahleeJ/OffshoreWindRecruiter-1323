@@ -6,12 +6,11 @@ import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 import { authInstance } from '../firebase/Firebase';
 import { getCurrentPermissionLevel } from '../firebase/Queries/AdminQueries';
 import { deleteJobOpp, getJobOpps, newJobOpp } from '../firebase/Queries/JobQueries';
-import { deleteSurvey, deleteSurveyResponse, getSurveyResponses, getSurveys } from '../firebase/Queries/SurveyQueries';
-import { JobOpp, PermissionLevel } from '../firebase/Types';
+import { deleteSurvey, deleteSurveyResponse, getNextSurveyResponses, getSurveyResponses, getSurveys } from '../firebase/Queries/SurveyQueries';
+import { PermissionLevel } from '../firebase/Types';
 
 import ListViewer from './generic/ListViewer';
 import ListElement from './generic/ListElement';
-import Prompt from './generic/Prompt';
 
 
 const AdminHome: React.FC = () => {
@@ -20,30 +19,14 @@ const AdminHome: React.FC = () => {
     const responses = useAppSelector(s => s.data.surveyResponses);
     const appDispatch = useAppDispatch();
     const user = authInstance.currentUser;
-    const [popupVisible, setPopupVisible] = useState(false);
-    const togglePopup = () => setPopupVisible(!popupVisible);
+
+    let nextResponses = null;
 
     const levelInfo = () => {
         const currentPermissionLevel = getCurrentPermissionLevel();
         if (currentPermissionLevel === PermissionLevel.Owner) return 'Owner';
         else if (currentPermissionLevel === PermissionLevel.Admin) return 'Administrator';
         else return 'User';
-    };
-
-    const scrapeJobs = async (): Promise<JobOpp[]> => {
-        const response = await fetch('http://api.ecodistricthamptonroads.org/Jobs');
-        const jsonResponse = await response.json(); // extract JSON from the http response
-
-        return jsonResponse.map((jR: any) => {
-            const jobOpp: JobOpp = {
-                jobName: jR.title,
-                companyName: jR.company,
-                labelIds: [],
-                jobDescription: jR.Description,
-                jobLink: jR.link
-            };
-            return jobOpp;
-        });
     };
 
 
@@ -65,6 +48,18 @@ const AdminHome: React.FC = () => {
                                 />;
                             })
                             : <div>There are currently no survey responses</div>
+                        }
+                        {responses.length >= 15 && nextResponses !== undefined
+                            ? <div className='adminButtons'>
+                                <button onClick={async () => {
+                                    nextResponses = await getNextSurveyResponses();
+                                    if (nextResponses !== undefined)
+                                        appDispatch(setSurveyResponses(responses.concat(nextResponses)));
+                                }}>
+                                Load More Responses
+                                </button>
+                            </div>
+                            : null
                         }
                     </ListViewer>
                 </div>
@@ -111,24 +106,9 @@ const AdminHome: React.FC = () => {
                     <div className='adminButtons'>
                         <button onClick={() => { appDispatch(changePage({ type: PageType.LabelManage })); }}>Manage Labels</button>
                         <button onClick={() => { appDispatch(changePage({ type: PageType.AdminManage })); }}>Manage Admins</button>
-                        {/* <button onClick={() => togglePopup()}>Import Jobs</button> */}
                     </div>
                 </div>
             </div>
-            {popupVisible &&
-                <Prompt
-                    title="Import Job Opportunities"
-                    message="Are you sure that you would import these jobs?"
-                    handleCancel={togglePopup}
-                    actionText="Import"
-                    handleAction={async () => {
-                        const jobs = await scrapeJobs();
-                        jobs.forEach(j => newJobOpp(j));
-                        togglePopup();
-                        appDispatch(setJobOpps(await getJobOpps()));
-                    }}
-                />
-            }
         </div>
     );
 };

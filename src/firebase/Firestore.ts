@@ -1,11 +1,13 @@
-import { collection, CollectionReference } from 'firebase/firestore';
+import { collection, CollectionReference, doc, enableMultiTabIndexedDbPersistence } from 'firebase/firestore';
 import lodash from 'lodash';
 
 import { firestoreInstance } from './Firebase';
 import { JobOpp, Label, StoredSurveyResponse, SurveyTemplate, User } from './Types';
 
 
+enableMultiTabIndexedDbPersistence(firestoreInstance).catch(() => { console.log('Failed to use local data cache'); });
 const table = <T>(collectionPath: string) => collection(firestoreInstance, collectionPath) as CollectionReference<T>;
+
 
 // Used to create lazily evaluated and memorized Firestore collection references to reduce Firestore reads
 class DB {

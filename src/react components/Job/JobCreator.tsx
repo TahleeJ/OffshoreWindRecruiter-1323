@@ -79,7 +79,7 @@ const JobCreator: React.FC<props> = props => {
 
         appDispatch(changePage({ type: PageType.AdminHome }));
         appDispatch(setJobOpps(await getJobOpps()));
-    }
+    };
     useEffect(() => {
         if (currentOperation === OperationType.Editing) {
             setJobOppName(reduxJobOppData.jobName);

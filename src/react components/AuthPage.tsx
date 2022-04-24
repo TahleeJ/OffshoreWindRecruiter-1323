@@ -2,7 +2,7 @@ import { useState } from 'react';
 import * as firebaseAuth from '@firebase/auth';
 import { FirebaseError } from 'firebase/app';
 import { authInstance } from '../firebase/Firebase';
-// import googleAuthIcon from '../icons/google-authentication-management.png';
+
 
 const AuthPage = () => {
     const [error, setError] = useState('');

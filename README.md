@@ -1,6 +1,6 @@
 # Offshore Wind Job Navigator
 A recruiting tool for the offshore wind industry related industry that automates the process of matching applications to job opportunities. Centered on customizable surveys to gauge skills and interests, our tool will match these survey responses to known job opportunities that an applicant could be a good fit to apply for.
-This project is a web application supported on both mobile and desktop platforms. Our backend and hosting services will use Firebase, and our frontend uses React with TypeScript. 
+This project is a web application supported on both mobile and desktop platforms. Our backend and hosting services will use Firebase, and our frontend uses React with TypeScript.
 
 # Development Prerequisites
 - Git clone this repository
@@ -20,7 +20,7 @@ To edit the frontend:
 
 # Backend
 ## Before You Begin
-**After [Development Prerequisites](https://github.com/TahleeJ/OffshoreWindJobNavigator-1323#development-prerequisites)* 
+**After [Development Prerequisites](https://github.com/TahleeJ/OffshoreWindJobNavigator-1323#development-prerequisites)*
 1. Contact Firebase project owner to be added as a member of the project
 2. Open a terminal session and navigate into `OffshoreWindJobNavigator-1323`
 3. Run `npm install` to create your `node_modules` folder with all currently necessary packages required to run the project as specified in `./package.json`
@@ -56,7 +56,7 @@ To deploy your function, run `firebase deploy --only functions:[function  1 name
 
 Unit Testing Suite:
 
-Unit test in this application are written using Mocha in the `./functions/test` location. Before editing the test suite environment, please read through the included [Testing.md](https://github.com/TahleeJ/OffshoreWindJobNavigator-1323/blob/98e387223503347dd8e4f589722fb62eef3dfd19/functions/Testing.md) file. 
+Unit test in this application are written using Mocha in the `./functions/test` location. Before editing the test suite environment, please read through the included [Testing.md](https://github.com/TahleeJ/OffshoreWindJobNavigator-1323/blob/98e387223503347dd8e4f589722fb62eef3dfd19/functions/Testing.md) file.
 
 To edit an existing test suite, navigate into one of the existing `*.spec.ts*` files and edit accordingly. To create a new testing suite, create a new `.spec.ts` file and follow the conventions in the other test suite files.
 
@@ -99,7 +99,7 @@ The analytics collected for this application are done via logging functions in `
 
 ## v0.3
 ### Features
-- Added ability to connect labels to survey questions as well as to job opportunities 
+- Added ability to connect labels to survey questions as well as to job opportunities
 - Create a new job opportunity
 - Edit an existing job opportunity (job name, company name, description, labels attached)
 - Delete an existing job opportunity

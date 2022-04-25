@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '../redux/hooks';
 import { drawChart } from '../firebase/Analytics/Draw';
 import { DataQuery, Chart, Subject, NavigatorGrouping, DateGrouping, SelectionArrays, DateSelection, dataFocusTypes, validChartInfo, today, determineStartDate } from '../firebase/Analytics/Utility';
@@ -95,9 +95,15 @@ const Analytics: React.FC = () => {
     const selectedLabels = selectedLabelsState;
 
     // HTML elements necessary to immediately set data for without waiting for state update
-    const validDataFocusesBox = document.getElementById('valid-focuses') as HTMLInputElement;
-    const popupTitleBox = document.getElementById('popup-title') as HTMLInputElement;
-    const popupMessageBox = document.getElementById('popup-message') as HTMLInputElement;
+    let validDataFocusesBox: HTMLInputElement;
+    let popupTitleBox: HTMLInputElement;
+    let popupMessageBox: HTMLInputElement;
+
+    useEffect(() => {
+        validDataFocusesBox = document.getElementById('valid-focuses') as HTMLInputElement;
+        popupTitleBox = document.getElementById('popup-title') as HTMLInputElement;
+        popupMessageBox = document.getElementById('popup-message') as HTMLInputElement;
+    });
 
     // Sets the error box on the page with the necessary error message
     const togglePopup = () => {

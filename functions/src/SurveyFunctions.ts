@@ -6,6 +6,10 @@ import { ReturnedSurveyResponse, JobOpp, RecommendedJob, SentSurveyResponse, Sur
 import { Timestamp } from 'firebase-admin/firestore';
 
 
+// Start loading Job Opps early and possibly reuse in future invocations
+const jobOpps = (firestore.collection('JobOpps') as FirebaseFirestore.CollectionReference<JobOpp>).get();
+
+
 /**
  * Stores submitted survey in Firestore then returns the recommended jobs.
  *
@@ -28,8 +32,6 @@ export const submitSurvey = functions.https.onCall(async (request: SentSurveyRes
         .doc(request.surveyId).get()).data();
     if (survey === undefined || survey.components.length !== request.answers.length)
         throw errors.illegalArgument.surveyResponse;
-
-    const jobOpps = (firestore.collection('JobOpps') as FirebaseFirestore.CollectionReference<JobOpp>).get(); // Start loading early
 
 
     // Calculate raw scores [Answered score, Expected score, Max score] for each label

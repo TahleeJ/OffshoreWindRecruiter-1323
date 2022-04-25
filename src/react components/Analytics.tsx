@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '../redux/hooks';
 import { drawChart } from '../firebase/Analytics/Draw';
 import { DataQuery, Chart, Subject, NavigatorGrouping, DateGrouping, SelectionArrays, DateSelection, dataFocusTypes, validChartInfo, today, determineStartDate } from '../firebase/Analytics/Utility';
@@ -107,7 +107,6 @@ const Analytics: React.FC = () => {
 
     // Sets the error box on the page with the necessary error message
     const togglePopup = () => {
-        console.log(popupTitleBox);
         popupTitleBox!.innerHTML = popupTitle;
         popupMessageBox!.innerHTML = popupMessage;
 

@@ -58,7 +58,7 @@ To deploy your function, run `firebase deploy --only functions:[function  1 name
 
 Unit test in this application are written using Mocha in the `./functions/test` location. Before editing the test suite environment, please read through the included [Testing.md](https://github.com/TahleeJ/OffshoreWindJobNavigator-1323/blob/98e387223503347dd8e4f589722fb62eef3dfd19/functions/Testing.md) file.
 
-To edit an existing test suite, navigate into one of the existing `*.spec.ts*` files and edit accordingly. To create a new testing suite, create a new `.spec.ts` file and follow the conventions in the other test suite files.
+To edit an existing test suite, navigate into one of the existing `*.spec.ts` files and edit accordingly. To create a new testing suite, create a new `.spec.ts` file and follow the conventions in the other test suite files.
 
 To run the test suite environment, run `npm test` in `./functions/`.
 

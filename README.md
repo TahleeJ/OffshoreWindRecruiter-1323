@@ -51,7 +51,7 @@ To add or edit a new function, navigate into `./functions/src/` and add your new
 
 To deploy your function, run `firebase deploy --only functions:[function  1 name], [function 2 name]` to deploy specific functions or run `firebase deploy --only functions` to deploy all.
 
-<br>
+
 
 ### Function Testing
 #### **Unit Testing Suite**
@@ -62,7 +62,7 @@ To edit an existing test suite, navigate into one of the existing `*.spec.ts*` f
 
 To run the test suite environment, run `npm test` in `./functions/`.
 
-<br>
+
 
 #### **Application Integrated Testing**
 
@@ -70,7 +70,7 @@ To run the test suite environment, run `npm test` in `./functions/`.
 2. Navigate into `/OffshoreWindJobNavigator/` and, if the application is not already running on localhost, run `npm start`
 3. If you would like to test your functions without affecting production, run `firebase emulators:start`, otherwise run `firebase emulators:start --only functions`
 
-<br>
+
 
 ## Job Matching
 The job matching process is done via a custom algorithm run in the cloud function `submitSurveyResponse` in `./functions/SurveyFunctions.ts`.
@@ -79,7 +79,7 @@ The job matching process is done via a custom algorithm run in the cloud functio
 ## Analytics
 The analytics collected for this application are done via logging functions in `./src/firebase/Analytics/Analytics.ts`, and the data is retrieved from BigQuery via `getBigQueryData` in `./functions/AnalyticsFunctions.ts`. More information can be found in [Analytics.md](https://github.com/TahleeJ/OffshoreWindJobNavigator-1323/blob/ceb920c68fdbcef766e29e1bd2936f1960bd87be/src/firebase/Analytics/Analytics.md).
 
-<br>
+
 
 # Release Notes
 ## v1.0.0

@@ -2,28 +2,22 @@
 A recruiting tool for the offshore wind industry related industry that automates the process of matching applications to job opportunities. Centered on customizable surveys to gauge skills and interests, our tool will match these survey responses to known job opportunities that an applicant could be a good fit to apply for.
 This project is a web application supported on both mobile and desktop platforms. Our backend and hosting services will use Firebase, and our frontend uses React with TypeScript.
 
-# Development Prerequisites
-- Git clone this repository
-- Node.js installed
-- Contact project owner to receive the project's `.env` file and place inside `OffshoreWindJobNavigator-1323/`
-
 Licensed under MIT License
 
-# Frontend
-To edit the frontend:
-- open the project in an IDE
-- open a terminal (ctrl + shift + p in vscode then type new terminal)
-- run `npm install` which will create and fill a folder called "node_modules"
-- run `npm start` to launch a dev version
-- edit the files under "./src/" which will mostly include the components from "./react components"
-- only edit the .scss file and compile it to css using the 'live sass compiler" extension
+# Installation & Launch Guide
+- Install Node.js
+- Contact Firebase project owner to be added as a member of the project
+- Git clone this repository
+- Contact project owner to receive the project's `.env` file and place inside `OffshoreWindJobNavigator-1323/`
+- Run `npm install` which will create and fill a folder called "node_modules". This should be run whenever new node packages have been added
 
-# Backend
-## Before You Begin
-**After [Development Prerequisites](https://github.com/TahleeJ/OffshoreWindJobNavigator-1323#development-prerequisites)*
-1. Contact Firebase project owner to be added as a member of the project
-2. Open a terminal session and navigate into `OffshoreWindJobNavigator-1323`
-3. Run `npm install` to create your `node_modules` folder with all currently necessary packages required to run the project as specified in `./package.json`
+### React Webpage
+1. Open the project in an IDE
+2. Open a terminal and go to the root directory (VSCODE: `ctrl` + `shift` + `p` then type "new terminal")
+3. Run `npm start` to launch a dev version
+
+### Local Firebase Instance (Optional)
+2. Open a terminal and go to the root directory (ctrl + shift + p in vscode then type new terminal)
 4. Run `firebase login` and login with the account authorized as a member of the Firebase project from **Step 1**
 5. Run `firebase init`
     - Select `Emulators` and press enter
@@ -31,7 +25,14 @@ To edit the frontend:
     - Enter "y" and press enter as necessary to select all default options
 6. Navigate into `./functions` and run `npm install`
 
-## Project Architecture [Backend]
+# Project Architecture
+### React & Redux
+- `index.js` is the entry point for the whole application. It's sole purpose is to render `App.tsx` inside a redux provider
+- `App.tsx` renders a collection of different pages depending on the current `pageType` in the redux store (see diagram below)
+- All of the other frontend react files are under "./src/" which will mostly include the components from "./react components"
+- For styling, edit the `./src/styling/App.scss` file and compile it to css using the 'live sass compiler" extension in vscode (or equivalent)
+<img src="https://user-images.githubusercontent.com/58948696/165195138-18301d65-a80e-4b50-9986-f9861fc38937.png" width="800"/>
+
 ### Firebase
 - **`./.firebaserc` defines the Firebase project name
 - **`./firebase.json` defines the hosting deployment and local emulator port usage information that Firebase will use
@@ -79,7 +80,6 @@ The job matching process is done via a [custom algorithm]() run in the cloud fun
 ### Analytics
 The analytics collected for this application are done via logging functions in `./src/firebase/Analytics/Analytics.ts`, and the data is retrieved from BigQuery via the functions in `./functions/AnalyticsFunctions.ts`. More information can be found in [Analytics.md](https://github.com/TahleeJ/OffshoreWindJobNavigator-1323/blob/ceb920c68fdbcef766e29e1bd2936f1960bd87be/src/firebase/Analytics/Analytics.md).
 
-<br>
 # Release Notes v1.0.0
 
 ## v0.4

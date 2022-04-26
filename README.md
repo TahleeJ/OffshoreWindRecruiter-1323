@@ -50,7 +50,7 @@ This project is a web application supported on both mobile and desktop platforms
 
 To add or edit a new function, navigate into `./functions/src/` and add your new function in a new `*.ts` file or edit one of the existing `*Functions.ts` files. After writing your function, follow the conventions done in `./src/functions/src/index.ts`. To make a function accessible throughout the application, follow the cloud function conventions done in `./src/firebase/Firebase.ts`.
 
-To deploy your function, run `firebase deploy --only functions:[function  1 name], [function 2 name]` to deploy specific functions or simply stop at `--only function` to deploy all.
+To deploy your function, run `firebase deploy --only functions:[function  1 name], [function 2 name]` to deploy specific functions or simply run `firebase deploy --only functions` to deploy all.
 
 <br>
 

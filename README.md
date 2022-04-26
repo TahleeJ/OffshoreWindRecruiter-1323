@@ -82,7 +82,26 @@ The analytics collected for this application are done via logging functions in `
 
 <br>
 
-# Release Notes v1.0.0
+# Release Notes 
+## v1.0.0
+### Features
+- Ability to download survey response after submitting a survey
+- New job exploration page
+- New analytics dashboard for surveys, matched jobs, and labels
+- Different default launch page for each permission level
+- Informational tooltips spread throughout application
+- New Offshore Wind Industry education page
+- Ability to add images/videos and text when creating a survey
+- Ability to change the permission level of multiple users at once
+### Bug Fixes
+- Card view available for users with navigator-level permissions
+- Proper permissions updatability with new navigator-level permissions
+- Label selector page overflow on survey creator page
+- Prevent survey creation with empty questions
+- Prevent duplicate survey title creation
+### Known Issues
+- Survey response view only shows answers for scale-type questions
+- Deleting a label does not give warning for connected components
 
 ## v0.4
 ### Features

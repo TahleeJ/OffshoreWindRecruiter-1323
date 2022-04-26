@@ -13,8 +13,8 @@ This project is a web application supported on both mobile and desktop platforms
 - Run `npm install` which will create and fill a folder called "node_modules". This should be run whenever new node packages have been added
 
 ## React Webpage
-1. Open the project in an IDE
-2. Open a terminal and go to the root directory
+1. (Optional) Open the cloned repository in an IDE
+2. Open a terminal session of your choosing and go to the root directory
 3. Run `npm start` to launch a dev version
 
 ## Local Firebase Instance (Frontend Optional)

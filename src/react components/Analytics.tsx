@@ -13,7 +13,7 @@ const Analytics: React.FC = () => {
     const jobOpps = useAppSelector(s => s.data.jobOpps);
     const labels = useAppSelector(s => s.data.labels);
     const userEmail = authInstance.currentUser!.email!;
-  
+
     // Stateful storage of the current state of the input error message
     const [popupTitleState, setPopupTitleState] = useState('');
     const [popupMessageState, setPopupMessageState] = useState('');
@@ -24,7 +24,7 @@ const Analytics: React.FC = () => {
     const [jobQueryTypeState, setJobQueryTypeState] = useState<DataQuery>(DataQuery.HighestAverageJobMatches);
     const [labelQueryTypeState, setLabelQueryTypeState] = useState<DataQuery>(DataQuery.LabelPoints);
 
-    const [navigatorGroupingState, setNavigatorGroupingstate] = useState<NavigatorGrouping>(NavigatorGrouping.All);
+    const [navigatorGroupingState, setNavigatorGroupingState] = useState<NavigatorGrouping>(NavigatorGrouping.All);
     const [validDataFocusesState, setValidDataFocusesState] = useState(validChartInfo.get(Subject.Surveys)!.get(Chart.Pie)!.text);
 
     // Stateful storage of chart type selection: what is in current use and for each subject
@@ -60,7 +60,7 @@ const Analytics: React.FC = () => {
     // largest data or smallest data (used to set tree informational box)
     const [treeState, setTreeState] = useState(DataQuery.None);
 
-    // letiables to hold the currently used data that the state will be set with;
+    // variables to hold the currently used data that the state will be set with;
     // initialized with the previous state information
     let popupTitle = popupTitleState;
     let popupMessage = popupMessageState;
@@ -77,19 +77,19 @@ const Analytics: React.FC = () => {
     let startDate = startDateState;
     let subject = subjectState;
 
-    // letiables to check the validity of the number of surveys selected
+    // Variables to check the validity of the number of surveys selected
     const maxSelectedSurveys = 5;
     let selectedSurveyCount = 0;
     const selectedSurveys = selectedSurveysState;
 
     let selectedNavigators = selectedNavigatorState;
 
-    // letiables to check the validity of the number of jobs selected
+    // Variables to check the validity of the number of jobs selected
     const maxSelectedJobs = 5;
     let selectedJobCount = 0;
     const selectedJobs = selectedJobsState;
 
-    // letiables to check the validity of the number of labels selected
+    // Variables to check the validity of the number of labels selected
     const maxSelectedLabels = 5;
     let selectedLabelCount = 0;
     const selectedLabels = selectedLabelsState;
@@ -150,11 +150,11 @@ const Analytics: React.FC = () => {
             }
         }
 
-        setNavigatorGroupingstate(value);
+        setNavigatorGroupingState(value);
     }
 
     /**
-     * Updates the letiables keeping track of the emails the
+     * Updates the variables keeping track of the emails the
      * user enters in in the navigators text box
      *
      * @param value the entered in string by the user

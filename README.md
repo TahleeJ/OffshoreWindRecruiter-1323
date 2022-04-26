@@ -1,8 +1,8 @@
-# Offshore Wind Job Navigator
+# 🌊 Offshore Wind Job Navigator
 A recruiting tool for the offshore wind industry related industry that automates the process of matching applications to job opportunities. Centered on customizable surveys to gauge skills and interests, our tool will match these survey responses to known job opportunities that an applicant could be a good fit to apply for.
 This project is a web application supported on both mobile and desktop platforms. Our backend and hosting services will use Firebase, and our frontend uses React with TypeScript.
 
-*Licensed under MIT License*
+*Licensed under the MIT License*
 
 # Installation & Launch Guide
 ## Setup
@@ -32,7 +32,6 @@ This project is a web application supported on both mobile and desktop platforms
 - `./src/App.tsx` renders a collection of different pages depending on the current `pageType` in the redux store (see diagram below)
 - All of the other frontend react files are under `./src/` which will mostly include the components from `./react components/`
 - For styling, edit the `./src/styling/App.scss` file and compile it to css using the 'live sass compiler" extension in vscode (or equivalent)
-<img src="https://user-images.githubusercontent.com/58948696/165195138-18301d65-a80e-4b50-9986-f9861fc38937.png" width="800"/>
 
 ## Firebase
 - **`./.firebaserc` defines the Firebase project name
@@ -50,7 +49,7 @@ This project is a web application supported on both mobile and desktop platforms
 
 To add or edit a new function, navigate into `./functions/src/` and add your new function in a new `*.ts` file or edit one of the existing `*Functions.ts` files. After writing your function, follow the conventions done in `./src/functions/src/index.ts`. To make a function accessible throughout the application, follow the cloud function conventions done in `./src/firebase/Firebase.ts`.
 
-To deploy your function, run `firebase deploy --only functions:[function  1 name], [function 2 name]` to deploy specific functions or simply stop at `--only function` to deploy all.
+To deploy your function, run `firebase deploy --only functions:[function  1 name], [function 2 name]` to deploy specific functions or run `firebase deploy --only functions` to deploy all.
 
 
 
@@ -82,7 +81,7 @@ The analytics collected for this application are done via logging functions in `
 
 
 
-# Release Notes 
+# Release Notes
 ## v1.0.0
 ### Features
 - Ability to download survey response after submitting a survey

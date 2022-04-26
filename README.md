@@ -17,7 +17,7 @@ This project is a web application supported on both mobile and desktop platforms
 2. Open a terminal session of your choosing and go to the root directory
 3. Run `npm start` to launch a dev version in localhost
 
-## Local Firebase Instance (Frontend Optional)
+## Local Firebase Instance (Optional for Frontend)
 1. Open a terminal and go to the root directory
 2. Run `firebase login` and login with the account authorized as a member of the Firebase project in [setup](https://github.com/TahleeJ/OffshoreWindJobNavigator-1323/blob/50e2c237f98ae011a4d7817ca7c60a382fdb3659/README.md#setup)
 3. Run `firebase init`

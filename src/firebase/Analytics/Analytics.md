@@ -20,23 +20,19 @@ To view the data currently accessible in the linked BigQuery integration, open t
 
 *Before attempting to retrieve data from the application, it is highly recommended to construct your data queries inside of the SQL workspace. The queries inside of `queries.sql` do **NOT** affect the available queries that BigQuery can use, they are only there for quick reference.*
 
-The administered survey queries available to the project are accessible in `Administered Survey Queries`, and the job queries are accessible in `Matched Job Queries` within BigQuery. After editing a query file, make sure to run and save your queries before attempting to use them in the application.
+The administered survey queries available to the project are accessible in `Administered Survey Queries`, the job queries are accessible in `Matched Job Queries`, and the label queries are accessible in `Label Queries` within BigQuery. After editing a query file, make sure to run and save your queries before attempting to use them in the application.
 
-Queries made made available to BigQuery are used inside of the functions in `./src/functions/AnalyticsFunctions.ts` to query data as need be. 
+Post-creation, the names of the each SQL table function will then be manually put into the `queryFunctions` variable and `DataQuery` data type defined in `./src/firebase/Analytics/Utility.ts` for easy reference and manipulation. Queries made made available to BigQuery are used inside of the functions in `./src/functions/AnalyticsFunctions.ts` to query data as need be. 
 
 ## Chart Generation
-The [Google] charts for the analytics dashboard are achieved by way of a pipeline:
+The [Google] charts for the analytics dashboard are achieved by way of a pipelined process:
 
-0. SQL table function creation in BigQuery
 1. Custom chart selection
 2. Data query type assertion
 3. Preliminary data querying
 4. Cloud function data querying
 5. Data serialization
 6. Chart generation
-
-### SQL Function Creation
-Before any data can be pulled and manipulated for chart generation purposes, SQL queries must first be constructed for each data collection that is desired to be represented. After deciding on these collections, the SQL functions can then be written in a query file inside of this project's BigQuery SQL workspace so that the function can then be called in the future. The queries in `./src/firebase/Analytics/queries.sql` represent the currently available queries for BigQuery, but editing this file will *not* update any currently exisiting function or create a new one, any changes must all be done within the linked BigQuery workspace. Post-creation, the names of the each SQL table function will then be manually put into the `queryFunctions` variable and `DataQuery` data type defined in `./src/firebase/Analytics/Utility.ts` for easy reference and manipulation.
 
 ### Custom Chart Selection
 When entering into the analytics dashboard of the application in `./src/react components/Analytics.tsx`, the user will have the ability to choose what type of data they would like to see alongside the visualization (chart) they would like to view it in. After this selection is done (by clicking `generateChart`), the application will then determine which type of data query needs to be sent to BigQuery, starting through the `drawChart` function in `./src/firebase/Analytics/Draw.ts`.

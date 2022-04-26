@@ -32,7 +32,6 @@ This project is a web application supported on both mobile and desktop platforms
 - `./src/App.tsx` renders a collection of different pages depending on the current `pageType` in the redux store (see diagram below)
 - All of the other frontend react files are under `./src/` which will mostly include the components from `./react components/`
 - For styling, edit the `./src/styling/App.scss` file and compile it to css using the 'live sass compiler" extension in vscode (or equivalent)
-<img src="https://user-images.githubusercontent.com/58948696/165195138-18301d65-a80e-4b50-9986-f9861fc38937.png" width="800"/>
 
 ## Firebase
 - **`./.firebaserc` defines the Firebase project name

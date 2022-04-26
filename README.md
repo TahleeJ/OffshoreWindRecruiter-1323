@@ -15,7 +15,7 @@ This project is a web application supported on both mobile and desktop platforms
 ## React Webpage
 1. (Optional) Open the cloned repository in an IDE
 2. Open a terminal session of your choosing and go to the root directory
-3. Run `npm start` to launch a dev version
+3. Run `npm start` to launch a dev version in localhost
 
 ## Local Firebase Instance (Frontend Optional)
 1. Open a terminal and go to the root directory

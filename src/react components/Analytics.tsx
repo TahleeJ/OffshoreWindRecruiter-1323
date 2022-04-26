@@ -77,19 +77,19 @@ const Analytics: React.FC = () => {
     let startDate = startDateState;
     let subject = subjectState;
 
-    // letiables to check the validity of the number of surveys selected
+    // Variables to check the validity of the number of surveys selected
     const maxSelectedSurveys = 5;
     let selectedSurveyCount = 0;
     const selectedSurveys = selectedSurveysState;
 
     let selectedNavigators = selectedNavigatorState;
 
-    // letiables to check the validity of the number of jobs selected
+    // Variables to check the validity of the number of jobs selected
     const maxSelectedJobs = 5;
     let selectedJobCount = 0;
     const selectedJobs = selectedJobsState;
 
-    // letiables to check the validity of the number of labels selected
+    // Variables to check the validity of the number of labels selected
     const maxSelectedLabels = 5;
     let selectedLabelCount = 0;
     const selectedLabels = selectedLabelsState;

@@ -1,4 +1,4 @@
-# OSWJN Analytics
+# OSWJN Analytics Process
 This application utilizes Google Analytics 4 for its analytics purposes. These purposes can be broken down into 3 parts as described below:
 
 1. Event logging to Firebase-integrated Google BigQuery
@@ -27,6 +27,7 @@ Queries made made available to BigQuery are used inside of the functions in `./s
 ## Chart Generation
 The [Google] charts for the analytics dashboard are achieved by way of a pipeline:
 
+0. SQL table function creation in BigQuery
 1. Custom chart selection
 2. Data query type assertion
 3. Preliminary data querying
@@ -34,14 +35,17 @@ The [Google] charts for the analytics dashboard are achieved by way of a pipelin
 5. Data serialization
 6. Chart generation
 
+### SQL Function Creation
+Before any data can be pulled and manipulated for chart generation purposes, SQL queries must first be constructed for each data collection that is desired to be represented. After deciding on these collections, the SQL functions can then be written in a query file inside of this project's BigQuery SQL workspace so that the function can then be called in the future. The queries in `./src/firebase/Analytics/queries.sql` represent the currently available queries for BigQuery, but editing this file will *not* update any currently exisiting function or create a new one, any changes must all be done within the linked BigQuery workspace. Post-creation, the names of the each SQL table function will then be manually put into the `queryFunctions` variable and `DataQuery` data type defined in `./src/firebase/Analytics/Utility.ts` for easy reference and manipulation.
+
 ### Custom Chart Selection
 When entering into the analytics dashboard of the application in `./src/react components/Analytics.tsx`, the user will have the ability to choose what type of data they would like to see alongside the visualization (chart) they would like to view it in. After this selection is done (by clicking `generateChart`), the application will then determine which type of data query needs to be sent to BigQuery, starting through the `drawChart` function in `./src/firebase/Analytics/Draw.ts`.
 
 ### Data Query Type Assertion
-To determine the type of data query that needs to be sent out, the application will know exactly which data queries for each chart type from the `validQueryCharts` variable in `./src/firebase/Analytics/Utility.ts`. If the user has selected a data query that is valid for the type of chart they selected, a preliminary query will be made through `getQueryData` in `./src/firebase/Analytics/Query.ts`.
+To determine the type of data query that needs to be sent out, the application will know exactly which data queries for each chart type from the maps in `./src/firebase/Analytics/Utility.ts` for each subject type listing the valid queries for each chart type and the text to display to the user. If the user has selected a data query that is valid for the type of chart they selected, a preliminary query will be made through `getQueryData` in `./src/firebase/Analytics/Query.ts`.
 
 ### Preliminary Data Query
-For optimization purposes, the application will know which query to send to BigQuery based on the selected chart and data selection. This is done to take away some of the processing power needed to be done by the querying cloud functions. The application will know which query to make as well as how many times to call the cloud function `getAnalyticsData` in `./functions/AnalyticsFunctions.ts` to do it.
+For optimization purposes, the application will know which query to send to BigQuery based on the selected chart and data selection. This is done to take away some of the processing power needed to be done by the querying cloud functions. The application will know which query to make as well as how many times to call the cloud function `getBigQueryData` in `./functions/AnalyticsFunctions.ts` to do it.
 
 ### Cloud Function Data Query
 After determining which data to retrieve from BigQuery and how, the cloud function `getAnalyticsData` in `./functions/AnalyticsFunctions.ts` will use the determined query to actually request data from BigQuery. Once this query job has been completed, the retrieved data will be sent back as JSON and then be sent through a serialization process in `serializeQueryData` in `./src/firebase/Analytics/Query.ts`.

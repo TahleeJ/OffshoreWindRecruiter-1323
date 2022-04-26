@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { setJobOpps, setSurveyResponses, setSurveys } from '../redux/dataSlice.ts';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { changePage, OperationType, PageType } from '../redux/navigationSlice';
 
 import { authInstance } from '../firebase/Firebase';
 import { getCurrentPermissionLevel } from '../firebase/Queries/AdminQueries';
-import { deleteJobOpp, getJobOpps, newJobOpp } from '../firebase/Queries/JobQueries';
+import { deleteJobOpp, getJobOpps } from '../firebase/Queries/JobQueries';
 import { deleteSurvey, deleteSurveyResponse, getNextSurveyResponses, getSurveyResponses, getSurveys } from '../firebase/Queries/SurveyQueries';
 import { PermissionLevel } from '../firebase/Types';
 

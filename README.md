@@ -52,6 +52,12 @@ To add or edit a new function, navigate into `./functions/src/` and add your new
 To deploy your function, run `firebase deploy --only functions:[function  1 name], [function 2 name]` to deploy specific functions or run `firebase deploy --only functions` to deploy all.
 
 
+## Google Cloud Hosting
+### Website Deployment
+
+To deploy or redeploy the website to Google Cloud Hosting, run `firebase deploy --only hosting`.
+
+<br>
 
 ### Function Testing
 #### **Unit Testing Suite**

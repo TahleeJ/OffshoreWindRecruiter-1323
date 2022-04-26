@@ -6,9 +6,9 @@ Licensed under MIT License
 
 # Installation & Launch Guide
 ## Setup
-- Install Node.js
+- Install [Node.js](https://nodejs.org/en/download/)
+- Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and clone this repository
 - Contact Firebase project owner to be added as a member of the project
-- Git clone this repository
 - Contact project owner to receive the project's `.env` file and place inside `OffshoreWindJobNavigator-1323/`
 - Run `npm install` which will create and fill a folder called "node_modules". This should be run whenever new node packages have been added
 

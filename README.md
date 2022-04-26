@@ -1,6 +1,6 @@
 # 🌊 Offshore Wind Job Navigator
 A recruiting tool for the offshore wind industry related industry that automates the process of matching applications to job opportunities. Centered on customizable surveys to gauge skills and interests, our tool will match these survey responses to known job opportunities that an applicant could be a good fit to apply for.
-This project is a web application supported on both mobile and desktop platforms. Our backend and hosting services will use Firebase, and our frontend uses React with TypeScript.
+This project is a web application supported on both mobile and desktop platforms. Our backend and hosting services use Firebase, and our frontend uses React with TypeScript.
 
 *Licensed under the MIT License*
 

@@ -19,7 +19,7 @@ Licensed under MIT License
 
 ## Local Firebase Instance (Frontend Optional)
 1. Open a terminal and go to the root directory
-2. Run `firebase login` and login with the account authorized as a member of the Firebase project in [setup]()
+2. Run `firebase login` and login with the account authorized as a member of the Firebase project in [setup](https://github.com/TahleeJ/OffshoreWindJobNavigator-1323/blob/50e2c237f98ae011a4d7817ca7c60a382fdb3659/README.md#setup)
 3. Run `firebase init`
     - Select `Emulators` and press enter
     - Ensure the `Authentication, Functions, Firestore, and Hosting` emulators are selected and press enter
@@ -30,7 +30,7 @@ Licensed under MIT License
 ## React & Redux
 - `./src/index.js` is the entry point for the whole application. It's sole purpose is to render `./src/App.tsx` inside a redux provider
 - `./src/App.tsx` renders a collection of different pages depending on the current `pageType` in the redux store (see diagram below)
-- All of the other frontend react files are under `./src/`, which will mostly include the components from `./react components/`
+- All of the other frontend react files are under `./src/` which will mostly include the components from `./react components/`
 - For styling, edit the `./src/styling/App.scss` file and compile it to css using the 'live sass compiler" extension in vscode (or equivalent)
 <img src="https://user-images.githubusercontent.com/58948696/165195138-18301d65-a80e-4b50-9986-f9861fc38937.png" width="800"/>
 

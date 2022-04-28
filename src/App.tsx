@@ -4,7 +4,6 @@ import './styling/App.css';
 import * as firebaseAuth from '@firebase/auth';
 import { authInstance } from './firebase/Firebase';
 
-import SurveySelect from './react components/survey/SurveySelect';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { changePage, OperationType, PageType } from './redux/navigationSlice';
 import AdminHome from './react components/AdminHome';

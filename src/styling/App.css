@@ -270,6 +270,16 @@ textarea {
   background: #d16161;
   color: white;
   border-radius: 3px;
+  font-size: 16px;
+}
+
+#authPage .success {
+  margin: 5px;
+  padding: 3px;
+  background: #7ba1ff;
+  color: white;
+  border-radius: 3px;
+  font-size: 16px;
 }
 
 #authPage input[type="text"],
@@ -294,6 +304,11 @@ textarea {
   -webkit-box-shadow: 0px 0px 3px 2px #dddddd;
           box-shadow: 0px 0px 3px 2px #dddddd;
   padding: 20px;
+}
+
+#authPage a {
+  font-size: 16px;
+  margin: 20px;
 }
 
 #authPage button {

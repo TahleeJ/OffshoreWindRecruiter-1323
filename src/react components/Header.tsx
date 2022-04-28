@@ -29,7 +29,6 @@ const Header: React.FC = () => {
                         <i className='fas fa-briefcase' onClick={() => { appDispatch(changePage({ type: PageType.JobManage, operation: OperationType.Administering })); }} data-tip="Job Explore"></i>
                     </>
                     : null
-
                 }
                 <i className="fas fa-graduation-cap" onClick={() => { appDispatch(changePage({ type: PageType.OffShoreInfo })); }} data-tip="OffShore 101"></i>
                 {currentPermissionLevel >= PermissionLevel.Admin

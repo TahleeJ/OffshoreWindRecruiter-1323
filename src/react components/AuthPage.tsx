@@ -15,8 +15,12 @@ const AuthPage = () => {
 
     const createAccount = async () => {
         try {
+            if (email === '' || password === '') {
+                setError('Please fill out email and password fields.');
+                return;
+            }
+
             const result = await firebaseAuth.createUserWithEmailAndPassword(authInstance, email, password);
-            console.log(result);
         } catch (e) {
             setError('Error creating account: ' + (e as FirebaseError).code);
         }
@@ -37,6 +41,11 @@ const AuthPage = () => {
     };
     const resetPassword = async () => {
         try {
+            if (email === '') {
+                setError('Please fill out email field.');
+                return;
+            }
+
             await firebaseAuth.sendPasswordResetEmail(authInstance, email);
 
             setSuccess('Sent a reset email to ' + email);

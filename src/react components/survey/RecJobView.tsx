@@ -1,7 +1,9 @@
-import React from 'react';
-import { RecommendedJobWithData } from '../../firebase/Types';
+import React, { useState } from 'react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
+
+import { RecommendedJobWithData } from '../../firebase/Types';
+import OffShoreInfo from '../OffshoreInfo';
 
 
 interface props {
@@ -9,35 +11,48 @@ interface props {
 }
 
 const RecJobView: React.FC<props> = props => {
-    const printRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
-    const downloadPDF = async () => {
-        const element = printRef.current;
-        const canvas = await html2canvas(element);
-        const data = canvas.toDataURL('image/png');
-    
-        const pdf = new jsPDF();
-        const imgProperties = pdf.getImageProperties(data);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight =
-          (imgProperties.height * pdfWidth) / imgProperties.width;
-          
-        pdf.addImage(data, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        
-        let offshoreinfo = ["4JK90mg", "2kJt9wm", "jRSqd5K", "wMk5pKS", "z5CtFZ1", "26MRXFy", "R3HmWXf"]
+    const [printing, setPrinting] = useState(false);
 
-        for (var i = 0; i < offshoreinfo.length; i++) {
-            pdf.addPage();
-            var img = document.createElement('img');
-            img.src = "https://i.ibb.co/" + offshoreinfo[i] + "/OWI-Recruiter.jpg";
-            if (offshoreinfo[i] == "R3HmWXf") {
-                pdf.addImage(img, 'JPEG', 0, 0, 203, 320);
-            } else {
-                pdf.addImage(img, 'JPEG', 0, 0, 203, 393);
-            }
-        }
-    
-        pdf.save('Offshore Wind Recommended Jobs.pdf');
-    }
+    const printRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+    const printRef2 = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+
+    const downloadPDF = async () => {
+        setPrinting(true);
+
+        // Fix bug with html2canvas not rendering shadows correctly
+        const recommendations = document.querySelectorAll('.recommendation') as NodeListOf<HTMLElement>;
+        const oldShadow = recommendations[0].style.boxShadow;
+        recommendations.forEach(r => { r.style.boxShadow = 'none'; });
+
+        const element = printRef.current;
+        const canvas = await html2canvas(printRef.current);
+        const data = canvas.toDataURL('image/png', 1);
+
+        const margin = 20;
+        const pdf = new jsPDF('p', 'pt', 'letter');
+        const imgProperties = pdf.getImageProperties(data);
+        const pWidth = pdf.internal.pageSize.width;
+        const srcWidth = element.scrollWidth;
+        const scale = (pWidth - margin * 2) / srcWidth;
+
+        pdf.addImage(data, 'png', margin, margin, imgProperties.width * scale, imgProperties.height * scale);
+        pdf.html(printRef2.current, {
+            callback: function (doc) {
+                doc.save('Offshore Wind Recommended Jobs.pdf');
+
+                setPrinting(false);
+            },
+            margin: [margin, margin, margin, margin],
+            html2canvas: {
+                scale: scale
+            },
+            y: pdf.internal.pageSize.height,
+            autoPaging: 'text'
+        });
+
+        recommendations.forEach(r => { r.style.boxShadow = oldShadow; });
+    };
+
     return (
         <>
             <button type="button" onClick={downloadPDF}>Download Results</button>
@@ -51,7 +66,7 @@ const RecJobView: React.FC<props> = props => {
                                 {recommendation.jobOpp
                                     ? <>
                                         <div className='title'>{recommendation.jobOpp.jobName}</div>
-                                         <div className='compName'>{recommendation.jobOpp.companyName}</div>
+                                        <div className='compName'>{recommendation.jobOpp.companyName}</div>
                                         <div className='jobDesc'>{recommendation.jobOpp.jobDescription}</div>
                                     </>
                                     : <div>Job no longer exists</div>
@@ -70,16 +85,15 @@ const RecJobView: React.FC<props> = props => {
                                     </span>
                                 }
                             </div>
-                            {/* <div className='jobLink'>{recommendation.jobOpp.jobLink}</div>
-                        <div className='labels'>
-                            {recommendation.jobOpp.labelIds.map((l, i) => (
-                                <span key={i}>-{labels.find(searchLabel => searchLabel.id === l)?.name}- </span>
-                            ))
-                            }
-                        </div> */}
                         </div>
                     ))}
             </div>
+            {printing
+                ? <div ref={printRef2}>
+                    <OffShoreInfo />
+                </div>
+                : null
+            }
         </>
     );
 };

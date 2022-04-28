@@ -271,6 +271,16 @@ textarea {
         background: $contrastColor;
         color: white;
         border-radius: 3px;
+        font-size: $normal-font-size;
+    }
+
+    .success {
+        margin: 5px;
+        padding: 3px;
+        background: $mainColor;
+        color: white;
+        border-radius: 3px;
+        font-size: $normal-font-size;
     }
 
     input[type="text"],
@@ -296,6 +306,10 @@ textarea {
         padding: 20px;
     }
 
+    a {
+        font-size: $normal-font-size;
+        margin: 20px;
+    }
     button {
         margin-bottom: 20px;
         padding: 7px;

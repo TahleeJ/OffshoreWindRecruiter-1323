@@ -40,11 +40,12 @@ const getOverallPageFromType = (type: PageType) => {
 
 
 const App: React.FC = () => {
-    const [isLoggedIn, setLoggedIn] = useState(false);
+    const [isLoggedIn, setLoggedIn] = useState(authInstance.currentUser != null);
     const [dataHasBeenFetched, setDataHasBeenFetched] = useState(false);
     const pageType = useAppSelector(s => s.navigation.currentPage);
     const appDispatch = useAppDispatch();
     firebaseAuth.setPersistence(authInstance, firebaseAuth.browserLocalPersistence);
+
 
     useEffect(() => {
         authInstance.onAuthStateChanged(async (user) => {
@@ -82,7 +83,6 @@ const App: React.FC = () => {
             } catch (e) { }
         });
     });
-
 
     return (
         <>

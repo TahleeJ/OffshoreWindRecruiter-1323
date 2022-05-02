@@ -1,12 +1,12 @@
 {
   "projects": {
-    "default": "hallowed-digit-338620"
+    "default": "offshore-recruiter-d9d47"
   },
   "targets": {
-    "hallowed-digit-338620": {
+    "offshore-recruiter-d9d47": {
       "hosting": {
         "prod": [
-          "hallowed-digit-338620"
+          "offshorewindrecruiter"
         ]
       }
     }

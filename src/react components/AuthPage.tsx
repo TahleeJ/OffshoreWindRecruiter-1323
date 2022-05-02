@@ -11,6 +11,7 @@ const AuthPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const gProvider = new firebaseAuth.GoogleAuthProvider();
+    gProvider.addScope('email');
 
 
     const createAccount = async () => {
@@ -69,8 +70,8 @@ const AuthPage = () => {
                 <input type="text" id="email" placeholder='Email' value={email} autoComplete="on" onChange={(e) => setEmail(e.target.value)}/><br />
                 <input type="password" id="password" placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)}/><br />
                 <button onClick={signIn}>Sign-In</button>
-                <a href="javascript:;" onClick={createAccount}>Create Account</a>
-                <a href="javascript:;" onClick={resetPassword}>Reset Password</a>
+                <a href="#" onClick={createAccount}>Create Account</a>
+                <a href="#" onClick={resetPassword}>Reset Password</a>
             </div>
         </div>
     );

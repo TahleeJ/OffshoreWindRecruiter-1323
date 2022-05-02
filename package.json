@@ -1,6 +1,6 @@
 {
-  "name": "oswjn",
-  "version": "0.4.0",
+  "name": "offshore-wind-recruiter",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
@@ -9,7 +9,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "firebase": "^9.6.11",
+    "firebase": "^9.7.0",
     "firebase-admin": "^10.0.2",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
@@ -29,8 +29,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "emulators": "firebase emulators:start",
-    "deploy": "firebase deploy --only hosting:prod",
-    "deploy-demo": "firebase deploy --only hosting:demo"
+    "deploy": "firebase deploy --only hosting"
   },
   "eslintConfig": {
     "extends": [

@@ -28,11 +28,16 @@ export function logSurveyCreation(title: string, user: string) {
 export function logSurveyAdministered(title: string, navigator: string) {
     logEvent(analyticsInstance, 'survey_administered', {
         administered_survey_title: title,
-        administering_navigator: navigator,
-        debug_mode: true
+        administering_navigator: navigator
     });
 }
 
+/**
+ * Custom logging function to track the jobs recommended
+ *
+ * @param surveyId the id of the survey used to recommend the job
+ * @param recommendedJobs the recommended jobs based on the survey response
+ */
 export async function logJobsMatched(surveyId: string, recommendedJobs: RecommendedJob[]) {
     const surveyName = (await getSurvey(surveyId)).title;
 
@@ -43,12 +48,17 @@ export async function logJobsMatched(surveyId: string, recommendedJobs: Recommen
         logEvent(analyticsInstance, 'job_matched', {
             administered_survey_title: surveyName,
             job_title: jobOpp.jobName,
-            matched_score: score,
-            debug_mode: true
+            matched_score: score
         });
     }
 }
 
+/**
+ * Custom logging function to track the labels used for recommending jobs
+ *
+ * @param labelScores the assigned linear and percentile scores for each label used
+ *                    to recommend jobs
+ */
 export async function logLabelsUsed(labelScores: [string, [number, number]][]) {
     for (const [key, value] of labelScores) {
         const labelName = (await getLabel(key)).name;
@@ -56,8 +66,7 @@ export async function logLabelsUsed(labelScores: [string, [number, number]][]) {
         logEvent(analyticsInstance, 'label_used', {
             label_title: labelName,
             linear_score: value[0],
-            percentile_score: value[1],
-            debug_mode: true
+            percentile_score: value[1]
         });
     }
 }

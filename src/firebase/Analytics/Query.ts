@@ -1,6 +1,8 @@
 import { getBigQueryData } from '../Firebase';
 import { queryFunctions, DataQuery, Subject, SerializedEntry, SelectionArrays } from './Utility';
 
+const datasetName = 'analytics_313603226';
+
 /**
  * Function to actually send a desired query to BigQuery
  *
@@ -27,11 +29,12 @@ export async function getQueryData(
         if ((queryType & DataQuery.SurveysAll) === 0) {
             const selectedNavigator = selectionArrays!.navigators![0];
             const queryString =
-                `SELECT * FROM analytics_305371849.${queryFunction}("${selectedNavigator}", ${forDay}, "${startDate}")`;
+                `SELECT * FROM ${datasetName}.${queryFunction}("${selectedNavigator}", ${forDay}, "${startDate}")`;
 
             response = await getBigQueryData({ queryString: queryString, navigatorEmail: selectedNavigator });
         } else {
-            const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(${forDay}, "${startDate}")`;
+            const queryString = `SELECT * FROM ${datasetName}.${queryFunction}(${forDay}, "${startDate}")`;
+            console.log(queryString);
 
             response = await getBigQueryData({ queryString: queryString });
         }
@@ -43,7 +46,7 @@ export async function getQueryData(
 
             for (const jobName of selectionArrays!.jobs!) {
                 const queryString =
-                    `SELECT * FROM analytics_305371849.${queryFunction}("${jobName}", ${forDay}, "${startDate}")`;
+                    `SELECT * FROM ${datasetName}.${queryFunction}("${jobName}", ${forDay}, "${startDate}")`;
 
                 response = await getBigQueryData({ queryString: queryString });
 
@@ -68,7 +71,7 @@ export async function getQueryData(
 
             for (const surveyName of selectionArrays!.surveys!) {
                 const queryString =
-                    `SELECT * FROM analytics_305371849.${queryFunction}("${surveyName}", ${forDay}, "${startDate}")`;
+                    `SELECT * FROM ${datasetName}.${queryFunction}("${surveyName}", ${forDay}, "${startDate}")`;
 
                 response = await getBigQueryData({ queryString: queryString });
 
@@ -89,7 +92,7 @@ export async function getQueryData(
 
             return serializedJobData;
         } else {
-            const queryString = `SELECT * FROM analytics_305371849.${queryFunction}(${forDay}, "${startDate}")`;
+            const queryString = `SELECT * FROM ${datasetName}.${queryFunction}(${forDay}, "${startDate}")`;
 
             response = await getBigQueryData({ queryString: queryString });
 
@@ -102,7 +105,7 @@ export async function getQueryData(
             const serializedLabelData = new Map<string, SerializedEntry[]>();
 
             for (const labelName of selectionArrays!.labels!) {
-                const queryString = `SELECT * FROM analytics_305371849.${queryFunction}("${labelName}", ${forDay}, "${startDate}")`;
+                const queryString = `SELECT * FROM ${datasetName}.${queryFunction}("${labelName}", ${forDay}, "${startDate}")`;
 
                 response = await getBigQueryData({ queryString: queryString });
 
@@ -124,7 +127,7 @@ export async function getQueryData(
             return serializedLabelData;
         } else {
             const queryString =
-                `SELECT * FROM analytics_305371849.${queryFunction}("${selectionArrays!.labels![0]}", ${forDay}, "${startDate}")`;
+                `SELECT * FROM ${datasetName}.${queryFunction}("${selectionArrays!.labels![0]}", ${forDay}, "${startDate}")`;
 
             response = await getBigQueryData({ queryString: queryString });
 

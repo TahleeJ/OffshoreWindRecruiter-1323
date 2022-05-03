@@ -10,10 +10,11 @@ Event logging for this application is done via the functions located in `./src/f
 
 Once a logging function call has been placed in the proper trigger collection, data will automatically be sent to BigQuery, which is a linked integration for this Firebase project. For this integration configuration, data will be propagated on an intra-day and per-day basis. While intra-day propagation does happen throughout the day, it does *not* propagate in realtime. Although this can hinder the testing process, there is a way to view collected data in semi-realtime:
 
-1. Include `debug_mode: true` in each of the logging events you would like to track in realtime
-2. Install the Google Analytics Debugger extension on Chrome
-3. Navigate into the Firebase project's "DebugView"
-4. Start the application and begin triggering the events (*it may take a few tries and minutes to start seeing the data appear in DebugView*)
+1. For each custom event parameter not implicitly recognized by GA4, add it as a custom definition in the project's Firebase console
+2. Include `debug_mode: true` in each of the logging events you would like to track in realtime
+3. Install the Google Analytics Debugger extension on Chrome
+4. Navigate into the Firebase project's "DebugView"
+5. Start the application and begin triggering the events (*it may take a few tries and minutes to start seeing the data appear in DebugView*)
 
 ## Data Querying from BigQuery
 To view the data currently accessible in the linked BigQuery integration, open the "View in BigQuery" link from BigQuery's integration manager in this project's Firebase console.
